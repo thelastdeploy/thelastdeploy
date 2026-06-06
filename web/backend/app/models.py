@@ -20,6 +20,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     lab_progress: Mapped[list["LabProgress"]] = relationship("LabProgress", back_populates="user")
+    section_progress: Mapped[list["SectionProgress"]] = relationship("SectionProgress", back_populates="user")
 
 
 class Module(Base):
@@ -31,7 +32,7 @@ class Module(Base):
     topic: Mapped[str | None] = mapped_column(String(50), nullable=True)
     difficulty: Mapped[str | None] = mapped_column(String(20), nullable=True)
     estimated_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    tags: Mapped[str | None] = mapped_column(Text, nullable=True)  # comma-separated
+    tags: Mapped[str | None] = mapped_column(Text, nullable=True)
     yaml_content: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
@@ -47,20 +48,15 @@ class Section(Base):
     module_id: Mapped[str] = mapped_column(String(100), ForeignKey("modules.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     order: Mapped[int] = mapped_column(Integer, nullable=False)
-    content: Mapped[str | None] = mapped_column(Text, nullable=True)  # markdown
+    content: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     module: Mapped["Module"] = relationship("Module", back_populates="sections")
-    labs: Mapped[list["Lab"]] = relationship(
-        "Lab", back_populates="section", order_by="Lab.order"
-    )
+    labs: Mapped[list["Lab"]] = relationship("Lab", back_populates="section", order_by="Lab.order")
+    progress: Mapped[list["SectionProgress"]] = relationship("SectionProgress", back_populates="section")
 
 
 class Lab(Base):
-    """
-    Globally unique runnable unit. e.g. id = 'dkr-run-hello'
-    Labs own: xp, setup_type, seed_commands, resource_limits, validator path.
-    """
     __tablename__ = "labs"
 
     id: Mapped[str] = mapped_column(String(100), primary_key=True)  # globally unique
@@ -70,10 +66,10 @@ class Lab(Base):
     order: Mapped[int] = mapped_column(Integer, default=0)
     xp: Mapped[int] = mapped_column(Integer, default=0)
     estimated_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    setup_type: Mapped[str | None] = mapped_column(String(50), nullable=True)   # shell | docker | kind
-    seed_commands: Mapped[str | None] = mapped_column(Text, nullable=True)       # JSON array stored as text
+    setup_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    seed_commands: Mapped[str | None] = mapped_column(Text, nullable=True)
     resource_limits_cpu: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    resource_limits_mem: Mapped[int | None] = mapped_column(Integer, nullable=True)  # MB
+    resource_limits_mem: Mapped[int | None] = mapped_column(Integer, nullable=True)
     yaml_content: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
@@ -82,6 +78,7 @@ class Lab(Base):
 
 
 class LabProgress(Base):
+    """Tracks completion of individual labs (via tld check)."""
     __tablename__ = "lab_progress"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -96,3 +93,26 @@ class LabProgress(Base):
 
     user: Mapped["User"] = relationship("User", back_populates="lab_progress")
     lab: Mapped["Lab"] = relationship("Lab", back_populates="progress")
+
+
+class SectionProgress(Base):
+    """
+    Tracks completion of sections.
+    A section is complete when:
+      - Reading: user scrolled to end (frontend triggers POST)
+      - Future: all questions answered correctly
+    A section with labs is considered complete via lab_progress (not here).
+    """
+    __tablename__ = "section_progress"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    module_id: Mapped[str] = mapped_column(String(100), ForeignKey("modules.id"), nullable=False)
+    section_id: Mapped[str] = mapped_column(String(100), ForeignKey("sections.id"), nullable=False)
+    completed: Mapped[bool] = mapped_column(Boolean, default=False)
+    xp_awarded: Mapped[int] = mapped_column(Integer, default=0)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    user: Mapped["User"] = relationship("User", back_populates="section_progress")
+    section: Mapped["Section"] = relationship("Section", back_populates="progress")

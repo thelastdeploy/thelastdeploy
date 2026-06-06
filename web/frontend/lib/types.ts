@@ -23,6 +23,7 @@ export interface Section {
   order: number;
   content: string | null;
   labs: Lab[];
+  section_completed: boolean;  // true = reading scrolled to end (or future: questions done)
 }
 
 export interface Module {
@@ -48,7 +49,8 @@ export interface User {
   email: string;
   xp: number;
   streak_days: number;
-  completed_labs: string[];   // lab IDs
+  completed_labs: string[];      // lab IDs (tld check)
+  completed_sections: string[];  // section IDs (reading / future: questions)
 }
 
 export interface LeaderboardEntry {

@@ -30,7 +30,7 @@ class LabSchema(BaseModel):
     xp: int
     estimated_minutes: int | None = None
     setup_type: str | None = None
-    seed_commands: str | None = None     # JSON string
+    seed_commands: str | None = None
     resource_limits_cpu: int | None = None
     resource_limits_mem: int | None = None
     completed: bool = False
@@ -56,6 +56,8 @@ class SectionSchema(BaseModel):
     order: int
     content: str | None = None
     labs: list[LabSchema] = []
+    # section-level completion (reading scroll / future: questions)
+    section_completed: bool = False
 
     class Config:
         from_attributes = True
@@ -91,7 +93,7 @@ class ModuleDetail(BaseModel):
     sections: list[SectionSchema]
 
 class ModuleSummary(BaseModel):
-    """Lightweight module info for GET /modules/:id (used by tld sync -m)."""
+    """Lightweight for GET /modules/:id (tld sync -m)."""
     id: str
     title: str
     description: str | None
@@ -103,7 +105,7 @@ class ModuleSummary(BaseModel):
     total_sections: int
 
 
-# --- Lab Progress ---
+# --- Progress ---
 
 class CompleteSectionResponse(BaseModel):
     xp_awarded: int
@@ -113,8 +115,8 @@ class CompleteSectionResponse(BaseModel):
 # --- Results (from tld check) ---
 
 class ResultRequest(BaseModel):
-    lab_id: str           # globally unique lab ID, e.g. "dkr-run-hello"
-    section_id: str       # for context/logging
+    lab_id: str
+    section_id: str
     passed: bool
     output: str | None = None
     ran_at: datetime | None = None
@@ -133,7 +135,8 @@ class MeResponse(BaseModel):
     email: str
     xp: int
     streak_days: int
-    completed_labs: list[str]        # lab IDs
+    completed_labs: list[str]       # lab IDs (from lab_progress)
+    completed_sections: list[str]   # section IDs (from section_progress — reading/questions)
 
 class LeaderboardEntry(BaseModel):
     rank: int

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from app.dependencies import get_db, get_current_user
-from app.models import User, LabProgress
+from app.models import User, LabProgress, SectionProgress
 from app.schemas import MeResponse, LeaderboardEntry, LeaderboardResponse
 
 router = APIRouter()
@@ -15,13 +15,23 @@ async def get_me(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    result = await db.execute(
+    # Completed labs (from tld check)
+    lab_result = await db.execute(
         select(LabProgress.lab_id).where(
             LabProgress.user_id == current_user.id,
             LabProgress.completed == True,
         )
     )
-    completed_labs = [row[0] for row in result.fetchall()]
+    completed_labs = [row[0] for row in lab_result.fetchall()]
+
+    # Completed sections (reading scroll / future: questions)
+    sec_result = await db.execute(
+        select(SectionProgress.section_id).where(
+            SectionProgress.user_id == current_user.id,
+            SectionProgress.completed == True,
+        )
+    )
+    completed_sections = [row[0] for row in sec_result.fetchall()]
 
     return MeResponse(
         id=current_user.id,
@@ -30,6 +40,7 @@ async def get_me(
         xp=current_user.xp,
         streak_days=current_user.streak_days,
         completed_labs=completed_labs,
+        completed_sections=completed_sections,
     )
 
 
@@ -53,11 +64,6 @@ async def get_leaderboard(db: AsyncSession = Depends(get_db)):
     rows = result.fetchall()
 
     return LeaderboardResponse(leaderboard=[
-        LeaderboardEntry(
-            rank=i + 1,
-            username=row.username,
-            xp=row.xp,
-            completed=row.completed,
-        )
+        LeaderboardEntry(rank=i + 1, username=row.username, xp=row.xp, completed=row.completed)
         for i, row in enumerate(rows)
     ])

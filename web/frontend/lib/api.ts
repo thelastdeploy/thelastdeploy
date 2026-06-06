@@ -47,6 +47,13 @@ export const api = {
   getModule: (id: string) =>
     request<ModuleDetail>(`/modules/${id}/full`),
 
+  // Mark a reading section (no labs) complete — triggered on scroll-to-end
+  completeSection: (moduleId: string, sectionId: string) =>
+    request<{ xp_awarded: number; total_xp: number }>(
+      `/modules/${moduleId}/sections/${sectionId}/complete`,
+      { method: "POST" }
+    ),
+
   // Users
   getMe: () => request<User>("/me"),
 
