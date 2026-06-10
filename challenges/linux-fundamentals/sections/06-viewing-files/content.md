@@ -45,3 +45,52 @@ To view only the beginning or end of a file:
   # Follow logs in real-time (-f) as new lines are appended
   tail -f system.log
   ```
+
+---
+
+## Lab Tasks
+
+### Task 1: View files using cat
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-cat-file
+   ```
+2. The setup script created `~/view-test/short.txt`. View its contents using the `cat` command.
+3. Save the secret code printed inside it to a new file named `code.txt` inside `~/view-test/`:
+   ```bash
+   echo "LINUX_RULES" > ~/view-test/code.txt
+   ```
+4. Verify the task to earn your XP:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Search logs using less
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-less-logfile
+   ```
+2. The setup script created `~/view-test/system.log`. Look up the timestamp of the connection timeout error (`ERR_CONN_TIMEOUT`) using `less`.
+3. Save the exact timestamp string (`2026-06-10T12:00:00Z`) to a file named `error_time.txt` inside `~/view-test/`:
+   ```bash
+   echo "2026-06-10T12:00:00Z" > ~/view-test/error_time.txt
+   ```
+4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 3: Inspect files with head and tail
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-head-tail
+   ```
+2. The setup script created `~/view-test/growth.txt`. Use `tail` to extract the very last line of the file.
+3. Save that last line (exactly `last_line`) to a file named `end.txt` inside `~/view-test/`:
+   ```bash
+   tail -n 1 ~/view-test/growth.txt > ~/view-test/end.txt
+   ```
+4. Verify the task:
+   ```bash
+   tld check
+   ```

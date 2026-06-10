@@ -22,3 +22,35 @@ command [options] [arguments]
 - **command**: The program you want to run (e.g., `ls` or `echo`).
 - **options/flags**: Modify the behavior of the command. They usually start with a single hyphen `-` or double hyphens `--` (e.g., `-l` or `--help`).
 - **arguments**: The target elements the command operates on (e.g., a file path).
+
+---
+
+## Lab Tasks
+
+### Task 1: Open your first Linux terminal
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-open-terminal
+   ```
+2. Prove your terminal is working by creating an empty file named `terminal_ready` in your home directory:
+   ```bash
+   touch ~/terminal_ready
+   ```
+3. Verify the task to earn your XP:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Run your first command
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-run-first-command
+   ```
+2. Create a file named `first_command.txt` in your home directory containing the exact text `hello devlab`:
+   ```bash
+   echo "hello devlab" > ~/first_command.txt
+   ```
+3. Verify the task:
+   ```bash
+   tld check
+   ```

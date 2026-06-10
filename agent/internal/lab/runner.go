@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strings"
 	"time"
 
 	"github.com/thelastdeploy/agent/internal/cache"
@@ -112,16 +111,7 @@ func runShellSetup(lab *cache.Lab) error {
 
 func runShellCommand(command string) error {
 	fmt.Printf("  $ %s\n", command)
-	parts := strings.Fields(command)
-	if len(parts) == 0 {
-		return nil
-	}
-	var cmd *exec.Cmd
-	if len(parts) == 1 {
-		cmd = exec.Command(parts[0])
-	} else {
-		cmd = exec.Command(parts[0], parts[1:]...)
-	}
+	cmd := exec.Command("bash", "-c", command)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

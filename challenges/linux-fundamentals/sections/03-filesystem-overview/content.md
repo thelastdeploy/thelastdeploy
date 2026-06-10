@@ -24,3 +24,22 @@ Here are some of the most critical standard directories in the Linux filesystem:
 
 - **Absolute Path**: The complete path starting from the root directory `/` (e.g. `/home/user/documents/report.txt`).
 - **Relative Path**: A path relative to your current working directory (e.g. `documents/report.txt` if you are already in `/home/user`).
+
+---
+
+## Lab Task
+
+### Identify standard system directories
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-identify-directories
+   ```
+2. Identify which standard system directory contains system-wide configuration files (e.g., configurations, startup scripts).
+3. Create a file named `directories.txt` in your home directory and write its absolute path inside it:
+   ```bash
+   echo "/etc" > ~/directories.txt
+   ```
+4. Verify the task to earn your XP:
+   ```bash
+   tld check
+   ```
