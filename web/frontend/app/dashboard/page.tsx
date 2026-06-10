@@ -9,10 +9,9 @@ import { useDashboardCache } from "@/lib/dashboard/use-dashboard-cache";
 import { ModuleDetail } from "@/lib/types";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ActivityRing } from "@/components/dashboard/activity-ring";
 import { SectionBadge } from "@/components/dashboard/section-badge";
 import { getRank, getNextRank, getXpProgress } from "@/lib/ranks";
-import { Zap, Flame, Trophy, Terminal, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Zap, Trophy, Terminal, ArrowRight, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
@@ -121,11 +120,11 @@ export default function DashboardPage() {
 
         <div className="rounded-2xl border p-5 shadow-sm" style={{ backgroundColor: "var(--topic-linux)", borderColor: "var(--topic-linux-border)" }}>
           <div className="flex items-center gap-2 mb-3">
-            <Flame className="h-4 w-4" style={{ color: "var(--topic-linux-text)" }} />
-            <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--topic-linux-text)" }}>Streak</span>
+            <Terminal className="h-4 w-4" style={{ color: "var(--topic-linux-text)" }} />
+            <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--topic-linux-text)" }}>Completed Labs</span>
           </div>
           <p className="text-3xl font-black font-mono" style={{ color: "var(--topic-linux-text)" }}>
-            {user.streak_days}<span className="text-sm font-normal opacity-60 ml-1">days</span>
+            {user.completed_labs.length}<span className="text-sm font-normal opacity-60 ml-1">labs</span>
           </p>
         </div>
 
@@ -152,34 +151,6 @@ export default function DashboardPage() {
       {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 flex flex-col gap-6">
-
-          {/* Progress rings */}
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <h2 className="font-black text-lg mb-6 text-foreground">Progress Overview</h2>
-            <div className="flex flex-wrap items-center justify-around gap-8">
-              <ActivityRing
-                value={completedModules.length}
-                max={modules.length || 1}
-                color="var(--accent-primary)"
-                label="Modules"
-                sublabel={`${modules.length} total`}
-              />
-              <ActivityRing
-                value={xpProgress.current}
-                max={xpProgress.needed || 1}
-                color={rank.color}
-                label="Rank XP"
-                sublabel={`${xpProgress.pct}% to next`}
-              />
-              <ActivityRing
-                value={user.streak_days}
-                max={7}
-                color="var(--topic-linux-text)"
-                label="Streak"
-                sublabel="days this week"
-              />
-            </div>
-          </div>
 
           {/* Modules progress */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">

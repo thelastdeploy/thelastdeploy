@@ -584,6 +584,31 @@ export function SectionContent({
           {children}
         </blockquote>
       );
+    },
+    // Customize tables for responsive, production-grade styles
+    table: ({ children }: any) => {
+      return (
+        <div className="my-6 w-full overflow-x-auto border border-border rounded-xl bg-card">
+          <table className="w-full text-sm border-collapse text-left m-0">
+            {children}
+          </table>
+        </div>
+      );
+    },
+    thead: ({ children }: any) => {
+      return <thead className="bg-muted/50 border-b border-border text-foreground">{children}</thead>;
+    },
+    tbody: ({ children }: any) => {
+      return <tbody className="divide-y divide-border/60">{children}</tbody>;
+    },
+    tr: ({ children }: any) => {
+      return <tr className="hover:bg-muted/20 transition-colors">{children}</tr>;
+    },
+    th: ({ children }: any) => {
+      return <th className="px-4 py-3 text-xs font-black uppercase tracking-wider text-muted-foreground/80 border-none">{children}</th>;
+    },
+    td: ({ children }: any) => {
+      return <td className="px-4 py-3 text-muted-foreground leading-normal border-none">{children}</td>;
     }
   };
 

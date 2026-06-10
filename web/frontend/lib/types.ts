@@ -49,7 +49,6 @@ export interface User {
   username: string;
   email: string;
   xp: number;
-  streak_days: number;
   completed_labs: string[];      // lab IDs (tld check)
   completed_sections: string[];  // section IDs (reading / future: questions)
 }
