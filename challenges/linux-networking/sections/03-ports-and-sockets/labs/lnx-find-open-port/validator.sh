@@ -9,7 +9,7 @@ if [ ! -f "$TARGET_FILE" ]; then
     exit 1
 fi
 
-EXPECTED_PORT=$(cat /tmp/tld-open-port)
+EXPECTED_PORT=$(cat /tmp/tld-lab-port)
 USER_PORT=$(tr -d '\r' < "$TARGET_FILE" | xargs)
 
 if [ "$USER_PORT" != "$EXPECTED_PORT" ]; then
