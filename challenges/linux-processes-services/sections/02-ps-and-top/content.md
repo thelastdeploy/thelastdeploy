@@ -44,19 +44,7 @@ pgrep nginx
 
 ## Lab Tasks
 
-### Task 1: Record your running processes
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-list-running-processes
-   ```
-2. Query the system for all running processes that belong to your active user account.
-3. Save that process list output directly to a file named `my_processes.txt` inside a new directory named `process-test` in your home directory.
-4. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Identify a resource-intensive process
+### Task 1: Identify a resource-intensive process
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-find-memory-hog
@@ -65,6 +53,18 @@ pgrep nginx
 3. Locate this process on the system and find its numeric **Process ID (PID)**.
 4. Save the PID number (e.g., `4520`) on a single line to a file named `memory_hog.txt` inside your `~/process-test` directory.
 5. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Record your running processes
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-list-running-processes
+   ```
+2. Query the system for all running processes that belong to your active user account.
+3. Save that process list output directly to a file named `my_processes.txt` inside a new directory named `process-test` in your home directory.
+4. Verify the task:
    ```bash
    tld check
    ```

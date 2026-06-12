@@ -35,18 +35,7 @@ To move to a different directory, use `cd` followed by the directory path.
 
 ## Lab Tasks
 
-### Task 1: Save your working directory path
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-pwd-navigation
-   ```
-2. Navigate to your user's home directory and save the output of the `pwd` command to a file named `current_path.txt` in your home directory.
-3. Verify the task to earn your XP:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Navigate to a nested target folder
+### Task 1: Navigate to a nested target folder
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-cd-home
@@ -58,7 +47,7 @@ To move to a different directory, use `cd` followed by the directory path.
    tld check
    ```
 
-### Task 3: Find a deeply nested directory path
+### Task 2: Find a deeply nested directory path
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-find-target-directory
@@ -66,6 +55,17 @@ To move to a different directory, use `cd` followed by the directory path.
 2. Locate the folder named `target` nested inside `~/search-zone`.
 3. Save its absolute path to a file named `found_path.txt` in your home directory.
 4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 3: Save your working directory path
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-pwd-navigation
+   ```
+2. Navigate to your user's home directory and save the output of the `pwd` command to a file named `current_path.txt` in your home directory.
+3. Verify the task to earn your XP:
    ```bash
    tld check
    ```

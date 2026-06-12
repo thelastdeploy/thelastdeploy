@@ -47,7 +47,19 @@ To interact with endpoints that require user payloads or custom authentication h
 
 ## Lab Tasks
 
-### Task 1: Fetch web server response
+### Task 1: Retrieve HTTP status code
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-check-http-status
+   ```
+2. Query the headers of `http://127.0.0.1:9090` to find its HTTP response status code.
+3. Save that numeric status code (e.g., `200`) on a single line to a file named `http_status.txt` inside your `~/network-test` directory.
+4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Fetch web server response
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-fetch-webpage
@@ -56,18 +68,6 @@ To interact with endpoints that require user payloads or custom authentication h
 3. Fetch the homepage response body using `curl`.
 4. Save the exact text returned by the server to a file named `homepage.txt` inside your `~/network-test` directory.
 5. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Retrieve HTTP status code
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-check-http-status
-   ```
-2. Query the headers of `http://127.0.0.1:9090` to find its HTTP response status code.
-3. Save that numeric status code (e.g., `200`) on a single line to a file named `http_status.txt` inside your `~/network-test` directory.
-4. Verify the task:
    ```bash
    tld check
    ```

@@ -40,18 +40,7 @@ To enable passwordless access to a remote host:
 
 ## Lab Tasks
 
-### Task 1: Generate an SSH key pair
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-ssh-login
-   ```
-2. Generate a standard SSH key pair (e.g. RSA or ED25519) in your user's default SSH folder (`~/.ssh/`).
-3. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Setup passwordless login to localhost
+### Task 1: Setup passwordless login to localhost
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-passwordless-login
@@ -59,6 +48,17 @@ To enable passwordless access to a remote host:
 2. Configure passwordless SSH login to your own local user account (`localhost`).
 3. You must be able to run `ssh localhost` without being prompted for a password.
 4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Generate an SSH key pair
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-ssh-login
+   ```
+2. Generate a standard SSH key pair (e.g. RSA or ED25519) in your user's default SSH folder (`~/.ssh/`).
+3. Verify the task:
    ```bash
    tld check
    ```

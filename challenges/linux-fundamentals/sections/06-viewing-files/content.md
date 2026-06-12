@@ -62,25 +62,25 @@ To view only the beginning or end of a file:
    tld check
    ```
 
-### Task 2: Search logs using less
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-less-logfile
-   ```
-2. You will find a file named `system.log` inside `~/view-test/`. Look up the timestamp of the connection timeout error (`ERR_CONN_TIMEOUT`).
-3. Save the exact timestamp string to a file named `error_time.txt` inside `~/view-test/`.
-4. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 3: Inspect files with head and tail
+### Task 2: Inspect files with head and tail
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-head-tail
    ```
 2. You will find a file named `growth.txt` inside `~/view-test/`. Extract the very last line of the file.
 3. Save that last line to a file named `end.txt` inside `~/view-test/`.
+4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 3: Search logs using less
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-less-logfile
+   ```
+2. You will find a file named `system.log` inside `~/view-test/`. Look up the timestamp of the connection timeout error (`ERR_CONN_TIMEOUT`).
+3. Save the exact timestamp string to a file named `error_time.txt` inside `~/view-test/`.
 4. Verify the task:
    ```bash
    tld check

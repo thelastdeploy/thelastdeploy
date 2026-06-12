@@ -52,7 +52,19 @@ The `grep` command searches files for lines containing a specific pattern (regul
 
 ## Lab Tasks
 
-### Task 1: Locate configuration files using find
+### Task 1: Combined find and grep operations
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-combined-search
+   ```
+2. Look up which log file under `~/search-test/logs/` contains the critical error keyword `FATAL`.
+3. Save the path of that file (which should end in `error-log-1.txt`) to a file named `fatal_log.txt` inside `~/search-test/`.
+4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Locate configuration files using find
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-find-config
@@ -64,25 +76,13 @@ The `grep` command searches files for lines containing a specific pattern (regul
    tld check
    ```
 
-### Task 2: Search secret line using grep
+### Task 3: Search secret line using grep
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-grep-secret
    ```
 2. Search for the line containing `devlab-key` in configuration files inside `~/search-test/configs/` using `grep`.
 3. Save the matching line to a file named `secret_line.txt` inside `~/search-test/`.
-4. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 3: Combined find and grep operations
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-combined-search
-   ```
-2. Look up which log file under `~/search-test/logs/` contains the critical error keyword `FATAL`.
-3. Save the path of that file (which should end in `error-log-1.txt`) to a file named `fatal_log.txt` inside `~/search-test/`.
 4. Verify the task:
    ```bash
    tld check

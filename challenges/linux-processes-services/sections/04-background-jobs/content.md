@@ -47,7 +47,19 @@ jobs
 
 ## Lab Tasks
 
-### Task 1: Start a job in the background
+### Task 1: Resume a suspended process
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-resume-suspended-job
+   ```
+2. The setup script created a process named `suspended_job` and suspended it (SIGSTOP state).
+3. Find this process on your system and resume its execution in the background (state change to running).
+4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Start a job in the background
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-run-background-job
@@ -56,18 +68,6 @@ jobs
 3. Find the Process ID (PID) of this new background sleep process.
 4. Save the PID number on a single line to a file named `bg_pid.txt` inside a new directory named `jobs-test` in your home directory.
 5. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Resume a suspended process
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-resume-suspended-job
-   ```
-2. The setup script created a process named `suspended_job` and suspended it (SIGSTOP state).
-3. Find this process on your system and resume its execution in the background (state change to running).
-4. Verify the task:
    ```bash
    tld check
    ```

@@ -47,17 +47,16 @@ sudo usermod -aG developers bob
 
 ## Lab Tasks
 
-### Task 1: Create a new system user
+### Task 1: Add user to a group
 1. Start the lab in your terminal:
    ```bash
-   tld start lnx-create-user
+   tld start lnx-add-user-group
    ```
-2. Create a new user account named `dev-intern` on your local system.
+2. Assign the user `dev-intern` as a member of the secondary group `dev-team`.
 3. Verify the task:
    ```bash
    tld check
    ```
-   *(Note: If you ever need to reset this lab, you can delete the user by running `sudo userdel dev-intern`).*
 
 ### Task 2: Create a system group
 1. Start the lab in your terminal:
@@ -70,16 +69,17 @@ sudo usermod -aG developers bob
    tld check
    ```
 
-### Task 3: Add user to a group
+### Task 3: Create a new system user
 1. Start the lab in your terminal:
    ```bash
-   tld start lnx-add-user-group
+   tld start lnx-create-user
    ```
-2. Assign the user `dev-intern` as a member of the secondary group `dev-team`.
+2. Create a new user account named `dev-intern` on your local system.
 3. Verify the task:
    ```bash
    tld check
    ```
+   *(Note: If you ever need to reset this lab, you can delete the user by running `sudo userdel dev-intern`).*
 
 ### Task 4: Remove a system user
 1. Start the lab in your terminal:

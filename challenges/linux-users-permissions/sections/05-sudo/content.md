@@ -39,25 +39,25 @@ username host_list=(runas_user:runas_group) commands_list
 
 ## Lab Tasks
 
-### Task 1: View protected credentials using sudo
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-run-sudo-command
-   ```
-2. The file `/etc/shadow` contains encrypted password hashes and is readable only by the root user.
-3. Use `sudo` to view the contents of `/etc/shadow` and write its **very first line** (which typically contains the root user entry) to a file named `admin_only.txt` inside a new directory named `sudo-test` in your home directory.
-4. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Configure passwordless sudo for a deployer script
+### Task 1: Configure passwordless sudo for a deployer script
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-fix-sudo-access
    ```
 2. The setup script created a configuration template at `~/sudo-test/deployer-sudo`.
 3. Edit this file so it contains a single, valid sudoers rule that grants the user `deployer` permission to run **all** commands as any user and group, without ever prompting for a password (`NOPASSWD`).
+4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 2: View protected credentials using sudo
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-run-sudo-command
+   ```
+2. The file `/etc/shadow` contains encrypted password hashes and is readable only by the root user.
+3. Use `sudo` to view the contents of `/etc/shadow` and write its **very first line** (which typically contains the root user entry) to a file named `admin_only.txt` inside a new directory named `sudo-test` in your home directory.
 4. Verify the task:
    ```bash
    tld check

@@ -50,7 +50,18 @@ The `mv` command is used for both moving files to different directories and rena
 
 ## Lab Tasks
 
-### Task 1: Create nested files and directories
+### Task 1: Copy files in a directory
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-copy-files
+   ```
+2. You will find a file named `source.txt` inside `~/files-test/`. Copy it to a new file named `destination.txt` in the same directory.
+3. Verify the task to earn your XP:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Create nested files and directories
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-create-files
@@ -62,34 +73,23 @@ The `mv` command is used for both moving files to different directories and rena
    tld check
    ```
 
-### Task 2: Copy files in a directory
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-copy-files
-   ```
-2. You will find a file named `source.txt` inside `~/files-test/`. Copy it to a new file named `destination.txt` in the same directory.
-3. Verify the task to earn your XP:
-   ```bash
-   tld check
-   ```
-
-### Task 3: Move or rename files
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-move-files
-   ```
-2. You will find a file named `move-me.txt` inside `~/files-test/`. Rename/move it to a new file named `moved.txt` in the same directory.
-3. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 4: Delete files using rm
+### Task 3: Delete files using rm
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-delete-files
    ```
 2. Delete the file named `delete-me.txt` inside `~/files-test/`.
+3. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 4: Move or rename files
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-move-files
+   ```
+2. You will find a file named `move-me.txt` inside `~/files-test/`. Rename/move it to a new file named `moved.txt` in the same directory.
 3. Verify the task:
    ```bash
    tld check

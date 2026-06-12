@@ -48,7 +48,18 @@ While standard services run system-wide with root privileges, systemd also manag
 
 ## Lab Tasks
 
-### Task 1: Inspect system service status
+### Task 1: Enable a user-level service
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-enable-service
+   ```
+2. Configure the user-level service `devlab-user.service` so that it is enabled to start automatically whenever your user session logs in.
+3. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Inspect system service status
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-inspect-service
@@ -60,7 +71,7 @@ While standard services run system-wide with root privileges, systemd also manag
    tld check
    ```
 
-### Task 2: Start a user-level service
+### Task 3: Start a user-level service
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-start-service
@@ -68,17 +79,6 @@ While standard services run system-wide with root privileges, systemd also manag
 2. The setup script created a user-level systemd service named `devlab-user.service`.
 3. Start this user-level service.
 4. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 3: Enable a user-level service
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-enable-service
-   ```
-2. Configure the user-level service `devlab-user.service` so that it is enabled to start automatically whenever your user session logs in.
-3. Verify the task:
    ```bash
    tld check
    ```

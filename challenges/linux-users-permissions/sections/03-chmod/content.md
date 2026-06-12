@@ -73,25 +73,25 @@ Permissions are updated using the `chmod` (change mode) command.
    tld check
    ```
 
-### Task 2: Secure private credentials
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-secure-secret-file
-   ```
-2. The setup script created a file at `~/chmod-test/secret.txt`.
-3. Configure the file permissions so that **only** the owner has read and write access, and nobody else has any access at all.
-4. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 3: Setup a public read-only file
+### Task 2: Setup a public read-only file
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-public-readonly-file
    ```
 2. The setup script created a file at `~/chmod-test/readme.txt`.
 3. Configure the permissions so that it is readable by everyone, but writable **only** by the owner. It should not have execution privileges for anyone.
+4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 3: Secure private credentials
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-secure-secret-file
+   ```
+2. The setup script created a file at `~/chmod-test/secret.txt`.
+3. Configure the file permissions so that **only** the owner has read and write access, and nobody else has any access at all.
 4. Verify the task:
    ```bash
    tld check

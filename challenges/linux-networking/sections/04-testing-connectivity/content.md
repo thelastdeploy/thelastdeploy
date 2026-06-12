@@ -31,25 +31,25 @@ The `ping` command uses **ICMP (Internet Control Message Protocol)** packets to 
 
 ## Lab Tasks
 
-### Task 1: Check loopback response with ping
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-ping-host
-   ```
-2. Run a `ping` command targeting your local loopback address (`127.0.0.1`) that transmits **exactly** 4 packets and exits automatically.
-3. Save the exact command you executed on a single line to a file named `ping_cmd.txt` inside your `~/network-test` directory.
-4. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Trace network hops
+### Task 1: Trace network hops
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-diagnose-network-path
    ```
 2. Execute a command to trace the routing hops or network path to your local loopback address (`127.0.0.1`).
 3. Save the command you executed on a single line to a file named `trace_cmd.txt` inside your `~/network-test` directory.
+4. Verify the task:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Check loopback response with ping
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-ping-host
+   ```
+2. Run a `ping` command targeting your local loopback address (`127.0.0.1`) that transmits **exactly** 4 packets and exits automatically.
+3. Save the exact command you executed on a single line to a file named `ping_cmd.txt` inside your `~/network-test` directory.
 4. Verify the task:
    ```bash
    tld check
