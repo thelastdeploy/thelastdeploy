@@ -14,13 +14,14 @@ import (
 
 // Entry is what we write to disk — a signed validator result keyed by lab_id.
 type Entry struct {
-	LabID     string    `json:"lab_id"`
-	SectionID string    `json:"section_id"`
-	Passed    bool      `json:"passed"`
-	Output    string    `json:"output"`
-	RanAt     time.Time `json:"ran_at"`
-	Signature string    `json:"signature"`
-	QueuedAt  time.Time `json:"queued_at"`
+	LabID         string    `json:"lab_id"`
+	SectionID     string    `json:"section_id"`
+	Passed        bool      `json:"passed"`
+	Output        string    `json:"output"`
+	RanAt         time.Time `json:"ran_at"`
+	Signature     string    `json:"signature"`
+	QueuedAt      time.Time `json:"queued_at"`
+	ValidatorHash string    `json:"validator_hash"`
 }
 
 // Save writes an entry to ~/.tld/queue/<lab-id>-<unix>.json

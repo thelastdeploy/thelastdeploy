@@ -126,6 +126,19 @@ async def seed():
 
                     lab_id = lab_data["id"]
 
+                    # Compute SHA-256 hash of validator script if it exists
+                    validator_hash = None
+                    sh_path = os.path.join(lab_path, "validator.sh")
+                    py_path = os.path.join(lab_path, "validator.py")
+                    val_path = py_path if os.path.exists(py_path) else (sh_path if os.path.exists(sh_path) else None)
+                    if val_path:
+                        import hashlib
+                        h = hashlib.sha256()
+                        with open(val_path, "rb") as f:
+                            while chunk := f.read(8192):
+                                h.update(chunk)
+                        validator_hash = h.hexdigest()
+
                     # seed_commands is a list in YAML → store as JSON string
                     seed_commands = lab_data.get("seed_commands", [])
                     seed_commands_json = json.dumps(seed_commands) if seed_commands else None
@@ -146,8 +159,9 @@ async def seed():
                         existing_lab.resource_limits_mem = resource_limits.get("mem")
                         existing_lab.yaml_content = raw_lab_yaml
                         existing_lab.version = lab_data.get("version", 1)
+                        existing_lab.validator_hash = validator_hash
                         db.add(existing_lab)
-                        print(f"      ↻ Updated lab: {lab_id}")
+                        print(f"      ↻ Updated lab: {lab_id} (hash: {validator_hash[:8] if validator_hash else 'none'})")
                     else:
                         db.add(Lab(
                             id=lab_id,
@@ -163,8 +177,9 @@ async def seed():
                             resource_limits_mem=resource_limits.get("mem"),
                             yaml_content=raw_lab_yaml,
                             version=lab_data.get("version", 1),
+                            validator_hash=validator_hash,
                         ))
-                        print(f"      ✅ Seeded lab: {lab_id}")
+                        print(f"      ✅ Seeded lab: {lab_id} (hash: {validator_hash[:8] if validator_hash else 'none'})")
 
         await db.commit()
         print("\nDone.")

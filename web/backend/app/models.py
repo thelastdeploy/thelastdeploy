@@ -75,6 +75,7 @@ class Lab(Base):
     resource_limits_mem: Mapped[int | None] = mapped_column(Integer, nullable=True)
     yaml_content: Mapped[str | None] = mapped_column(Text, nullable=True)
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    validator_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     section: Mapped["Section"] = relationship("Section", back_populates="labs")

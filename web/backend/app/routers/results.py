@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 def _verify_signature(body: ResultRequest, device_key: str) -> bool:
     """
     Verify HMAC-SHA256 signature using the user's per-device key.
-    Payload format: lab_id:section_id:passed:output:timestamp (RFC3339 UTC)
+    Payload format: lab_id:section_id:passed:output:validator_hash:timestamp (RFC3339 UTC)
     """
     if not body.signature or not body.ran_at:
         return False
@@ -26,8 +26,9 @@ def _verify_signature(body: ResultRequest, device_key: str) -> bool:
     timestamp = body.ran_at.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     passed_str = "true" if body.passed else "false"
     output_str = body.output or ""
+    validator_hash_str = body.validator_hash or ""
 
-    payload = f"{body.lab_id}:{body.section_id}:{passed_str}:{output_str}:{timestamp}"
+    payload = f"{body.lab_id}:{body.section_id}:{passed_str}:{output_str}:{validator_hash_str}:{timestamp}"
 
     expected = hmac.new(
         device_key.encode(),
@@ -44,7 +45,23 @@ async def submit_result(
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
 ):
-    # 1. Signature verification — requires authenticated user with device_key
+    # 1. Look up lab by globally unique lab_id
+    result = await db.execute(
+        select(Lab).where(Lab.id == body.lab_id)
+    )
+    lab = result.scalar_one_or_none()
+    if not lab:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lab not found")
+
+    # 1.5. Validator hash verification
+    if lab.validator_hash:
+        if not body.validator_hash or body.validator_hash != lab.validator_hash:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Validator script mismatch. The local validator script has been modified or is out of date. Please run 'tld sync' to update.",
+            )
+
+    # 2. Signature verification — requires authenticated user with device_key
     if body.signature:
         if not current_user:
             raise HTTPException(
@@ -61,14 +78,6 @@ async def submit_result(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid signature",
             )
-
-    # 2. Look up lab by globally unique lab_id
-    result = await db.execute(
-        select(Lab).where(Lab.id == body.lab_id)
-    )
-    lab = result.scalar_one_or_none()
-    if not lab:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lab not found")
 
     # 3. If not passed, return early — no XP
     if not body.passed:

@@ -106,12 +106,17 @@ func drainQueue(apiBaseURL, authToken, tldDir string) bool {
 	fmt.Printf("Flushing %d queued result(s) to API...\n", len(entries))
 	reachable := false
 	for _, entry := range entries {
-		if err := postQueuedEntry(apiBaseURL, authToken, entry); err != nil {
+		err, retry := postQueuedEntry(apiBaseURL, authToken, entry)
+		if err != nil {
 			fmt.Fprintf(os.Stderr, "  ✗ %s (queued %s ago): %v\n",
 				entry.LabID,
 				time.Since(entry.QueuedAt).Round(time.Second),
 				err,
 			)
+			if !retry {
+				fmt.Fprintf(os.Stderr, "  (Deleting permanently due to server rejection)\n")
+				queue.Delete(tldDir, entry.LabID, entry.QueuedAt)
+			}
 			continue
 		}
 		reachable = true
@@ -121,22 +126,22 @@ func drainQueue(apiBaseURL, authToken, tldDir string) bool {
 			fmt.Printf("  ✓ %s (queued %s ago) — synced\n",
 				entry.LabID,
 				time.Since(entry.QueuedAt).Round(time.Second),
-			)
+				)
 		}
 	}
 	return reachable
 }
 
-func postQueuedEntry(apiBaseURL, authToken string, entry *queue.Entry) error {
+func postQueuedEntry(apiBaseURL, authToken string, entry *queue.Entry) (error, bool) {
 	data, err := json.MarshalIndent(entry, "", "  ")
 	if err != nil {
-		return err
+		return err, false
 	}
 
 	client := &http.Client{Timeout: 10 * time.Second}
 	req, err := http.NewRequest(http.MethodPost, apiBaseURL+"/results", bytes.NewReader(data))
 	if err != nil {
-		return err
+		return err, false
 	}
 	req.Header.Set("Content-Type", "application/json")
 	if authToken != "" {
@@ -145,15 +150,16 @@ func postQueuedEntry(apiBaseURL, authToken string, entry *queue.Entry) error {
 
 	resp, err := client.Do(req)
 	if err != nil {
-		return err
+		return err, true
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
 		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("API returned %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
+		retry := resp.StatusCode >= 500 || resp.StatusCode == http.StatusRequestTimeout || resp.StatusCode == http.StatusTooManyRequests
+		return fmt.Errorf("API returned %d: %s", resp.StatusCode, strings.TrimSpace(string(body))), retry
 	}
-	return nil
+	return nil, false
 }
 
 func syncFromGitHub(repo string, challengesDir string, targetModule string, targetLab string) error {

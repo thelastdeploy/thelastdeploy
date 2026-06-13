@@ -127,6 +127,7 @@ class ResultRequest(BaseModel):
     ran_at: datetime | None = None
     signature: str | None = None
     queued_at: datetime | None = None
+    validator_hash: str | None = None
 
 class ResultResponse(BaseModel):
     xp_awarded: int

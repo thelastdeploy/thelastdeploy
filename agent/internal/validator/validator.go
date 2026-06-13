@@ -7,6 +7,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -18,12 +19,13 @@ import (
 
 // Result holds the outcome of a validation run.
 type Result struct {
-	LabID     string    `json:"lab_id"`
-	SectionID string    `json:"section_id"`
-	Passed    bool      `json:"passed"`
-	Output    string    `json:"output"`
-	RanAt     time.Time `json:"ran_at"`
-	Signature string    `json:"signature"`
+	LabID         string    `json:"lab_id"`
+	SectionID     string    `json:"section_id"`
+	Passed        bool      `json:"passed"`
+	Output        string    `json:"output"`
+	RanAt         time.Time `json:"ran_at"`
+	Signature     string    `json:"signature"`
+	ValidatorHash string    `json:"validator_hash"`
 }
 
 // Run executes the validator script and returns a signed Result.
@@ -32,6 +34,11 @@ type Result struct {
 func Run(labID, sectionID, scriptPath, deviceKeyPath string) (*Result, error) {
 	if _, err := os.Stat(scriptPath); os.IsNotExist(err) {
 		return nil, fmt.Errorf("validator script not found: %s", scriptPath)
+	}
+
+	valHash, err := sha256Sum(scriptPath)
+	if err != nil {
+		return nil, fmt.Errorf("calculate validator hash: %w", err)
 	}
 
 	os.Chmod(scriptPath, 0755)
@@ -55,11 +62,12 @@ func Run(labID, sectionID, scriptPath, deviceKeyPath string) (*Result, error) {
 	passed := err == nil
 
 	result := &Result{
-		LabID:     labID,
-		SectionID: sectionID,
-		Passed:    passed,
-		Output:    output,
-		RanAt:     time.Now(),
+		LabID:         labID,
+		SectionID:     sectionID,
+		Passed:        passed,
+		Output:        output,
+		RanAt:         time.Now(),
+		ValidatorHash: valHash,
 	}
 
 	key, err := device.Key(deviceKeyPath)
@@ -68,6 +76,20 @@ func Run(labID, sectionID, scriptPath, deviceKeyPath string) (*Result, error) {
 	}
 	result.Signature = sign(result, key)
 	return result, nil
+}
+
+func sha256Sum(path string) (string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
 
 func GetPythonInterpreter(labDir string) (string, error) {
@@ -123,11 +145,12 @@ func GetPythonInterpreter(labDir string) (string, error) {
 
 // sign produces an HMAC-SHA256 over the result fields (excluding Signature).
 func sign(r *Result, key []byte) string {
-	payload := fmt.Sprintf("%s:%s:%v:%s:%s",
+	payload := fmt.Sprintf("%s:%s:%v:%s:%s:%s",
 		r.LabID,
 		r.SectionID,
 		r.Passed,
 		r.Output,
+		r.ValidatorHash,
 		r.RanAt.UTC().Format(time.RFC3339),
 	)
 	mac := hmac.New(sha256.New, key)
