@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/users-groups-test"
     - "rm -f $HOME/users-groups-test/current_user.txt"
+version: 1

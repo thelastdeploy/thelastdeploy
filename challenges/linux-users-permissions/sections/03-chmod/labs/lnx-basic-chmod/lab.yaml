@@ -8,3 +8,4 @@ setup:
     - "mkdir -p $HOME/chmod-test"
     - "touch $HOME/chmod-test/script.sh"
     - "chmod 644 $HOME/chmod-test/script.sh"
+version: 1

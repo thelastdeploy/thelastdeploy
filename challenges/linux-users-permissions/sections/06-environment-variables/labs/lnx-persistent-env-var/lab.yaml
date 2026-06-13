@@ -7,3 +7,4 @@ setup:
   seed_commands:
     # Cleanup any previous entries we added to bashrc
     - "sed -i '/PLATFORM_NAME/d' $HOME/.bashrc || true"
+version: 1

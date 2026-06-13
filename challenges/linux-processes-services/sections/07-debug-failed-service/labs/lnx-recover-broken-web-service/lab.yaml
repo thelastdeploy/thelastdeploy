@@ -12,3 +12,4 @@ setup:
     - "echo 'ExecStart=/bin/sleepy 3600' >> $HOME/.config/systemd/user/devlab-broken.service"
     - "systemctl --user daemon-reload"
     - "systemctl --user stop devlab-broken.service || true"
+version: 1

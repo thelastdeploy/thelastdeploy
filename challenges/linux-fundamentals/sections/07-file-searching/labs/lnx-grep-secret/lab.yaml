@@ -9,3 +9,4 @@ setup:
     - "echo 'database_port=5432' > $HOME/search-test/configs/prod/app.conf"
     - "echo 'app_secret=devlab-key' >> $HOME/search-test/configs/prod/app.conf"
     - "rm -f $HOME/search-test/secret_line.txt"
+version: 1

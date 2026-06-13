@@ -21,3 +21,4 @@ setup:
     - "echo 'HTTPServer((\"127.0.0.1\", 9090), MyHandler).serve_forever()' >> /tmp/mock_server.py"
     - "nohup python3 /tmp/mock_server.py >/dev/null 2>&1 &"
     - "sleep 0.5"
+version: 1

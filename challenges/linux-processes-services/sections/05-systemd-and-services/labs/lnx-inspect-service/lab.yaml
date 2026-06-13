@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/service-test"
     - "rm -f $HOME/service-test/cron_status.txt"
+version: 1

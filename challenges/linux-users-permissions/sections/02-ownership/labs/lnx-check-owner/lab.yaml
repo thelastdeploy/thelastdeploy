@@ -9,3 +9,4 @@ setup:
     - "rm -f $HOME/ownership-test/owner_info.txt"
     - "touch /tmp/ownership-check.txt"
     - "chmod 644 /tmp/ownership-check.txt"
+version: 1

@@ -8,3 +8,4 @@ setup:
     - "mkdir -p $HOME/files-test"
     - "echo 'copy-me' > $HOME/files-test/source.txt"
     - "rm -f $HOME/files-test/destination.txt"
+version: 1

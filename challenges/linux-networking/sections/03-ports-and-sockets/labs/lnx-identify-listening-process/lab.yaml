@@ -9,3 +9,4 @@ setup:
     - "rm -f $HOME/network-test/listening_pid.txt"
     - "pkill -f 'python3 -m http.server 987[6]' || true"
     - "nohup python3 -m http.server 9876 --bind 127.0.0.1 >/dev/null 2>&1 &"
+version: 1

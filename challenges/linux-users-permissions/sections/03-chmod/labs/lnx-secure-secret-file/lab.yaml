@@ -8,3 +8,4 @@ setup:
     - "mkdir -p $HOME/chmod-test"
     - "touch $HOME/chmod-test/secret.txt"
     - "chmod 644 $HOME/chmod-test/secret.txt"
+version: 1

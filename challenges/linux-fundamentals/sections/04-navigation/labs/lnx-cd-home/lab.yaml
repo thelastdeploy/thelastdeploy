@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/navigation-test/target"
     - "rm -f $HOME/navigation-test/path.txt"
+version: 1

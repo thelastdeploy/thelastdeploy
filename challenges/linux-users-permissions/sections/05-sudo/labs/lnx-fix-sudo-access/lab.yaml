@@ -8,3 +8,4 @@ setup:
     - "mkdir -p $HOME/sudo-test"
     - "echo '# Grant deployer root privileges without password' > $HOME/sudo-test/deployer-sudo"
     - "echo 'deployer INVALID_SYNTAX NOPASSWD' >> $HOME/sudo-test/deployer-sudo"
+version: 1

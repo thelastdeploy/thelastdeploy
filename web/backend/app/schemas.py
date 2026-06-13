@@ -35,6 +35,7 @@ class LabSchema(BaseModel):
     resource_limits_mem: int | None = None
     completed: bool = False
     xp_awarded: int = 0
+    version: int = 1
 
     class Config:
         from_attributes = True
@@ -58,6 +59,7 @@ class SectionSchema(BaseModel):
     content: str | None = None
     labs: list[LabSchema] = []
     section_completed: bool = False  # reading scroll / future: questions
+    version: int = 1
 
     class Config:
         from_attributes = True
@@ -76,6 +78,7 @@ class ModuleListItem(BaseModel):
     total_xp: int = 0
     total_sections: int = 0
     completed_sections: int = 0
+    version: int = 1
 
 class ModuleListResponse(BaseModel):
     modules: list[ModuleListItem]
@@ -91,6 +94,7 @@ class ModuleDetail(BaseModel):
     total_xp: int
     total_sections: int
     sections: list[SectionSchema]
+    version: int = 1
 
 class ModuleSummary(BaseModel):
     """Lightweight for GET /modules/:id (tld sync -m)."""
@@ -103,6 +107,7 @@ class ModuleSummary(BaseModel):
     tags: list[str] = []
     total_xp: int
     total_sections: int
+    version: int = 1
 
 
 # --- Progress ---

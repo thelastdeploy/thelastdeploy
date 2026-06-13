@@ -10,3 +10,4 @@ setup:
     - "echo 'FATAL: system exploded' >> $HOME/search-test/logs/error-log-1.txt"
     - "echo 'INFO: retry login' > $HOME/search-test/logs/error-log-2.txt"
     - "rm -f $HOME/search-test/fatal_log.txt"
+version: 1

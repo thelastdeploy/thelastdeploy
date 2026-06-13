@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/users-groups-test"
     - "rm -f $HOME/users-groups-test/my_groups.txt"
+version: 1

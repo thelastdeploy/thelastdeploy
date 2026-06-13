@@ -14,3 +14,4 @@ setup:
     - "echo 'WantedBy=default.target' >> $HOME/.config/systemd/user/devlab-user.service"
     - "systemctl --user daemon-reload"
     - "systemctl --user disable devlab-user.service || true"
+version: 1

@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/env-test"
     - "rm -f $HOME/env-test/local_var.txt"
+version: 1

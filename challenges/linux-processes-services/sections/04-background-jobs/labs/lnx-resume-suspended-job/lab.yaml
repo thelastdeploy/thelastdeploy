@@ -9,3 +9,4 @@ setup:
     - "nohup bash -c 'exec -a suspended_job sleep 3600' >/dev/null 2>&1 &"
     - "sleep 0.5"
     - "pkill -STOP -f suspended_jo[b]"
+version: 1

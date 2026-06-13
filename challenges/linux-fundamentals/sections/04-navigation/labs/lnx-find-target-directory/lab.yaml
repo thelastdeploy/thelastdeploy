@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/search-zone/sub1/sub2/sub3/target"
     - "rm -f $HOME/found_path.txt"
+version: 1

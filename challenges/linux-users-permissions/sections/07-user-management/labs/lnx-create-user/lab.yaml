@@ -5,3 +5,4 @@ estimated_minutes: 5
 setup:
   type: shell
   seed_commands: []
+version: 1

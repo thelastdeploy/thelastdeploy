@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/special-test/sticky-dir"
     - "chmod 777 $HOME/special-test/sticky-dir"
+version: 1

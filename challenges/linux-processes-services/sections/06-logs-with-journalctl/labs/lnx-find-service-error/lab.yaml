@@ -15,3 +15,4 @@ setup:
     - "echo 'ExecStart=/bin/bash -c \"echo SECRET_LOG_KEY=SEC_PROC_99\"' >> $HOME/.config/systemd/user/devlab-logger.service"
     - "systemctl --user daemon-reload"
     - "systemctl --user start devlab-logger.service || true"
+version: 1

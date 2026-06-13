@@ -6,3 +6,4 @@ setup:
   type: shell
   seed_commands:
     - "rm -f $HOME/first_command.txt"
+version: 1

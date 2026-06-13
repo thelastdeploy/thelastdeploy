@@ -8,3 +8,4 @@ setup:
     - "mkdir -p $HOME/files-test"
     - "echo 'moved' > $HOME/files-test/move-me.txt"
     - "rm -f $HOME/files-test/moved.txt"
+version: 1

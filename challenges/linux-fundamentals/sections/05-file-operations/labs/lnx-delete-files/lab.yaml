@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/files-test"
     - "echo 'delete-me' > $HOME/files-test/delete-me.txt"
+version: 1

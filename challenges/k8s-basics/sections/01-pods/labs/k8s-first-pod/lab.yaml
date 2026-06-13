@@ -6,3 +6,4 @@ setup:
   type: kind
   resource_limits_cpu: 1
   resource_limits_mem: 1024
+version: 1

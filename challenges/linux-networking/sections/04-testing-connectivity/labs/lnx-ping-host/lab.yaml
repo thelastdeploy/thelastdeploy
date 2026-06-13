@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/network-test"
     - "rm -f $HOME/network-test/ping_cmd.txt"
+version: 1

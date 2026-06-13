@@ -9,3 +9,4 @@ setup:
     - "mkdir -p $HOME/network-test"
     - "rm -f $HOME/network-test/open_port.txt"
     - "nohup python3 -m http.server 9876 --bind 127.0.0.1 >/dev/null 2>&1 &"
+version: 1

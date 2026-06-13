@@ -25,3 +25,4 @@ sections:
     order: 7
   - id: 08-restore-connectivity
     order: 8
+version: 1

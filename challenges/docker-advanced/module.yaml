@@ -7,3 +7,4 @@ estimated_minutes: 25
 sections:
   - id: 01-custom-images
     order: 1
+version: 1

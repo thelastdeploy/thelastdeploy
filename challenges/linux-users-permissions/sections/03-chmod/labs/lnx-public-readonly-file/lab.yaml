@@ -8,3 +8,4 @@ setup:
     - "mkdir -p $HOME/chmod-test"
     - "touch $HOME/chmod-test/readme.txt"
     - "chmod 777 $HOME/chmod-test/readme.txt"
+version: 1

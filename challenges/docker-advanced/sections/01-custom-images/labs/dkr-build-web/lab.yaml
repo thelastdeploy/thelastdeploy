@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "docker rm -f tld-my-web-app"
     - "docker rmi -f my-web-app:latest"
+version: 1

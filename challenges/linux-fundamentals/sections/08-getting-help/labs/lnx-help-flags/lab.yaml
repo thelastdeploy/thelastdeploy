@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/help-test"
     - "rm -f $HOME/help-test/size_flag.txt"
+version: 1

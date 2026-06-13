@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/sudo-test"
     - "rm -f $HOME/sudo-test/admin_only.txt"
+version: 1

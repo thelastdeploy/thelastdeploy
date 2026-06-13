@@ -19,6 +19,7 @@ type Module struct {
 	Difficulty       string
 	EstimatedMinutes int
 	Sections         []SectionRef
+	Version          int
 }
 
 type SectionRef struct {
@@ -27,9 +28,10 @@ type SectionRef struct {
 }
 
 type Section struct {
-	ID    string
-	Title string
-	Order int
+	ID      string
+	Title   string
+	Order   int
+	Version int
 }
 
 type Lab struct {
@@ -44,6 +46,7 @@ type Lab struct {
 	ResourcesCPU  int
 	ResourcesMem  int
 	ValidatorPath string
+	Version       int
 }
 
 type moduleJSONFile struct {
@@ -56,6 +59,7 @@ type moduleJSONFile struct {
 	Tags             []string `json:"tags"`
 	TotalXP          int      `json:"total_xp"`
 	TotalSections    int      `json:"total_sections"`
+	Version          int      `json:"version"`
 }
 
 type labJSONFile struct {
@@ -67,6 +71,7 @@ type labJSONFile struct {
 	EstimatedMins int      `json:"estimated_minutes"`
 	ResourcesCPU  int      `json:"resource_limits_cpu"`
 	ResourcesMem  int      `json:"resource_limits_mem"`
+	Version       int      `json:"version"`
 }
 
 func LoadModule(baseDir, moduleID string) (*Module, error) {
@@ -271,6 +276,7 @@ func parseModuleJSON(path string) (*Module, error) {
 		Topic:            jf.Topic,
 		Difficulty:       jf.Difficulty,
 		EstimatedMinutes: jf.EstimatedMinutes,
+		Version:          jf.Version,
 	}, nil
 }
 
@@ -292,6 +298,7 @@ func parseLabJSON(path string) (*Lab, error) {
 		EstimatedMins: jf.EstimatedMins,
 		ResourcesCPU:  jf.ResourcesCPU,
 		ResourcesMem:  jf.ResourcesMem,
+		Version:       jf.Version,
 	}, nil
 }
 
@@ -331,6 +338,8 @@ func ParseModuleYAML(path string) (*Module, error) {
 			m.Difficulty = val
 		case indent == 0 && key == "estimated_minutes":
 			m.EstimatedMinutes, _ = strconv.Atoi(val)
+		case indent == 0 && key == "version":
+			m.Version, _ = strconv.Atoi(val)
 		case indent == 0 && key == "sections":
 			inSections = true
 		case inSections && indent == 2 && strings.HasPrefix(trimmed, "- "):
@@ -383,6 +392,8 @@ func parseLabYAML(path string) (*Lab, error) {
 			lab.XP, _ = strconv.Atoi(val)
 		case indent == 0 && key == "estimated_minutes":
 			lab.EstimatedMins, _ = strconv.Atoi(val)
+		case indent == 0 && key == "version":
+			lab.Version, _ = strconv.Atoi(val)
 		case indent == 0 && key == "setup":
 			inSetup = true
 		case inSetup && indent == 2 && key == "type":
@@ -425,6 +436,8 @@ func ParseSectionYAML(path string) (*Section, error) {
 			s.Title = unquote(val)
 		case "order":
 			s.Order, _ = strconv.Atoi(val)
+		case "version":
+			s.Version, _ = strconv.Atoi(val)
 		}
 	}
 	if s.ID == "" {

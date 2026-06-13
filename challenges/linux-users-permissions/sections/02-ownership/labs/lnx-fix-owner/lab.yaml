@@ -9,3 +9,4 @@ setup:
     - "touch $HOME/ownership-test/admin-file.txt"
     - "chown $(whoami):$(id -gn) $HOME/ownership-test/admin-file.txt"
     - "chmod 644 $HOME/ownership-test/admin-file.txt"
+version: 1

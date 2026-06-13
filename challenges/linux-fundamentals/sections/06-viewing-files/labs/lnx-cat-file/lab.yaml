@@ -8,3 +8,4 @@ setup:
     - "mkdir -p $HOME/view-test"
     - "echo 'LINUX_RULES' > $HOME/view-test/short.txt"
     - "rm -f $HOME/view-test/code.txt"
+version: 1

@@ -6,3 +6,4 @@ setup:
   type: shell
   seed_commands:
     - "rm -f $HOME/terminal_ready"
+version: 1

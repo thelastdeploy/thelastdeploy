@@ -34,6 +34,7 @@ class Module(Base):
     estimated_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
     tags: Mapped[str | None] = mapped_column(Text, nullable=True)
     yaml_content: Mapped[str] = mapped_column(Text, nullable=False)
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     sections: Mapped[list["Section"]] = relationship(
@@ -50,6 +51,7 @@ class Section(Base):
     order: Mapped[int] = mapped_column(Integer, nullable=False)
     xp: Mapped[int] = mapped_column(Integer, default=10)
     content: Mapped[str | None] = mapped_column(Text, nullable=True)
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     module: Mapped["Module"] = relationship("Module", back_populates="sections")
@@ -72,6 +74,7 @@ class Lab(Base):
     resource_limits_cpu: Mapped[int | None] = mapped_column(Integer, nullable=True)
     resource_limits_mem: Mapped[int | None] = mapped_column(Integer, nullable=True)
     yaml_content: Mapped[str | None] = mapped_column(Text, nullable=True)
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     section: Mapped["Section"] = relationship("Section", back_populates="labs")

@@ -76,6 +76,7 @@ async def list_modules(
             total_xp=_total_xp(sections, all_labs),
             total_sections=len(sections),
             completed_sections=completed_sections,
+            version=m.version,
         ))
 
     return ModuleListResponse(modules=items)
@@ -139,6 +140,7 @@ async def get_all_modules_full(
                     resource_limits_mem=lab.resource_limits_mem,
                     completed=lab_progress_map[lab.id].completed if lab.id in lab_progress_map else False,
                     xp_awarded=lab_progress_map[lab.id].xp_awarded if lab.id in lab_progress_map else 0,
+                    version=lab.version,
                 )
                 for lab in s.labs
             ]
@@ -150,6 +152,7 @@ async def get_all_modules_full(
                 content=None if exclude_content else s.content,
                 labs=lab_schemas,
                 section_completed=s.id in completed_section_ids,
+                version=s.version,
             ))
 
         all_labs = [lab for s in m.sections for lab in s.labs]
@@ -164,6 +167,7 @@ async def get_all_modules_full(
             total_xp=_total_xp(m.sections, all_labs),
             total_sections=len(m.sections),
             sections=section_schemas,
+            version=m.version,
         ))
 
     return items
@@ -235,6 +239,7 @@ async def get_module_full(
                 resource_limits_mem=lab.resource_limits_mem,
                 completed=lab_progress_map[lab.id].completed if lab.id in lab_progress_map else False,
                 xp_awarded=lab_progress_map[lab.id].xp_awarded if lab.id in lab_progress_map else 0,
+                version=lab.version,
             )
             for lab in section_labs
         ]
@@ -246,6 +251,7 @@ async def get_module_full(
             content=s.content,
             labs=lab_schemas,
             section_completed=s.id in completed_section_ids,
+            version=s.version,
         ))
 
     return ModuleDetail(
@@ -259,6 +265,7 @@ async def get_module_full(
         total_xp=_total_xp(sections, all_labs),
         total_sections=len(sections),
         sections=section_schemas,
+        version=module.version,
     )
 
 
@@ -291,6 +298,7 @@ async def get_module_summary(
         tags=[t.strip() for t in (module.tags or "").split(",") if t.strip()],
         total_xp=_total_xp(sections, labs),
         total_sections=len(sections),
+        version=module.version,
     )
 
 
@@ -416,5 +424,6 @@ async def get_lab(
             seed_commands=lab.seed_commands,
             resource_limits_cpu=lab.resource_limits_cpu,
             resource_limits_mem=lab.resource_limits_mem,
+            version=lab.version,
         ),
     )

@@ -45,6 +45,7 @@ async def seed():
                 existing_module.estimated_minutes = module_data.get("estimated_minutes")
                 existing_module.tags = tags
                 existing_module.yaml_content = raw_yaml
+                existing_module.version = module_data.get("version", 1)
                 db.add(existing_module)
                 print(f"  ↻ Updated module: {module_id}")
             else:
@@ -57,6 +58,7 @@ async def seed():
                     estimated_minutes=module_data.get("estimated_minutes"),
                     tags=tags,
                     yaml_content=raw_yaml,
+                    version=module_data.get("version", 1),
                 ))
                 print(f"  ✅ Seeded module: {module_id}")
 
@@ -91,6 +93,7 @@ async def seed():
                     existing_section.order = section_data["order"]
                     existing_section.xp = section_data.get("xp", 10)
                     existing_section.content = content
+                    existing_section.version = section_data.get("version", 1)
                     db.add(existing_section)
                     print(f"    ↻ Updated section: {section_id}")
                 else:
@@ -101,6 +104,7 @@ async def seed():
                         order=section_data["order"],
                         xp=section_data.get("xp", 10),
                         content=content,
+                        version=section_data.get("version", 1),
                     ))
                     print(f"    ✅ Seeded section: {section_id}")
 
@@ -141,6 +145,7 @@ async def seed():
                         existing_lab.resource_limits_cpu = resource_limits.get("cpu")
                         existing_lab.resource_limits_mem = resource_limits.get("mem")
                         existing_lab.yaml_content = raw_lab_yaml
+                        existing_lab.version = lab_data.get("version", 1)
                         db.add(existing_lab)
                         print(f"      ↻ Updated lab: {lab_id}")
                     else:
@@ -157,6 +162,7 @@ async def seed():
                             resource_limits_cpu=resource_limits.get("cpu"),
                             resource_limits_mem=resource_limits.get("mem"),
                             yaml_content=raw_lab_yaml,
+                            version=lab_data.get("version", 1),
                         ))
                         print(f"      ✅ Seeded lab: {lab_id}")
 

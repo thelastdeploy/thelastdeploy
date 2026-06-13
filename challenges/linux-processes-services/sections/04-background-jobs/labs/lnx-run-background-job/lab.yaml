@@ -7,3 +7,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/jobs-test"
     - "rm -f $HOME/jobs-test/bg_pid.txt"
+version: 1

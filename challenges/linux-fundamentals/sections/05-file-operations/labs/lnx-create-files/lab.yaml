@@ -6,3 +6,4 @@ setup:
   type: shell
   seed_commands:
     - "rm -rf $HOME/files-test"
+version: 1

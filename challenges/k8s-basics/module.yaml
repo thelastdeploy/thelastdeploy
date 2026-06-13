@@ -7,3 +7,4 @@ estimated_minutes: 30
 sections:
   - id: 01-pods
     order: 1
+version: 1
