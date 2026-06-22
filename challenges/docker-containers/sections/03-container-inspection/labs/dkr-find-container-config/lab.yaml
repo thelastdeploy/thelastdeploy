@@ -1,0 +1,12 @@
+id: dkr-find-container-config
+title: "Find container IP address"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "docker rm -f config-target || true"
+    - "docker run -d --name config-target alpine sleep 1000"
+    - "mkdir -p $HOME/docker-test"
+    - "rm -f $HOME/docker-test/container_ip.txt"
+version: 1

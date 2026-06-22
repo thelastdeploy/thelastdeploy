@@ -1,0 +1,9 @@
+id: dkr-run-detached-container
+title: "Run a detached container"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "docker rm -f background-sleeper || true"
+version: 1

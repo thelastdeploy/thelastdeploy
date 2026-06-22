@@ -1,0 +1,10 @@
+id: dkr-fix-file-inside-container
+title: "Fix file inside container"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "docker rm -f app-to-fix || true"
+    - "docker run -d --name app-to-fix alpine sh -c 'mkdir -p /app && echo \"STATUS=broken\" > /app/config.txt && sleep 1000'"
+version: 1

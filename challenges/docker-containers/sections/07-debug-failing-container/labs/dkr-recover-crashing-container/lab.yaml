@@ -1,0 +1,10 @@
+id: dkr-recover-crashing-container
+title: "Recover crashing container"
+xp: 35
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "docker rm -f crashing-service || true"
+    - "docker create --name crashing-service alpine sleepy 1000"
+version: 1

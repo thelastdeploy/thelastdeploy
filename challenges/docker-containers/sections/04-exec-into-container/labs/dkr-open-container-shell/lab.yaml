@@ -1,0 +1,10 @@
+id: dkr-open-container-shell
+title: "Open container shell"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "docker rm -f interactive-shell-target || true"
+    - "docker run -d --name interactive-shell-target alpine sh -c 'touch /tmp/touchme && sleep 1000'"
+version: 1

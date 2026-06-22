@@ -1,0 +1,12 @@
+id: dkr-inspect-container
+title: "Locate container log path"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "docker rm -f inspect-target || true"
+    - "docker run -d --name inspect-target alpine sleep 1000"
+    - "mkdir -p $HOME/docker-test"
+    - "rm -f $HOME/docker-test/log_path.txt"
+version: 1

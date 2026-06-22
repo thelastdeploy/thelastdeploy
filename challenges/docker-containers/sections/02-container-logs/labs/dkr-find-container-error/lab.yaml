@@ -1,0 +1,12 @@
+id: dkr-find-container-error
+title: "Find container error"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "docker rm -f buggy-app || true"
+    - "docker run -d --name buggy-app alpine sh -c 'echo \"INFO: starting server...\"; echo \"CRITICAL_ERROR: db_connection_failed\"; sleep 1000'"
+    - "mkdir -p $HOME/docker-test"
+    - "rm -f $HOME/docker-test/error_msg.txt"
+version: 1
