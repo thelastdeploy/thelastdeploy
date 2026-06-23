@@ -50,6 +50,17 @@ class CLITokenRequest(BaseModel):
     device_code: str
 
 
+# --- User Updates ---
+
+class ProfileUpdateRequest(BaseModel):
+    username: str | None = None
+    email: EmailStr | None = None
+
+class PasswordUpdateRequest(BaseModel):
+    old_password: str
+    new_password: str
+
+
 # --- Labs ---
 
 class LabSchema(BaseModel):

@@ -95,6 +95,20 @@ export const api = {
     });
   },
 
+  updateProfile: async (username?: string, email?: string) => {
+    return request<{ detail: string }>("/me", {
+      method: "PUT",
+      body: JSON.stringify({ username, email }),
+    });
+  },
+
+  updatePassword: async (oldPassword: string, newPassword: string) => {
+    return request<{ detail: string }>("/me/password", {
+      method: "PUT",
+      body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
+    });
+  },
+
   logout: () => {
     clearDashboardCache();
     clearModulesMemoryCache();

@@ -114,10 +114,7 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-card border-border">
                 <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer text-foreground hover:bg-muted">
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/settings")} className="cursor-pointer text-foreground hover:bg-muted">
-                  Settings
+                  Profile & Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-border" />
                 <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 hover:bg-muted">

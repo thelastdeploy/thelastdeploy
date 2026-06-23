@@ -1,11 +1,14 @@
 # web/backend/app/routers/users.py
 
-from fastapi import APIRouter, Depends
+import secrets
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select
 from app.dependencies import get_db, get_current_user
 from app.models import User, LabProgress, SectionProgress
-from app.schemas import MeResponse
+from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse
+from app.auth import verify_password, hash_password
+from app.email import send_verification_email
 
 router = APIRouter()
 
@@ -51,4 +54,68 @@ async def get_me(
         completed_labs=completed_labs,
         completed_sections=completed_sections,
     )
+
+
+@router.put("/me", response_model=MessageResponse)
+async def update_profile(
+    body: ProfileUpdateRequest,
+    background_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    email_changed = False
+    
+    if body.username and body.username != current_user.username:
+        # Check conflict
+        result = await db.execute(select(User).where(User.username == body.username))
+        if result.scalar_one_or_none():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username is already taken",
+            )
+        current_user.username = body.username
+
+    if body.email and body.email != current_user.email:
+        # Check conflict
+        result = await db.execute(select(User).where(User.email == body.email))
+        if result.scalar_one_or_none():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Email is already registered",
+            )
+        current_user.email = body.email
+        current_user.is_verified = False
+        verification_token = secrets.token_urlsafe(32)
+        current_user.verification_token = verification_token
+        email_changed = True
+
+    db.add(current_user)
+    await db.commit()
+
+    if email_changed:
+        send_verification_email(current_user.email, current_user.verification_token, background_tasks)
+        return MessageResponse(
+            detail="Profile updated successfully. A verification link has been sent to your new email."
+        )
+
+    return MessageResponse(detail="Profile updated successfully.")
+
+
+@router.put("/me/password", response_model=MessageResponse)
+async def update_password(
+    body: PasswordUpdateRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    if not verify_password(body.old_password, current_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid current password.",
+        )
+
+    current_user.password_hash = hash_password(body.new_password)
+    db.add(current_user)
+    await db.commit()
+
+    return MessageResponse(detail="Password updated successfully.")
 
