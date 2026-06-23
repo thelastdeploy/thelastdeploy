@@ -140,6 +140,11 @@ export default function ProfilePage() {
     labId.toLowerCase().includes(labSearch.toLowerCase())
   );
 
+  const dockerCompleted = user.completed_labs.filter((id) => id.startsWith("dkr-")).length;
+  const k8sCompleted = user.completed_labs.filter((id) => id.startsWith("k8s-")).length;
+  const lnxCompleted = user.completed_labs.filter((id) => id.startsWith("lnx-")).length;
+  const gitCompleted = user.completed_labs.filter((id) => id.startsWith("git-")).length;
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 transition-colors duration-300">
       
@@ -242,6 +247,7 @@ export default function ProfilePage() {
             
             {/* Activity Summary Column */}
             <div className="md:col-span-1 space-y-6">
+              {/* Stat Count Card */}
               <div className="bg-card border border-border rounded-2xl p-6 shadow-md space-y-5">
                 <div>
                   <h2 className="text-lg font-black text-foreground">Activity Summary</h2>
@@ -265,6 +271,67 @@ export default function ProfilePage() {
                     <span className="font-bold text-xs uppercase tracking-wide px-2 py-0.5 rounded-lg bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
                       {rank.label}
                     </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Topic Mastery Progress Card */}
+              <div className="bg-card border border-border rounded-2xl p-6 shadow-md space-y-5">
+                <div>
+                  <h2 className="text-lg font-black text-foreground">Topic Mastery</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">Your progress across disciplines</p>
+                </div>
+                <div className="space-y-4">
+                  {/* Docker */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-bold flex items-center gap-1.5 text-blue-400">
+                        <span className="w-2 h-2 rounded-full bg-blue-400" /> Docker
+                      </span>
+                      <span className="font-mono text-[10px] text-muted-foreground">{dockerCompleted} completed</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                      <div className="bg-blue-400 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, dockerCompleted * 10)}%` }} />
+                    </div>
+                  </div>
+
+                  {/* Kubernetes */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-bold flex items-center gap-1.5 text-indigo-400">
+                        <span className="w-2 h-2 rounded-full bg-indigo-400" /> Kubernetes
+                      </span>
+                      <span className="font-mono text-[10px] text-muted-foreground">{k8sCompleted} completed</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                      <div className="bg-indigo-400 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, k8sCompleted * 10)}%` }} />
+                    </div>
+                  </div>
+
+                  {/* Linux */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-bold flex items-center gap-1.5 text-orange-400">
+                        <span className="w-2 h-2 rounded-full bg-orange-400" /> Linux
+                      </span>
+                      <span className="font-mono text-[10px] text-muted-foreground">{lnxCompleted} completed</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                      <div className="bg-orange-400 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, lnxCompleted * 10)}%` }} />
+                    </div>
+                  </div>
+
+                  {/* Git */}
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="font-bold flex items-center gap-1.5 text-red-400">
+                        <span className="w-2 h-2 rounded-full bg-red-400" /> Git
+                      </span>
+                      <span className="font-mono text-[10px] text-muted-foreground">{gitCompleted} completed</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                      <div className="bg-red-400 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, gitCompleted * 10)}%` }} />
+                    </div>
                   </div>
                 </div>
               </div>
