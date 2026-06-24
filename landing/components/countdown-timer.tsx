@@ -4,16 +4,17 @@ import { useState, useEffect } from "react";
 import { getTimeRemaining } from "@/lib/utils";
 
 export default function CountdownTimer() {
-  const [time, setTime] = useState(getTimeRemaining());
+  const [time, setTime] = useState<ReturnType<typeof getTimeRemaining> | null>(null);
 
   useEffect(() => {
+    setTime(getTimeRemaining());
     const timer = setInterval(() => {
       setTime(getTimeRemaining());
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  if (time.launched) return null;
+  if (!time || time.launched) return null;
 
   const segments = [
     { label: "Days", value: time.days },
