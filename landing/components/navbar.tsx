@@ -48,22 +48,16 @@ export default function Navbar() {
         <div style={{ display: "flex", height: "64px", alignItems: "center", justifyContent: "space-between" }}>
           {/* Logo */}
           <a href="/" style={{ display: "flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-            <div style={{
-              width: "32px",
-              height: "32px",
-              borderRadius: "8px",
-              background: "linear-gradient(135deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05))",
-              border: "1px solid rgba(34,197,94,0.25)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "14px",
-              fontFamily: "JetBrains Mono, monospace",
-              fontWeight: 700,
-              color: "#22c55e",
-            }}>
-              $
-            </div>
+            <img
+              src="/logo.png"
+              alt="Logo"
+              style={{
+                height: "40px",
+                width: "auto",
+                objectFit: "contain",
+                display: "block",
+              }}
+            />
             <span style={{
               fontSize: "15px",
               fontWeight: 700,

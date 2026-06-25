@@ -72,10 +72,17 @@ export default function RegisterPage() {
           ) : (
             <>
               <div className="mb-8">
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5 bg-[var(--accent-primary)]"
-                >
-                  <span className="text-black dark:text-black font-black text-xl">T</span>
+                <div className="mb-5">
+                  <img
+                    src="/logo-light.png"
+                    alt="Logo"
+                    className="h-14 w-auto object-contain block dark:hidden"
+                  />
+                  <img
+                    src="/logo-dark.png"
+                    alt="Logo"
+                    className="h-14 w-auto object-contain hidden dark:block"
+                  />
                 </div>
                 <h1 className="text-3xl font-black text-foreground">Create account</h1>
                 <p className="text-muted-foreground text-sm mt-1">Free forever. No credit card needed.</p>

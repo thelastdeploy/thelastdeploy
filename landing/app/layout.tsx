@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     "An open-source DevOps learning platform. Complete hands-on labs on your own machine — no cloud fees, no fake terminals, no passive videos.",
   icons: {
-    icon: "/favicon.svg",
+    icon: "/favicon.png",
   },
   openGraph: {
     title: "The Last Deploy",

@@ -17,7 +17,7 @@ type Config struct {
 }
 
 const defaultAPIBaseURL = "http://localhost:8742"
-const defaultChallengesRepo = "shreyansh-shankar/OrbStack"
+const defaultChallengesRepo = "thelastdeploy/thelastdeploy"
 
 func Load() (*Config, error) {
 	path, err := configPath()

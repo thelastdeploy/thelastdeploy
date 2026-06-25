@@ -68,9 +68,16 @@ export function Navbar() {
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo — dashboard if logged in, landing if not */}
         <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--accent-primary)]">
-            <span className="text-black dark:text-black font-black text-sm">O</span>
-          </div>
+          <img
+            src="/logo-light.png"
+            alt="Logo"
+            className="h-10 w-auto object-contain block dark:hidden"
+          />
+          <img
+            src="/logo-dark.png"
+            alt="Logo"
+            className="h-10 w-auto object-contain hidden dark:block"
+          />
           <span className="font-black text-lg tracking-tight text-foreground">The Last Deploy</span>
         </Link>
 
