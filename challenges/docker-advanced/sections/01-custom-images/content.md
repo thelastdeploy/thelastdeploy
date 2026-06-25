@@ -77,7 +77,7 @@ Create and run a custom Nginx-based container:
    tld start dkr-build-web
    ```
 2. Create a clean project directory of your choice and move into it.
-3. Create a file named `index.html` containing the word `antigravity` (or any web content).
+3. Create a file named `index.html` containing the word `last-deploy` (or any web content).
 4. Create a `Dockerfile` that uses `nginx:alpine` as the base image, copies your `index.html` into `/usr/share/nginx/html/`, and exposes port `80`.
 5. Build the image and tag it exactly as `my-web-app:latest`.
 6. Start a container from this image named `tld-my-web-app` running in the background and mapping host port `8256` to container port `80`.
