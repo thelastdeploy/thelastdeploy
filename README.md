@@ -42,6 +42,7 @@ Everything runs locally. No account required to start. No cloud costs. Forever f
 │   ├── docker-fundamentals/
 │   ├── docker-images/
 │   ├── docker-networking/
+│   ├── docker-compose/
 │   ├── git-fundamentals/
 │   └── ...
 ├── web/
@@ -147,6 +148,7 @@ npm run dev   # runs on http://localhost:3002
 | Docker Images | ✅ Available |
 | Docker Networking | ✅ Available |
 | Docker Storage | ✅ Available |
+| Docker Compose | ✅ Available |
 | Terraform | 🔜 Coming Soon |
 | Nginx | 🔜 Coming Soon |
 

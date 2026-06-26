@@ -1,0 +1,12 @@
+id: dkr-run-web-and-db
+title: "Run web and database services"
+xp: 40
+estimated_minutes: 10
+order: 1
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/docker-compose/multi-service"
+    - "rm -f $HOME/docker-compose/multi-service/docker-compose.yml"
+    - "docker compose -f $HOME/docker-compose/multi-service/docker-compose.yml down -v || true"
+version: 1

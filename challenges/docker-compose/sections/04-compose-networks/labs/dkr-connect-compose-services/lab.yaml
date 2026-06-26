@@ -1,0 +1,11 @@
+id: dkr-connect-compose-services
+title: "Connect services via custom networks"
+xp: 40
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/docker-compose/networks"
+    - "rm -f $HOME/docker-compose/networks/docker-compose.yml"
+    - "docker compose -f $HOME/docker-compose/networks/docker-compose.yml down -v || true"
+version: 1

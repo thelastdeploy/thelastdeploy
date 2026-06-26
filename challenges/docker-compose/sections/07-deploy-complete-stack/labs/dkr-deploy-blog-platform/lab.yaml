@@ -1,0 +1,11 @@
+id: dkr-deploy-blog-platform
+title: "Deploy a complete blog platform"
+xp: 60
+estimated_minutes: 15
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/docker-compose/blog-platform"
+    - "rm -f $HOME/docker-compose/blog-platform/docker-compose.yml"
+    - "docker compose -f $HOME/docker-compose/blog-platform/docker-compose.yml down -v || true"
+version: 1

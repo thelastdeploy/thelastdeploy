@@ -1,0 +1,11 @@
+id: dkr-create-compose-file
+title: "Create a basic Compose file"
+xp: 25
+estimated_minutes: 5
+order: 1
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/docker-compose/first-compose"
+    - "rm -f $HOME/docker-compose/first-compose/docker-compose.yml"
+version: 1

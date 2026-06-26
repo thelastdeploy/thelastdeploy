@@ -1,0 +1,12 @@
+id: dkr-fix-env-configuration
+title: "Use .env file for configuration"
+xp: 45
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/docker-compose/env-vars"
+    - "echo -e 'version: \"3.8\"\nservices:\n  app:\n    image: alpine\n    command: sh -c \"echo App password is \\$\\$DB_PASSWORD && sleep 3600\"\n    environment:\n      - DB_PASSWORD=\\${DB_PASSWORD}\n  db:\n    image: postgres:15-alpine\n    environment:\n      - POSTGRES_USER=postgres\n      - POSTGRES_PASSWORD=\\${DB_PASSWORD}\n      - POSTGRES_DB=app_db' > $HOME/docker-compose/env-vars/docker-compose.yml"
+    - "rm -f $HOME/docker-compose/env-vars/.env"
+    - "docker compose -f $HOME/docker-compose/env-vars/docker-compose.yml down -v || true"
+version: 1

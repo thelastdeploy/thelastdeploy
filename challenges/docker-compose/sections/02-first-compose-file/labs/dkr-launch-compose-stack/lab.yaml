@@ -1,0 +1,12 @@
+id: dkr-launch-compose-stack
+title: "Launch a Compose stack"
+xp: 30
+estimated_minutes: 5
+order: 2
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/docker-compose/first-compose"
+    - "echo -e 'version: \"3.8\"\nservices:\n  web:\n    image: nginx:alpine\n    ports:\n      - \"8080:80\"' > $HOME/docker-compose/first-compose/docker-compose.yml"
+    - "docker compose -f $HOME/docker-compose/first-compose/docker-compose.yml down -v || true"
+version: 1
