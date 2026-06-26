@@ -7,14 +7,6 @@ setup:
   type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-compose/first-compose"
-    - |
-      cat << 'EOF' > $HOME/docker-compose/first-compose/docker-compose.yml
-      version: "3.8"
-      services:
-        web:
-          image: nginx:alpine
-          ports:
-            - "8080:80"
-      EOF
+    - 'echo -e "version: \"3.8\"\nservices:\n  web:\n    image: nginx:alpine\n    ports:\n      - \"8080:80\"" > $HOME/docker-compose/first-compose/docker-compose.yml'
     - "docker compose -f $HOME/docker-compose/first-compose/docker-compose.yml down -v || true"
-version: 1
+version: 2
