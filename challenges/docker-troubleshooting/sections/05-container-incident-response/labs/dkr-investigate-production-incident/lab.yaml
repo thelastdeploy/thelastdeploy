@@ -7,7 +7,14 @@ setup:
   type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-troubleshooting/incident"
-    - "echo -e 'version: \"3.8\"\nservices:\n  app:\n    image: alpine\n    command: sh -c \"if [ ! -f /etc/app/config.json ]; then echo \\'FATAL: config.json not found at /etc/app/config.json\\' >&2 && exit 1; else echo \\'App running...\\' && sleep 3600; fi\"' > $HOME/docker-troubleshooting/incident/docker-compose.yml"
+    - |
+      cat << 'EOF' > $HOME/docker-troubleshooting/incident/docker-compose.yml
+      version: "3.8"
+      services:
+        app:
+          image: alpine
+          command: sh -c "if [ ! -f /etc/app/config.json ]; then echo 'FATAL: config.json not found at /etc/app/config.json' >&2 && exit 1; else echo 'App running...' && sleep 3600; fi"
+      EOF
     - "rm -f $HOME/docker-troubleshooting/incident/config.json"
     - "docker compose -f $HOME/docker-troubleshooting/incident/docker-compose.yml down -v || true"
 version: 1

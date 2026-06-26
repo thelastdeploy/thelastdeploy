@@ -7,7 +7,19 @@ setup:
   type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-compose/multi-service"
-    - "echo -e 'version: \"3.8\"\nservices:\n  web:\n    image: nginx:alpine\n    ports:\n      - \"80\"\n  db:\n    image: postgres:15-alpine\n    environment:\n      - POSTGRES_PASSWORD=secret' > $HOME/docker-compose/multi-service/docker-compose.yml"
+    - |
+      cat << 'EOF' > $HOME/docker-compose/multi-service/docker-compose.yml
+      version: "3.8"
+      services:
+        web:
+          image: nginx:alpine
+          ports:
+            - "80"
+        db:
+          image: postgres:15-alpine
+          environment:
+            - POSTGRES_PASSWORD=secret
+      EOF
     - "docker compose -f $HOME/docker-compose/multi-service/docker-compose.yml down -v || true"
     - "docker compose -f $HOME/docker-compose/multi-service/docker-compose.yml up -d"
 version: 1
