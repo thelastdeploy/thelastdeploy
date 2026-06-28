@@ -74,6 +74,9 @@ async def seed():
                 existing_module.version = module_data.get("version", 1)
                 existing_module.total_xp = total_xp
                 existing_module.total_sections = total_sections
+                # Official seeded modules are always authored by The Last Deploy (NULL) and verified
+                existing_module.author_id = None
+                existing_module.is_official_verified = True
                 db.add(existing_module)
                 print(f"  ↻ Updated module: {module_id} (total_xp: {total_xp}, total_sections: {total_sections})")
             else:
@@ -89,6 +92,8 @@ async def seed():
                     version=module_data.get("version", 1),
                     total_xp=total_xp,
                     total_sections=total_sections,
+                    author_id=None,          # official module
+                    is_official_verified=True,
                 ))
                 print(f"  ✅ Seeded module: {module_id} (total_xp: {total_xp}, total_sections: {total_sections})")
 

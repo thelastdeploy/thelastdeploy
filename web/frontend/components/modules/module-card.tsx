@@ -1,9 +1,7 @@
-// web/frontend/components/modules/module-card.tsx
-
 import Link from "next/link";
 import { Module } from "@/lib/types";
 import { DifficultyBadge } from "@/components/challenges/difficulty-badge";
-import { Clock, Zap, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Clock, Zap, ChevronRight, CheckCircle2, Crown, ShieldCheck, User } from "lucide-react";
 
 const topicConfig: Record<string, { bg: string; border: string; label: string; color: string }> = {
   docker:     { bg: "var(--topic-docker)",     border: "var(--topic-docker-border)",     label: "Docker",     color: "var(--topic-docker-text)" },
@@ -51,6 +49,24 @@ export function ModuleCard({ module }: { module: Module }) {
           <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
             {module.description}
           </p>
+
+          {/* Author + Verified */}
+          <div className="flex items-center gap-2 mt-3 flex-wrap">
+            {/* Author chip */}
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/10 dark:bg-black/30 border border-border/10" style={{ color: topic.color }}>
+              {module.author.is_official
+                ? <Crown className="h-2.5 w-2.5" />
+                : <User className="h-2.5 w-2.5" />}
+              {module.author.name}
+            </span>
+            {/* Verified badge */}
+            {module.is_official_verified && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
+                <ShieldCheck className="h-2.5 w-2.5" />
+                Verified
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Progress bar */}

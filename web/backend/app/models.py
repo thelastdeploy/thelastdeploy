@@ -55,8 +55,12 @@ class Module(Base):
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     total_xp: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     total_sections: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    # NULL  → official module ("The Last Deploy"); set to user.id for community modules
+    author_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    is_official_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+    author: Mapped["User | None"] = relationship("User", foreign_keys=[author_id])
     sections: Mapped[list["Section"]] = relationship(
         "Section", back_populates="module", order_by="Section.order"
     )

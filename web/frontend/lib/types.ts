@@ -27,6 +27,11 @@ export interface Section {
   section_completed: boolean;  // true = reading scrolled to end (or future: questions done)
 }
 
+export interface AuthorInfo {
+  name: string;
+  is_official: boolean;
+}
+
 export interface Module {
   id: string;
   title: string;
@@ -38,6 +43,8 @@ export interface Module {
   total_xp: number;
   total_sections: number;
   completed_sections: number;
+  author: AuthorInfo;
+  is_official_verified: boolean;
 }
 
 export interface ModuleDetail extends Module {

@@ -7,6 +7,7 @@ from sqlalchemy import select, func
 from app.dependencies import get_db, get_current_user, get_optional_user
 from app.models import Lab, LabProgress, Module, Section, SectionProgress, User
 from app.schemas import (
+    AuthorInfo,
     CompleteSectionResponse,
     LabDetail, LabSchema,
     ModuleListResponse, ModuleListItem,
@@ -15,6 +16,16 @@ from app.schemas import (
 )
 
 router = APIRouter()
+
+
+OFFICIAL_AUTHOR = AuthorInfo(name="The Last Deploy", is_official=True)
+
+
+def _author_info(author: "User | None") -> AuthorInfo:
+    """Return an AuthorInfo from a resolved author ORM object (or None for official)."""
+    if author is None:
+        return OFFICIAL_AUTHOR
+    return AuthorInfo(name=author.username, is_official=False)
 
 
 def _total_xp(sections: list[Section], labs: list[Lab]) -> int:
@@ -54,15 +65,25 @@ async def list_modules(
         Module.total_xp,
         Module.total_sections,
         Module.version,
+        Module.author_id,
+        Module.is_official_verified,
         completed_sections_sub.label("completed_sections")
     )
     result = await db.execute(stmt)
     rows = result.all()
 
-    # 3. Build ModuleListItem list
+    # 3. Collect author_ids that are non-null and batch-load those users
+    author_ids = {row.author_id for row in rows if row.author_id is not None}
+    author_map: dict[int, User] = {}
+    if author_ids:
+        au_result = await db.execute(select(User).where(User.id.in_(author_ids)))
+        author_map = {u.id: u for u in au_result.scalars().all()}
+
+    # 4. Build ModuleListItem list
     items = []
     for row in rows:
         tags = [t.strip() for t in (row.tags or "").split(",") if t.strip()]
+        author = author_map.get(row.author_id) if row.author_id else None
         items.append(ModuleListItem(
             id=row.id,
             title=row.title,
@@ -75,6 +96,8 @@ async def list_modules(
             total_sections=row.total_sections,
             completed_sections=row.completed_sections,
             version=row.version,
+            author=_author_info(author),
+            is_official_verified=row.is_official_verified,
         ))
 
     return ModuleListResponse(modules=items)
@@ -93,10 +116,11 @@ async def get_all_modules_full(
 ):
     from sqlalchemy.orm import selectinload
 
-    # 1. Eagerly load all modules, sections, and labs in 3 database queries
+    # 1. Eagerly load all modules, sections, labs, and author in 3 database queries
     result = await db.execute(
         select(Module).options(
-            selectinload(Module.sections).selectinload(Section.labs)
+            selectinload(Module.sections).selectinload(Section.labs),
+            selectinload(Module.author),
         )
     )
     modules = result.scalars().all()
@@ -166,6 +190,8 @@ async def get_all_modules_full(
             total_sections=len(m.sections),
             sections=section_schemas,
             version=m.version,
+            author=_author_info(m.author),
+            is_official_verified=m.is_official_verified,
         ))
 
     return items
@@ -181,7 +207,12 @@ async def get_module_full(
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
 ):
-    result = await db.execute(select(Module).where(Module.id == module_id))
+    from sqlalchemy.orm import selectinload
+    result = await db.execute(
+        select(Module)
+        .options(selectinload(Module.author))
+        .where(Module.id == module_id)
+    )
     module = result.scalar_one_or_none()
     if not module:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
@@ -264,6 +295,8 @@ async def get_module_full(
         total_sections=len(sections),
         sections=section_schemas,
         version=module.version,
+        author=_author_info(module.author),
+        is_official_verified=module.is_official_verified,
     )
 
 
@@ -276,7 +309,12 @@ async def get_module_summary(
     module_id: str,
     db: AsyncSession = Depends(get_db),
 ):
-    result = await db.execute(select(Module).where(Module.id == module_id))
+    from sqlalchemy.orm import selectinload
+    result = await db.execute(
+        select(Module)
+        .options(selectinload(Module.author))
+        .where(Module.id == module_id)
+    )
     module = result.scalar_one_or_none()
     if not module:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
@@ -297,7 +335,36 @@ async def get_module_summary(
         total_xp=_total_xp(sections, labs),
         total_sections=len(sections),
         version=module.version,
+        author=_author_info(module.author),
+        is_official_verified=module.is_official_verified,
     )
+
+
+# ---------------------------------------------------------------------------
+# PATCH /modules/:id/verify — mark a module as officially verified (admin only)
+# ---------------------------------------------------------------------------
+
+@router.patch("/modules/{module_id}/verify", response_model=dict)
+async def verify_module(
+    module_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    # Only the official account (user id = 1) may verify modules
+    if current_user.id != 1:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only official administrators can verify modules",
+        )
+    result = await db.execute(select(Module).where(Module.id == module_id))
+    module = result.scalar_one_or_none()
+    if not module:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
+
+    module.is_official_verified = True
+    db.add(module)
+    await db.commit()
+    return {"detail": f"Module '{module_id}' is now officially verified."}
 
 
 # ---------------------------------------------------------------------------

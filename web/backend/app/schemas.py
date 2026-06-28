@@ -105,6 +105,13 @@ class SectionSchema(BaseModel):
         from_attributes = True
 
 
+# --- Author ---
+
+class AuthorInfo(BaseModel):
+    name: str
+    is_official: bool
+
+
 # --- Modules ---
 
 class ModuleListItem(BaseModel):
@@ -119,6 +126,8 @@ class ModuleListItem(BaseModel):
     total_sections: int = 0
     completed_sections: int = 0
     version: int = 1
+    author: AuthorInfo
+    is_official_verified: bool = False
 
 class ModuleListResponse(BaseModel):
     modules: list[ModuleListItem]
@@ -135,6 +144,8 @@ class ModuleDetail(BaseModel):
     total_sections: int
     sections: list[SectionSchema]
     version: int = 1
+    author: AuthorInfo
+    is_official_verified: bool = False
 
 class ModuleSummary(BaseModel):
     """Lightweight for GET /modules/:id (tld sync -m)."""
@@ -148,6 +159,8 @@ class ModuleSummary(BaseModel):
     total_xp: int
     total_sections: int
     version: int = 1
+    author: AuthorInfo
+    is_official_verified: bool = False
 
 
 # --- Progress ---
