@@ -14,6 +14,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     xp: Mapped[int] = mapped_column(Integer, default=0)
+    unverified_xp: Mapped[int] = mapped_column(Integer, default=0, server_default="0", nullable=False)
     streak_days: Mapped[int] = mapped_column(Integer, default=0)
     device_key: Mapped[str | None] = mapped_column(String(64), unique=True, nullable=True)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
@@ -58,6 +59,8 @@ class Module(Base):
     # NULL  → official module ("The Last Deploy"); set to user.id for community modules
     author_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     is_official_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
+    status: Mapped[str] = mapped_column(String(20), default="draft", server_default="draft", nullable=False)
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     author: Mapped["User | None"] = relationship("User", foreign_keys=[author_id])
@@ -100,6 +103,7 @@ class Lab(Base):
     yaml_content: Mapped[str | None] = mapped_column(Text, nullable=True)
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     validator_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    validator_script: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     section: Mapped["Section"] = relationship("Section", back_populates="labs")

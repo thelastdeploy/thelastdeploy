@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from app.dependencies import get_db, get_optional_user
-from app.models import Lab, LabProgress, User, SectionProgress
+from app.models import Lab, LabProgress, User, SectionProgress, Module, Section
 from app.schemas import ResultRequest, ResultResponse
 
 router = APIRouter()
@@ -120,18 +120,49 @@ async def submit_result(
 
     # Recalculate true total XP by summing database entries to prevent and heal drift
     lab_xp_sum = await db.scalar(
-        select(func.sum(LabProgress.xp_awarded)).where(
+        select(func.sum(LabProgress.xp_awarded))
+        .join(Lab, Lab.id == LabProgress.lab_id)
+        .join(Module, Module.id == Lab.module_id)
+        .where(
             LabProgress.user_id == current_user.id,
-            LabProgress.completed == True
+            LabProgress.completed == True,
+            Module.status == 'verified'
         )
     ) or 0
     sec_xp_sum = await db.scalar(
-        select(func.sum(SectionProgress.xp_awarded)).where(
+        select(func.sum(SectionProgress.xp_awarded))
+        .join(Section, Section.id == SectionProgress.section_id)
+        .join(Module, Module.id == Section.module_id)
+        .where(
             SectionProgress.user_id == current_user.id,
-            SectionProgress.completed == True
+            SectionProgress.completed == True,
+            Module.status == 'verified'
         )
     ) or 0
+
+    lab_unverified_xp = await db.scalar(
+        select(func.sum(LabProgress.xp_awarded))
+        .join(Lab, Lab.id == LabProgress.lab_id)
+        .join(Module, Module.id == Lab.module_id)
+        .where(
+            LabProgress.user_id == current_user.id,
+            LabProgress.completed == True,
+            Module.status != 'verified'
+        )
+    ) or 0
+    sec_unverified_xp = await db.scalar(
+        select(func.sum(SectionProgress.xp_awarded))
+        .join(Section, Section.id == SectionProgress.section_id)
+        .join(Module, Module.id == Section.module_id)
+        .where(
+            SectionProgress.user_id == current_user.id,
+            SectionProgress.completed == True,
+            Module.status != 'verified'
+        )
+    ) or 0
+
     current_user.xp = lab_xp_sum + sec_xp_sum
+    current_user.unverified_xp = lab_unverified_xp + sec_unverified_xp
     db.add(current_user)
 
     await db.commit()

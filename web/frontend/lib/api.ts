@@ -1,6 +1,6 @@
 // web/frontend/lib/api.ts
 
-import { Module, ModuleDetail, User } from "./types";
+import { Module, ModuleDetail, User, BuilderDraftListItem, BuilderModuleInput } from "./types";
 import { writeCache, clearDashboardCache } from "./dashboard/use-dashboard-cache";
 import { clearModulesMemoryCache } from "@/hooks/use-modules";
 
@@ -134,4 +134,33 @@ export const api = {
 
   // Users
   getMe: () => request<User>("/me"),
+
+  // Builder
+  getMyModules: () =>
+    request<BuilderDraftListItem[]>("/builder/modules"),
+
+  getBuilderModule: (id: string) =>
+    request<BuilderModuleInput>(`/builder/modules/${id}`),
+
+  createModule: (data: BuilderModuleInput) =>
+    request<{ id: string }>("/builder/modules", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  saveModule: (id: string, data: BuilderModuleInput) =>
+    request<{ id: string }>(`/builder/modules/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  publishModule: (id: string) =>
+    request<{ id: string }>([`/builder/modules/${id}/publish`][0], {
+      method: "POST",
+    }),
+
+  deleteModule: (id: string) =>
+    request<{ detail: string }>(`/builder/modules/${id}`, {
+      method: "DELETE",
+    }),
 };

@@ -68,7 +68,7 @@ async def list_modules(
         Module.author_id,
         Module.is_official_verified,
         completed_sections_sub.label("completed_sections")
-    )
+    ).where(Module.status != 'draft')
     result = await db.execute(stmt)
     rows = result.all()
 
@@ -118,7 +118,9 @@ async def get_all_modules_full(
 
     # 1. Eagerly load all modules, sections, labs, and author in 3 database queries
     result = await db.execute(
-        select(Module).options(
+        select(Module)
+        .where(Module.status != 'draft')
+        .options(
             selectinload(Module.sections).selectinload(Section.labs),
             selectinload(Module.author),
         )
@@ -362,7 +364,76 @@ async def verify_module(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
 
     module.is_official_verified = True
+    module.status = "verified"
     db.add(module)
+    await db.flush()
+
+    # Move unverified XP to verified XP for all users who completed sections/labs in this module
+    from sqlalchemy.orm import selectinload
+    sec_result = await db.execute(
+        select(Section)
+        .where(Section.module_id == module_id)
+        .options(selectinload(Section.labs))
+    )
+    sections = sec_result.scalars().all()
+    section_ids = [s.id for s in sections]
+    lab_ids = [lab.id for sec in sections for lab in sec.labs]
+
+    user_ids = set()
+    if lab_ids:
+        lp_result = await db.execute(
+            select(LabProgress.user_id).where(
+                LabProgress.lab_id.in_(lab_ids),
+                LabProgress.completed == True
+            )
+        )
+        user_ids.update(lp_result.scalars().all())
+
+    if section_ids:
+        sp_result = await db.execute(
+            select(SectionProgress.user_id).where(
+                SectionProgress.section_id.in_(section_ids),
+                SectionProgress.completed == True
+            )
+        )
+        user_ids.update(sp_result.scalars().all())
+
+    for u_id in user_ids:
+        user_res = await db.execute(select(User).where(User.id == u_id))
+        target_user = user_res.scalar_one_or_none()
+        if target_user:
+            # Recalculate verified XP
+            lab_verified = await db.scalar(
+                select(func.sum(LabProgress.xp_awarded))
+                .join(Lab, Lab.id == LabProgress.lab_id)
+                .join(Module, Module.id == Lab.module_id)
+                .where(LabProgress.user_id == target_user.id, LabProgress.completed == True, Module.status == 'verified')
+            ) or 0
+            sec_verified = await db.scalar(
+                select(func.sum(SectionProgress.xp_awarded))
+                .join(Section, Section.id == SectionProgress.section_id)
+                .join(Module, Module.id == Section.module_id)
+                .where(SectionProgress.user_id == target_user.id, SectionProgress.completed == True, Module.status == 'verified')
+            ) or 0
+            
+            # Recalculate unverified XP
+            lab_unverified = await db.scalar(
+                select(func.sum(LabProgress.xp_awarded))
+                .join(Lab, Lab.id == LabProgress.lab_id)
+                .join(Module, Module.id == Lab.module_id)
+                .where(LabProgress.user_id == target_user.id, LabProgress.completed == True, Module.status != 'verified')
+            ) or 0
+            sec_unverified = await db.scalar(
+                select(func.sum(SectionProgress.xp_awarded))
+                .join(Section, Section.id == SectionProgress.section_id)
+                .join(Module, Module.id == Section.module_id)
+                .where(SectionProgress.user_id == target_user.id, SectionProgress.completed == True, Module.status != 'verified')
+            ) or 0
+            
+            target_user.xp = lab_verified + sec_verified
+            target_user.unverified_xp = lab_unverified + sec_unverified
+            db.add(target_user)
+
     await db.commit()
     return {"detail": f"Module '{module_id}' is now officially verified."}
 
@@ -443,18 +514,49 @@ async def complete_reading_section(
 
     # Recalculate true total XP by summing database entries to prevent and heal drift
     lab_xp_sum = await db.scalar(
-        select(func.sum(LabProgress.xp_awarded)).where(
+        select(func.sum(LabProgress.xp_awarded))
+        .join(Lab, Lab.id == LabProgress.lab_id)
+        .join(Module, Module.id == Lab.module_id)
+        .where(
             LabProgress.user_id == current_user.id,
-            LabProgress.completed == True
+            LabProgress.completed == True,
+            Module.status == 'verified'
         )
     ) or 0
     sec_xp_sum = await db.scalar(
-        select(func.sum(SectionProgress.xp_awarded)).where(
+        select(func.sum(SectionProgress.xp_awarded))
+        .join(Section, Section.id == SectionProgress.section_id)
+        .join(Module, Module.id == Section.module_id)
+        .where(
             SectionProgress.user_id == current_user.id,
-            SectionProgress.completed == True
+            SectionProgress.completed == True,
+            Module.status == 'verified'
         )
     ) or 0
+    
+    lab_unverified_xp = await db.scalar(
+        select(func.sum(LabProgress.xp_awarded))
+        .join(Lab, Lab.id == LabProgress.lab_id)
+        .join(Module, Module.id == Lab.module_id)
+        .where(
+            LabProgress.user_id == current_user.id,
+            LabProgress.completed == True,
+            Module.status != 'verified'
+        )
+    ) or 0
+    sec_unverified_xp = await db.scalar(
+        select(func.sum(SectionProgress.xp_awarded))
+        .join(Section, Section.id == SectionProgress.section_id)
+        .join(Module, Module.id == Section.module_id)
+        .where(
+            SectionProgress.user_id == current_user.id,
+            SectionProgress.completed == True,
+            Module.status != 'verified'
+        )
+    ) or 0
+
     current_user.xp = lab_xp_sum + sec_xp_sum
+    current_user.unverified_xp = lab_unverified_xp + sec_unverified_xp
     db.add(current_user)
 
     await db.commit()

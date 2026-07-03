@@ -56,7 +56,55 @@ export interface User {
   username: string;
   email: string;
   xp: number;
+  unverified_xp: number;
   streak_days: number;
   completed_labs: string[];      // lab IDs (tld check)
   completed_sections: string[];  // section IDs (reading / future: questions)
 }
+
+export type ModuleStatus = 'draft' | 'published' | 'verified';
+
+export interface BuilderLabInput {
+  id: string;
+  title: string;
+  order: number;
+  xp: number;
+  estimated_minutes: number | null;
+  setup_type: string | null;
+  seed_commands: string[];
+  validator_script: string;
+}
+
+export interface BuilderSectionInput {
+  id: string;
+  title: string;
+  order: number;
+  xp: number;
+  content: string;
+  labs: BuilderLabInput[];
+}
+
+export interface BuilderModuleInput {
+  id: string;
+  title: string;
+  description: string;
+  topic: string;
+  difficulty: string;
+  estimated_minutes: number | null;
+  tags: string[];
+  sections: BuilderSectionInput[];
+}
+
+export interface BuilderDraftListItem {
+  id: string;
+  title: string;
+  topic: string | null;
+  difficulty: string | null;
+  total_sections: number;
+  total_xp: number;
+  status: ModuleStatus;
+  is_official_verified: boolean;
+  created_at: string;
+  submitted_at: string | null;
+}
+

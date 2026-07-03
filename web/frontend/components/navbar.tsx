@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter, usePathname } from "next/navigation";
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Hammer } from "lucide-react";
 
 export function Navbar() {
   const { user, loading, logout } = useAuth();
@@ -48,42 +48,46 @@ export function Navbar() {
   };
 
   const navLink = (href: string, label: string) => {
-    const active = pathname === href;
+    const active = pathname === href || pathname.startsWith(href + "/");
     return (
       <Link
         href={href}
-        className={`text-sm font-medium px-3 py-1.5 rounded-lg transition-all ${
+        className={`text-xs font-black uppercase tracking-wider px-4 py-2 rounded-xl transition-all duration-200 relative overflow-hidden group border ${
           active
-            ? "text-[var(--accent-primary)] bg-[rgba(var(--accent-primary-rgb),0.1)]"
-            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+            ? "text-[var(--accent-primary)] bg-[rgba(var(--accent-primary-rgb),0.06)] border-[rgba(var(--accent-primary-rgb),0.15)] shadow-[0_0_15px_rgba(var(--accent-primary-rgb),0.03)]"
+            : "text-muted-foreground hover:text-foreground hover:bg-muted/40 border-transparent"
         }`}
       >
         {label}
+        {active && (
+          <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-[3px] bg-[var(--accent-primary)] rounded-full" />
+        )}
       </Link>
     );
   };
 
   return (
-    <nav className="border-b border-border bg-background sticky top-0 z-50 transition-colors duration-300">
+    <nav className="border-b border-border/70 bg-background/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo — dashboard if logged in, landing if not */}
-        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2">
+        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
           <img
             src="/logo-light.png"
             alt="Logo"
-            className="h-10 w-auto object-contain block dark:hidden"
+            className="h-10 w-auto object-contain block dark:hidden group-hover:scale-105 transition-transform"
           />
           <img
             src="/logo-dark.png"
             alt="Logo"
-            className="h-10 w-auto object-contain hidden dark:block"
+            className="h-10 w-auto object-contain hidden dark:block group-hover:scale-105 transition-transform"
           />
-          <span className="font-black text-lg tracking-tight text-foreground">The Last Deploy</span>
+          <span className="font-black text-lg tracking-tight text-foreground group-hover:text-[var(--accent-primary)] transition-colors">The Last Deploy</span>
         </Link>
 
         {/* Nav links */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-2">
           {navLink("/modules", "Modules")}
+          {user && navLink("/builder", "Module Builder")}
         </div>
 
         {/* Auth & Theme Toggler */}
@@ -92,7 +96,7 @@ export function Navbar() {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            className="rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted shrink-0"
+            className="rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted shrink-0 cursor-pointer"
             aria-label="Toggle theme"
           >
             {theme === "dark" ? (
@@ -107,34 +111,41 @@ export function Navbar() {
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-card hover:bg-muted transition-colors border border-border text-foreground">
-                  <Avatar className="h-6 w-6">
-                    <AvatarFallback className="text-[10px] font-bold" style={{ backgroundColor: "var(--accent-primary)", color: "#000" }}>
+                <button className="flex items-center gap-2.5 pl-2 pr-4 py-1.5 rounded-xl bg-card hover:bg-muted transition-all border border-border hover:border-[rgba(var(--accent-primary-rgb),0.25)] hover:shadow-[0_0_15px_rgba(var(--accent-primary-rgb),0.06)] text-foreground cursor-pointer outline-none">
+                  <Avatar className="h-6 w-6 shrink-0">
+                    <AvatarFallback className="text-[10px] font-bold text-black" style={{ backgroundColor: "var(--accent-primary)" }}>
                       {user.username.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium hidden md:block">{user.username}</span>
-                  <span className="text-xs font-mono font-bold hidden md:block" style={{ color: "var(--accent-primary)" }}>
-                    {user.xp} XP
-                  </span>
+                  <div className="text-left hidden md:block">
+                    <p className="text-xs font-black leading-none">{user.username}</p>
+                    <p className="text-[10px] font-mono font-bold leading-none mt-1" style={{ color: "var(--accent-primary)" }}>
+                      {user.xp} XP
+                    </p>
+                  </div>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-card border-border">
-                <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer text-foreground hover:bg-muted">
+              <DropdownMenuContent align="end" className="w-52 bg-card border-border rounded-xl p-1.5 shadow-xl">
+                <DropdownMenuItem onClick={() => router.push("/builder")} className="cursor-pointer text-foreground hover:bg-muted flex items-center gap-2 font-bold rounded-lg py-2">
+                  <Hammer className="h-4 w-4 text-[var(--accent-primary)]" />
+                  Module Builder
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-border my-1" />
+                <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer text-foreground hover:bg-muted rounded-lg py-2">
                   Profile & Settings
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 hover:bg-muted">
+                <DropdownMenuSeparator className="bg-border my-1" />
+                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 hover:bg-red-500/5 hover:text-red-400 rounded-lg py-2">
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground hover:bg-muted">
+              <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer rounded-xl">
                 <Link href="/login">Login</Link>
               </Button>
-              <Button size="sm" asChild className="font-bold text-black rounded-xl" style={{ backgroundColor: "var(--accent-primary)" }}>
+              <Button size="sm" asChild className="font-bold text-black rounded-xl cursor-pointer hover:opacity-90 transition-opacity" style={{ backgroundColor: "var(--accent-primary)" }}>
                 <Link href="/register">Sign up</Link>
               </Button>
             </>

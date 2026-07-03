@@ -64,6 +64,9 @@ async def seed():
             tags = ",".join(module_data.get("tags", []))
 
             if existing_module:
+                if existing_module.author_id is not None:
+                    print(f"  ⏭ Skipping community module: {module_id}")
+                    continue
                 existing_module.title = module_data["title"]
                 existing_module.description = module_data.get("description")
                 existing_module.topic = module_data.get("topic")
@@ -77,6 +80,7 @@ async def seed():
                 # Official seeded modules are always authored by The Last Deploy (NULL) and verified
                 existing_module.author_id = None
                 existing_module.is_official_verified = True
+                existing_module.status = 'verified'
                 db.add(existing_module)
                 print(f"  ↻ Updated module: {module_id} (total_xp: {total_xp}, total_sections: {total_sections})")
             else:
@@ -94,6 +98,7 @@ async def seed():
                     total_sections=total_sections,
                     author_id=None,          # official module
                     is_official_verified=True,
+                    status='verified',
                 ))
                 print(f"  ✅ Seeded module: {module_id} (total_xp: {total_xp}, total_sections: {total_sections})")
 

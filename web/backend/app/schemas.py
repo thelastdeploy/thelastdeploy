@@ -193,6 +193,72 @@ class MeResponse(BaseModel):
     username: str
     email: str
     xp: int
+    unverified_xp: int = 0
     streak_days: int
     completed_labs: list[str]       # lab IDs (from lab_progress)
     completed_sections: list[str]   # section IDs (from section_progress — reading/questions)
+
+
+# --- Builder (Module Authoring) ---
+
+class BuilderLabInput(BaseModel):
+    id: str
+    title: str
+    order: int
+    xp: int = 30
+    estimated_minutes: int | None = None
+    setup_type: str | None = "shell"
+    seed_commands: list[str] = []
+    validator_script: str | None = None  # None allowed in drafts, verified in publish gate
+
+class BuilderSectionInput(BaseModel):
+    id: str
+    title: str
+    order: int
+    xp: int = 10
+    content: str | None = None          # None allowed in drafts, verified in publish gate
+    labs: list[BuilderLabInput] = []
+
+class BuilderModuleInput(BaseModel):
+    id: str
+    title: str
+    description: str | None = None
+    topic: str
+    difficulty: str
+    estimated_minutes: int | None = None
+    tags: list[str] = []
+    sections: list[BuilderSectionInput] = []
+
+class BuilderDraftListItem(BaseModel):
+    id: str
+    title: str
+    topic: str | None
+    difficulty: str | None
+    total_sections: int
+    total_xp: int
+    status: str                     # 'draft' | 'published' | 'verified'
+    is_official_verified: bool
+    created_at: datetime
+    submitted_at: datetime | None
+
+class BuilderModuleDetail(BaseModel):
+    id: str
+    title: str
+    description: str | None
+    topic: str | None
+    difficulty: str | None
+    estimated_minutes: int | None
+    tags: list[str] = []
+    status: str
+    sections: list[BuilderSectionInput]
+
+
+class BuilderModuleResponse(BaseModel):
+    id: str
+    title: str
+    is_official_verified: bool
+    total_sections: int
+    total_xp: int
+    created_at: datetime
+
+

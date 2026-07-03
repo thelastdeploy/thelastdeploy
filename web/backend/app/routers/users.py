@@ -3,9 +3,9 @@
 import secrets
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, func
 from app.dependencies import get_db, get_current_user
-from app.models import User, LabProgress, SectionProgress
+from app.models import User, LabProgress, SectionProgress, Lab, Section, Module
 from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse
 from app.auth import verify_password, hash_password
 from app.email import send_verification_email
@@ -26,7 +26,6 @@ async def get_me(
         ).order_by(LabProgress.completed_at.desc())
     )).scalars().all()
     completed_labs = [p.lab_id for p in lab_progress_list]
-    lab_xp_sum = sum(p.xp_awarded for p in lab_progress_list)
 
     # 2. Fetch section progress in a single query, ordered by completion date descending
     section_progress_list = (await db.execute(
@@ -36,12 +35,40 @@ async def get_me(
         ).order_by(SectionProgress.completed_at.desc())
     )).scalars().all()
     completed_sections = [p.section_id for p in section_progress_list]
-    sec_xp_sum = sum(p.xp_awarded for p in section_progress_list)
 
-    actual_xp = lab_xp_sum + sec_xp_sum
+    # Recalculate verified XP
+    lab_verified_xp = await db.scalar(
+        select(func.sum(LabProgress.xp_awarded))
+        .join(Lab, Lab.id == LabProgress.lab_id)
+        .join(Module, Module.id == Lab.module_id)
+        .where(LabProgress.user_id == current_user.id, LabProgress.completed == True, Module.status == 'verified')
+    ) or 0
+    sec_verified_xp = await db.scalar(
+        select(func.sum(SectionProgress.xp_awarded))
+        .join(Section, Section.id == SectionProgress.section_id)
+        .join(Module, Module.id == Section.module_id)
+        .where(SectionProgress.user_id == current_user.id, SectionProgress.completed == True, Module.status == 'verified')
+    ) or 0
+    actual_xp = lab_verified_xp + sec_verified_xp
 
-    if current_user.xp != actual_xp:
+    # Recalculate unverified XP
+    lab_unverified_xp = await db.scalar(
+        select(func.sum(LabProgress.xp_awarded))
+        .join(Lab, Lab.id == LabProgress.lab_id)
+        .join(Module, Module.id == Lab.module_id)
+        .where(LabProgress.user_id == current_user.id, LabProgress.completed == True, Module.status != 'verified')
+    ) or 0
+    sec_unverified_xp = await db.scalar(
+        select(func.sum(SectionProgress.xp_awarded))
+        .join(Section, Section.id == SectionProgress.section_id)
+        .join(Module, Module.id == Section.module_id)
+        .where(SectionProgress.user_id == current_user.id, SectionProgress.completed == True, Module.status != 'verified')
+    ) or 0
+    actual_unverified_xp = lab_unverified_xp + sec_unverified_xp
+
+    if current_user.xp != actual_xp or current_user.unverified_xp != actual_unverified_xp:
         current_user.xp = actual_xp
+        current_user.unverified_xp = actual_unverified_xp
         db.add(current_user)
         await db.commit()
 
@@ -50,6 +77,7 @@ async def get_me(
         username=current_user.username,
         email=current_user.email,
         xp=current_user.xp,
+        unverified_xp=current_user.unverified_xp,
         streak_days=current_user.streak_days,
         completed_labs=completed_labs,
         completed_sections=completed_sections,
