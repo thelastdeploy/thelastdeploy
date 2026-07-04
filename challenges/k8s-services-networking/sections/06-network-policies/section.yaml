@@ -1,0 +1,5 @@
+id: k8s-network-policies
+title: "Securing Traffic with Network Policies"
+order: 6
+xp: 10
+version: 1

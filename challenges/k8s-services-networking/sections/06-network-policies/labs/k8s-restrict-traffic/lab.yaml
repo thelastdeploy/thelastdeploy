@@ -1,0 +1,15 @@
+id: k8s-restrict-traffic
+title: "Restrict Traffic with NetworkPolicy"
+xp: 40
+estimated_minutes: 5
+setup:
+  type: kind
+  resource_limits_cpu: 1
+  resource_limits_mem: 1024
+  seed_commands:
+    - "mkdir -p $HOME/k8s-services-networking"
+    - 'until kubectl get serviceaccount default --context=kind-tld-k8s-restrict-traffic &>/dev/null; do sleep 1; done'
+    - 'kubectl run frontend-pod --image=nginx --labels="role=frontend" --context=kind-tld-k8s-restrict-traffic'
+    - 'kubectl run backend-pod --image=nginx --labels="role=backend" --context=kind-tld-k8s-restrict-traffic'
+    - 'kubectl run secure-db-pod --image=nginx --labels="role=db" --context=kind-tld-k8s-restrict-traffic'
+version: 1

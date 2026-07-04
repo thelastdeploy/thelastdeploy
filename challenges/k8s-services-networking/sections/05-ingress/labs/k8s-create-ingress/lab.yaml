@@ -1,0 +1,16 @@
+id: k8s-create-ingress
+title: "Create an Ingress Resource"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: kind
+  resource_limits_cpu: 1
+  resource_limits_mem: 1024
+  seed_commands:
+    - "mkdir -p $HOME/k8s-services-networking"
+    - 'until kubectl get serviceaccount default --context=kind-tld-k8s-create-ingress &>/dev/null; do sleep 1; done'
+    - 'kubectl create deployment backend-app --image=nginx --replicas=1 --context=kind-tld-k8s-create-ingress'
+    - 'kubectl expose deployment backend-app --name=backend-service --port=80 --target-port=80 --context=kind-tld-k8s-create-ingress'
+    - 'kubectl create namespace ingress-nginx --context=kind-tld-k8s-create-ingress'
+    - 'kubectl create deployment ingress-nginx-controller --image=nginx:alpine -n ingress-nginx --context=kind-tld-k8s-create-ingress'
+version: 1

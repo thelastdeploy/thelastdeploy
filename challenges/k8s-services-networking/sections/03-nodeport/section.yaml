@@ -1,0 +1,5 @@
+id: k8s-nodeport
+title: "Exposing Apps with NodePort"
+order: 3
+xp: 10
+version: 1

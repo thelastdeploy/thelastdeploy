@@ -1,0 +1,15 @@
+id: k8s-debug-service-connectivity
+title: "Debug Service Connectivity"
+xp: 45
+estimated_minutes: 10
+setup:
+  type: kind
+  resource_limits_cpu: 1
+  resource_limits_mem: 1024
+  seed_commands:
+    - "mkdir -p $HOME/k8s-services-networking"
+    - 'until kubectl get serviceaccount default --context=kind-tld-k8s-debug-service-connectivity &>/dev/null; do sleep 1; done'
+    - 'kubectl run api-pod --image=nginx --labels="app=api-server" --context=kind-tld-k8s-debug-service-connectivity'
+    - 'echo -e "apiVersion: v1\nkind: Service\nmetadata:\n  name: api-service\nspec:\n  selector:\n    app: api-backend\n  ports:\n  - port: 80\n    targetPort: 8080" > $HOME/k8s-services-networking/api-service-broken.yaml'
+    - 'kubectl apply -f $HOME/k8s-services-networking/api-service-broken.yaml --context=kind-tld-k8s-debug-service-connectivity'
+version: 1

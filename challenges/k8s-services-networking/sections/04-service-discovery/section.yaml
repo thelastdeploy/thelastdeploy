@@ -1,0 +1,5 @@
+id: k8s-service-discovery
+title: "Service Discovery & CoreDNS"
+order: 4
+xp: 10
+version: 1

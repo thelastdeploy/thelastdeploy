@@ -1,0 +1,13 @@
+id: k8s-install-ingress
+title: "Install an Ingress Controller"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: kind
+  resource_limits_cpu: 1
+  resource_limits_mem: 1024
+  seed_commands:
+    - "mkdir -p $HOME/k8s-services-networking"
+    - 'until kubectl get serviceaccount default --context=kind-tld-k8s-install-ingress &>/dev/null; do sleep 1; done'
+    - 'echo -e "apiVersion: v1\nkind: Namespace\nmetadata:\n  name: ingress-nginx\n---\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: ingress-nginx-controller\n  namespace: ingress-nginx\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app.kubernetes.io/component: controller\n  template:\n    metadata:\n      labels:\n        app.kubernetes.io/component: controller\n    spec:\n      containers:\n      - name: controller\n        image: nginx:alpine\n        ports:\n        - containerPort: 80" > $HOME/k8s-services-networking/ingress-controller.yaml'
+version: 1

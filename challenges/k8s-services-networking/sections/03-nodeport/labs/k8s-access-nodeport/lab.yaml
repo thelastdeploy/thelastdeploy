@@ -1,0 +1,16 @@
+id: k8s-access-nodeport
+title: "Access NodePort Service"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: kind
+  resource_limits_cpu: 1
+  resource_limits_mem: 1024
+  seed_commands:
+    - "mkdir -p $HOME/k8s-services-networking"
+    - "rm -f $HOME/k8s-services-networking/nodeport-response.html"
+    - 'until kubectl get serviceaccount default --context=kind-tld-k8s-access-nodeport &>/dev/null; do sleep 1; done'
+    - 'kubectl create deployment backend-app --image=nginx --replicas=1 --context=kind-tld-k8s-access-nodeport'
+    - 'echo -e "apiVersion: v1\nkind: Service\nmetadata:\n  name: nodeport-service\nspec:\n  type: NodePort\n  selector:\n    app: backend-app\n  ports:\n  - port: 80\n    targetPort: 80\n    nodePort: 30080" > $HOME/k8s-services-networking/nodeport-svc.yaml'
+    - 'kubectl apply -f $HOME/k8s-services-networking/nodeport-svc.yaml --context=kind-tld-k8s-access-nodeport'
+version: 1
