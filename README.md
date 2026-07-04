@@ -146,6 +146,7 @@ npm run dev   # runs on http://localhost:3002
 | Git Fundamentals | ✅ Available |
 | Git Branching | ✅ Available |
 | Git Remotes & Collaboration | ✅ Available |
+| Git History & Recovery | ✅ Available |
 | Docker Fundamentals | ✅ Available |
 | Docker Containers | ✅ Available |
 | Docker Images | ✅ Available |
