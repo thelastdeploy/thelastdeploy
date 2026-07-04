@@ -1,0 +1,13 @@
+id: git-branching
+title: "Git Branching"
+description: "Master the concept of branching in Git. Learn how to isolate features, perform merges, resolve conflicts, delete branches, and complete standard feature branch workflows."
+topic: git
+difficulty: intermediate
+estimated_minutes: 60
+tags:
+  - git
+  - branching
+  - merge
+  - conflict-resolution
+  - workflow
+version: 1

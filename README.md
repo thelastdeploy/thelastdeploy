@@ -144,6 +144,7 @@ npm run dev   # runs on http://localhost:3002
 | Linux Processes & Services | ✅ Available |
 | Linux Networking | ✅ Available |
 | Git Fundamentals | ✅ Available |
+| Git Branching | ✅ Available |
 | Docker Fundamentals | ✅ Available |
 | Docker Containers | ✅ Available |
 | Docker Images | ✅ Available |
