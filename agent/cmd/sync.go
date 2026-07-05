@@ -197,7 +197,7 @@ func syncFromGitHub(repo string, challengesDir string, targetModule string, targ
 		parts := strings.Split(filepath.ToSlash(file.Name), "/")
 		challengesIdx := -1
 		for idx, part := range parts {
-			if part == "challenges" {
+			if part == "challenges" && idx == 1 {
 				challengesIdx = idx
 				break
 			}
@@ -240,7 +240,7 @@ func syncFromGitHub(repo string, challengesDir string, targetModule string, targ
 			parts := strings.Split(filepath.ToSlash(file.Name), "/")
 			challengesIdx := -1
 			for idx, part := range parts {
-				if part == "challenges" {
+				if part == "challenges" && idx == 1 {
 					challengesIdx = idx
 					break
 				}
@@ -266,7 +266,7 @@ func syncFromGitHub(repo string, challengesDir string, targetModule string, targ
 		parts := strings.Split(filepath.ToSlash(file.Name), "/")
 		challengesIdx := -1
 		for idx, part := range parts {
-			if part == "challenges" {
+			if part == "challenges" && idx == 1 {
 				challengesIdx = idx
 				break
 			}

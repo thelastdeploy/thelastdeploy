@@ -58,6 +58,15 @@ func Execute() {
 }
 
 func printUsage() {
+	fmt.Println("\x1b[1;36m" + ` _________  ___       ________     
+|\___   ___\\  \     |\   ___ \    
+\|___ \  \_\ \  \    \ \  \_|\ \   
+     \ \  \ \ \  \    \ \  \ \\ \  
+      \ \  \ \ \  \____\ \  \_| \ \ 
+       \ \__\ \ \_______\ \_______\
+        \|__|  \|_______|\|_______|
+
+    T H E   L A S T   D E P L O Y` + "\x1b[0m")
 	fmt.Println(`The Last Deploy — local DevOps practice platform
 
 Usage:
