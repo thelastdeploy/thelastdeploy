@@ -1,0 +1,11 @@
+id: nginx-fix-installation
+title: "Fix Broken Installation"
+xp: 50
+estimated_minutes: 15
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo sed -i 's/listen 80 default_server;/listen 80 default_server; broken_syntax_here/' /etc/nginx/sites-available/default"
+    - "sudo systemctl stop nginx || true"
+version: 1

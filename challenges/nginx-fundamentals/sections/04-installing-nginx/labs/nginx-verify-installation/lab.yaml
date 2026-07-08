@@ -1,0 +1,9 @@
+id: nginx-verify-installation
+title: "Verify Nginx Installation"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "echo 'Verifying default Nginx configuration file presence'"
+version: 1

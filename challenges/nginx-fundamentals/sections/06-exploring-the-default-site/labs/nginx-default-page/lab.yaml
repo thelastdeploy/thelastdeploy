@@ -1,0 +1,11 @@
+id: nginx-default-page
+title: "Modify Default Site Page"
+xp: 30
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "sudo systemctl start nginx || true"
+    - "sudo mkdir -p /var/www/html"
+    - "if [ ! -f /var/www/html/index.html ]; then echo 'Welcome to Nginx' | sudo tee /var/www/html/index.html > /dev/null; fi"
+version: 1

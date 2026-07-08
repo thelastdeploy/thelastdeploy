@@ -1,0 +1,9 @@
+id: nginx-install-server
+title: "Install Nginx Server"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "echo 'Starting lab to check Nginx package installation'"
+version: 1
