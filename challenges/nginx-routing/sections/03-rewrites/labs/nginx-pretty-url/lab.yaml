@@ -1,0 +1,12 @@
+id: nginx-pretty-url
+title: "Configure Pretty URL Rewrite"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo mkdir -p /var/www/html"
+    - "echo 'product page' | sudo tee /var/www/html/product.html > /dev/null"
+    - "sudo systemctl start nginx || true"
+version: 1

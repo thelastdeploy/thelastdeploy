@@ -1,0 +1,12 @@
+id: nginx-exact-match
+title: "Configure Exact Match"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo mkdir -p /var/www/html"
+    - "echo 'exact test' | sudo tee /var/www/html/special.html > /dev/null"
+    - "sudo systemctl start nginx || true"
+version: 1

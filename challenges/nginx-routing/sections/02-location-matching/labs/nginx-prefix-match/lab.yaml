@@ -1,0 +1,12 @@
+id: nginx-prefix-match
+title: "Configure Prefix Match"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo mkdir -p /var/www/docs"
+    - "echo 'prefix test' | sudo tee /var/www/docs/index.html > /dev/null"
+    - "sudo systemctl start nginx || true"
+version: 1

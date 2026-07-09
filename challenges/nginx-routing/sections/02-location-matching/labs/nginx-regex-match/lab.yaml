@@ -1,0 +1,12 @@
+id: nginx-regex-match
+title: "Configure Regex Match"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo mkdir -p /var/www/html"
+    - "echo 'regex test' | sudo tee /var/www/html/test.PNG > /dev/null"
+    - "sudo systemctl start nginx || true"
+version: 1

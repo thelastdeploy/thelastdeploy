@@ -1,0 +1,25 @@
+id: nginx-fix-routing
+title: "Fix Routing Conflict"
+xp: 40
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Seed files
+    - "sudo mkdir -p /var/www/docs/documents /var/www/pdf/documents"
+    - "echo 'docs report' | sudo tee /var/www/docs/documents/report.pdf > /dev/null"
+    - "echo 'pdf report' | sudo tee /var/www/pdf/documents/report.pdf > /dev/null"
+    # Overwrite default block location rules with conflicting blocks
+    # We will insert them right under standard server block config
+    # To keep it safe, let's append it to /etc/nginx/sites-available/default after removing existing custom blocks
+    - "sudo sed -i '/location \\/documents/,+3d' /etc/nginx/sites-available/default || true"
+    - "sudo sed -i '/location \\~ \\\\.pdf/ ,+3d' /etc/nginx/sites-available/default || true"
+    # Now write the conflicting config directly into /etc/nginx/sites-available/default before the last curly brace
+    # First we remove the last '}'
+    - "sudo sed -i '$ d' /etc/nginx/sites-available/default"
+    # Then append the locations and the final '}'
+    - "echo -e '    location /documents/ {\n        root /var/www/docs;\n    }\n    location ~ \\\\.pdf$ {\n        root /var/www/pdf;\n    }\n}' | sudo tee -a /etc/nginx/sites-available/default > /dev/null"
+    - "sudo systemctl start nginx || true"
+    - "sudo systemctl reload nginx || true"
+version: 1
