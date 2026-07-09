@@ -1,0 +1,16 @@
+id: nginx-limit-requests
+title: "Limit Request Rate"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak || true"
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Inject api location block to default if not present
+    - "sudo sed -i '/location \\/api/,+3d' /etc/nginx/sites-available/default || true"
+    - "sudo sed -i '$ d' /etc/nginx/sites-available/default"
+    - "echo -e '    location /api/ {\n        root /var/www/html;\n    }\n}' | sudo tee -a /etc/nginx/sites-available/default > /dev/null"
+    - "sudo systemctl start nginx || true"
+    - "sudo systemctl reload nginx || true"
+version: 1

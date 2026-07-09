@@ -1,0 +1,14 @@
+id: nginx-optimize-production-config
+title: "Optimize Production Configuration"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak || true"
+    # Seed sub-optimal variables (double escaped backslashes)
+    - "sudo sed -i 's/worker_processes[[:space:]]\\\\+auto;/worker_processes 1;/g' /etc/nginx/nginx.conf"
+    - "sudo sed -i 's/keepalive_timeout[[:space:]]\\\\+[0-9]\\\\+;/keepalive_timeout 300;/g' /etc/nginx/nginx.conf"
+    - "sudo systemctl start nginx || true"
+    - "sudo systemctl reload nginx || true"
+version: 1

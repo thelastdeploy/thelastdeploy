@@ -1,0 +1,10 @@
+id: nginx-enable-gzip
+title: "Enable Gzip Compression"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak || true"
+    - "sudo systemctl start nginx || true"
+version: 1

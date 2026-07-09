@@ -1,0 +1,10 @@
+id: nginx-x-frame-options
+title: "Configure X-Frame-Options"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo systemctl start nginx || true"
+version: 1
