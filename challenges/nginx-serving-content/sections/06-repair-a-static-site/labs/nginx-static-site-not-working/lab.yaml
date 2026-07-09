@@ -1,0 +1,15 @@
+id: nginx-static-site-not-working
+title: "Repair Blocked Static Page"
+xp: 40
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    # Ensure default welcomes page exists
+    - "sudo mkdir -p /var/www/html"
+    - "if [ ! -f /var/www/html/index.html ]; then echo 'Welcome to Nginx' | sudo tee /var/www/html/index.html > /dev/null; fi"
+    - "sudo chmod 644 /var/www/html/index.html"
+    # Revoke permissions on the parent folder /var/www/html
+    - "sudo chmod 000 /var/www/html"
+    - "sudo systemctl start nginx || true"
+version: 1

@@ -1,0 +1,13 @@
+id: nginx-root-directive
+title: "Configure Root Directive"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    # Ensure test directories and files exist
+    - "sudo mkdir -p /var/www/static/images"
+    - "echo 'root test' | sudo tee /var/www/static/images/test.txt > /dev/null"
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo systemctl start nginx || true"
+version: 1

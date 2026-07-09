@@ -1,0 +1,14 @@
+id: nginx-disable-directory-listing
+title: "Disable Directory Listing"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo mkdir -p /var/www/html/secret"
+    - "echo 'private data' | sudo tee /var/www/html/secret/credentials.txt > /dev/null"
+    # Ensure there is no index file in secret/
+    - "sudo rm -f /var/www/html/secret/index.html /var/www/html/secret/index.htm"
+    - "sudo systemctl start nginx || true"
+version: 1

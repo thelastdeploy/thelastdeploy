@@ -1,0 +1,13 @@
+id: nginx-enable-directory-listing
+title: "Enable Directory Listing"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo mkdir -p /var/www/html/downloads"
+    - "echo 'some package content' | sudo tee /var/www/html/downloads/pkg1.tar.gz > /dev/null"
+    - "sudo rm -f /var/www/html/downloads/index.html /var/www/html/downloads/index.htm"
+    - "sudo systemctl start nginx || true"
+version: 1

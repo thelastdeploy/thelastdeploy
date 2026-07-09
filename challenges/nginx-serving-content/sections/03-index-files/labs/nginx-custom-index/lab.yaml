@@ -1,0 +1,12 @@
+id: nginx-custom-index
+title: "Configure Custom Index"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo mkdir -p /var/www/html"
+    - "echo 'Custom welcome page' | sudo tee /var/www/html/custom.html > /dev/null"
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo systemctl start nginx || true"
+version: 1
