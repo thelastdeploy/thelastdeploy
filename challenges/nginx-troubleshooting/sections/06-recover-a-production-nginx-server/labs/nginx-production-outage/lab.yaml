@@ -1,0 +1,17 @@
+id: nginx-production-outage
+title: "Recover Production Outage"
+xp: 30
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "sudo systemctl stop nginx || true"
+    - "sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak || true"
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Seed bug 1: Missing semicolon on line 35 in nginx.conf (after keepalive_timeout)
+    - "sudo sed -i 's/keepalive_timeout[[:space:]]\\+[0-9]\\+;/keepalive_timeout 65/g' /etc/nginx/nginx.conf"
+    # Seed bug 2: Duplicate default_server block in sites-available/default (we append a dummy server block with default_server)
+    - "sudo sed -i '$ d' /etc/nginx/sites-available/default"
+    - "echo -e '    location /outage {\n        proxy_pass ht://127.0.0.1:8080;\n    }\n}\nserver {\n    listen 80 default_server;\n    server_name broken.local;\n}' | sudo tee -a /etc/nginx/sites-available/default > /dev/null"
+    # Bug 3 is already injected inside the /outage location block: proxy_pass ht://127.0.0.1:8080; (invalid scheme)
+version: 1

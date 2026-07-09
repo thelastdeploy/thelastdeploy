@@ -1,0 +1,12 @@
+id: nginx-find-client-request
+title: "Find Client Request"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -f /tmp/client_ip.txt"
+    # Seed access log with a target line
+    - "sudo mkdir -p /var/log/nginx"
+    - "echo '192.168.12.34 - - [09/Jul/2026:22:15:30 +0000] \"GET /secret-info HTTP/1.1\" 200 612 \"-\" \"SecretAgent\"' | sudo tee -a /var/log/nginx/access.log > /dev/null"
+version: 1

@@ -1,0 +1,12 @@
+id: nginx-identify-startup-error
+title: "Identify Startup Error"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -f /tmp/failed_port.txt"
+    # Seed error log with a bind error
+    - "sudo mkdir -p /var/log/nginx"
+    - "echo '2026/07/09 22:15:30 [emerg] 1234#1234: bind() to 0.0.0.0:9999 failed (98: Address already in use)' | sudo tee -a /var/log/nginx/error.log > /dev/null"
+version: 1

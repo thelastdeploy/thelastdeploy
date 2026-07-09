@@ -1,0 +1,10 @@
+id: nginx-fix-403
+title: "Fix a 403 Forbidden Error"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo systemctl start nginx || true"
+    - "sudo chmod 000 /var/www/html/index.html || true"
+version: 1

@@ -1,0 +1,20 @@
+id: nginx-fix-502
+title: "Fix a 502 Bad Gateway Error"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Ensure any active python servers on 8080 are killed
+    - "sudo kill -9 $(sudo lsof -t -i:8080) &>/dev/null || true"
+    # Start a mock python http server in background on port 8080
+    - "mkdir -p /tmp/mock-backend && echo 'API OK' > /tmp/mock-backend/index.html"
+    - "python3 -m http.server 8080 --directory /tmp/mock-backend &>/dev/null &"
+    # Inject bad proxy pass (9090 instead of 8080) to /api block
+    - "sudo sed -i '/location \\/api/,+3d' /etc/nginx/sites-available/default || true"
+    - "sudo sed -i '$ d' /etc/nginx/sites-available/default"
+    - "echo -e '    location /api {\n        proxy_pass http://127.0.0.1:9090;\n    }\n}' | sudo tee -a /etc/nginx/sites-available/default > /dev/null"
+    - "sudo systemctl start nginx || true"
+    - "sudo systemctl reload nginx || true"
+version: 1

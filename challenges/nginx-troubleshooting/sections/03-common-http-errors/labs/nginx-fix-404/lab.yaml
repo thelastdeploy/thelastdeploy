@@ -1,0 +1,13 @@
+id: nginx-fix-404
+title: "Fix a 404 Not Found Error"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Replace root directive with invalid path
+    - "sudo sed -i 's/root \\/var\\/www\\/html;/root \\/var\\/www\\/htm;/g' /etc/nginx/sites-available/default"
+    - "sudo systemctl start nginx || true"
+    - "sudo systemctl reload nginx || true"
+version: 1

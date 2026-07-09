@@ -1,0 +1,22 @@
+id: nginx-port-mismatch
+title: "Fix Upstream Port Mismatch"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Ensure any active python servers on 8081 are killed
+    - "sudo kill -9 $(sudo lsof -t -i:8081) &>/dev/null || true"
+    # Start mock python server in background on port 8081
+    - "mkdir -p /tmp/backend-port && echo 'UPSTREAM OK' > /tmp/backend-port/index.html"
+    - "python3 -m http.server 8081 --directory /tmp/backend-port &>/dev/null &"
+    # Create the upstream conf file
+    - "echo -e 'upstream api_pool {\n    server 127.0.0.1:8088;\n}' | sudo tee /etc/nginx/conf.d/upstream.conf > /dev/null"
+    # Configure /app location in default pointing to api_pool
+    - "sudo sed -i '/location \\/app/,+3d' /etc/nginx/sites-available/default || true"
+    - "sudo sed -i '$ d' /etc/nginx/sites-available/default"
+    - "echo -e '    location /app {\n        proxy_pass http://api_pool;\n    }\n}' | sudo tee -a /etc/nginx/sites-available/default > /dev/null"
+    - "sudo systemctl start nginx || true"
+    - "sudo systemctl reload nginx || true"
+version: 1

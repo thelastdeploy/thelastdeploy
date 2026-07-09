@@ -1,0 +1,25 @@
+id: nginx-backend-offline
+title: "Start Offline Backend"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak || true"
+    # Create the upstream definition in nginx.conf
+    - "sudo sed -i '/upstream app_servers/,+3d' /etc/nginx/nginx.conf || true"
+    - "sudo sed -i '/http {/a \\    upstream app_servers {\\n        server 127.0.0.1:8081;\\n    }' /etc/nginx/nginx.conf"
+    # Ensure /app location block exists in default
+    - "sudo sed -i '/location \\/app/,+3d' /etc/nginx/sites-available/default || true"
+    - "sudo sed -i '$ d' /etc/nginx/sites-available/default"
+    - "echo -e '    location /app {\n        proxy_pass http://app_servers;\n    }\n}' | sudo tee -a /etc/nginx/sites-available/default > /dev/null"
+    # Ensure any active python servers on 8081 are killed
+    - "sudo kill -9 $(sudo lsof -t -i:8081) &>/dev/null || true"
+    # Create the helper start_backend.sh script
+    - "mkdir -p /tmp/backend-static && echo 'BACKEND LIVE' > /tmp/backend-static/index.html"
+    - "echo -e '#!/bin/bash\npython3 -m http.server 8081 --directory /tmp/backend-static &' > /tmp/start_backend.sh"
+    - "chmod +x /tmp/start_backend.sh"
+    - "sudo systemctl start nginx || true"
+    - "sudo systemctl reload nginx || true"
+version: 1
