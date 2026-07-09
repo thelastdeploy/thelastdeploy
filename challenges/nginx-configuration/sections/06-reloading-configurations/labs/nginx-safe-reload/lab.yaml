@@ -1,0 +1,14 @@
+id: nginx-safe-reload
+title: "Safe Reload Nginx"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Modify default block to listen on port 8085 (replace 'listen 80 default_server;' and 'listen [::]:80 default_server;')
+    - "sudo sed -i 's/listen 80 default_server;/listen 8085 default_server;/g' /etc/nginx/sites-available/default"
+    - "sudo sed -i 's/listen \\[::\\]:80 default_server;/listen \\[::\\]:8085 default_server;/g' /etc/nginx/sites-available/default"
+    - "sudo systemctl start nginx || true"
+    # Ensure it's not yet reloaded so port 8085 is not listening (Nginx has cached configuration on port 80)
+version: 1

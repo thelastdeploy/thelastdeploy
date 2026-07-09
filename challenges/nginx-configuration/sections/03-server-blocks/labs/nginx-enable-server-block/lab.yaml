@@ -1,0 +1,12 @@
+id: nginx-enable-server-block
+title: "Enable Server Block"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    # Ensure sites-available/mysite exists so the user can symlink it.
+    - "sudo mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled"
+    - "sudo rm -f /etc/nginx/sites-enabled/mysite /etc/nginx/sites-enabled/mysite.conf"
+    - "if [ ! -f /etc/nginx/sites-available/mysite ]; then echo -e 'server {\n    listen 8080;\n    server_name mysite.local;\n    root /var/www/mysite;\n}' | sudo tee /etc/nginx/sites-available/mysite > /dev/null; fi"
+version: 1

@@ -1,0 +1,9 @@
+id: nginx-organize-configs
+title: "Organize Configs"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo rm -f /etc/nginx/conf.d/upstream.conf"
+version: 1

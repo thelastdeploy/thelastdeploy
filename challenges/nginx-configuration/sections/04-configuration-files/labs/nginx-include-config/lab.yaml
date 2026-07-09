@@ -1,0 +1,12 @@
+id: nginx-include-config
+title: "Include Config"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo mkdir -p /etc/nginx/snippets"
+    - "echo 'add_header X-Custom-Header \"DevLab\";' | sudo tee /etc/nginx/snippets/custom-headers.conf > /dev/null"
+    - "sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak || true"
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+version: 1

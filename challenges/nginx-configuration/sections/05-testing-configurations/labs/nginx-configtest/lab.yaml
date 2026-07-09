@@ -1,0 +1,9 @@
+id: nginx-configtest
+title: "Nginx Config Test"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -f /tmp/config_test_result.txt"
+version: 2

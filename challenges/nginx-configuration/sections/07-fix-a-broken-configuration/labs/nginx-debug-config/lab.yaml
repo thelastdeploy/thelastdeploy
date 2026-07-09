@@ -1,0 +1,14 @@
+id: nginx-debug-config
+title: "Debug Config Conflict"
+xp: 50
+estimated_minutes: 15
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Create duplicate site configuration
+    - "sudo mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled"
+    - "echo -e 'server {\n    listen 80 default_server;\n    server_name duplicatesite.local;\n    root /var/www/html;\n}' | sudo tee /etc/nginx/sites-available/duplicate-default > /dev/null"
+    - "sudo ln -sf /etc/nginx/sites-available/duplicate-default /etc/nginx/sites-enabled/duplicate-default"
+    - "sudo systemctl stop nginx || true"
+version: 1

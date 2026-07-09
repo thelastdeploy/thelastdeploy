@@ -1,0 +1,12 @@
+id: nginx-find-config-error
+title: "Find Config Error"
+xp: 30
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    # Backup, then break a directive by removing a semicolon
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Find root directive and remove its semicolon
+    - "sudo sed -i 's/root \/var\/www\/html;/root \/var\/www\/html/' /etc/nginx/sites-available/default"
+version: 1
