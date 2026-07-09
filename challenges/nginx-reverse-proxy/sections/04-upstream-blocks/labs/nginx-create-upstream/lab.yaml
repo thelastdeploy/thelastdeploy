@@ -1,0 +1,11 @@
+id: nginx-create-upstream
+title: "Create Upstream"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak || true"
+    - "sudo rm -f /etc/nginx/conf.d/upstream.conf"
+    - "sudo systemctl start nginx || true"
+version: 1

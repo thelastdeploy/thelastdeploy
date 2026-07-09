@@ -1,0 +1,15 @@
+id: nginx-forward-host-header
+title: "Forward Host Header"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    # Ensure default has /node block to modify
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    - "sudo sed -i '/location \\/node/,+3d' /etc/nginx/sites-available/default || true"
+    - "sudo sed -i '$ d' /etc/nginx/sites-available/default"
+    - "echo -e '    location /node {\n        proxy_pass http://127.0.0.1:3000;\n    }\n}' | sudo tee -a /etc/nginx/sites-available/default > /dev/null"
+    - "sudo systemctl start nginx || true"
+    - "sudo systemctl reload nginx || true"
+version: 1

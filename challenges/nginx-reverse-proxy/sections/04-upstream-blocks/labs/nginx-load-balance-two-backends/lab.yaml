@@ -1,0 +1,13 @@
+id: nginx-load-balance-two-backends
+title: "Load Balance Backends"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
+    # Write default upstream definition if not present (in conf.d to keep default config simple)
+    - "echo -e 'upstream backend_servers {\n    server 127.0.0.1:8001;\n    server 127.0.0.1:8002;\n}' | sudo tee /etc/nginx/conf.d/upstream.conf > /dev/null"
+    - "sudo systemctl start nginx || true"
+    - "sudo systemctl reload nginx || true"
+version: 1
