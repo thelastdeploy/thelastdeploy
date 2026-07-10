@@ -21,9 +21,9 @@ function CallbackContent() {
 
     let isMounted = true;
 
-    async function authenticate() {
+    async function authenticate(authCode: string) {
       try {
-        const { access_token, device_key } = await api.loginWithGitHub(code);
+        const { access_token, device_key } = await api.loginWithGitHub(authCode);
         if (isMounted) {
           await login(access_token, device_key);
           router.push("/dashboard");
@@ -35,7 +35,7 @@ function CallbackContent() {
       }
     }
 
-    authenticate();
+    authenticate(code);
 
     return () => {
       isMounted = false;
