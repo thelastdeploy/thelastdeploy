@@ -96,7 +96,7 @@ export default function Hero() {
       >
         {/* Badge */}
         <div className="animate-fade-in-up" style={{ marginBottom: "24px" }}>
-          <span className="section-badge animate-pulse-glow">
+          <span className="section-badge animate-pulse-glow" style={{ background: "rgba(34,197,94,0.08)", borderColor: "rgba(34,197,94,0.25)", color: "#4ade80" }}>
             <span style={{
               width: "6px",
               height: "6px",
@@ -105,7 +105,7 @@ export default function Hero() {
               display: "inline-block",
               boxShadow: "0 0 6px rgba(34,197,94,0.8)",
             }} />
-            Open Source · Pre-Launch
+            Early Access Live for Testing
           </span>
         </div>
 
@@ -158,7 +158,7 @@ export default function Hero() {
           }}
         >
           <a
-            href={SOCIAL_LINKS.discord}
+            href="https://app.thelastdeploy.com"
             target="_blank"
             rel="noopener noreferrer"
             style={{
@@ -170,21 +170,91 @@ export default function Hero() {
               fontSize: "15px",
               fontWeight: 600,
               color: "#fff",
-              background: "linear-gradient(135deg, #5865F2 0%, #4752c4 100%)",
+              background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)",
               borderRadius: "10px",
               textDecoration: "none",
-              border: "1px solid rgba(88,101,242,0.35)",
-              boxShadow: "0 0 20px rgba(88,101,242,0.2)",
+              border: "1px solid rgba(34,197,94,0.35)",
+              boxShadow: "0 0 20px rgba(34,197,94,0.2)",
               transition: "all 0.3s ease",
               minWidth: "160px",
             }}
             onMouseEnter={e => {
               (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.02)";
-              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 30px rgba(88,101,242,0.4), 0 8px 24px rgba(0,0,0,0.4)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 30px rgba(34,197,94,0.4), 0 8px 24px rgba(0,0,0,0.4)";
             }}
             onMouseLeave={e => {
               (e.currentTarget as HTMLElement).style.transform = "none";
-              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 20px rgba(88,101,242,0.2)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 20px rgba(34,197,94,0.2)";
+            }}
+          >
+            Start Practicing
+          </a>
+
+          <a
+            href="https://docs.thelastdeploy.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              padding: "14px 28px",
+              fontSize: "15px",
+              fontWeight: 500,
+              color: "#c8c8e0",
+              background: "rgba(255,255,255,0.04)",
+              borderRadius: "10px",
+              textDecoration: "none",
+              border: "1px solid rgba(255,255,255,0.08)",
+              backdropFilter: "blur(8px)",
+              transition: "all 0.3s ease",
+              minWidth: "160px",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.14)";
+              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.02)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
+              (e.currentTarget as HTMLElement).style.transform = "none";
+            }}
+          >
+            Read Docs
+          </a>
+
+          <a
+            href={SOCIAL_LINKS.discord}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              padding: "14px 28px",
+              fontSize: "15px",
+              fontWeight: 500,
+              color: "#c8c8e0",
+              background: "rgba(255,255,255,0.04)",
+              borderRadius: "10px",
+              textDecoration: "none",
+              border: "1px solid rgba(255,255,255,0.08)",
+              backdropFilter: "blur(8px)",
+              transition: "all 0.3s ease",
+              minWidth: "160px",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.14)";
+              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.02)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
+              (e.currentTarget as HTMLElement).style.transform = "none";
             }}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
@@ -217,7 +287,7 @@ export default function Hero() {
             onMouseEnter={e => {
               (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)";
               (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.14)";
-              (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)";
+              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.02)";
             }}
             onMouseLeave={e => {
               (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
@@ -228,7 +298,7 @@ export default function Hero() {
             <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
               <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
             </svg>
-            View on GitHub
+            GitHub
           </a>
         </div>
 

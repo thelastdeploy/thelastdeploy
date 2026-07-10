@@ -71,6 +71,68 @@ export default function Navbar() {
           {/* Nav links */}
           <nav style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <a
+              href="https://docs.thelastdeploy.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "8px 14px",
+                fontSize: "13px",
+                fontWeight: 500,
+                color: "#8888aa",
+                textDecoration: "none",
+                borderRadius: "8px",
+                border: "1px solid transparent",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.color = "#f0f0ff";
+                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.color = "#8888aa";
+                (e.currentTarget as HTMLElement).style.background = "transparent";
+                (e.currentTarget as HTMLElement).style.borderColor = "transparent";
+              }}
+            >
+              Docs
+            </a>
+
+            <a
+              href="https://app.thelastdeploy.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: "8px 16px",
+                fontSize: "13px",
+                fontWeight: 600,
+                color: "#fff",
+                background: "linear-gradient(135deg, #22c55e, #16a34a)",
+                borderRadius: "8px",
+                textDecoration: "none",
+                border: "1px solid rgba(34,197,94,0.4)",
+                boxShadow: "0 0 12px rgba(34,197,94,0.15)",
+                transition: "all 0.2s ease",
+                marginRight: "6px",
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 20px rgba(34,197,94,0.3)";
+                (e.currentTarget as HTMLElement).style.transform = "translateY(-0.5px)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 12px rgba(34,197,94,0.15)";
+                (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
+              }}
+            >
+              Open App
+            </a>
+
+            <a
               href={SOCIAL_LINKS.github}
               target="_blank"
               rel="noopener noreferrer"

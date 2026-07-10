@@ -3,6 +3,8 @@
 import { SOCIAL_LINKS } from "@/lib/constants";
 
 const footerLinks = [
+  { label: "App", href: "https://app.thelastdeploy.com" },
+  { label: "Docs", href: "https://docs.thelastdeploy.com" },
   { label: "GitHub", href: SOCIAL_LINKS.github },
   { label: "Discord", href: SOCIAL_LINKS.discord },
   { label: "LinkedIn", href: SOCIAL_LINKS.linkedin },
