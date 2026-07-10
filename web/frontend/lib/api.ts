@@ -69,6 +69,10 @@ export const api = {
     return res;
   },
 
+  checkUsername: async (username: string) => {
+    return request<{ available: boolean; detail?: string }>(`/check-username?username=${encodeURIComponent(username)}`);
+  },
+
   verifyEmail: async (token: string) => {
     return request<{ detail: string }>("/verify-email", {
       method: "POST",

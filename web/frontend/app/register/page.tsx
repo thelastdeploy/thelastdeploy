@@ -2,11 +2,17 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+  </svg>
+);
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -16,9 +22,59 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 
+  // Username checking states
+  const [isCheckingUsername, setIsCheckingUsername] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [usernameMessage, setUsernameMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!username) {
+      setUsernameAvailable(null);
+      setUsernameMessage(null);
+      setIsCheckingUsername(false);
+      return;
+    }
+
+    if (username.length < 3) {
+      setUsernameAvailable(false);
+      setUsernameMessage("Username must be at least 3 characters");
+      setIsCheckingUsername(false);
+      return;
+    }
+
+    setIsCheckingUsername(true);
+    setUsernameMessage(null);
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await api.checkUsername(username);
+        if (res.available) {
+          setUsernameAvailable(true);
+          setUsernameMessage("Username is available!");
+        } else {
+          setUsernameAvailable(false);
+          setUsernameMessage(res.detail || "Username is already taken");
+        }
+      } catch (err) {
+        setUsernameAvailable(null);
+        setUsernameMessage("Could not verify username availability");
+      } finally {
+        setIsCheckingUsername(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [username]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (usernameAvailable === false) {
+      setError("Please choose an available username.");
+      return;
+    }
+
     setLoading(true);
     try {
       await api.register(email, username, password);
@@ -28,6 +84,19 @@ export default function RegisterPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGithubLogin = () => {
+    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+    if (!clientId) {
+      setError("GitHub Client ID is not configured on the client.");
+      return;
+    }
+    const redirectUri = `${window.location.origin}/login/callback`;
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+      redirectUri
+    )}&scope=user:email`;
+    window.location.href = githubAuthUrl;
   };
 
   return (
@@ -96,12 +165,23 @@ export default function RegisterPage() {
                   <Input
                     id="username"
                     type="text"
-                    placeholder="fsociety"
+                    placeholder="devops_ninja"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
                     className="bg-card border-border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl focus:border-[var(--accent-primary)] focus:ring-0"
                   />
+                  {username && (
+                    <div className="text-xs mt-1.5 flex items-center gap-1.5 px-1 min-h-[16px]">
+                      {isCheckingUsername ? (
+                        <span className="text-muted-foreground animate-pulse">Checking availability...</span>
+                      ) : usernameAvailable === true ? (
+                        <span className="text-emerald-500 font-medium">✓ {usernameMessage}</span>
+                      ) : usernameAvailable === false ? (
+                        <span className="text-red-500 font-medium">✗ {usernameMessage}</span>
+                      ) : null}
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="email" className="text-muted-foreground/80 text-xs font-semibold uppercase tracking-wider">
@@ -146,6 +226,24 @@ export default function RegisterPage() {
                   {loading ? "Creating account..." : "Create account"}
                 </button>
               </form>
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-border/80" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleGithubLogin}
+                className="w-full h-12 rounded-xl border border-border bg-card text-foreground font-bold hover:bg-muted/40 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+              >
+                <GithubIcon className="w-5 h-5 text-foreground" />
+                Continue with GitHub
+              </button>
 
               <p className="text-center text-sm text-muted-foreground mt-6">
                 Already have an account?{" "}

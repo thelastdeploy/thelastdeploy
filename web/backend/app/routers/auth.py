@@ -72,6 +72,16 @@ async def register(
     return MessageResponse(detail="Verification email sent. Please check your inbox.")
 
 
+@router.get("/check-username")
+async def check_username(username: str, db: AsyncSession = Depends(get_db)):
+    normalized = username.strip()
+    if len(normalized) < 3:
+        return {"available": False, "detail": "Username must be at least 3 characters."}
+    result = await db.execute(select(User).where(User.username == normalized))
+    exists = result.scalar_one_or_none() is not None
+    return {"available": not exists}
+
+
 @router.post("/login", response_model=TokenResponse)
 async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == body.email))
