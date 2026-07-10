@@ -13,6 +13,10 @@ class Settings(BaseSettings):
     MAIL_FROM: str = "DevLab <onboarding@resend.dev>"
     FRONTEND_URL: str = "http://localhost:3000"
 
+    # GitHub OAuth Settings
+    GITHUB_CLIENT_ID: str | None = None
+    GITHUB_CLIENT_SECRET: str | None = None
+
     class Config:
         env_file = ".env"
 

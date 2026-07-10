@@ -60,6 +60,15 @@ export const api = {
     return res;
   },
 
+  loginWithGitHub: async (code: string) => {
+    const res = await request<{ access_token: string; device_key: string }>("/github", {
+      method: "POST",
+      body: JSON.stringify({ code }),
+    });
+    await warmCache(res.access_token);
+    return res;
+  },
+
   verifyEmail: async (token: string) => {
     return request<{ detail: string }>("/verify-email", {
       method: "POST",

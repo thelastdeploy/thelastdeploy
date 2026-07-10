@@ -2,11 +2,13 @@
 
 import secrets
 import string
+import httpx
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from app.config import settings
 from app.dependencies import get_db, get_current_user
 from app.models import User, CLIDeviceAuth
 from app.auth import hash_password, verify_password, create_access_token
@@ -22,6 +24,7 @@ from app.schemas import (
     CLIDeviceCodeResponse,
     CLIAuthorizeRequest,
     CLITokenRequest,
+    GitHubLoginRequest,
 )
 from app.email import send_verification_email, send_reset_password_email
 
@@ -343,3 +346,122 @@ async def cli_token(body: CLITokenRequest, db: AsyncSession = Depends(get_db)):
             "token_type": "bearer",
             "device_key": user.device_key,
         }
+
+
+@router.post("/github", response_model=TokenResponse)
+async def github_auth(body: GitHubLoginRequest, db: AsyncSession = Depends(get_db)):
+    if not settings.GITHUB_CLIENT_ID or not settings.GITHUB_CLIENT_SECRET:
+        raise HTTPException(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED,
+            detail="GitHub OAuth is not configured on the server."
+        )
+
+    # 1. Exchange code for access token
+    async with httpx.AsyncClient() as client:
+        token_response = await client.post(
+            "https://github.com/login/oauth/access_token",
+            headers={"Accept": "application/json"},
+            json={
+                "client_id": settings.GITHUB_CLIENT_ID,
+                "client_secret": settings.GITHUB_CLIENT_SECRET,
+                "code": body.code,
+            },
+            timeout=10.0
+        )
+        if token_response.status_code != 200:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to authenticate with GitHub."
+            )
+        
+        token_data = token_response.json()
+        github_access_token = token_data.get("access_token")
+        if not github_access_token:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=token_data.get("error_description", "Invalid code or configuration.")
+            )
+
+        # 2. Get user info
+        user_response = await client.get(
+            "https://api.github.com/user",
+            headers={
+                "Authorization": f"Bearer {github_access_token}",
+                "User-Agent": "DevLab-FastAPI"
+            },
+            timeout=10.0
+        )
+        if user_response.status_code != 200:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to retrieve GitHub profile info."
+            )
+        
+        github_user = user_response.json()
+        github_username = github_user.get("login")
+        email = github_user.get("email")
+
+        # 3. If email is private, get it from email list
+        if not email:
+            emails_response = await client.get(
+                "https://api.github.com/user/emails",
+                headers={
+                    "Authorization": f"Bearer {github_access_token}",
+                    "User-Agent": "DevLab-FastAPI"
+                },
+                timeout=10.0
+            )
+            if emails_response.status_code == 200:
+                emails_data = emails_response.json()
+                # Find primary verified email, or first primary, or just first email
+                primary_verified = next(
+                    (e["email"] for e in emails_data if e.get("primary") and e.get("verified")),
+                    None
+                )
+                if not primary_verified:
+                    primary = next((e["email"] for e in emails_data if e.get("primary")), None)
+                    email = primary or (emails_data[0]["email"] if emails_data else None)
+                else:
+                    email = primary_verified
+
+        if not email:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email address not found from GitHub profile. Please ensure you have a verified email on GitHub."
+            )
+
+    # 4. Check if user exists by email
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+
+    if not user:
+        # Check if username is taken, if so, append random characters
+        username_check = await db.execute(select(User).where(User.username == github_username))
+        if username_check.scalar_one_or_none():
+            github_username = f"{github_username}_{secrets.token_hex(3).lower()}"
+
+        user = User(
+            email=email,
+            username=github_username,
+            password_hash=hash_password(secrets.token_urlsafe(32)),  # secure placeholder
+            is_verified=True,  # GitHub verified accounts are trusted
+            device_key=secrets.token_hex(32)
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+    else:
+        # If user existed but wasn't verified, mark verified since GitHub verified it
+        if not user.is_verified:
+            user.is_verified = True
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+
+    # Ensure device key exists
+    _ensure_device_key(user)
+    db.add(user)
+    await db.commit()
+
+    token = create_access_token(user.id)
+    return TokenResponse(access_token=token, device_key=user.device_key)

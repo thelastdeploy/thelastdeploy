@@ -49,6 +49,9 @@ class CLIAuthorizeRequest(BaseModel):
 class CLITokenRequest(BaseModel):
     device_code: str
 
+class GitHubLoginRequest(BaseModel):
+    code: str
+
 
 # --- User Updates ---
 
