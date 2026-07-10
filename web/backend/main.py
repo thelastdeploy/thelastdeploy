@@ -5,10 +5,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.routers import auth, modules, results, users, builder
 
+# Only enable docs in development environment
+docs_url = "/docs" if settings.ENVIRONMENT == "development" else None
+redoc_url = "/redoc" if settings.ENVIRONMENT == "development" else None
+openapi_url = "/openapi.json" if settings.ENVIRONMENT == "development" else None
+
 app = FastAPI(
     title="The Last Deploy API",
     description="Backend for The Last Deploy DevOps practice platform",
     version="0.3.0",
+    docs_url=docs_url,
+    redoc_url=redoc_url,
+    openapi_url=openapi_url,
 )
 
 app.add_middleware(
