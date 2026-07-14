@@ -1,0 +1,13 @@
+id: tf-init-validate-format
+title: Initialize, Validate, and Format
+xp: 25
+estimated_minutes: 8
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-challenge
+  - mkdir -p $HOME/terraform-challenge
+  - echo 'provider "local" {}' > $HOME/terraform-challenge/main.tf
+  - echo 'resource "local_file" "app" {content = "Welcome" filename = "output.txt"}'
+    >> $HOME/terraform-challenge/main.tf
+version: 1

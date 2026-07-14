@@ -1,0 +1,9 @@
+id: tf-install-cli
+title: Install Terraform CLI
+xp: 15
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+  - echo 'Please install Terraform on your system.'
+version: 1

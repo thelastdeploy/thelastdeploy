@@ -1,0 +1,24 @@
+id: terraform-fundamentals
+title: Terraform Fundamentals
+description: Learn the core concepts of Infrastructure as Code (IaC) using HashiCorp
+  Terraform. Discover how to write declarative configuration files, initialize your
+  working directory, and manage your first cloud and local resources.
+topic: terraform
+difficulty: beginner
+estimated_minutes: 60
+sections:
+- id: 01-what-is-infrastructure-as-code
+  order: 1
+- id: 02-why-terraform
+  order: 2
+- id: 03-installing-terraform
+  order: 3
+- id: 04-your-first-terraform-project
+  order: 4
+- id: 05-the-terraform-workflow
+  order: 5
+- id: 06-understanding-plan-and-apply
+  order: 6
+- id: 07-first-terraform-workflow
+  order: 7
+version: 1

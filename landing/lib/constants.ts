@@ -38,13 +38,13 @@ export const TRACKS = [
     name: "Terraform",
     description: "Infrastructure as code, state management, modules, and providers.",
     color: "cyan",
-    status: "coming-soon" as const,
+    status: "available" as const,
   },
   {
     name: "Nginx",
     description: "Reverse proxy, load balancing, SSL termination, and performance tuning.",
     color: "green",
-    status: "coming-soon" as const,
+    status: "available" as const,
   },
 ] as const;
 

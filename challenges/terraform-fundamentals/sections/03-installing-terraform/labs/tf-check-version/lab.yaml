@@ -1,0 +1,9 @@
+id: tf-check-version
+title: Verify Terraform Version
+xp: 10
+estimated_minutes: 3
+setup:
+  type: shell
+  seed_commands:
+  - echo 'Verifying that the installed version of Terraform works.'
+version: 1

@@ -1,0 +1,11 @@
+id: tf-init-project
+title: Initialize a Terraform Project
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-challenge
+  - mkdir -p $HOME/terraform-challenge
+  - echo 'provider "local" {}' > $HOME/terraform-challenge/main.tf
+version: 1
