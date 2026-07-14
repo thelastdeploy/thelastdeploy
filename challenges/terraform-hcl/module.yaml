@@ -1,0 +1,26 @@
+id: terraform-hcl
+title: Terraform HCL
+description: Master HashiCorp Configuration Language (HCL). Learn about blocks, arguments,
+  comments, expressions, project structure, and how to validate, lint, and debug syntactically
+  invalid configurations.
+topic: terraform
+difficulty: beginner
+estimated_minutes: 60
+sections:
+- id: 01-understanding-hcl
+  order: 1
+- id: 02-blocks-and-arguments
+  order: 2
+- id: 03-writing-your-first-resource
+  order: 3
+- id: 04-comments-and-formatting
+  order: 4
+- id: 05-expressions
+  order: 5
+- id: 06-project-structure
+  order: 6
+- id: 07-validation-and-linting
+  order: 7
+- id: 08-repair-a-broken-configuration
+  order: 8
+version: 1

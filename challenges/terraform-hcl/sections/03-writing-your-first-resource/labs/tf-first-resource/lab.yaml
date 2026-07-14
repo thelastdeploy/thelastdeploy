@@ -1,0 +1,10 @@
+id: tf-first-resource
+title: Create Your First Resource Block
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-hcl-challenge
+  - mkdir -p $HOME/terraform-hcl-challenge
+version: 1

@@ -1,0 +1,14 @@
+id: tf-format-configuration
+title: Comment and Format Configuration
+xp: 15
+estimated_minutes: 4
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-hcl-challenge
+  - mkdir -p $HOME/terraform-hcl-challenge
+  - echo 'resource "local_file" "app" {' > $HOME/terraform-hcl-challenge/main.tf
+  - echo 'content = "AppConfig"' >> $HOME/terraform-hcl-challenge/main.tf
+  - echo 'filename = "/tmp/app.config"' >> $HOME/terraform-hcl-challenge/main.tf
+  - echo '}' >> $HOME/terraform-hcl-challenge/main.tf
+version: 1
