@@ -16,7 +16,7 @@ type Config struct {
 	ChallengesRepo string
 }
 
-const defaultAPIBaseURL = "http://localhost:8742"
+const defaultAPIBaseURL = "https://api.thelastdeploy.com"
 const defaultChallengesRepo = "thelastdeploy/thelastdeploy"
 
 func Load() (*Config, error) {
