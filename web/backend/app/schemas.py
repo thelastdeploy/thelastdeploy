@@ -213,6 +213,7 @@ class BuilderLabInput(BaseModel):
     setup_type: str | None = "shell"
     seed_commands: list[str] = []
     validator_script: str | None = None  # None allowed in drafts, verified in publish gate
+    cleanup_script: str | None = None    # Optional cleanup/restore script
 
 class BuilderSectionInput(BaseModel):
     id: str

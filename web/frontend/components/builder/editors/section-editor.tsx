@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Markdown } from "tiptap-markdown";
+import { PremiumStepper } from "../ui-components";
 import {
   Bold,
   Italic,
@@ -158,12 +159,13 @@ export function SectionEditor({ section, onChange }: Props) {
           />
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">XP</span>
-          <input
-            type="number"
+          <PremiumStepper
             value={section.xp}
-            onChange={(e) => handleFieldChange("xp", parseInt(e.target.value) || 0)}
-            className="w-16 px-2 py-1 rounded-lg border border-border bg-background text-sm text-foreground font-mono font-black text-center focus:outline-none focus:border-[var(--accent-primary)] transition-colors"
+            onChange={(val) => handleFieldChange("xp", val)}
+            min={0}
+            max={500}
+            step={5}
+            className="w-[120px]"
           />
         </div>
       </div>

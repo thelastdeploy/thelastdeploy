@@ -4,12 +4,13 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { BuilderModuleInput, BuilderSectionInput } from "@/lib/types";
+import { BuilderModuleInput, BuilderSectionInput, BuilderLabInput } from "@/lib/types";
 import { api } from "@/lib/api";
 import { TreeNav } from "./tree-nav";
 import { LivePreview } from "./live-preview";
 import { ModuleEditor } from "./editors/module-editor";
 import { SectionEditor } from "./editors/section-editor";
+import { LabBuilderEditor } from "./editors/lab-builder-editor";
 import { PublishGateModal } from "./publish-gate-modal";
 import { ConfirmModal } from "./confirm-modal";
 import {
@@ -128,6 +129,14 @@ export function ModuleBuilderIDE({
     handleDraftChange({ ...draft, sections: updatedSections });
   };
 
+  const updateActiveLab = (sectionId: string, updatedLab: BuilderLabInput) => {
+    const updatedSections = draft.sections.map((s) => {
+      if (s.id !== sectionId) return s;
+      return { ...s, labs: s.labs.map((l) => (l.id === updatedLab.id ? updatedLab : l)) };
+    });
+    handleDraftChange({ ...draft, sections: updatedSections });
+  };
+
   // ── Unload guard ──────────────────────────────────────────────────────────
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
@@ -194,6 +203,13 @@ export function ModuleBuilderIDE({
   const activeSection =
     selectedNode?.type === "section"
       ? draft.sections.find((s) => s.id === selectedNode.sectionId) || null
+      : null;
+
+  const activeLab =
+    selectedNode?.type === "lab"
+      ? draft.sections
+          .find((s) => s.id === selectedNode.sectionId)
+          ?.labs.find((l) => l.id === selectedNode.labId) || null
       : null;
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -313,6 +329,12 @@ export function ModuleBuilderIDE({
           )}
           {selectedNode?.type === "section" && activeSection && (
             <SectionEditor section={activeSection} onChange={updateActiveSection} />
+          )}
+          {selectedNode?.type === "lab" && activeLab && selectedNode.sectionId && (
+            <LabBuilderEditor
+              lab={activeLab}
+              onChange={(updated) => updateActiveLab(selectedNode.sectionId!, updated)}
+            />
           )}
           {!selectedNode && (
             <div className="h-full flex items-center justify-center text-sm text-muted-foreground/60">

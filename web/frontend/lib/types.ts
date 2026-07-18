@@ -73,6 +73,7 @@ export interface BuilderLabInput {
   setup_type: string | null;
   seed_commands: string[];
   validator_script: string;
+  cleanup_script: string;
 }
 
 export interface BuilderSectionInput {

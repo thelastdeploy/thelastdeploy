@@ -194,3 +194,13 @@ body {
   from { transform: rotate(0deg); }
   to   { transform: rotate(-360deg); }
 }
+
+/* Hide number spin buttons globally for class .no-spin */
+.no-spin::-webkit-outer-spin-button,
+.no-spin::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spin[type=number] {
+  -moz-appearance: textfield;
+}

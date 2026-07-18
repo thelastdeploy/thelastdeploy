@@ -6,8 +6,8 @@ asyncpg==0.30.0
 alembic==1.13.3
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
-pydantic[email]==2.9.2
-pydantic-settings==2.5.2
+pydantic[email]==2.11.7
+pydantic-settings==2.8.1
 python-multipart==0.0.12
 pyyaml==6.0.2
 bcrypt==4.0.1

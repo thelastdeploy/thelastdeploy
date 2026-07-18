@@ -104,6 +104,7 @@ async def create_module_draft(
                 version=1,
                 validator_hash=val_hash,
                 validator_script=l_input.validator_script,
+                cleanup_script=l_input.cleanup_script,
             )
             db.add(new_lab)
 
@@ -196,6 +197,7 @@ async def get_my_module_detail(
                 setup_type=lab.setup_type,
                 seed_commands=json.loads(lab.seed_commands) if lab.seed_commands else [],
                 validator_script=lab.validator_script,
+                cleanup_script=lab.cleanup_script,
             )
             for lab in section_labs
         ]
@@ -326,6 +328,7 @@ async def update_module_draft(
                 lab.seed_commands = seed_cmds_json
                 lab.validator_hash = val_hash
                 lab.validator_script = l_input.validator_script
+                lab.cleanup_script = l_input.cleanup_script
                 db.add(lab)
             else:
                 new_lab = Lab(
@@ -342,6 +345,7 @@ async def update_module_draft(
                     version=1,
                     validator_hash=val_hash,
                     validator_script=l_input.validator_script,
+                    cleanup_script=l_input.cleanup_script,
                 )
                 db.add(new_lab)
 

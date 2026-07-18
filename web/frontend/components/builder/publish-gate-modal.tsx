@@ -32,6 +32,14 @@ export function PublishGateModal({ isOpen, onClose, onConfirm, draft, publishing
     if (!s.content || !s.content.trim()) {
       errors.push(`Section '${s.title || "Untitled"}' is missing learning content.`);
     }
+    s.labs.forEach((lab) => {
+      if (lab.xp <= 0) {
+        errors.push(`Lab '${lab.title || lab.id}' must reward more than 0 XP.`);
+      }
+      if (!lab.validator_script || !lab.validator_script.trim()) {
+        errors.push(`Lab '${lab.title || lab.id}' is missing a validator script.`);
+      }
+    });
   });
 
   const totalSections = draft.sections.length;

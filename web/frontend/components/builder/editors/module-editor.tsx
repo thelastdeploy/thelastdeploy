@@ -4,6 +4,7 @@
 
 import { BuilderModuleInput } from "@/lib/types";
 import { IdSlugInput } from "../id-slug-input";
+import { PremiumSelect, PremiumStepper } from "../ui-components";
 
 interface Props {
   draft: BuilderModuleInput;
@@ -91,56 +92,32 @@ export function ModuleEditor({ draft, onChange, status }: Props) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Topic */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
-              Topic
-            </label>
-            <select
-              value={draft.topic}
-              onChange={(e) => handleFieldChange("topic", e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition-all cursor-pointer"
-            >
-              {topics.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <PremiumSelect
+            value={draft.topic}
+            onChange={(val) => handleFieldChange("topic", val)}
+            options={topics}
+            label="Topic"
+          />
 
           {/* Difficulty */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
-              Difficulty
-            </label>
-            <select
-              value={draft.difficulty}
-              onChange={(e) => handleFieldChange("difficulty", e.target.value)}
-              className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition-all cursor-pointer"
-            >
-              {difficulties.map((d) => (
-                <option key={d.value} value={d.value}>
-                  {d.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <PremiumSelect
+            value={draft.difficulty}
+            onChange={(val) => handleFieldChange("difficulty", val)}
+            options={difficulties}
+            label="Difficulty"
+          />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Est Minutes */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
-              Est. Duration (Minutes)
-            </label>
-            <input
-              type="number"
-              value={draft.estimated_minutes || ""}
-              onChange={(e) => handleFieldChange("estimated_minutes", parseInt(e.target.value) || null)}
-              placeholder="e.g. 45"
-              className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm text-foreground focus:outline-none focus:border-[var(--accent-primary)] focus:ring-1 focus:ring-[var(--accent-primary)] transition-all"
-            />
-          </div>
+          <PremiumStepper
+            value={draft.estimated_minutes || 30}
+            onChange={(val) => handleFieldChange("estimated_minutes", val)}
+            min={5}
+            max={360}
+            step={5}
+            label="Est. Duration (Minutes)"
+          />
 
           {/* Tags */}
           <div className="space-y-1.5">
