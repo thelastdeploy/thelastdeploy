@@ -1,0 +1,10 @@
+id: tf-explicit-dependency
+title: Create an Explicit Dependency
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-resources-challenge
+  - mkdir -p $HOME/terraform-resources-challenge
+version: 1

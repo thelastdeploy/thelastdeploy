@@ -1,0 +1,11 @@
+id: tf-read-data-source
+title: Read from a Data Source
+xp: 20
+estimated_minutes: 6
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-resources-challenge
+  - mkdir -p $HOME/terraform-resources-challenge
+  - echo 'Hello from external source!' > /tmp/external.txt
+version: 1

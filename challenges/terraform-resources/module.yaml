@@ -1,0 +1,28 @@
+id: terraform-resources
+title: Terraform Resources
+description: Learn how Terraform manages resources. Explore providers, resource blocks,
+  dependencies (implicit and explicit), data sources, lifecycles, resource graphs,
+  and destroying provisioned infrastructure.
+topic: terraform
+difficulty: beginner
+estimated_minutes: 75
+sections:
+- id: 01-providers
+  order: 1
+- id: 02-resources
+  order: 2
+- id: 03-resource-arguments
+  order: 3
+- id: 04-resource-dependencies
+  order: 4
+- id: 05-data-sources
+  order: 5
+- id: 06-resource-lifecycle
+  order: 6
+- id: 07-destroying-infrastructure
+  order: 7
+- id: 08-understanding-resource-graphs
+  order: 8
+- id: 09-build-your-first-infrastructure
+  order: 9
+version: 1
