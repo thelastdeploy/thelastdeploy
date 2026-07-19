@@ -1,0 +1,24 @@
+id: terraform-expressions-and-variables
+title: Terraform Expressions and Variables
+description: Master dynamic configurations in Terraform. Learn how to work with input
+  variables, terraform.tfvars, output values, local values, built-in HCL functions,
+  count and for_each loops, and refactor hardcoded code.
+topic: terraform
+difficulty: intermediate
+estimated_minutes: 70
+sections:
+- id: 01-input-variables
+  order: 1
+- id: 02-variable-files
+  order: 2
+- id: 03-output-values
+  order: 3
+- id: 04-local-values
+  order: 4
+- id: 05-built-in-functions
+  order: 5
+- id: 06-count-and-for-each
+  order: 6
+- id: 07-refactor-hardcoded-infrastructure
+  order: 7
+version: 1

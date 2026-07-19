@@ -1,0 +1,10 @@
+id: tf-repeat-resources
+title: Repeat Resources with count or for_each
+xp: 25
+estimated_minutes: 6
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-expr-challenge
+  - mkdir -p $HOME/terraform-expr-challenge
+version: 1

@@ -1,0 +1,11 @@
+id: tf-default-values
+title: Define Variable Default Values
+xp: 15
+estimated_minutes: 4
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-expr-challenge
+  - mkdir -p $HOME/terraform-expr-challenge
+  - echo 'variable "app_name" {\n  type = string\n}' > $HOME/terraform-expr-challenge/main.tf
+version: 1
