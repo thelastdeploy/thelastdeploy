@@ -1,0 +1,29 @@
+id: terraform-troubleshooting
+title: Terraform Troubleshooting
+description: Master diagnosing and repairing broken Terraform configurations. Learn
+  how to parse error messages, resolve syntax and validation errors, debug provider
+  issues, fix resource references, recover state files, and repair broken production
+  infrastructure.
+topic: terraform
+difficulty: intermediate
+estimated_minutes: 80
+sections:
+- id: 01-reading-terraform-errors
+  order: 1
+- id: 02-fixing-syntax-errors
+  order: 2
+- id: 03-validation-errors
+  order: 3
+- id: 04-provider-errors
+  order: 4
+- id: 05-resource-reference-errors
+  order: 5
+- id: 06-state-errors
+  order: 6
+- id: 07-module-errors
+  order: 7
+- id: 08-debugging-workflow
+  order: 8
+- id: 09-recover-a-broken-infrastructure-project
+  order: 9
+version: 1

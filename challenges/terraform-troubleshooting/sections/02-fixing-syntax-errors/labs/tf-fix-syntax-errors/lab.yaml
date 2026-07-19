@@ -1,0 +1,13 @@
+id: tf-fix-syntax-errors
+title: Fix Syntax Errors in Configuration
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-troubleshoot-challenge
+  - mkdir -p $HOME/terraform-troubleshoot-challenge
+  - echo 'resource "local_file" "syntax_bug" {' > $HOME/terraform-troubleshoot-challenge/main.tf
+  - echo '  content = "broken syntax"' >> $HOME/terraform-troubleshoot-challenge/main.tf
+  - echo '  filename = "/tmp/syntax.txt"' >> $HOME/terraform-troubleshoot-challenge/main.tf
+version: 1
