@@ -1,0 +1,13 @@
+id: tf-read-plan
+title: Generate and Read Execution Plan
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+  - rm -rf $HOME/terraform-state-challenge
+  - mkdir -p $HOME/terraform-state-challenge
+  - echo 'resource "local_file" "plan_test" { content = "planning" \n filename = "/tmp/plan.txt"
+    }' > $HOME/terraform-state-challenge/main.tf
+  - cd $HOME/terraform-state-challenge && terraform init
+version: 1

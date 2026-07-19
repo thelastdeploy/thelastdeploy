@@ -1,0 +1,26 @@
+id: terraform-state
+title: Terraform State
+description: Understand how Terraform state works. Learn how to inspect state, manage
+  plan execution, detect and recover from infrastructure drift, import existing resources,
+  use state commands, and configure remote backends.
+topic: terraform
+difficulty: intermediate
+estimated_minutes: 75
+sections:
+- id: 01-what-is-state
+  order: 1
+- id: 02-inspecting-state
+  order: 2
+- id: 03-plan-vs-apply
+  order: 3
+- id: 04-state-drift
+  order: 4
+- id: 05-importing-existing-resources
+  order: 5
+- id: 06-state-commands
+  order: 6
+- id: 07-remote-state-concepts
+  order: 7
+- id: 08-recover-from-state-drift
+  order: 8
+version: 1
