@@ -1,0 +1,22 @@
+id: terraform-modules
+title: Terraform Modules
+description: Learn how to write, structure, and consume Terraform modules. Discover
+  how to encapsulate resources into reusable child modules, handle input and output
+  parameters, organize large codebases, and refactor monolithic configurations.
+topic: terraform
+difficulty: intermediate
+estimated_minutes: 70
+sections:
+- id: 01-why-modules-exist
+  order: 1
+- id: 02-creating-your-first-module
+  order: 2
+- id: 03-module-inputs-and-outputs
+  order: 3
+- id: 04-organizing-large-projects
+  order: 4
+- id: 05-module-best-practices
+  order: 5
+- id: 06-refactor-a-project-into-modules
+  order: 6
+version: 1
