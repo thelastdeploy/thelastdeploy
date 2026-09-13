@@ -18,6 +18,7 @@ CHALLENGES_DIR = os.path.abspath(
 
 
 async def seed():
+    print(f"🌱 Seeding challenge modules from: {CHALLENGES_DIR}")
     async with AsyncSessionLocal() as db:
         for module_dir in sorted(os.listdir(CHALLENGES_DIR)):
             module_path = os.path.join(CHALLENGES_DIR, module_dir)

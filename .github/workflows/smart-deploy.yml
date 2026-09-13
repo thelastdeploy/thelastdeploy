@@ -306,11 +306,23 @@ jobs:
           cd web/backend
 
           if [ -n "${{ secrets.DATABASE_URL }}" ]; then
-            export DATABASE_URL="${{ secrets.DATABASE_URL }}"
+            RAW_URL="${{ secrets.DATABASE_URL }}"
+            RAW_URL="${RAW_URL#DATABASE_URL=}"
+            RAW_URL="${RAW_URL%\"}"
+            RAW_URL="${RAW_URL#\"}"
+            RAW_URL="${RAW_URL%'}"
+            RAW_URL="${RAW_URL#'}"
+            export DATABASE_URL="$RAW_URL"
           fi
 
           if [ -n "${{ secrets.SECRET_KEY }}" ]; then
-            export SECRET_KEY="${{ secrets.SECRET_KEY }}"
+            RAW_KEY="${{ secrets.SECRET_KEY }}"
+            RAW_KEY="${RAW_KEY#SECRET_KEY=}"
+            RAW_KEY="${RAW_KEY%\"}"
+            RAW_KEY="${RAW_KEY#\"}"
+            RAW_KEY="${RAW_KEY%'}"
+            RAW_KEY="${RAW_KEY#'}"
+            export SECRET_KEY="$RAW_KEY"
           fi
 
           python seed/seed_modules.py

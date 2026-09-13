@@ -4,11 +4,27 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
 
-db_url = settings.DATABASE_URL
-if db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
-elif db_url.startswith("postgresql://"):
-    db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+def _normalize_db_url(raw_url: str) -> str:
+    url = raw_url.strip()
+    # Strip accidental variable assignment prefix
+    if url.startswith("DATABASE_URL="):
+        url = url[len("DATABASE_URL="):].strip()
+    # Strip quotes (single or double)
+    url = url.strip('"\'').strip()
+
+    # Normalize driver scheme for asyncpg
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+asyncpg://", 1)
+    elif url.startswith("postgresql://"):
+        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
+
+    # asyncpg expects ssl= instead of sslmode=
+    if "sslmode=" in url:
+        url = url.replace("sslmode=", "ssl=")
+
+    return url
+
+db_url = _normalize_db_url(settings.DATABASE_URL)
 
 engine = create_async_engine(
     db_url,

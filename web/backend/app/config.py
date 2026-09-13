@@ -1,6 +1,7 @@
 # web/backend/app/config.py
 
 import os
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -27,6 +28,16 @@ class Settings(BaseSettings):
     POSTHOG_API_KEY: str | None = None
     POSTHOG_HOST: str = "https://us.i.posthog.com"
     ANALYTICS_ENABLED: bool = False
+
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def clean_database_url(cls, v: str) -> str:
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("DATABASE_URL="):
+                v = v[len("DATABASE_URL="):].strip()
+            v = v.strip('"\'').strip()
+        return v
 
     class Config:
         env_file = (
