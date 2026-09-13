@@ -1,5 +1,6 @@
 # web/backend/app/config.py
 
+import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -28,6 +29,11 @@ class Settings(BaseSettings):
     ANALYTICS_ENABLED: bool = False
 
     class Config:
-        env_file = ".env"
+        env_file = (
+            ".env",
+            "web/backend/.env",
+            os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"),
+        )
+        extra = "ignore"
 
 settings = Settings()

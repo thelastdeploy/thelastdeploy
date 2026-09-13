@@ -1,4 +1,4 @@
-# web/backend/seed/seed_modules.py
+# web/backend/seed/seed_modules.py — database seeder for challenges and modules
 
 import asyncio
 import json

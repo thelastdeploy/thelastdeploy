@@ -34,6 +34,7 @@ components:
   challenges:
     description: "Challenge Modules"
     paths:
-      - "web/challenges/**"
-    deployment: "none"
-    working_directory: "none"
+      - "challenges/**"
+      - "web/backend/seed/**"
+    deployment: "database-seed"
+    working_directory: "web/backend"
