@@ -47,10 +47,15 @@ jobs:
           with open(".ci/components.yaml") as f:
               config = yaml.safe_load(f)
 
-          changed = subprocess.check_output(
-              ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
-              text=True
-          ).splitlines()
+          # On workflow_dispatch there may be no HEAD~1 (or the diff would be empty/irrelevant)
+          # Force all components to be detected so manual runs always seed
+          if os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch":
+              changed = ["challenges/__force_seed__"]
+          else:
+              changed = subprocess.check_output(
+                  ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
+                  text=True
+              ).splitlines()
 
           print("\n================ Changed Files ================\n")
 
@@ -251,7 +256,7 @@ jobs:
   seed-challenges:
     name: Seed Challenges (Database)
     needs: detect-components
-    if: needs.detect-components.outputs.challenges == 'true'
+    if: needs.detect-components.outputs.challenges == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
