@@ -64,7 +64,7 @@ function JourneyPanel() {
   ];
 
   return (
-    <div className="hidden lg:flex flex-1 relative items-center justify-center p-12 overflow-hidden border-l border-white/[0.06]">
+    <div className="hidden lg:flex flex-1 relative items-center justify-center p-12 overflow-hidden border-l border-border dark:border-white/[0.06]">
       {/* Dark bg */}
       <div className="absolute inset-0 bg-[#0a0a0f]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_50%,rgba(168,85,247,0.10),transparent)]" />
@@ -256,7 +256,12 @@ export default function RegisterPage() {
   return (
     <div className="min-h-[calc(100vh-64px)] flex flex-col lg:flex-row transition-colors duration-300">
       {/* Left Column: Form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 relative">
+      <div className="flex-1 flex items-center justify-center px-6 py-12 relative overflow-hidden">
+        {/* Light mode background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-transparent dark:via-transparent dark:to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_-20%,rgba(168,85,247,0.06),transparent)] dark:bg-[radial-gradient(ellipse_70%_50%_at_50%_-20%,rgba(168,85,247,0.03),transparent)]" />
+        {/* Subtle dot grid for light mode */}
+        <div className="absolute inset-0 opacity-[0.03] dark:opacity-0 bg-[radial-gradient(circle,#0f172a_1px,transparent_1px)] bg-[size:24px_24px]" />
         {/* Subtle bg glow behind logo */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-32 bg-purple-500/5 blur-3xl rounded-full pointer-events-none" />
 
@@ -279,7 +284,7 @@ export default function RegisterPage() {
               </div>
               <Link
                 href="/login"
-                className="inline-block w-full h-12 leading-[48px] rounded-xl font-bold text-background bg-[var(--accent-primary)] hover:opacity-90 transition-all text-white dark:text-black shadow-sm"
+                className="inline-block w-full h-12 leading-[48px] rounded-xl font-bold bg-[var(--accent-primary)] hover:opacity-90 transition-all text-white shadow-sm"
               >
                 Go to Log in
               </Link>
@@ -307,7 +312,7 @@ export default function RegisterPage() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
-                    className="bg-card border-border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:border-[var(--accent-primary)]"
+                    className="bg-muted/60 dark:bg-card border-border dark:border-border border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:border-[var(--accent-primary)] shadow-sm"
                   />
                   {username && (
                     <div className="text-xs mt-1.5 flex items-center gap-1.5 px-1 min-h-[16px]">
@@ -332,7 +337,7 @@ export default function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="bg-card border-border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:border-[var(--accent-primary)]"
+                    className="bg-muted/60 dark:bg-card border-border dark:border-border border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:border-[var(--accent-primary)] shadow-sm"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -346,7 +351,7 @@ export default function RegisterPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="bg-card border-border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:border-[var(--accent-primary)]"
+                    className="bg-muted/60 dark:bg-card border-border dark:border-border border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)]/40 focus-visible:border-[var(--accent-primary)] shadow-sm"
                   />
                 </div>
 
@@ -371,14 +376,14 @@ export default function RegisterPage() {
                   <span className="w-full border-t border-border/80" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                  <span className="bg-gradient-to-br from-slate-50 to-slate-100 dark:bg-background px-2 text-muted-foreground">Or continue with</span>
                 </div>
               </div>
 
               <button
                 type="button"
                 onClick={handleGithubLogin}
-                className="w-full h-12 rounded-xl border border-border bg-card text-foreground font-bold hover:bg-muted/40 hover:border-foreground/20 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-md"
+                className="w-full h-12 rounded-xl border border-border/80 dark:border-border bg-white dark:bg-card text-foreground font-bold hover:bg-muted/50 dark:hover:bg-muted/40 hover:border-foreground/30 dark:hover:border-foreground/20 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm hover:shadow-md"
               >
                 <GithubIcon className="w-5 h-5 text-foreground" />
                 Continue with GitHub
