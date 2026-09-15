@@ -74,11 +74,11 @@ function ShowcasePanel() {
   return (
     <div className="hidden lg:flex flex-1 relative items-center justify-center p-12 overflow-hidden border-l border-border dark:border-white/[0.06]">
       {/* Layered background */}
-      <div className="absolute inset-0 bg-[#0a0a0f]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_70%_40%,rgba(22,163,74,0.12),transparent)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_20%_80%,rgba(59,130,246,0.08),transparent)]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-slate-50 to-white dark:from-[#0a0a0f] dark:via-[#0a0a0f] dark:to-[#0a0a0f]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_70%_40%,rgba(22,163,74,0.10),transparent)] dark:bg-[radial-gradient(ellipse_60%_50%_at_70%_40%,rgba(22,163,74,0.12),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_30%_at_20%_80%,rgba(59,130,246,0.06),transparent)] dark:bg-[radial-gradient(ellipse_40%_30%_at_20%_80%,rgba(59,130,246,0.08),transparent)]" />
       {/* Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:40px_40px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:40px_40px]" />
 
       {/* Floating glow blobs */}
       <div className="absolute top-16 right-16 w-32 h-32 rounded-full bg-[var(--accent-primary)]/10 blur-3xl animate-pulse" />
@@ -86,31 +86,31 @@ function ShowcasePanel() {
 
       {/* Floating achievement toast */}
       <div
-        className="absolute top-8 right-8 flex items-center gap-2.5 bg-white/5 border border-white/10 backdrop-blur-sm rounded-xl px-3.5 py-2.5 shadow-xl"
+        className="absolute top-8 right-8 flex items-center gap-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-sm rounded-xl px-3.5 py-2.5 shadow-xl"
         style={{ animation: "floatBadge 3s ease-in-out infinite" }}
       >
         <span className="text-lg">🏆</span>
         <div className="text-[11px] leading-tight">
-          <p className="font-bold text-white/90">Achievement Unlocked!</p>
-          <p className="text-white/50">Docker Master · +100 XP</p>
+          <p className="font-bold text-slate-800 dark:text-white/90">Achievement Unlocked!</p>
+          <p className="text-slate-500 dark:text-white/50">Docker Master · +100 XP</p>
         </div>
       </div>
 
       {/* Main card */}
       <div className="max-w-md w-full space-y-5 relative z-10">
         {/* Stats card */}
-        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 backdrop-blur-sm shadow-2xl space-y-5">
+        <div className="bg-black/[0.04] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-2xl p-6 backdrop-blur-sm shadow-2xl space-y-5">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/40 text-[11px] uppercase tracking-widest font-semibold">Your Progress</p>
-              <h3 className="text-white font-black text-lg mt-0.5">Track Dashboard</h3>
+              <p className="text-slate-400 dark:text-white/40 text-[11px] uppercase tracking-widest font-semibold">Your Progress</p>
+              <h3 className="text-slate-800 dark:text-white font-black text-lg mt-0.5">Track Dashboard</h3>
             </div>
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-center gap-1.5 bg-[var(--accent-primary)]/15 border border-[var(--accent-primary)]/30 rounded-lg px-2.5 py-1">
                 <span className="text-[var(--accent-primary)] text-xs font-black">⚡ 1,240 XP</span>
               </div>
-              <p className="text-white/30 text-[10px]">Rank #47</p>
+              <p className="text-slate-400 dark:text-white/30 text-[10px]">Rank #47</p>
             </div>
           </div>
 
@@ -119,10 +119,10 @@ function ShowcasePanel() {
             {tracks.map((track) => (
               <div key={track.label} className="space-y-1.5">
                 <div className="flex justify-between items-center">
-                  <span className="text-white/70 text-xs font-semibold">{track.label}</span>
-                  <span className="text-white/40 text-[11px]">{track.pct}%</span>
+                  <span className="text-slate-600 dark:text-white/70 text-xs font-semibold">{track.label}</span>
+                  <span className="text-slate-400 dark:text-white/40 text-[11px]">{track.pct}%</span>
                 </div>
-                <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                <div className="h-1.5 rounded-full bg-black/[0.06] dark:bg-white/[0.06] overflow-hidden">
                   <div
                     className="h-full rounded-full"
                     style={{
@@ -138,20 +138,20 @@ function ShowcasePanel() {
           </div>
 
           {/* Avatar social proof */}
-          <div className="flex items-center gap-3 pt-1 border-t border-white/[0.06]">
+          <div className="flex items-center gap-3 pt-1 border-t border-black/[0.06] dark:border-white/[0.06]">
             <div className="flex -space-x-2">
               {avatarColors.map((c, i) => (
                 <div
                   key={i}
-                  className="w-7 h-7 rounded-full border-2 border-[#0a0a0f] flex items-center justify-center text-[10px] font-black text-white"
+                  className="w-7 h-7 rounded-full border-2 border-slate-100 dark:border-[#0a0a0f] flex items-center justify-center text-[10px] font-black text-white"
                   style={{ background: c }}
                 >
                   {String.fromCharCode(65 + i)}
                 </div>
               ))}
             </div>
-            <p className="text-white/40 text-[11px]">
-              <span className="text-white/70 font-bold">2,400+</span> engineers learning today
+            <p className="text-slate-400 dark:text-white/40 text-[11px]">
+              <span className="text-slate-600 dark:text-white/70 font-bold">2,400+</span> engineers learning today
             </p>
           </div>
         </div>
@@ -320,7 +320,7 @@ function LoginContent() {
               <span className="w-full border-t border-border/80" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-gradient-to-br from-slate-50 to-slate-100 dark:bg-background px-2 text-muted-foreground">Or continue with</span>
+              <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
             </div>
           </div>
 

@@ -65,12 +65,12 @@ function JourneyPanel() {
 
   return (
     <div className="hidden lg:flex flex-1 relative items-center justify-center p-12 overflow-hidden border-l border-border dark:border-white/[0.06]">
-      {/* Dark bg */}
-      <div className="absolute inset-0 bg-[#0a0a0f]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_50%,rgba(168,85,247,0.10),transparent)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_20%,rgba(22,163,74,0.09),transparent)]" />
+      {/* Background - theme aware */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-100 via-slate-50 to-white dark:from-[#0a0a0f] dark:via-[#0a0a0f] dark:to-[#0a0a0f]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_50%,rgba(168,85,247,0.08),transparent)] dark:bg-[radial-gradient(ellipse_60%_50%_at_30%_50%,rgba(168,85,247,0.10),transparent)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_40%_40%_at_80%_20%,rgba(22,163,74,0.07),transparent)] dark:bg-[radial-gradient(ellipse_40%_40%_at_80%_20%,rgba(22,163,74,0.09),transparent)]" />
       {/* Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:40px_40px]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:40px_40px]" />
 
       {/* Glow blobs */}
       <div className="absolute top-20 left-20 w-36 h-36 rounded-full bg-purple-500/10 blur-3xl animate-pulse" />
@@ -78,11 +78,11 @@ function JourneyPanel() {
 
       {/* Free badge */}
       <div
-        className="absolute top-8 left-8 flex items-center gap-2 bg-white/5 border border-white/10 backdrop-blur-sm rounded-xl px-3.5 py-2 shadow-lg"
+        className="absolute top-8 left-8 flex items-center gap-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-sm rounded-xl px-3.5 py-2 shadow-lg"
         style={{ animation: "floatBadge 3.5s ease-in-out infinite" }}
       >
         <span className="text-base">🎁</span>
-        <p className="text-[11px] font-bold text-white/80">Free Forever · No CC Required</p>
+        <p className="text-[11px] font-bold text-slate-700 dark:text-white/80">Free Forever · No CC Required</p>
       </div>
 
       <div className="max-w-md w-full space-y-6 relative z-10">
@@ -124,8 +124,8 @@ function JourneyPanel() {
         </div>
 
         {/* Journey steps */}
-        <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 backdrop-blur-sm space-y-5">
-          <p className="text-white/40 text-[11px] uppercase tracking-widest font-semibold">Your Journey</p>
+        <div className="bg-black/[0.04] dark:bg-white/[0.04] border border-black/10 dark:border-white/10 rounded-2xl p-6 backdrop-blur-sm space-y-5">
+          <p className="text-slate-400 dark:text-white/40 text-[11px] uppercase tracking-widest font-semibold">Your Journey</p>
           <div className="space-y-1">
             {steps.map((step, idx) => (
               <div key={step.num} className="relative">
@@ -136,20 +136,20 @@ function JourneyPanel() {
                     style={
                       step.done
                         ? { background: `${step.color}25`, borderColor: `${step.color}50`, color: step.color }
-                        : { background: "rgba(255,255,255,0.04)", borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.3)" }
+                        : { background: "rgba(0,0,0,0.04)", borderColor: "rgba(0,0,0,0.1)", color: "rgba(0,0,0,0.3)" }
                     }
                   >
                     {step.done ? "✓" : step.num}
                   </div>
                   {/* Label */}
                   <div className="pt-0.5 pb-4">
-                    <p className={`text-sm font-bold ${step.done ? "text-white/90" : "text-white/40"}`}>{step.label}</p>
-                    <p className="text-[11px] text-white/30 mt-0.5">{step.desc}</p>
+                    <p className={`text-sm font-bold ${step.done ? "text-slate-800 dark:text-white/90" : "text-slate-400 dark:text-white/40"}`}>{step.label}</p>
+                    <p className="text-[11px] text-slate-400 dark:text-white/30 mt-0.5">{step.desc}</p>
                   </div>
                 </div>
                 {/* Connector line */}
                 {idx < steps.length - 1 && (
-                  <div className="absolute left-4 top-8 w-px h-[calc(100%-8px)] bg-white/[0.07]" />
+                  <div className="absolute left-4 top-8 w-px h-[calc(100%-8px)] bg-black/[0.07] dark:bg-white/[0.07]" />
                 )}
               </div>
             ))}
@@ -158,8 +158,8 @@ function JourneyPanel() {
 
         {/* Caption */}
         <div className="text-center space-y-1 pt-1">
-          <h2 className="text-white font-black text-xl tracking-tight">Build Cloud Native Systems</h2>
-          <p className="text-white/40 text-sm leading-relaxed">
+          <h2 className="text-slate-800 dark:text-white font-black text-xl tracking-tight">Build Cloud Native Systems</h2>
+          <p className="text-slate-400 dark:text-white/40 text-sm leading-relaxed">
             Learn by doing. No fluff. Just real labs.
           </p>
         </div>
@@ -376,7 +376,7 @@ export default function RegisterPage() {
                   <span className="w-full border-t border-border/80" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-gradient-to-br from-slate-50 to-slate-100 dark:bg-background px-2 text-muted-foreground">Or continue with</span>
+                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
                 </div>
               </div>
 
