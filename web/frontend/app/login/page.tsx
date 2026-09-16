@@ -16,6 +16,24 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+const TrophyIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M6 9H4a2 2 0 0 1-2-2V5h4" />
+    <path d="M18 9h2a2 2 0 0 0 2-2V5h-4" />
+    <path d="M6 2h12v7a6 6 0 0 1-12 0Z" />
+    <path d="M12 15v4" />
+    <path d="M8 19h8" />
+    <path d="M9 19v2" />
+    <path d="M15 19v2" />
+  </svg>
+);
+
+const ZapIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path d="M13 2L4.5 13.5H11L10 22L20.5 10.5H14L13 2Z" />
+  </svg>
+);
+
 const tracks = [
   { label: "Docker", pct: 80, color: "#3b82f6" },
   { label: "Kubernetes", pct: 55, color: "#a855f7" },
@@ -30,7 +48,7 @@ function AnimatedTerminal() {
     { text: "$ tld check dkr-backup-volume", type: "cmd" },
     { text: "✓ Found named volume prod-db-vol", type: "ok" },
     { text: "✓ Asserted backup.tar exists", type: "ok" },
-    { text: "✓ Lab passed! +20 XP awarded 🎉", type: "success" },
+    { text: "✓ Lab passed! +20 XP awarded", type: "success" },
   ];
   const [visible, setVisible] = useState(0);
 
@@ -89,7 +107,7 @@ function ShowcasePanel() {
         className="absolute top-8 right-8 flex items-center gap-2.5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-sm rounded-xl px-3.5 py-2.5 shadow-xl"
         style={{ animation: "floatBadge 3s ease-in-out infinite" }}
       >
-        <span className="text-lg">🏆</span>
+        <TrophyIcon className="w-5 h-5 text-amber-500 shrink-0" />
         <div className="text-[11px] leading-tight">
           <p className="font-bold text-slate-800 dark:text-white/90">Achievement Unlocked!</p>
           <p className="text-slate-500 dark:text-white/50">Docker Master · +100 XP</p>
@@ -108,7 +126,7 @@ function ShowcasePanel() {
             </div>
             <div className="flex flex-col items-end gap-1">
               <div className="flex items-center gap-1.5 bg-[var(--accent-primary)]/15 border border-[var(--accent-primary)]/30 rounded-lg px-2.5 py-1">
-                <span className="text-[var(--accent-primary)] text-xs font-black">⚡ 1,240 XP</span>
+                <span className="text-[var(--accent-primary)] text-xs font-black flex items-center gap-0.5"><ZapIcon className="w-3 h-3" /> 1,240 XP</span>
               </div>
               <p className="text-slate-400 dark:text-white/30 text-[10px]">Rank #47</p>
             </div>

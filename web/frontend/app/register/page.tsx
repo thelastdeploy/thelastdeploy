@@ -14,6 +14,52 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+const GiftIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <rect x="3" y="8" width="18" height="4" rx="1" />
+    <path d="M12 8v13" />
+    <path d="M3 12v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M7.5 8A2.5 2.5 0 0 1 10 5.5c1.38 0 2.5 1.5 2 2.5" />
+    <path d="M16.5 8A2.5 2.5 0 0 0 14 5.5c-1.38 0-2.5 1.5-2 2.5" />
+  </svg>
+);
+
+const RocketIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+    <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+    <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+  </svg>
+);
+
+const CheckCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="m9 12 2 2 4-4" />
+  </svg>
+);
+
+const XCircleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <circle cx="12" cy="12" r="10" />
+    <path d="m15 9-6 6" />
+    <path d="m9 9 6 6" />
+  </svg>
+);
+
+const CheckIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="m5 12 5 5L20 7" />
+  </svg>
+);
+
+const ZapIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+    <path d="M13 2L4.5 13.5H11L10 22L20.5 10.5H14L13 2Z" />
+  </svg>
+);
+
 const DockerIcon = () => (
   <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
     <path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.186.186 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.186v1.887c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z" />
@@ -81,7 +127,7 @@ function JourneyPanel() {
         className="absolute top-8 left-8 flex items-center gap-2 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 backdrop-blur-sm rounded-xl px-3.5 py-2 shadow-lg"
         style={{ animation: "floatBadge 3.5s ease-in-out infinite" }}
       >
-        <span className="text-base">🎁</span>
+        <GiftIcon className="w-4 h-4 text-emerald-500 shrink-0" />
         <p className="text-[11px] font-bold text-slate-700 dark:text-white/80">Free Forever · No CC Required</p>
       </div>
 
@@ -92,7 +138,7 @@ function JourneyPanel() {
             {/* Center orb */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-16 h-16 rounded-2xl bg-[var(--accent-primary)]/20 border border-[var(--accent-primary)]/40 flex items-center justify-center shadow-lg shadow-[rgba(22,163,74,0.2)]" style={{ animation: "pulseOrb 2s ease-in-out infinite" }}>
-                <span className="text-2xl">🚀</span>
+                <RocketIcon className="w-7 h-7 text-[var(--accent-primary)]" />
               </div>
             </div>
             {/* Orbit ring */}
@@ -139,7 +185,7 @@ function JourneyPanel() {
                         : { background: "rgba(0,0,0,0.04)", borderColor: "rgba(0,0,0,0.1)", color: "rgba(0,0,0,0.3)" }
                     }
                   >
-                    {step.done ? "✓" : step.num}
+                    {step.done ? <CheckIcon className="w-4 h-4" /> : step.num}
                   </div>
                   {/* Label */}
                   <div className="pt-0.5 pb-4">
@@ -319,9 +365,9 @@ export default function RegisterPage() {
                       {isCheckingUsername ? (
                         <span className="text-muted-foreground animate-pulse">Checking availability...</span>
                       ) : usernameAvailable === true ? (
-                        <span className="text-emerald-500 font-medium">✓ {usernameMessage}</span>
+                        <span className="text-emerald-500 font-medium flex items-center gap-1"><CheckCircleIcon className="w-3.5 h-3.5" />{usernameMessage}</span>
                       ) : usernameAvailable === false ? (
-                        <span className="text-red-500 font-medium">✗ {usernameMessage}</span>
+                        <span className="text-red-500 font-medium flex items-center gap-1"><XCircleIcon className="w-3.5 h-3.5" />{usernameMessage}</span>
                       ) : null}
                     </div>
                   )}
