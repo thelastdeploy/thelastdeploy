@@ -1,0 +1,11 @@
+id: lnx-inspect-file-metadata
+title: "Inspect file metadata and size"
+xp: 15
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/metadata-test"
+    - "mkdir -p $HOME/metadata-test"
+    - "echo 'DevOps Linux Lab Metadata Content 2026' > $HOME/metadata-test/target_file.txt"
+version: 1

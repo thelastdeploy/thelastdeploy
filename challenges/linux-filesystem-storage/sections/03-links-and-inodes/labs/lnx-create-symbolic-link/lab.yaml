@@ -1,0 +1,11 @@
+id: lnx-create-symbolic-link
+title: "Create a symbolic link to a configuration file"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/link-test"
+    - "mkdir -p $HOME/link-test/configs"
+    - "echo 'PORT=8080' > $HOME/link-test/configs/app_v2.conf"
+version: 1

@@ -1,0 +1,12 @@
+id: lnx-locate-system-data
+title: "Locate configuration files using hierarchy principles"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/fhs-test"
+    - "mkdir -p $HOME/fhs-test/etc_mock $HOME/fhs-test/var_mock"
+    - "echo 'server_name=tld.local' > $HOME/fhs-test/etc_mock/app.conf"
+    - "echo 'runtime_data=123' > $HOME/fhs-test/var_mock/app.pid"
+version: 1

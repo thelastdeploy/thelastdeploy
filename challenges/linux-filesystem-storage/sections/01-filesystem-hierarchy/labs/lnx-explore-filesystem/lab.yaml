@@ -1,0 +1,9 @@
+id: lnx-explore-filesystem
+title: "Explore the filesystem hierarchy"
+xp: 15
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -f $HOME/log_path.txt"
+version: 1

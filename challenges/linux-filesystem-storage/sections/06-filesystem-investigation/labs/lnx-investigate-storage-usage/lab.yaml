@@ -1,0 +1,12 @@
+id: lnx-investigate-storage-usage
+title: "Investigate hidden large files consuming storage"
+xp: 35
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/storage-investigation"
+    - "mkdir -p $HOME/storage-investigation/sub_logs"
+    - "echo 'normal log entry' > $HOME/storage-investigation/sub_logs/app.log"
+    - "truncate -s 50M $HOME/storage-investigation/sub_logs/.hidden_dump.log"
+version: 1

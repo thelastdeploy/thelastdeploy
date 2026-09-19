@@ -1,0 +1,28 @@
+id: linux-filesystem-storage
+title: "Linux Filesystem & Storage"
+description: "Master the Linux Filesystem Hierarchy Standard (FHS), file metadata, inodes, hard/symbolic links, disk space utilization, mount points, storage troubleshooting, and disk space recovery."
+topic: linux
+difficulty: intermediate
+estimated_minutes: 60
+tags:
+  - storage
+  - filesystem
+  - linux
+  - administration
+sections:
+  - id: 01-filesystem-hierarchy
+    order: 1
+  - id: 02-file-metadata
+    order: 2
+  - id: 03-links-and-inodes
+    order: 3
+  - id: 04-disk-usage
+    order: 4
+  - id: 05-mount-points
+    order: 5
+  - id: 06-filesystem-investigation
+    order: 6
+  - id: 07-storage-challenge
+    order: 7
+verified: true
+version: 1
