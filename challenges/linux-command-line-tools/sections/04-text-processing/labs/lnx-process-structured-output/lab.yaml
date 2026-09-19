@@ -1,0 +1,13 @@
+id: lnx-process-structured-output
+title: "Process structured CSV output using field delimiters"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/text-test"
+    - "mkdir -p $HOME/text-test"
+    - "echo '1,alice,admin' > $HOME/text-test/users.csv"
+    - "echo '2,bob,developer' >> $HOME/text-test/users.csv"
+    - "echo '3,charlie,ops' >> $HOME/text-test/users.csv"
+version: 1

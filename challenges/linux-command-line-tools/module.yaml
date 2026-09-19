@@ -1,0 +1,34 @@
+id: linux-command-line-tools
+title: "Linux Command Line Tools"
+description: "Master command discovery, advanced file searching, text processing (grep, awk, cut, sort, uniq), pipelines, xargs, regular expressions, and real-world log investigation."
+topic: linux
+difficulty: intermediate
+estimated_minutes: 75
+tags:
+  - cli
+  - text-processing
+  - pipelines
+  - grep
+  - linux
+  - administration
+sections:
+  - id: 01-command-discovery
+    order: 1
+  - id: 02-advanced-file-searching
+    order: 2
+  - id: 03-text-searching
+    order: 3
+  - id: 04-text-processing
+    order: 4
+  - id: 05-pipelines
+    order: 5
+  - id: 06-xargs-and-command-composition
+    order: 6
+  - id: 07-regular-expressions
+    order: 7
+  - id: 08-cli-investigation
+    order: 8
+  - id: 09-command-line-challenge
+    order: 9
+verified: true
+version: 1

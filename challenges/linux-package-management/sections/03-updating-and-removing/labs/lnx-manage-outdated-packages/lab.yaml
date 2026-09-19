@@ -1,0 +1,14 @@
+id: lnx-manage-outdated-packages
+title: "Identify upgradable outdated packages"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/pkg-test"
+    - "mkdir -p $HOME/pkg-test"
+    - "echo 'nginx/stable 1.18.0 upgradable' > $HOME/pkg-test/upgrades.log"
+    - "echo 'curl/stable 7.68.0 kept-back' >> $HOME/pkg-test/upgrades.log"
+    - "echo 'openssl/stable 1.1.1f upgradable' >> $HOME/pkg-test/upgrades.log"
+    - "echo 'bash/stable 5.0.17 upgradable' >> $HOME/pkg-test/upgrades.log"
+version: 1

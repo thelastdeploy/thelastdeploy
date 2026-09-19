@@ -1,0 +1,10 @@
+id: lnx-identify-package-manager
+title: "Identify active system package manager"
+xp: 15
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/pkg-test"
+    - "mkdir -p $HOME/pkg-test"
+version: 1

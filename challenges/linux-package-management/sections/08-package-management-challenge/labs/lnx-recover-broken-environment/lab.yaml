@@ -1,0 +1,13 @@
+id: lnx-recover-broken-environment
+title: "Recover broken package management environment"
+xp: 50
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/pkg-challenge"
+    - "mkdir -p $HOME/pkg-challenge/locks"
+    - "touch $HOME/pkg-challenge/locks/frontend.lock"
+    - "echo 'Package: nginx Status: installed' > $HOME/pkg-challenge/status.log"
+    - "echo 'Package: app-service Status: half-configured' >> $HOME/pkg-challenge/status.log"
+version: 1

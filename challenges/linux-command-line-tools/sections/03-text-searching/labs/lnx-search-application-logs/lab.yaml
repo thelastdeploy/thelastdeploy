@@ -1,0 +1,15 @@
+id: lnx-search-application-logs
+title: "Search application logs for critical errors"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/grep-test"
+    - "mkdir -p $HOME/grep-test"
+    - "echo '2026-01-01 INFO Starting service' > $HOME/grep-test/app.log"
+    - "echo '2026-01-01 CRITICAL Database connection failed' >> $HOME/grep-test/app.log"
+    - "echo '2026-01-01 DEBUG Retrying connection' >> $HOME/grep-test/app.log"
+    - "echo '2026-01-01 CRITICAL Out of memory in worker 2' >> $HOME/grep-test/app.log"
+    - "echo '2026-01-01 INFO Service stopped' >> $HOME/grep-test/app.log"
+version: 1

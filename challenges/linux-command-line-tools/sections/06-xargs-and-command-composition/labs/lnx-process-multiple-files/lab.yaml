@@ -1,0 +1,14 @@
+id: lnx-process-multiple-files
+title: "Batch process multiple files using find and xargs"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/xargs-test"
+    - "mkdir -p $HOME/xargs-test/batch"
+    - "echo 'FAIL: Auth failed' > $HOME/xargs-test/batch/auth.log"
+    - "echo 'INFO: System start' > $HOME/xargs-test/batch/sys.log"
+    - "echo 'FAIL: Storage full' >> $HOME/xargs-test/batch/sys.log"
+    - "echo 'FAIL: Service crash' > $HOME/xargs-test/batch/app.log"
+version: 1

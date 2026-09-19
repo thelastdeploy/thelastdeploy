@@ -1,0 +1,32 @@
+id: linux-package-management
+title: "Linux Package Management"
+description: "Master Linux package ecosystems (apt, dpkg, rpm, dnf), package installation, repository source lists, dependency resolution, diagnosing broken packages, and recovering locked environments."
+topic: linux
+difficulty: intermediate
+estimated_minutes: 60
+tags:
+  - apt
+  - dpkg
+  - packages
+  - repositories
+  - linux
+  - administration
+sections:
+  - id: 01-package-management-basics
+    order: 1
+  - id: 02-installing-packages
+    order: 2
+  - id: 03-updating-and-removing
+    order: 3
+  - id: 04-package-information
+    order: 4
+  - id: 05-dependencies
+    order: 5
+  - id: 06-repositories
+    order: 6
+  - id: 07-broken-packages
+    order: 7
+  - id: 08-package-management-challenge
+    order: 8
+verified: true
+version: 1

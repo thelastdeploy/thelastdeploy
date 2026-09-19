@@ -1,0 +1,11 @@
+id: lnx-repair-package-state
+title: "Resolve stale package manager lock files"
+xp: 40
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/broken-test"
+    - "mkdir -p $HOME/broken-test/lock_zone"
+    - "touch $HOME/broken-test/lock_zone/dpkg_lock.lock"
+version: 1

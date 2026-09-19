@@ -1,0 +1,13 @@
+id: lnx-diagnose-broken-package
+title: "Diagnose half-installed broken package status"
+xp: 35
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/broken-test"
+    - "mkdir -p $HOME/broken-test"
+    - "echo 'Package: nginx Status: install ok installed' > $HOME/broken-test/dpkg_status.log"
+    - "echo 'Package: custom-app Status: install ok half-installed' >> $HOME/broken-test/dpkg_status.log"
+    - "echo 'Package: curl Status: install ok installed' >> $HOME/broken-test/dpkg_status.log"
+version: 1

@@ -1,0 +1,14 @@
+id: lnx-investigate-package-dependencies
+title: "Investigate package dependency requirements"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/pkg-test"
+    - "mkdir -p $HOME/pkg-test"
+    - "echo 'Package: web-app-v2' > $HOME/pkg-test/deps.log"
+    - "echo '  Depends: libc6 (>= 2.27)' >> $HOME/pkg-test/deps.log"
+    - "echo '  Depends: libssl-dev (>= 1.1.1)' >> $HOME/pkg-test/deps.log"
+    - "echo '  Recommends: nginx-light' >> $HOME/pkg-test/deps.log"
+version: 1

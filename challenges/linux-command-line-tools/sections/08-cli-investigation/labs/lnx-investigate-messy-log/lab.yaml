@@ -1,0 +1,16 @@
+id: lnx-investigate-messy-log
+title: "Investigate unstructured messy log dumps"
+xp: 40
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/cli-investigation"
+    - "mkdir -p $HOME/cli-investigation"
+    - "echo '2026-01-01T10:00:01Z AUTH_SUCCESS user=user_10 ip=10.0.0.1' > $HOME/cli-investigation/raw_dump.log"
+    - "echo '2026-01-01T10:00:02Z AUTH_FAILURE user=user_88 ip=192.168.1.99' >> $HOME/cli-investigation/raw_dump.log"
+    - "echo '2026-01-01T10:00:03Z AUTH_FAILURE user=user_12 ip=10.0.0.2' >> $HOME/cli-investigation/raw_dump.log"
+    - "echo '2026-01-01T10:00:04Z AUTH_FAILURE user=user_88 ip=192.168.1.99' >> $HOME/cli-investigation/raw_dump.log"
+    - "echo '2026-01-01T10:00:05Z AUTH_FAILURE user=user_88 ip=192.168.1.99' >> $HOME/cli-investigation/raw_dump.log"
+    - "echo '2026-01-01T10:00:06Z AUTH_SUCCESS user=user_88 ip=192.168.1.99' >> $HOME/cli-investigation/raw_dump.log"
+version: 1

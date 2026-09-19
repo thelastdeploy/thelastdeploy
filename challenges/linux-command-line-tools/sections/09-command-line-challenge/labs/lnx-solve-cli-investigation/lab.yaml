@@ -1,0 +1,16 @@
+id: lnx-solve-cli-investigation
+title: "Solve complex outage investigation using CLI pipeline"
+xp: 50
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/cli-challenge"
+    - "mkdir -p $HOME/cli-challenge/logs"
+    - "echo '198.51.100.4 - - \"POST /api/v1/auth HTTP/1.1\" 401' > $HOME/cli-challenge/logs/node_1.log"
+    - "echo '203.0.113.199 - - \"POST /api/v1/auth HTTP/1.1\" 401' >> $HOME/cli-challenge/logs/node_1.log"
+    - "echo '198.51.100.4 - - \"GET /index.html HTTP/1.1\" 200' >> $HOME/cli-challenge/logs/node_1.log"
+    - "echo '203.0.113.199 - - \"POST /api/v1/auth HTTP/1.1\" 401' > $HOME/cli-challenge/logs/node_2.log"
+    - "echo '203.0.113.199 - - \"POST /api/v1/auth HTTP/1.1\" 401' >> $HOME/cli-challenge/logs/node_2.log"
+    - "echo '203.0.113.199 - - \"POST /api/v1/auth HTTP/1.1\" 401' >> $HOME/cli-challenge/logs/node_2.log"
+version: 1

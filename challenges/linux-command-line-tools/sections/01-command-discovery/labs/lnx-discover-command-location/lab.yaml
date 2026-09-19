@@ -1,0 +1,10 @@
+id: lnx-discover-command-location
+title: "Discover executable binary locations"
+xp: 15
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/cli-test"
+    - "mkdir -p $HOME/cli-test"
+version: 1

@@ -1,0 +1,10 @@
+id: lnx-find-package-information
+title: "Find package ownership for system binaries"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "rm -rf $HOME/pkg-test"
+    - "mkdir -p $HOME/pkg-test"
+version: 1
