@@ -4,7 +4,7 @@ description: Learn to diagnose and repair issues in containerized environments. 
   reading crash logs, resolving port collisions, fixing network isolations, restoring
   volume typo paths, and debugging production incidents.
 topic: docker
-difficulty: intermediate
+difficulty: advanced
 estimated_minutes: 45
 sections:
 - id: 01-reading-docker-errors

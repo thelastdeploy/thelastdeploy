@@ -1,0 +1,11 @@
+id: lnx-analyze-structured-output
+title: "Analyze Structured Output with AWK"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/text-test"
+    - "printf 'PID USER CPU COMMAND\n101 root 1.2 systemd\n102 nginx 8.5 worker\n103 db 12.0 mysqld\n104 user 0.5 bash\n' > $HOME/text-test/ps_output.txt"
+    - "rm -f $HOME/text-test/high_cpu.txt"
+version: 1

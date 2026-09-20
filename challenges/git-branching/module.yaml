@@ -4,7 +4,7 @@ description: Master the concept of branching in Git. Learn how to isolate featur
   perform merges, resolve conflicts, delete branches, and complete standard feature
   branch workflows.
 topic: git
-difficulty: intermediate
+difficulty: beginner
 estimated_minutes: 60
 tags:
 - git

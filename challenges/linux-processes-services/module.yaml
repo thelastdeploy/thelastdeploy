@@ -4,7 +4,7 @@ description: Master process lifecycles, real-time system monitoring, signals man
   background/foreground execution, systemd user-level unit controls, journal logs,
   and debugging failing services.
 topic: linux
-difficulty: intermediate
+difficulty: beginner
 estimated_minutes: 60
 tags:
 - administration

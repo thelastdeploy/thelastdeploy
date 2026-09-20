@@ -3,7 +3,7 @@ title: Nginx Serving Content
 description: Master serving static files, using root and alias directives, custom
   error pages, configuring directory indexing, and resolving file permissions.
 topic: nginx
-difficulty: intermediate
+difficulty: foundational
 estimated_minutes: 80
 sections:
 - id: 01-serving-static-files

@@ -5,7 +5,7 @@ description: Understand the Kubernetes networking model, expose applications usi
   external traffic with Ingress, secure pods using Network Policies, and troubleshoot
   service connectivity issues.
 topic: kubernetes
-difficulty: intermediate
+difficulty: beginner
 estimated_minutes: 100
 tags:
 - kubernetes

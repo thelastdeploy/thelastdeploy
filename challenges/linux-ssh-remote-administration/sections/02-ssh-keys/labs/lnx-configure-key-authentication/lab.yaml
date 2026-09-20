@@ -1,0 +1,12 @@
+id: lnx-configure-key-authentication
+title: "Configure Authorized Keys and Permissions"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/ssh-test/key_dir"
+    - "mkdir -p $HOME/ssh-test/server_home/.ssh"
+    - "echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDummyPublicKeyForTesting admin@example' > $HOME/ssh-test/key_dir/id_ed25519.pub"
+    - "rm -f $HOME/ssh-test/server_home/.ssh/authorized_keys"
+version: 1

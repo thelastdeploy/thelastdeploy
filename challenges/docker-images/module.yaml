@@ -3,7 +3,7 @@ title: Docker Images
 description: Learn how to manage, pull, inspect, and build Docker images. Master Dockerfiles,
   build contexts, layer caching, and web server customization.
 topic: docker
-difficulty: intermediate
+difficulty: beginner
 estimated_minutes: 60
 sections:
 - id: 01-understanding-images

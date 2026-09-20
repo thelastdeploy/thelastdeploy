@@ -2,7 +2,7 @@
 
 "use client";
 
-import { Search, X, Container, Server, Monitor, GitBranch, Sparkles, Zap, Flame, Gem, Infinity, Layers, Globe } from "lucide-react";
+import { Search, X, Container, Server, Monitor, GitBranch, Sparkles, Zap, Flame, Gem, Infinity, Layers, Globe, BookOpen, Crown } from "lucide-react";
 import { Difficulty, Topic } from "@/lib/types";
 
 const TOPICS: { key: "all" | Topic; label: string; icon: typeof Container }[] = [
@@ -18,9 +18,11 @@ const TOPICS: { key: "all" | Topic; label: string; icon: typeof Container }[] = 
 
 const DIFFICULTIES: { key: "all" | Difficulty; label: string; icon: typeof Zap; color: string }[] = [
   { key: "all", label: "All Levels", icon: Sparkles, color: "var(--muted-foreground)" },
+  { key: "foundational", label: "Foundational", icon: BookOpen, color: "#38bdf8" },
   { key: "beginner", label: "Beginner", icon: Zap, color: "var(--accent-primary)" },
   { key: "intermediate", label: "Intermediate", icon: Flame, color: "#fbbf24" },
   { key: "advanced", label: "Advanced", icon: Gem, color: "#ff4444" },
+  { key: "expert", label: "Expert", icon: Crown, color: "#a855f7" },
 ];
 
 const topicStyles: Record<string, { bg: string; border: string; text: string }> = {

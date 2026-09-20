@@ -3,7 +3,7 @@ title: Docker Storage
 description: Understand how to manage data in Docker. Master bind mounts, named volumes,
   metadata inspection, volume backups, and recovery techniques.
 topic: docker
-difficulty: intermediate
+difficulty: beginner
 estimated_minutes: 60
 sections:
 - id: 01-why-data-disappears

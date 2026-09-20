@@ -3,7 +3,7 @@ title: Kubernetes Fundamentals
 description: Learn the core concepts of Kubernetes, deploy local clusters using Kind,
   manage namespaces, inspect resources, and troubleshoot application crashes.
 topic: kubernetes
-difficulty: beginner
+difficulty: foundational
 estimated_minutes: 60
 tags:
 - kubernetes

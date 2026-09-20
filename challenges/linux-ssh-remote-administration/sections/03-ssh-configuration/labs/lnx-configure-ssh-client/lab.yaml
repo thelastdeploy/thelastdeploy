@@ -1,0 +1,10 @@
+id: lnx-configure-ssh-client
+title: "Configure SSH Client Connection Aliases"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/ssh-test/config_dir"
+    - "rm -f $HOME/ssh-test/config_dir/config"
+version: 1

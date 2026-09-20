@@ -1,0 +1,32 @@
+id: text-processing-regex
+title: "Text Processing & Regular Expressions"
+description: "Master Unix text processing tools: head, tail, sort, uniq, cut, awk, sed, and regular expressions to parse, transform, and extract insights from structured data and log files."
+topic: linux
+difficulty: beginner
+estimated_minutes: 60
+tags:
+  - text-processing
+  - grep
+  - awk
+  - sed
+  - regex
+  - linux
+sections:
+  - id: 01-text-processing-basics
+    order: 1
+  - id: 02-sorting-and-counting
+    order: 2
+  - id: 03-cut-and-field-processing
+    order: 3
+  - id: 04-awk
+    order: 4
+  - id: 05-sed
+    order: 5
+  - id: 06-regular-expression-basics
+    order: 6
+  - id: 07-combining-text-tools
+    order: 7
+  - id: 08-text-processing-challenge
+    order: 8
+verified: true
+version: 1

@@ -4,7 +4,7 @@ description: Master IP address structures, network interfaces, port monitoring, 
   diagnostics (ping, traceroute), HTTP interactions (curl), DNS hostname queries,
   SSH configurations, and system network troubleshooting.
 topic: linux
-difficulty: intermediate
+difficulty: beginner
 estimated_minutes: 60
 tags:
 - networking

@@ -3,7 +3,7 @@ title: Git Fundamentals
 description: 'Master the basics of version control with Git: initialize repositories,
   stage changes, commit, check history, and configure ignore lists.'
 topic: git
-difficulty: beginner
+difficulty: foundational
 estimated_minutes: 40
 tags:
 - git

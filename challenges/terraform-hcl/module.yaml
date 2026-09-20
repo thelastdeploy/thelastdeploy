@@ -4,7 +4,7 @@ description: Master HashiCorp Configuration Language (HCL). Learn about blocks, 
   comments, expressions, project structure, and how to validate, lint, and debug syntactically
   invalid configurations.
 topic: terraform
-difficulty: beginner
+difficulty: foundational
 estimated_minutes: 60
 sections:
 - id: 01-understanding-hcl

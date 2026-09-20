@@ -1,0 +1,11 @@
+id: lnx-analyze-server-data
+title: "Analyze Server Data and Build Metric Report"
+xp: 50
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/text-challenge"
+    - "printf '2026-09-20 10:00:00 192.168.1.10 STATUS:200 TIME:45ms\n2026-09-20 10:01:00 10.0.0.5 STATUS:500 TIME:1200ms\n2026-09-20 10:02:00 192.168.1.10 STATUS:500 TIME:850ms\n2026-09-20 10:03:00 172.16.0.2 STATUS:200 TIME:30ms\n2026-09-20 10:04:00 10.0.0.5 STATUS:500 TIME:950ms\n' > $HOME/text-challenge/server.log"
+    - "rm -f $HOME/text-challenge/analysis_report.txt"
+version: 1

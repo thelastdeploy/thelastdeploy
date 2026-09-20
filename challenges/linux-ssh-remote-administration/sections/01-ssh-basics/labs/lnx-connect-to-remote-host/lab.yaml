@@ -1,0 +1,10 @@
+id: lnx-connect-to-remote-host
+title: "Connect to a Remote Host via SSH"
+xp: 15
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/ssh-test"
+    - "rm -f $HOME/ssh-test/connect.sh"
+version: 1

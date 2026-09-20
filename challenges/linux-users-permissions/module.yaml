@@ -4,7 +4,7 @@ description: Master user identities, group structures, permission bits (chmod), 
   controls, special permissions (SUID/Sticky Bit), sudo escalation, and environment
   variables.
 topic: linux
-difficulty: beginner
+difficulty: foundational
 estimated_minutes: 60
 tags:
 - security

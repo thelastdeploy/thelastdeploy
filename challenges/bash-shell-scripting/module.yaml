@@ -1,0 +1,31 @@
+id: bash-shell-scripting
+title: "Bash Shell Scripting"
+description: "Master writing, executing, and debugging Bash shell scripts: shebang syntax, positional arguments, variables, conditional logic, loops, reusable functions, exit codes, and automated health reporting."
+topic: linux
+difficulty: beginner
+estimated_minutes: 60
+tags:
+  - bash
+  - scripting
+  - automation
+  - linux
+  - administration
+sections:
+  - id: 01-shell-scripts
+    order: 1
+  - id: 02-variables-and-input
+    order: 2
+  - id: 03-conditions
+    order: 3
+  - id: 04-loops
+    order: 4
+  - id: 05-functions
+    order: 5
+  - id: 06-exit-codes-and-error-handling
+    order: 6
+  - id: 07-script-automation
+    order: 7
+  - id: 08-shell-scripting-challenge
+    order: 8
+verified: true
+version: 1

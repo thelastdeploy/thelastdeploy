@@ -4,7 +4,7 @@ description: 'Harden Nginx configurations for security and speed: add security h
   apply rate limiting to prevent abuse, enable gzip compression, configure reverse
   proxy caching, and optimize system sockets.'
 topic: nginx
-difficulty: intermediate
+difficulty: advanced
 estimated_minutes: 90
 sections:
 - id: 01-tls-and-https

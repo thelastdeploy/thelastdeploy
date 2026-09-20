@@ -1,0 +1,11 @@
+id: lnx-clean-messy-text
+title: "Clean Messy Text Using Stream Translation"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/text-test"
+    - "echo 'SYSTEM ERROR REPORT - SEVERITY HIGH' > $HOME/text-test/messy.txt"
+    - "rm -f $HOME/text-test/clean.txt"
+version: 1

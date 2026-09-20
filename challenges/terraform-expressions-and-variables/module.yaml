@@ -4,7 +4,7 @@ description: Master dynamic configurations in Terraform. Learn how to work with 
   variables, terraform.tfvars, output values, local values, built-in HCL functions,
   count and for_each loops, and refactor hardcoded code.
 topic: terraform
-difficulty: intermediate
+difficulty: beginner
 estimated_minutes: 70
 sections:
 - id: 01-input-variables

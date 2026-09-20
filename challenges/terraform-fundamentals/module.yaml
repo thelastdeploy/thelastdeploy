@@ -4,7 +4,7 @@ description: Learn the core concepts of Infrastructure as Code (IaC) using Hashi
   Terraform. Discover how to write declarative configuration files, initialize your
   working directory, and manage your first cloud and local resources.
 topic: terraform
-difficulty: beginner
+difficulty: foundational
 estimated_minutes: 60
 sections:
 - id: 01-what-is-infrastructure-as-code

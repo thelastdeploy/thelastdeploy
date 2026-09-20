@@ -1,0 +1,12 @@
+id: lnx-fix-ssh-authentication
+title: "Fix OpenSSH Permissions and Key Authentication"
+xp: 40
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/ssh-test/broken_ssh/.ssh"
+    - "chmod 777 $HOME/ssh-test/broken_ssh/.ssh"
+    - "touch $HOME/ssh-test/broken_ssh/.ssh/authorized_keys"
+    - "chmod 666 $HOME/ssh-test/broken_ssh/.ssh/authorized_keys"
+version: 1

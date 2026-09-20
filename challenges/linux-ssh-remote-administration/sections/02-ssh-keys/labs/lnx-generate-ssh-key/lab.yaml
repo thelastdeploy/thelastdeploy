@@ -1,0 +1,10 @@
+id: lnx-generate-ssh-key
+title: "Generate an SSH Keypair"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/ssh-test/key_dir"
+    - "rm -f $HOME/ssh-test/key_dir/id_ed25519*"
+version: 1

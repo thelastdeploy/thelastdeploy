@@ -4,7 +4,7 @@ description: Master techniques to diagnose, isolate, and recover from common fai
   scenarios in Kubernetes environments, including crash loops, image errors, pending
   pods, service selector mismatches, rollout bugs, and complex production incidents.
 topic: kubernetes
-difficulty: intermediate
+difficulty: advanced
 estimated_minutes: 90
 tags:
 - kubernetes

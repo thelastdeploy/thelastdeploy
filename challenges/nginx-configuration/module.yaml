@@ -3,7 +3,7 @@ title: Nginx Configuration
 description: Learn how to structure, test, reload, and organize Nginx configuration
   files, set up server blocks (virtual hosts), and debug directive conflicts.
 topic: nginx
-difficulty: intermediate
+difficulty: beginner
 estimated_minutes: 90
 sections:
 - id: 01-understanding-nginx-conf

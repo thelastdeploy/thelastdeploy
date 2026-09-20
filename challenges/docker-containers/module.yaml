@@ -4,7 +4,7 @@ description: Master container operations and investigation — manage running co
   inspect internal states, execute commands, configure environment variables, set
   resource caps, and troubleshoot crashes.
 topic: docker
-difficulty: intermediate
+difficulty: foundational
 estimated_minutes: 60
 sections:
 - id: 01-running-containers

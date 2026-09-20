@@ -3,7 +3,7 @@ title: Git Remotes & Collaboration
 description: Learn how to collaborate using Git. Understand remote repositories, push
   and pull changes, manage tracking branches, and synchronize changes with team members.
 topic: git
-difficulty: intermediate
+difficulty: beginner
 estimated_minutes: 80
 tags:
 - git

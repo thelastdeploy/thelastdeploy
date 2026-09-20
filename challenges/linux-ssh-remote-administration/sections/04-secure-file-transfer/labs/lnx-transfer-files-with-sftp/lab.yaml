@@ -1,0 +1,10 @@
+id: lnx-transfer-files-with-sftp
+title: "Transfer Files with SFTP Batch Commands"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/ssh-test"
+    - "rm -f $HOME/ssh-test/sftp_batch.txt"
+version: 1

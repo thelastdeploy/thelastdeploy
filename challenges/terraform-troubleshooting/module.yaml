@@ -5,7 +5,7 @@ description: Master diagnosing and repairing broken Terraform configurations. Le
   issues, fix resource references, recover state files, and repair broken production
   infrastructure.
 topic: terraform
-difficulty: intermediate
+difficulty: advanced
 estimated_minutes: 80
 sections:
 - id: 01-reading-terraform-errors

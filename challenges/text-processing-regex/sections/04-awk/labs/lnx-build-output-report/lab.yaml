@@ -1,0 +1,11 @@
+id: lnx-build-output-report
+title: "Build Output Report with AWK Aggregation"
+xp: 35
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/text-test"
+    - "printf 'item1 10 2\nitem2 25 4\nitem3 5 10\n' > $HOME/text-test/sales.txt"
+    - "rm -f $HOME/text-test/report_summary.txt"
+version: 1

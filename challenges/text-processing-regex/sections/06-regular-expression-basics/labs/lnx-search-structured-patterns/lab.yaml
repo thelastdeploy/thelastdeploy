@@ -1,0 +1,11 @@
+id: lnx-search-structured-patterns
+title: "Search Structured Patterns using Extended Regex"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/text-test"
+    - "printf 'Conn from 192.168.1.50 port 443\nInternal event localhost\nConn from 10.0.0.12 port 80\n' > $HOME/text-test/network.log"
+    - "rm -f $HOME/text-test/ip_lines.txt"
+version: 1

@@ -1,0 +1,32 @@
+id: linux-ssh-remote-administration
+title: "Linux SSH & Remote Administration"
+description: "Master Secure Shell (SSH) remote administration: key generation, passwordless authentication, client configuration, SCP/SFTP file transfers, connection debugging, and remote maintenance automation."
+topic: linux
+difficulty: beginner
+estimated_minutes: 60
+tags:
+  - ssh
+  - remote-administration
+  - scp
+  - sftp
+  - security
+  - linux
+sections:
+  - id: 01-ssh-basics
+    order: 1
+  - id: 02-ssh-keys
+    order: 2
+  - id: 03-ssh-configuration
+    order: 3
+  - id: 04-secure-file-transfer
+    order: 4
+  - id: 05-remote-system-inspection
+    order: 5
+  - id: 06-ssh-troubleshooting
+    order: 6
+  - id: 07-remote-administration
+    order: 7
+  - id: 08-ssh-administration-challenge
+    order: 8
+verified: true
+version: 1

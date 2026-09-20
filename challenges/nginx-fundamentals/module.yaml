@@ -4,7 +4,7 @@ description: Master the basics of Nginx, the high-performance web server, revers
   proxy, and load balancer. Learn how to install, manage, configure, and troubleshoot
   Nginx installations.
 topic: nginx
-difficulty: beginner
+difficulty: foundational
 estimated_minutes: 60
 sections:
 - id: 01-what-is-nginx
