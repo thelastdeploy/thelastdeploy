@@ -1,0 +1,17 @@
+id: lnx-investigate-permission-breach
+title: "Investigate and Remediate Security Privilege Breach"
+xp: 55
+estimated_minutes: 10
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/security-breach/sudoers.d"
+    - "mkdir -p $HOME/security-breach/bin"
+    - "mkdir -p $HOME/security-breach/config"
+    - "printf 'app_user ALL=(ALL) NOPASSWD: ALL\n' > $HOME/security-breach/sudoers.d/app_user"
+    - "touch $HOME/security-breach/bin/custom_helper"
+    - "chmod 4755 $HOME/security-breach/bin/custom_helper"
+    - "touch $HOME/security-breach/config/db_pass.key"
+    - "chmod 777 $HOME/security-breach/config/db_pass.key"
+    - "rm -f $HOME/security-breach/breach_report.txt"
+version: 1

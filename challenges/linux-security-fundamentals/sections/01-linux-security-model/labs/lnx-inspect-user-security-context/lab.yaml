@@ -1,0 +1,10 @@
+id: lnx-inspect-user-security-context
+title: "Inspect User Security Context and Group Memberships"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/sec-test"
+    - "rm -f $HOME/sec-test/user_context.txt"
+version: 1

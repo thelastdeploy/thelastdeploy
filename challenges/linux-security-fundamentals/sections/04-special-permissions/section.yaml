@@ -1,0 +1,5 @@
+id: 04-special-permissions
+title: "Special Permissions (SUID, SGID, Sticky Bit)"
+order: 4
+xp: 35
+version: 1

@@ -1,0 +1,30 @@
+id: linux-security-fundamentals
+title: "Linux Security Fundamentals"
+description: "Master Linux security architecture: user/group security contexts, file permission auditing, sudo & privilege delegation, special permission bits (SUID/SGID/Sticky Bit), process security auditing, and privilege breach investigations."
+topic: linux
+difficulty: intermediate
+estimated_minutes: 75
+tags:
+  - security
+  - permissions
+  - sudo
+  - suid
+  - auditing
+  - linux
+sections:
+  - id: 01-linux-security-model
+    order: 1
+  - id: 02-file-security
+    order: 2
+  - id: 03-sudo-and-privilege
+    order: 3
+  - id: 04-special-permissions
+    order: 4
+  - id: 05-process-and-user-security
+    order: 5
+  - id: 06-security-auditing
+    order: 6
+  - id: 07-security-investigation-challenge
+    order: 7
+verified: true
+version: 1
