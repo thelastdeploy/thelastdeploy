@@ -1,0 +1,30 @@
+id: linux-logging-journaling
+title: "Linux Logging & Journaling"
+description: "Master Linux log inspection and investigation: /var/log/ architecture, systemd journal (journalctl) filtering, log analysis pipelines, logrotate management, service crash correlation, JSON structured logging, and production incident post-mortems."
+topic: linux
+difficulty: intermediate
+estimated_minutes: 75
+tags:
+  - logging
+  - journalctl
+  - systemd
+  - logrotate
+  - incident-response
+  - linux
+sections:
+  - id: 01-linux-logging-basics
+    order: 1
+  - id: 02-journalctl
+    order: 2
+  - id: 03-log-analysis
+    order: 3
+  - id: 04-log-rotation
+    order: 4
+  - id: 05-service-logging
+    order: 5
+  - id: 06-remote-and-structured-logging
+    order: 6
+  - id: 07-logging-investigation-challenge
+    order: 7
+verified: true
+version: 1

@@ -1,0 +1,10 @@
+id: lnx-filter-journal-events
+title: "Filter Journal Events by Priority and Format"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/log-test"
+    - "rm -f $HOME/log-test/priority_cmd.sh"
+version: 1

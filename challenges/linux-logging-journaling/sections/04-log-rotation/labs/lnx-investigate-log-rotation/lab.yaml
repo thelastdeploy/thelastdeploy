@@ -1,0 +1,11 @@
+id: lnx-investigate-log-rotation
+title: "Investigate Log Rotation Archives"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/log-test/archives"
+    - "echo '[2026-09-19 23:59:00] CRITICAL_DATABASE_FAIL: Connection reset' | gzip > $HOME/log-test/archives/app.log.1.gz"
+    - "rm -f $HOME/log-test/archived_fault.txt"
+version: 1

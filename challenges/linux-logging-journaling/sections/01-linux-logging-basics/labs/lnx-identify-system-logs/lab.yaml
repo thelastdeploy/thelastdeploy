@@ -1,0 +1,13 @@
+id: lnx-identify-system-logs
+title: "Identify System Log File Locations"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/log-test/sys_logs"
+    - "echo 'kernel: PCI bus scan' > $HOME/log-test/sys_logs/kern.log"
+    - "echo 'sshd: Failed password for root' > $HOME/log-test/sys_logs/auth.log"
+    - "echo 'cron: task completed' > $HOME/log-test/sys_logs/syslog"
+    - "rm -f $HOME/log-test/auth_file.txt"
+version: 1
