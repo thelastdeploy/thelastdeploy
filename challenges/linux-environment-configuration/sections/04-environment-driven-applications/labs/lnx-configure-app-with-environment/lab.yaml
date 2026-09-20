@@ -1,0 +1,12 @@
+id: lnx-configure-app-with-environment
+title: "Configure Environment-Driven Applications"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/env-test"
+    - "printf 'PORT=5000\nLOG_LEVEL=debug\n' > $HOME/env-test/app.env"
+    - "rm -f $HOME/env-test/run_app.sh"
+    - "rm -f $HOME/env-test/app_runtime.log"
+version: 1

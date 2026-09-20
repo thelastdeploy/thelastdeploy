@@ -1,0 +1,10 @@
+id: lnx-create-cron-job
+title: "Create Step Schedule Cron Entries"
+xp: 25
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/cron-test"
+    - "rm -f $HOME/cron-test/step_schedule.cron"
+version: 1

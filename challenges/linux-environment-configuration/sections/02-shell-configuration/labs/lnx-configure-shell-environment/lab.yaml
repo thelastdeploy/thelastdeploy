@@ -1,0 +1,10 @@
+id: lnx-configure-shell-environment
+title: "Configure Shell Environment in Bashrc"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/env-test"
+    - "touch $HOME/env-test/mock_bashrc"
+version: 1

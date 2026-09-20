@@ -1,0 +1,11 @@
+id: lnx-manage-user-crontab
+title: "Manage User Crontab Files"
+xp: 20
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/cron-test"
+    - "printf '0 1 * * * /usr/bin/find /tmp -type f -mtime +7 -delete\n' > $HOME/cron-test/user_schedule.txt"
+    - "rm -f $HOME/cron-test/current_crontab.bak"
+version: 1

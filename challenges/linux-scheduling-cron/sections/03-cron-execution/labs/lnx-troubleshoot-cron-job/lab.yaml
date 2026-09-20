@@ -1,0 +1,10 @@
+id: lnx-troubleshoot-cron-job
+title: "Troubleshoot Cron Execution Environment and PATH"
+xp: 35
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/cron-test"
+    - "printf '* * * * * backup.sh\n' > $HOME/cron-test/broken_crontab"
+version: 1

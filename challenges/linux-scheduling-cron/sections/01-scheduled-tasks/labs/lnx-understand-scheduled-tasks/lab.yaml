@@ -1,0 +1,10 @@
+id: lnx-understand-scheduled-tasks
+title: "Understand Scheduled Task Expressions"
+xp: 15
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/cron-test"
+    - "rm -f $HOME/cron-test/daily_backup.cron"
+version: 1

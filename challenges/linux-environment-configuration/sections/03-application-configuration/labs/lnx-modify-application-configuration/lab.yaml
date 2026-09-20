@@ -1,0 +1,11 @@
+id: lnx-modify-application-configuration
+title: "Modify Configuration Settings and Preserve Backups"
+xp: 30
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/env-test"
+    - "printf 'MAX_CONNECTIONS=100\nTIMEOUT=30\n' > $HOME/env-test/service.conf"
+    - "rm -f $HOME/env-test/service.conf.bak"
+version: 1

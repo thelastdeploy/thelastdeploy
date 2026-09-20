@@ -1,0 +1,27 @@
+id: linux-environment-configuration
+title: "Environment & Configuration Management"
+description: "Master Linux environment and application configuration: environment variables, shell startup scripts (.bashrc, .bash_profile), key-value application settings, environment-driven apps, configuration troubleshooting, and backup recovery."
+topic: linux
+difficulty: beginner
+estimated_minutes: 60
+tags:
+  - environment-variables
+  - bashrc
+  - configuration
+  - troubleshooting
+  - linux
+sections:
+  - id: 01-environment-variables
+    order: 1
+  - id: 02-shell-configuration
+    order: 2
+  - id: 03-application-configuration
+    order: 3
+  - id: 04-environment-driven-applications
+    order: 4
+  - id: 05-configuration-troubleshooting
+    order: 5
+  - id: 06-configuration-challenge
+    order: 6
+verified: true
+version: 1

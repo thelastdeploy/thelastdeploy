@@ -1,0 +1,28 @@
+id: linux-scheduling-cron
+title: "Task Scheduling with Cron and At"
+description: "Master Linux task scheduling: five-field cron syntax, user crontab management, non-interactive environment troubleshooting, one-time jobs with at, and automated maintenance scheduling."
+topic: linux
+difficulty: beginner
+estimated_minutes: 60
+tags:
+  - cron
+  - crontab
+  - scheduling
+  - at
+  - automation
+  - linux
+sections:
+  - id: 01-scheduled-tasks
+    order: 1
+  - id: 02-crontab
+    order: 2
+  - id: 03-cron-execution
+    order: 3
+  - id: 04-at-and-one-time-tasks
+    order: 4
+  - id: 05-automated-maintenance
+    order: 5
+  - id: 06-scheduling-challenge
+    order: 6
+verified: true
+version: 1
