@@ -20,7 +20,7 @@ if ! echo "$CONTENT" | grep -Eq "journalctl -u (ssh|sshd)(\.service)?"; then
     exit 1
 fi
 
-if ! echo "$CONTENT" | grep -Eq "--since"; then
+if ! echo "$CONTENT" | grep -Eq -- "--since"; then
     echo "FAIL: $SCRIPT_PATH missing time window filter '--since'."
     exit 1
 fi
