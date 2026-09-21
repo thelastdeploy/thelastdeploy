@@ -34,3 +34,31 @@ echo "Selected environment: $ENV_NAME"
 ```
 
 The `-p` flag displays a prompt before waiting for input.
+
+---
+
+## Lab Tasks
+
+### Task 1: Build an Interactive Shell Script (`lnx-build-interactive-script`)
+1. Start the lab:
+   ```bash
+   tld start lnx-build-interactive-script
+   ```
+2. Create an interactive script at `$HOME/script-test/interactive.sh` that prompts the user using `read -p` to enter a username.
+3. Ensure the script prints `Welcome, <username>!` based on the entered input.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Work with Script Variables and Arguments (`lnx-work-with-script-variables`)
+1. Start the lab:
+   ```bash
+   tld start lnx-work-with-script-variables
+   ```
+2. Create an executable script at `$HOME/script-test/vars.sh` that accepts positional parameters `$1` (Name) and `$2` (Role).
+3. Ensure the script prints `User: $1, Role: $2` when run with positional arguments.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

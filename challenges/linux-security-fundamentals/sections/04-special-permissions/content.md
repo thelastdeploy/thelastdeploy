@@ -21,3 +21,19 @@ find / -perm -4000 -type f 2>/dev/null
 ## 3. Sticky Bit (`1000` / `+t`)
 
 Applied to shared directories (like `/tmp` with mode `1777` / `drwxrwxrwt`). Prevents users from deleting or renaming files owned by other users within the shared directory.
+
+---
+
+## Lab Tasks
+
+### Task 1: Investigate Special SUID/SGID/Sticky Bit Permissions (`lnx-investigate-special-permissions`)
+1. Start the lab:
+   ```bash
+   tld start lnx-investigate-special-permissions
+   ```
+2. Locate files with SUID or SGID bits set.
+3. Find all SUID binaries (`-perm -4000`) in `$HOME/sec-test/` and record their paths in `$HOME/sec-test/suid_files.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

@@ -22,3 +22,19 @@ grep ' 500 ' access.log | cut -d ' ' -f 1 | sort | uniq -c | sort -nr | head -n 
 ```
 
 By chaining commands together, complex data extraction tasks are completed concisely without writing custom program code.
+
+---
+
+## Lab Tasks
+
+### Task 1: Build a Multi-Stage Text Processing Pipeline (`lnx-build-text-processing-pipeline`)
+1. Start the lab:
+   ```bash
+   tld start lnx-build-text-processing-pipeline
+   ```
+2. Construct a multi-stage command pipeline combining `grep`, `awk`, and `sort`.
+3. Process `$HOME/text-test/server.log` to find `500` status codes, extract client IP addresses, and write top IP counts to `$HOME/text-test/top_errors.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

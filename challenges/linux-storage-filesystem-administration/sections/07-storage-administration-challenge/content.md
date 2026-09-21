@@ -15,3 +15,19 @@ An application service reported read/write failures when attempting to persist d
 - Check permissions (`chmod`) and ownership (`chown`) on the target location.
 - Verify persistent mount parameters and formatting.
 - Confirm successful end-to-end verification.
+
+---
+
+## Lab Tasks
+
+### Task 1: Restore Missing Storage (`lnx-restore-missing-storage`)
+1. Start the lab:
+   ```bash
+   tld start lnx-restore-missing-storage
+   ```
+2. Complete the storage administration capstone challenge.
+3. Repair unmounted storage volumes, fix fstab entries, and record `STORAGE_STATUS: ONLINE` in `$HOME/storage-challenge/app/status.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

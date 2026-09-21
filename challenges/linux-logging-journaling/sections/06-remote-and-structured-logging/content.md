@@ -25,3 +25,19 @@ cat app.json.log | jq -r '[.timestamp, .message] | @tsv'
 ## 3. Remote Syslog Transport Overview
 
 Enterprise environments ship logs over UDP/TCP port 514 using `rsyslog` or forwarders like Fluentd/Logstash to centralized SIEM platforms.
+
+---
+
+## Lab Tasks
+
+### Task 1: Analyze Structured JSON Log Entries (`lnx-analyze-structured-logs`)
+1. Start the lab:
+   ```bash
+   tld start lnx-analyze-structured-logs
+   ```
+2. Parse and analyze structured JSON log records.
+3. Filter error-level JSON records from `$HOME/log-test/app.json` and save to `$HOME/log-test/json_errors.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

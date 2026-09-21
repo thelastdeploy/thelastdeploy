@@ -36,3 +36,32 @@ set -euo pipefail
 - `set -o pipefail`: Ensure pipelines return the exit code of the last command that failed.
 
 Using strict mode prevents silent failures and helps catch bugs early.
+
+---
+
+## Lab Tasks
+
+### Task 1: Create Your First Shell Script (`lnx-create-first-script`)
+1. Start the lab:
+   ```bash
+   tld start lnx-create-first-script
+   ```
+2. Create an executable Bash script at `$HOME/script-test/hello.sh` starting with a valid shebang (`#!/bin/bash`).
+3. Ensure the script prints `Hello, Shell!` to stdout when executed.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Run Scripts Safely with Strict Options (`lnx-run-script-safely`)
+1. Start the lab:
+   ```bash
+   tld start lnx-run-script-safely
+   ```
+2. Create an executable script at `$HOME/script-test/safe.sh` starting with shebang `#!/bin/bash`.
+3. Enable strict execution mode by adding `set -euo pipefail` near the top of the script.
+4. Ensure the script prints `Safe Execution` when executed.
+5. Validate your solution:
+   ```bash
+   tld check
+   ```

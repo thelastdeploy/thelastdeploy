@@ -23,3 +23,31 @@ To follow new entries in real-time as they are written:
 ```bash
 tail -f /var/log/syslog
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Identify System Log File Locations (`lnx-identify-system-logs`)
+1. Start the lab:
+   ```bash
+   tld start lnx-identify-system-logs
+   ```
+2. Locate standard system log file locations.
+3. Save the filename responsible for authentication logs (`auth.log`) to `$HOME/log-test/auth_file.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Inspect Application Log Streams (`lnx-inspect-application-log`)
+1. Start the lab:
+   ```bash
+   tld start lnx-inspect-application-log
+   ```
+2. Inspect application log streams using `tail`.
+3. Extract the last 10 lines of `$HOME/log-test/app_logs/web_access.log` and save to `$HOME/log-test/recent_access.log`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

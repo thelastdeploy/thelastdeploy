@@ -25,3 +25,19 @@ echo "/usr/local/bin/sync.sh" | at now + 2 hours
   ```bash
   atrm 4
   ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Schedule One-Time Tasks with At (`lnx-schedule-one-time-task`)
+1. Start the lab:
+   ```bash
+   tld start lnx-schedule-one-time-task
+   ```
+2. Schedule one-time task execution with `at`.
+3. Create a script at `$HOME/cron-test/at_command.sh` containing `at` job submission syntax.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

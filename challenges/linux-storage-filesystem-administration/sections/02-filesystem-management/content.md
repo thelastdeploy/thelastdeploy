@@ -33,3 +33,31 @@ fsck /dev/sda1
 ```
 
 *Note: Never run `fsck` on an actively mounted filesystem to prevent corruption.*
+
+---
+
+## Lab Tasks
+
+### Task 1: Identify Filesystem Formats and UUIDs (`lnx-identify-filesystem-types`)
+1. Start the lab:
+   ```bash
+   tld start lnx-identify-filesystem-types
+   ```
+2. Identify filesystem formats and partition UUIDs.
+3. Determine filesystem types using `blkid` and save summary output to `$HOME/storage-test/fs_summary.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Inspect Superblock Metadata and Filesystem Health (`lnx-inspect-filesystem-health`)
+1. Start the lab:
+   ```bash
+   tld start lnx-inspect-filesystem-health
+   ```
+2. Inspect superblock metadata and filesystem status.
+3. Inspect filesystem health metadata using `tune2fs -l` or `dumpe2fs` and save status to `$HOME/storage-test/fs_health.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

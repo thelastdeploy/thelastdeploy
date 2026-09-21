@@ -25,3 +25,31 @@ deploy  ALL = (ALL) NOPASSWD: ALL
 
 - **`NOPASSWD: ALL`**: Grants un-authenticated full superuser access. If an application service account assigned this rule is compromised, the entire host is compromised.
 - **Wildcards in Sudo Rules**: Granting sudo access to binaries that support shell escapes (like `vim`, `find`, `less`, `awk`) allows users to break out into a root shell.
+
+---
+
+## Lab Tasks
+
+### Task 1: Inspect Sudo Privileges with Sudo List (`lnx-inspect-sudo-access`)
+1. Start the lab:
+   ```bash
+   tld start lnx-inspect-sudo-access
+   ```
+2. Inspect user sudo privilege specifications.
+3. Create an executable script at `$HOME/sec-test/check_sudo.sh` running `sudo -l` to list allowed commands.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Investigate Permissive Sudoers Rules (`lnx-investigate-privilege-access`)
+1. Start the lab:
+   ```bash
+   tld start lnx-investigate-privilege-access
+   ```
+2. Audit permissive sudoers configurations.
+3. Identify users with full `ALL=(ALL:ALL) ALL` NOPASSWD privileges and save their username to `$HOME/sec-test/permissive_user.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

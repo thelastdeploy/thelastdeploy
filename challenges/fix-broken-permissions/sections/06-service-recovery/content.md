@@ -4,7 +4,7 @@ Once file permissions are restored, the final step in incident response is verif
 
 ---
 
-## 🔄 Verification Checklist
+## Verification Checklist
 
 1. **Verify Log Readability**: Confirm non-root users can read `/var/log/app-server.log`.
 2. **Restart Application Service**: Ensure `webapp` starts without `EACCES` errors.
@@ -12,7 +12,7 @@ Once file permissions are restored, the final step in incident response is verif
 
 ---
 
-## 📋 Task 4 Instructions
+## Task 4 Instructions
 
 To complete the final lab task:
 

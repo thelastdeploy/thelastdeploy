@@ -32,3 +32,19 @@ To count unique items and rank them from most frequent to least frequent:
 ```bash
 sort input.txt | uniq -c | sort -nr > counts.txt
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Analyze Repeated Data with Sort and Uniq (`lnx-analyze-repeated-data`)
+1. Start the lab:
+   ```bash
+   tld start lnx-analyze-repeated-data
+   ```
+2. Analyze duplicate lines using `sort` and `uniq`.
+3. Count unique IP addresses in `$HOME/text-test/access.log` and save sorted count results to `$HOME/text-test/unique_ips.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

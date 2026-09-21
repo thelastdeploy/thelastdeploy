@@ -38,3 +38,31 @@ Export structured data in JSON format for automated processing:
 ```bash
 journalctl -u nginx -o json-pretty
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Filter Journal Events by Priority and Format (`lnx-filter-journal-events`)
+1. Start the lab:
+   ```bash
+   tld start lnx-filter-journal-events
+   ```
+2. Filter systemd journal events by priority and output format.
+3. Create an executable script at `$HOME/log-test/priority_cmd.sh` executing `journalctl -p err -o json-pretty`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Query Systemd Journal by Unit and Time (`lnx-query-system-journal`)
+1. Start the lab:
+   ```bash
+   tld start lnx-query-system-journal
+   ```
+2. Query systemd journal logs by service unit and time range.
+3. Create an executable script at `$HOME/log-test/journal_query_cmd.sh` executing `journalctl -u ssh.service --since "1 hour ago"`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

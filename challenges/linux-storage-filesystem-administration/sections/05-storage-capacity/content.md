@@ -19,3 +19,31 @@ When a file is deleted (`rm`) while a running process holds an open file handle,
 
 - `lsof +L1`: List open files that have been deleted (link count 0).
 - Terminating or restarting the holding process releases the locked filesystem blocks.
+
+---
+
+## Lab Tasks
+
+### Task 1: Investigate Disk Capacity (`lnx-investigate-disk-capacity`)
+1. Start the lab:
+   ```bash
+   tld start lnx-investigate-disk-capacity
+   ```
+2. Analyze directory disk usage using `du`.
+3. Identify the largest directory in `$HOME/storage-test/data` using `du -sh *` and write directory name to `$HOME/storage-test/largest_dir.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Recover Storage Space (`lnx-recover-storage-space`)
+1. Start the lab:
+   ```bash
+   tld start lnx-recover-storage-space
+   ```
+2. Recover storage space consumed by temporary files.
+3. Identify and safely delete obsolete `.tmp` and log dump files in `$HOME/storage-test/cleanup_target/`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

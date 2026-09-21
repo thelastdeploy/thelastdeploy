@@ -36,3 +36,31 @@ cat text.txt | tr 'A-Z' 'a-z'
 # Delete specific characters (e.g. carriage returns)
 cat file.txt | tr -d '\r'
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Clean Messy Text Using Stream Translation (`lnx-clean-messy-text`)
+1. Start the lab:
+   ```bash
+   tld start lnx-clean-messy-text
+   ```
+2. Process messy log entries using stream translation (`tr`).
+3. Convert lowercase characters to uppercase in `$HOME/text-test/raw.txt` and save output to `$HOME/text-test/clean.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Process Command Output with Head and Redirection (`lnx-process-command-output`)
+1. Start the lab:
+   ```bash
+   tld start lnx-process-command-output
+   ```
+2. Process command output using `head` and redirection.
+3. Extract the first 5 lines of `$HOME/text-test/system.log` and write them to `$HOME/text-test/head_sample.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

@@ -4,12 +4,12 @@ With the root cause identified, you must now restore appropriate read permission
 
 ---
 
-## 🛠️ Recommended Permission Mode
+## Recommended Permission Mode
 
 Log files should generally be configured with mode `644`:
-- **User (Owner)**: `rw-` — Read and Write
-- **Group**: `r--` — Read only
-- **Others**: `r--` — Read only
+- **User (Owner)**: `rw-`  Read and Write
+- **Group**: `r--`  Read only
+- **Others**: `r--`  Read only
 
 ### Applying `644`:
 ```bash
@@ -22,7 +22,7 @@ sudo chmod 644 /var/log/app-server.log
 ```
 ---
 
-## 📋 Task 3 Instructions
+## Task 3 Instructions
 
 To complete the third lab task:
 

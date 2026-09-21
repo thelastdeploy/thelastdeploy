@@ -19,3 +19,19 @@ A security audit systematically evaluates a Linux system's security posture by a
 ## 2. Generating Security Audit Reports
 
 Audits should produce clear, repeatable findings reports detailing identified vulnerabilities rather than executing blind modifications.
+
+---
+
+## Lab Tasks
+
+### Task 1: Perform System Security Baseline Audit (`lnx-audit-system-security`)
+1. Start the lab:
+   ```bash
+   tld start lnx-audit-system-security
+   ```
+2. Perform a comprehensive system security baseline audit.
+3. Create an audit execution script at `$HOME/sec-test/audit_script.sh` that checks file permissions and writes findings to `$HOME/sec-test/audit_findings.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

@@ -25,3 +25,31 @@ Rank error occurrences by frequency to prioritize bug fixes:
 ```bash
 grep -i "error" /var/log/syslog | cut -d ' ' -f 5- | sort | uniq -c | sort -nr | head -n 10
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Extract Errors and Fatal Exceptions from Logs (`lnx-find-errors-in-logs`)
+1. Start the lab:
+   ```bash
+   tld start lnx-find-errors-in-logs
+   ```
+2. Extract error and fatal log entries using `grep`.
+3. Extract all lines matching `ERROR` or `FATAL` from `$HOME/log-test/app.log` and save to `$HOME/log-test/error_summary.log`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Trace System Event Timelines across Logs (`lnx-trace-system-event`)
+1. Start the lab:
+   ```bash
+   tld start lnx-trace-system-event
+   ```
+2. Trace system events across log files by session ID.
+3. Extract all lines containing `session_id=1042` from `$HOME/log-test/system_trace.log` and save to `$HOME/log-test/session_1042_trace.log`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

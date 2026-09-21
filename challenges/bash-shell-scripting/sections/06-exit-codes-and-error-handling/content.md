@@ -35,3 +35,19 @@ trap cleanup EXIT
 ```
 
 Regardless of whether the script terminates normally or encounters an error, the `cleanup` function will execute automatically upon script exit.
+
+---
+
+## Lab Tasks
+
+### Task 1: Handle Script Failures with Exit Codes and Traps (`lnx-handle-script-failures`)
+1. Start the lab:
+   ```bash
+   tld start lnx-handle-script-failures
+   ```
+2. Create an error-resilient script at `$HOME/script-test/resilient.sh`.
+3. Use `trap` commands to handle script exit signals and print cleanup confirmation messages upon termination.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

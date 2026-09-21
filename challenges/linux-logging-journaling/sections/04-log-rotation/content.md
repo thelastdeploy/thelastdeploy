@@ -34,3 +34,19 @@ zgrep "ERROR" /var/log/syslog.2.gz
 # View compressed log contents
 zcat /var/log/nginx/access.log.3.gz | head -n 20
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Investigate Log Rotation Archives (`lnx-investigate-log-rotation`)
+1. Start the lab:
+   ```bash
+   tld start lnx-investigate-log-rotation
+   ```
+2. Inspect compressed log archives (`.gz`).
+3. Search `$HOME/log-test/app.log.1.gz` for critical errors and save the error line to `$HOME/log-test/archived_fault.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

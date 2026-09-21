@@ -34,3 +34,31 @@ grep -E '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' network.log
 # Match ERROR or WARN keywords
 grep -E 'ERROR|WARN' app.log
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Match Text Patterns with Grep Anchors (`lnx-match-text-patterns`)
+1. Start the lab:
+   ```bash
+   tld start lnx-match-text-patterns
+   ```
+2. Match text line anchors using basic regex with `grep`.
+3. Extract lines starting with `ERROR` from `$HOME/text-test/app.log` and write to `$HOME/text-test/anchored_errors.log`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Search Structured Patterns using Extended Regex (`lnx-search-structured-patterns`)
+1. Start the lab:
+   ```bash
+   tld start lnx-search-structured-patterns
+   ```
+2. Search complex patterns using extended regular expressions (`grep -E`).
+3. Extract valid IPv4 addresses from `$HOME/text-test/network.log` and write to `$HOME/text-test/valid_ips.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

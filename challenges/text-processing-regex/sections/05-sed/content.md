@@ -31,3 +31,19 @@ sed '1d' data.txt
 # Delete lines starting with comments (#)
 sed '/^#/d' config.txt
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Transform Configuration Data using SED (`lnx-transform-configuration-data`)
+1. Start the lab:
+   ```bash
+   tld start lnx-transform-configuration-data
+   ```
+2. Substitute text strings using `sed`.
+3. Replace all occurrences of `PORT=80` with `PORT=8080` in `$HOME/text-test/config.ini` and save to `$HOME/text-test/config_updated.ini`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

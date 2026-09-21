@@ -28,3 +28,19 @@ You can supply one-off environment variables directly to an application command 
 ```bash
 PORT=9000 LOG_LEVEL=warn ./start_server.sh
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Configure Environment-Driven Applications (`lnx-configure-app-with-environment`)
+1. Start the lab:
+   ```bash
+   tld start lnx-configure-app-with-environment
+   ```
+2. Configure environment-driven application execution scripts.
+3. Create an executable launcher at `$HOME/env-test/run_app.sh` setting `PORT=5000` and `LOG_LEVEL=debug`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

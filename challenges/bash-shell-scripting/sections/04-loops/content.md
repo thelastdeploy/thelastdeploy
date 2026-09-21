@@ -42,3 +42,19 @@ while IFS= read -r LINE; do
     echo "Line: $LINE"
 done < input.txt
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Automate Repetitive Tasks with Loops (`lnx-automate-repetitive-task`)
+1. Start the lab:
+   ```bash
+   tld start lnx-automate-repetitive-task
+   ```
+2. Create an executable script at `$HOME/script-test/backup_logs.sh`.
+3. Use a `for` loop to compress all `.log` files in `$HOME/script-test/logs/` into `.gz` archives using `gzip`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

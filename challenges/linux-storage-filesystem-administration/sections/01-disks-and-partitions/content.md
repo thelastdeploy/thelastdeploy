@@ -26,3 +26,31 @@ Inspect partition tables:
 fdisk -l /dev/sda
 parted /dev/sda print
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Identify Storage Devices and Block Topology (`lnx-identify-storage-devices`)
+1. Start the lab:
+   ```bash
+   tld start lnx-identify-storage-devices
+   ```
+2. Identify storage devices, block sizes, and disk topology.
+3. List all block devices using `lsblk` and save output to `$HOME/storage-test/block_devices.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Inspect Disk Partition Tables (`lnx-inspect-disk-partitions`)
+1. Start the lab:
+   ```bash
+   tld start lnx-inspect-disk-partitions
+   ```
+2. Inspect partition table layouts and partition types.
+3. Inspect disk partition layout using `fdisk -l` or `parted -l` and save details to `$HOME/storage-test/partition_info.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

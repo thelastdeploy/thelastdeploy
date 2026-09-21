@@ -40,3 +40,31 @@ Use the `-b` flag with a batch command file:
 ```bash
 sftp -b sftp_commands.txt admin@192.168.1.50
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Copy Files Remotely using SCP (`lnx-copy-files-with-scp`)
+1. Start the lab:
+   ```bash
+   tld start lnx-copy-files-with-scp
+   ```
+2. Perform the required system administration task for `Copy Files Remotely using SCP`.
+3. Save the resulting verification output or file to the designated lab workspace directory.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Transfer Files with SFTP Batch Commands (`lnx-transfer-files-with-sftp`)
+1. Start the lab:
+   ```bash
+   tld start lnx-transfer-files-with-sftp
+   ```
+2. Perform the required system administration task for `Transfer Files with SFTP Batch Commands`.
+3. Save the resulting verification output or file to the designated lab workspace directory.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

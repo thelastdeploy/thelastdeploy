@@ -23,3 +23,19 @@ find /var/log/app -name "*.log" -mtime +7 -delete
 - Log all operations with precise timestamps.
 - Validate paths before deleting files to prevent accidental data loss.
 - Always check exit codes before logging success.
+
+---
+
+## Lab Tasks
+
+### Task 1: Automate System Maintenance and Logging (`lnx-automate-system-maintenance`)
+1. Start the lab:
+   ```bash
+   tld start lnx-automate-system-maintenance
+   ```
+2. Create a system maintenance script at `$HOME/script-test/clean_old_logs.sh`.
+3. Find and delete `.tmp` files older than 7 days, logging maintenance activity to `$HOME/script-test/maintenance.log`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

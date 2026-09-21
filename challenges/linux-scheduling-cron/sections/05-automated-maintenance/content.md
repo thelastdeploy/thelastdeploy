@@ -29,3 +29,31 @@ A typical automated maintenance script uses `find` to delete temporary or log fi
 find /tmp/app_logs -name "*.log" -mtime +14 -delete
 echo "[$(date)] Pruned old log files" >> /var/log/maintenance.log
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Automate Directory Cleanup and Logging (`lnx-automate-file-cleanup`)
+1. Start the lab:
+   ```bash
+   tld start lnx-automate-file-cleanup
+   ```
+2. Automate maintenance cleanup tasks via scripts.
+3. Create an executable cleanup script at `$HOME/cron-test/cleanup_job.sh` removing temporary log files and logging output to `$HOME/cron-test/cleanup.log`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Configure System-Wide Crontab Maintenance (`lnx-schedule-system-maintenance`)
+1. Start the lab:
+   ```bash
+   tld start lnx-schedule-system-maintenance
+   ```
+2. Configure system-wide `/etc/crontab` maintenance jobs.
+3. Create a system crontab snippet at `$HOME/cron-test/sys_crontab` including the user field `root` before command execution.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

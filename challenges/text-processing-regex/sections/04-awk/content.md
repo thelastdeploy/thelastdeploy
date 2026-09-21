@@ -32,3 +32,31 @@ Execute initialization code before processing lines with `BEGIN`, and print tota
 ```bash
 awk 'BEGIN { sum=0 } { sum += $2 } END { print "Total:", sum }' numbers.txt
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Analyze Structured Output with AWK (`lnx-analyze-structured-output`)
+1. Start the lab:
+   ```bash
+   tld start lnx-analyze-structured-output
+   ```
+2. Analyze tabular system output using `awk`.
+3. Print the second column of `$HOME/text-test/metrics.txt` using `awk '{print $2}'` and save to `$HOME/text-test/col2.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Build Output Report with AWK Aggregation (`lnx-build-output-report`)
+1. Start the lab:
+   ```bash
+   tld start lnx-build-output-report
+   ```
+2. Build aggregated summary reports using `awk`.
+3. Calculate total values in column 3 of `$HOME/text-test/sales.txt` using `awk '{sum+=$3} END {print sum}'` and write to `$HOME/text-test/total.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

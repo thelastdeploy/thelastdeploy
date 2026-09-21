@@ -42,3 +42,31 @@ Always test `/etc/fstab` edits before rebooting:
 mount -a
 ```
 If `mount -a` executes cleanly without errors, all `/etc/fstab` entries are syntactically valid.
+
+---
+
+## Lab Tasks
+
+### Task 1: Configure Persistent Mounts in Fstab (`lnx-configure-persistent-mount`)
+1. Start the lab:
+   ```bash
+   tld start lnx-configure-persistent-mount
+   ```
+2. Configure persistent filesystem mounts in `/etc/fstab`.
+3. Create a mock fstab entry in `$HOME/storage-test/mock_fstab` specifying mount point, filesystem type, and default options.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Mount and Unmount Storage Devices (`lnx-mount-storage-device`)
+1. Start the lab:
+   ```bash
+   tld start lnx-mount-storage-device
+   ```
+2. Mount and unmount storage volumes.
+3. Create an executable script at `$HOME/storage-test/mount_cmd.sh` executing `mount` to attach storage volumes to target directories.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

@@ -27,3 +27,19 @@ If your script relies on local relative files, change directory first:
 ```cron
 0 2 * * * cd /var/www/app && ./deploy.sh
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Troubleshoot Cron Execution Environment and PATH (`lnx-troubleshoot-cron-job`)
+1. Start the lab:
+   ```bash
+   tld start lnx-troubleshoot-cron-job
+   ```
+2. Troubleshoot missing PATH variables in cron environments.
+3. Fix `$HOME/cron-test/broken_crontab` by explicitly defining `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

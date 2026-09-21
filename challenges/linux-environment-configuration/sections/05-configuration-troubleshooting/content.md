@@ -25,3 +25,31 @@ When a bad configuration edit causes an outage, restore the last known good back
 cp /etc/myapp/app.conf.bak /etc/myapp/app.conf
 systemctl restart myapp
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Diagnose Configuration Problems (`lnx-diagnose-configuration-problem`)
+1. Start the lab:
+   ```bash
+   tld start lnx-diagnose-configuration-problem
+   ```
+2. Diagnose invalid application configuration parameters.
+3. Create a diagnostic report at `$HOME/env-test/diagnosis.txt` containing `ROOT_CAUSE: INVALID_PORT`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Restore Corrupted Configuration from Backup (`lnx-restore-broken-configuration`)
+1. Start the lab:
+   ```bash
+   tld start lnx-restore-broken-configuration
+   ```
+2. Restore corrupted configuration files from backup.
+3. Restore `$HOME/env-test/corrupted_server.conf` using the backup copy `$HOME/env-test/corrupted_server.conf.bak`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

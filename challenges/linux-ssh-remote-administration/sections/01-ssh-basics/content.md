@@ -25,3 +25,31 @@ ssh user@remote.example.com "df -h /"
 ```
 
 This capability makes SSH ideal for automated scripting and remote system auditing.
+
+---
+
+## Lab Tasks
+
+### Task 1: Connect to a Remote Host via SSH (`lnx-connect-to-remote-host`)
+1. Start the lab:
+   ```bash
+   tld start lnx-connect-to-remote-host
+   ```
+2. Perform the required system administration task for `Connect to a Remote Host via SSH`.
+3. Save the resulting verification output or file to the designated lab workspace directory.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Run Commands Remotely over SSH (`lnx-run-remote-command`)
+1. Start the lab:
+   ```bash
+   tld start lnx-run-remote-command
+   ```
+2. Perform the required system administration task for `Run Commands Remotely over SSH`.
+3. Save the resulting verification output or file to the designated lab workspace directory.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

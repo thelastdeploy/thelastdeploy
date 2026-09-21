@@ -14,3 +14,19 @@ Investigate system configurations in `$HOME/security-breach/`, audit permissions
 4. **Submit Incident Report**: Output an investigation report at `$HOME/security-breach/breach_report.txt` containing:
    - `VULNERABILITY_VECTOR: SUDO_NOPASSWD`
    - `BREACH_REMEDIATION: COMPLETED`
+
+---
+
+## Lab Tasks
+
+### Task 1: Investigate and Remediate Security Privilege Breach (`lnx-investigate-permission-breach`)
+1. Start the lab:
+   ```bash
+   tld start lnx-investigate-permission-breach
+   ```
+2. Complete the security fundamentals capstone challenge.
+3. Secure secret keys at `$HOME/security-breach/config/db_pass.key`, fix sudoers configuration, and record `SECURITY_BREACH_REMEDIATED: YES` in `$HOME/security-breach/breach_report.txt`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

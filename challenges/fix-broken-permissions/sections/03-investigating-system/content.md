@@ -4,7 +4,7 @@ In this section, you will begin hands-on troubleshooting by checking system logs
 
 ---
 
-## 🛠️ Step-by-Step Troubleshooting Workflow
+## Step-by-Step Troubleshooting Workflow
 
 ### Step 1: Check System File Mode
 Check the permission details of the application log file `/var/log/app-server.log`.
@@ -15,11 +15,11 @@ Check the permission details of the application log file `/var/log/app-server.lo
 ```
 
 
-> ⚠️ **Notice:** The mode `000` means **no read or write access** is granted to any user or group!
+>  **Notice:** The mode `000` means **no read or write access** is granted to any user or group!
 
 ---
 
-## 📋 Task 1 Instructions
+## Task 1 Instructions
 
 To complete the first lab task:
 

@@ -45,3 +45,31 @@ if is_even 4; then
     echo "4 is even"
 fi
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Build a Script Helper Toolkit (`lnx-build-script-toolkit`)
+1. Start the lab:
+   ```bash
+   tld start lnx-build-script-toolkit
+   ```
+2. Create a administration script at `$HOME/script-test/toolkit.sh` with helper functions.
+3. Implement file cleanup logic that checks for existing `.tmp` files and safely removes them.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Create Reusable Functions (`lnx-create-reusable-functions`)
+1. Start the lab:
+   ```bash
+   tld start lnx-create-reusable-functions
+   ```
+2. Create a script library at `$HOME/script-test/log_helper.sh` containing a reusable function named `log_message`.
+3. The function should take two arguments (level and message) and format output as `[LEVEL] Message`.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

@@ -38,3 +38,31 @@ OpenSSH strictly enforces file permissions for security reasons:
 chmod 700 ~/.ssh
 chmod 600 ~/.ssh/authorized_keys
 ```
+
+---
+
+## Lab Tasks
+
+### Task 1: Configure Authorized Keys and Permissions (`lnx-configure-key-authentication`)
+1. Start the lab:
+   ```bash
+   tld start lnx-configure-key-authentication
+   ```
+2. Perform the required system administration task for `Configure Authorized Keys and Permissions`.
+3. Save the resulting verification output or file to the designated lab workspace directory.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Generate an SSH Keypair (`lnx-generate-ssh-key`)
+1. Start the lab:
+   ```bash
+   tld start lnx-generate-ssh-key
+   ```
+2. Perform the required system administration task for `Generate an SSH Keypair`.
+3. Save the resulting verification output or file to the designated lab workspace directory.
+4. Validate your solution:
+   ```bash
+   tld check
+   ```

@@ -4,7 +4,7 @@ Now that you have verified `/var/log/app-server.log` has mode `000`, let's analy
 
 ---
 
-## 🔬 Root Cause Analysis
+## Root Cause Analysis
 
 ### Why Did `webapp` Fail?
 1. **Service User Context**: The daemon runs under the `webapp` system account.
@@ -16,7 +16,7 @@ Now that you have verified `/var/log/app-server.log` has mode `000`, let's analy
 
 ---
 
-## 📋 Task 2 Instructions
+## Task 2 Instructions
 
 To complete the second lab task:
 
