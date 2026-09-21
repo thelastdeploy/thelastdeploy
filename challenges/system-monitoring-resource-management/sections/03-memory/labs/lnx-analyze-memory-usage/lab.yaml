@@ -1,18 +1,20 @@
-id: "lnx-analyze-memory-usage"
-title: "Analyze Memory Usage"
-summary: "Inspect free output and identify available memory capacity."
+id: lnx-analyze-memory-usage
+title: Analyze Memory Usage
+summary: Inspect free output and identify available memory capacity.
 xp: 25
 duration_minutes: 15
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/mon-test/mem"
-  cat << 'EOF' > "$HOME/mon-test/mem/meminfo_summary.txt"
-                 total        used        free      shared  buff/cache   available
-  Mem:           32Gi       24.5Gi       1.2Gi       512Mi       6.3Gi       7.0Gi
-  Swap:         4.0Gi        1.5Gi       2.5Gi
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect `$HOME/mon-test/mem/meminfo_summary.txt`.
+
   2. Identify the `available` RAM size (`7.0Gi`).
+
   3. Write the available memory value (`7.0Gi`) into `$HOME/mon-test/avail_ram.txt`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/mon-test/mem'
+  - '"printf ''%s'

@@ -1,11 +1,9 @@
 id: lnx-investigate-privilege-access
-title: "Investigate Permissive Sudoers Rules"
+title: Investigate Permissive Sudoers Rules
 xp: 35
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/sec-test"
-    - "printf 'alice ALL=(ALL:ALL) ALL\ndeploy_user ALL=(ALL) NOPASSWD: ALL\nbob ALL=(ALL) /usr/bin/systemctl restart nginx\n' > $HOME/sec-test/mock_sudoers"
-    - "rm -f $HOME/sec-test/permissive_user.txt"
-version: 1
+  - mkdir -p $HOME/sec-test
+  - 'printf ''alice ALL=(ALL:ALL) ALL\ndeploy_user ALL=(ALL) NOPASSWD: ALL\nbob ALL=(ALL)
+    /usr/bin/systemctl restart nginx\n'' > $HOME/sec-test/mock_sudoers'
+  - rm -f $HOME/sec-test/permissive_user.txt

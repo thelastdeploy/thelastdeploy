@@ -1,13 +1,10 @@
 id: lnx-trace-installed-package
-title: "Trace package owning target binary"
+title: Trace package owning target binary
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "rm -rf $HOME/pkg-test"
-    - "mkdir -p $HOME/pkg-test"
-    - "echo '/usr/bin/curl: curl' > $HOME/pkg-test/pkg_query.log"
-    - "echo '/usr/bin/git: git' >> $HOME/pkg-test/pkg_query.log"
-    - "echo '/usr/bin/tar: tar' >> $HOME/pkg-test/pkg_query.log"
-version: 1
+  - rm -rf $HOME/pkg-test
+  - mkdir -p $HOME/pkg-test
+  - 'echo ''/usr/bin/curl: curl'' > $HOME/pkg-test/pkg_query.log'
+  - 'echo ''/usr/bin/git: git'' >> $HOME/pkg-test/pkg_query.log'
+  - 'echo ''/usr/bin/tar: tar'' >> $HOME/pkg-test/pkg_query.log'

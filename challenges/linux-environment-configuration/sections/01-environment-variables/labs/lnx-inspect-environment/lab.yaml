@@ -1,10 +1,7 @@
 id: lnx-inspect-environment
-title: "Inspect Environment Variables"
+title: Inspect Environment Variables
 xp: 15
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/env-test"
-    - "rm -f $HOME/env-test/env_summary.txt"
-version: 1
+  - mkdir -p $HOME/env-test
+  - rm -f $HOME/env-test/env_summary.txt

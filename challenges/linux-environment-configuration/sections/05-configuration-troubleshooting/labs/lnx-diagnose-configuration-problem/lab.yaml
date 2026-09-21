@@ -1,12 +1,10 @@
 id: lnx-diagnose-configuration-problem
-title: "Diagnose Configuration Problems"
+title: Diagnose Configuration Problems
 xp: 35
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/env-test"
-    - "printf 'PORT=INVALID_PORT_STRING\nHOST=127.0.0.1\n' > $HOME/env-test/broken_app.conf"
-    - "printf '[ERROR] Failed to bind to port INVALID_PORT_STRING: integer expected\n' > $HOME/env-test/app_error.log"
-    - "rm -f $HOME/env-test/diagnosis.txt"
-version: 1
+  - mkdir -p $HOME/env-test
+  - printf 'PORT=INVALID_PORT_STRING\nHOST=127.0.0.1\n' > $HOME/env-test/broken_app.conf
+  - 'printf ''[ERROR] Failed to bind to port INVALID_PORT_STRING: integer expected\n''
+    > $HOME/env-test/app_error.log'
+  - rm -f $HOME/env-test/diagnosis.txt

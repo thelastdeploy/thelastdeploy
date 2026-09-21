@@ -1,11 +1,8 @@
 id: lnx-inspect-application-log
-title: "Inspect Application Log Streams"
+title: Inspect Application Log Streams
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/log-test/app_logs"
-    - "seq 1 30 | sed 's/^/192.168.1.1 GET \/item\//' > $HOME/log-test/app_logs/web_access.log"
-    - "rm -f $HOME/log-test/recent_access.log"
-version: 1
+  - mkdir -p $HOME/log-test/app_logs
+  - seq 1 30 | sed 's/^/192.168.1.1 GET \/item\//' > $HOME/log-test/app_logs/web_access.log
+  - rm -f $HOME/log-test/recent_access.log

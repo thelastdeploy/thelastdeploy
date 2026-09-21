@@ -1,11 +1,8 @@
 id: lnx-manage-shell-startup
-title: "Manage Shell Startup Script Cascade"
+title: Manage Shell Startup Script Cascade
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/env-test"
-    - "touch $HOME/env-test/mock_bashrc"
-    - "rm -f $HOME/env-test/mock_profile"
-version: 1
+  - mkdir -p $HOME/env-test
+  - touch $HOME/env-test/mock_bashrc
+  - rm -f $HOME/env-test/mock_profile

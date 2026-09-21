@@ -1,14 +1,11 @@
 id: lnx-audit-file-permissions
-title: "Audit File Permissions and Octal Masks"
+title: Audit File Permissions and Octal Masks
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/sec-test/configs"
-    - "touch $HOME/sec-test/configs/app.conf"
-    - "chmod 777 $HOME/sec-test/configs/app.conf"
-    - "touch $HOME/sec-test/configs/db.conf"
-    - "chmod 644 $HOME/sec-test/configs/db.conf"
-    - "rm -f $HOME/sec-test/permission_audit.txt"
-version: 1
+  - mkdir -p $HOME/sec-test/configs
+  - touch $HOME/sec-test/configs/app.conf
+  - chmod 777 $HOME/sec-test/configs/app.conf
+  - touch $HOME/sec-test/configs/db.conf
+  - chmod 644 $HOME/sec-test/configs/db.conf
+  - rm -f $HOME/sec-test/permission_audit.txt

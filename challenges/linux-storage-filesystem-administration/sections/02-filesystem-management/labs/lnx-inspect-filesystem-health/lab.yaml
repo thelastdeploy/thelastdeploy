@@ -1,11 +1,10 @@
 id: lnx-inspect-filesystem-health
-title: "Inspect Superblock Metadata and Filesystem Health"
+title: Inspect Superblock Metadata and Filesystem Health
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/storage-test"
-    - "printf 'Filesystem volume name:   app_data\nFilesystem magic number: 0xEF53\nFilesystem state:        clean\nErrors behavior:          Continue\nBlock count:              2621440\nInode count:              655360\n' > $HOME/storage-test/tune2fs_output.txt"
-    - "rm -f $HOME/storage-test/fs_health.txt"
-version: 1
+  - mkdir -p $HOME/storage-test
+  - 'printf ''Filesystem volume name:   app_data\nFilesystem magic number: 0xEF53\nFilesystem
+    state:        clean\nErrors behavior:          Continue\nBlock count:              2621440\nInode
+    count:              655360\n'' > $HOME/storage-test/tune2fs_output.txt'
+  - rm -f $HOME/storage-test/fs_health.txt

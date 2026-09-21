@@ -1,11 +1,9 @@
 id: lnx-analyze-repeated-data
-title: "Analyze Repeated Data with Sort and Uniq"
+title: Analyze Repeated Data with Sort and Uniq
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/text-test"
-    - "printf '192.168.1.1\n10.0.0.1\n192.168.1.1\n172.16.0.1\n192.168.1.1\n10.0.0.1\n' > $HOME/text-test/access_ips.txt"
-    - "rm -f $HOME/text-test/ip_counts.txt"
-version: 1
+  - mkdir -p $HOME/text-test
+  - printf '192.168.1.1\n10.0.0.1\n192.168.1.1\n172.16.0.1\n192.168.1.1\n10.0.0.1\n'
+    > $HOME/text-test/access_ips.txt
+  - rm -f $HOME/text-test/ip_counts.txt

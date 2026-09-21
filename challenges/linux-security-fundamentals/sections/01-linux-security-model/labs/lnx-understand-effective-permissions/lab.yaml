@@ -1,11 +1,10 @@
 id: lnx-understand-effective-permissions
-title: "Understand Effective Permission Evaluation"
+title: Understand Effective Permission Evaluation
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/sec-test"
-    - "printf 'Scenario 1: User is owner, owner mode r-- -> write attempt\nScenario 2: User in group, group mode rw- -> read attempt\nScenario 3: Other mode r--, user non-owner/non-group -> read attempt\n' > $HOME/sec-test/perm_eval.txt"
-    - "rm -f $HOME/sec-test/eval_result.txt"
-version: 1
+  - mkdir -p $HOME/sec-test
+  - 'printf ''Scenario 1: User is owner, owner mode r-- -> write attempt\nScenario
+    2: User in group, group mode rw- -> read attempt\nScenario 3: Other mode r--,
+    user non-owner/non-group -> read attempt\n'' > $HOME/sec-test/perm_eval.txt'
+  - rm -f $HOME/sec-test/eval_result.txt

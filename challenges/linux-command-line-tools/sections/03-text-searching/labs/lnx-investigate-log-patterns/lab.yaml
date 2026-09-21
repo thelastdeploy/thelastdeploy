@@ -1,14 +1,11 @@
 id: lnx-investigate-log-patterns
-title: "Investigate log patterns with context matching"
+title: Investigate log patterns with context matching
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "rm -rf $HOME/grep-test"
-    - "mkdir -p $HOME/grep-test"
-    - "echo 'Worker process initialized' > $HOME/grep-test/service.log"
-    - "echo 'Fatal exception: SIGSEGV encountered' >> $HOME/grep-test/service.log"
-    - "echo 'Core dump written to /var/dumps/core.9902' >> $HOME/grep-test/service.log"
-    - "echo 'Shutting down service worker' >> $HOME/grep-test/service.log"
-version: 1
+  - rm -rf $HOME/grep-test
+  - mkdir -p $HOME/grep-test
+  - echo 'Worker process initialized' > $HOME/grep-test/service.log
+  - 'echo ''Fatal exception: SIGSEGV encountered'' >> $HOME/grep-test/service.log'
+  - echo 'Core dump written to /var/dumps/core.9902' >> $HOME/grep-test/service.log
+  - echo 'Shutting down service worker' >> $HOME/grep-test/service.log

@@ -1,14 +1,11 @@
 id: lnx-find-large-files
-title: "Locate space-consuming files in log directories"
+title: Locate space-consuming files in log directories
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "rm -rf $HOME/disk-test"
-    - "mkdir -p $HOME/disk-test/logs"
-    - "truncate -s 1M $HOME/disk-test/logs/app.log"
-    - "truncate -s 5M $HOME/disk-test/logs/small_archive.tar"
-    - "truncate -s 25M $HOME/disk-test/logs/heavy_dump.log"
-    - "truncate -s 2M $HOME/disk-test/logs/error.log"
-version: 1
+  - rm -rf $HOME/disk-test
+  - mkdir -p $HOME/disk-test/logs
+  - truncate -s 1M $HOME/disk-test/logs/app.log
+  - truncate -s 5M $HOME/disk-test/logs/small_archive.tar
+  - truncate -s 25M $HOME/disk-test/logs/heavy_dump.log
+  - truncate -s 2M $HOME/disk-test/logs/error.log

@@ -1,10 +1,7 @@
 id: lnx-schedule-one-time-task
-title: "Schedule One-Time Tasks with At"
+title: Schedule One-Time Tasks with At
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/cron-test"
-    - "rm -f $HOME/cron-test/at_command.sh"
-version: 1
+  - mkdir -p $HOME/cron-test
+  - rm -f $HOME/cron-test/at_command.sh

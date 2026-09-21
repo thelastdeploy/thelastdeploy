@@ -1,17 +1,26 @@
-id: "lnx-investigate-disk-capacity"
-title: "Investigate Disk Capacity"
-summary: "Identify the directory consuming the most storage space and record its size."
+id: lnx-investigate-disk-capacity
+title: Investigate Disk Capacity
+summary: Identify the directory consuming the most storage space and record its size.
 xp: 30
 duration_minutes: 15
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/storage-test/capacity_audit/app_logs"
-  mkdir -p "$HOME/storage-test/capacity_audit/user_data"
-  mkdir -p "$HOME/storage-test/capacity_audit/backups"
-  dd if=/dev/zero of="$HOME/storage-test/capacity_audit/backups/archive.tar" bs=1M count=25 2>/dev/null
-  dd if=/dev/zero of="$HOME/storage-test/capacity_audit/app_logs/service.log" bs=1M count=5 2>/dev/null
-instructions: |
+instructions: '
+
   1. Inspect the directory tree inside `$HOME/storage-test/capacity_audit`.
-  2. Use `du` to determine which top-level subdirectory (`app_logs`, `user_data`, or `backups`) consumes the most disk space.
+
+  2. Use `du` to determine which top-level subdirectory (`app_logs`, `user_data`,
+  or `backups`) consumes the most disk space.
+
   3. Save the name of the largest directory (e.g., `backups`) into `$HOME/storage-test/largest_dir.txt`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/storage-test/capacity_audit/app_logs'
+  - mkdir -p '$HOME/storage-test/capacity_audit/user_data'
+  - mkdir -p '$HOME/storage-test/capacity_audit/backups'
+  - dd if=/dev/zero of='$HOME/storage-test/capacity_audit/backups/archive.tar' bs=1M
+    count=25 2>/dev/null
+  - dd if=/dev/zero of='$HOME/storage-test/capacity_audit/app_logs/service.log' bs=1M
+    count=5 2>/dev/null

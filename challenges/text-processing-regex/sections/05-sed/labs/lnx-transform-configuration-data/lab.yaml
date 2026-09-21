@@ -1,10 +1,7 @@
 id: lnx-transform-configuration-data
-title: "Transform Configuration Data using SED"
+title: Transform Configuration Data using SED
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/text-test"
-    - "printf 'PORT=8080\nDEBUG=true\nENV=development\n' > $HOME/text-test/app.conf"
-version: 1
+  - mkdir -p $HOME/text-test
+  - printf 'PORT=8080\nDEBUG=true\nENV=development\n' > $HOME/text-test/app.conf

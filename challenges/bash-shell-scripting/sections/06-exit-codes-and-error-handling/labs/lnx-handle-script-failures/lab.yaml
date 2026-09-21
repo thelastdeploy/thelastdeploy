@@ -1,10 +1,7 @@
 id: lnx-handle-script-failures
-title: "Handle Script Failures with Exit Codes and Traps"
+title: Handle Script Failures with Exit Codes and Traps
 xp: 35
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/script-test/target_dir"
-    - "rm -f $HOME/script-test/resilient.sh"
-version: 1
+  - mkdir -p $HOME/script-test/target_dir
+  - rm -f $HOME/script-test/resilient.sh

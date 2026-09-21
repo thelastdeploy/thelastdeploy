@@ -1,19 +1,20 @@
-id: "lnx-map-network-path"
-title: "Map Network Path"
-summary: "Trace ICMP packets and analyze hop latency towards a simulated host."
+id: lnx-map-network-path
+title: Map Network Path
+summary: Trace ICMP packets and analyze hop latency towards a simulated host.
 xp: 25
 duration_minutes: 15
-difficulty: "intermediate"
+difficulty: intermediate
 order: 2
-setup: |
-  mkdir -p "$HOME/net-test/traceroute_sim"
-  cat << 'EOF' > "$HOME/net-test/traceroute_sim/path.log"
-  1  192.168.1.1  0.42 ms
-  2  10.0.0.1     2.15 ms
-  3  172.16.0.1   12.40 ms
-  4  10.20.30.40  24.81 ms
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect the simulated network trace output in `$HOME/net-test/traceroute_sim/path.log`.
+
   2. Identify the target IP address located at hop 4.
+
   3. Write the target IP address (`10.20.30.40`) into `$HOME/net-test/target_hop.txt`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/net-test/traceroute_sim'
+  - '"printf ''%s'

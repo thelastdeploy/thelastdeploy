@@ -1,14 +1,11 @@
 id: lnx-automate-repetitive-task
-title: "Automate Repetitive Tasks with Loops"
+title: Automate Repetitive Tasks with Loops
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/script-test/logs"
-    - "mkdir -p $HOME/script-test/backup"
-    - "echo 'server error' > $HOME/script-test/logs/app.log"
-    - "echo 'auth failure' > $HOME/script-test/logs/auth.log"
-    - "rm -f $HOME/script-test/backup_logs.sh"
-    - "rm -f $HOME/script-test/backup/*.bak"
-version: 1
+  - mkdir -p $HOME/script-test/logs
+  - mkdir -p $HOME/script-test/backup
+  - echo 'server error' > $HOME/script-test/logs/app.log
+  - echo 'auth failure' > $HOME/script-test/logs/auth.log
+  - rm -f $HOME/script-test/backup_logs.sh
+  - rm -f $HOME/script-test/backup/*.bak

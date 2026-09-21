@@ -1,17 +1,15 @@
 id: lnx-recover-remote-server
-title: "Recover Remote Server SSH Access and Client Config"
+title: Recover Remote Server SSH Access and Client Config
 xp: 50
-estimated_minutes: 10
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/ssh-challenge/remote_server/.ssh"
-    - "mkdir -p $HOME/ssh-challenge/client_keys"
-    - "chmod 777 $HOME/ssh-challenge/remote_server/.ssh"
-    - "touch $HOME/ssh-challenge/remote_server/.ssh/authorized_keys"
-    - "chmod 666 $HOME/ssh-challenge/remote_server/.ssh/authorized_keys"
-    - "echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICapstoneRecoveryPublicKey admin@devlab' > $HOME/ssh-challenge/client_keys/id_ed25519.pub"
-    - "echo '-----BEGIN OPENSSH PRIVATE KEY-----' > $HOME/ssh-challenge/client_keys/id_ed25519"
-    - "rm -f $HOME/ssh-challenge/client_config"
-    - "rm -f $HOME/ssh-challenge/recovery_status.txt"
-version: 1
+  - mkdir -p $HOME/ssh-challenge/remote_server/.ssh
+  - mkdir -p $HOME/ssh-challenge/client_keys
+  - chmod 777 $HOME/ssh-challenge/remote_server/.ssh
+  - touch $HOME/ssh-challenge/remote_server/.ssh/authorized_keys
+  - chmod 666 $HOME/ssh-challenge/remote_server/.ssh/authorized_keys
+  - echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICapstoneRecoveryPublicKey admin@devlab'
+    > $HOME/ssh-challenge/client_keys/id_ed25519.pub
+  - echo '-----BEGIN OPENSSH PRIVATE KEY-----' > $HOME/ssh-challenge/client_keys/id_ed25519
+  - rm -f $HOME/ssh-challenge/client_config
+  - rm -f $HOME/ssh-challenge/recovery_status.txt

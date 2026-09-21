@@ -1,10 +1,7 @@
 id: lnx-run-remote-command
-title: "Run Commands Remotely over SSH"
+title: Run Commands Remotely over SSH
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/ssh-test"
-    - "rm -f $HOME/ssh-test/remote_cmd.sh"
-version: 1
+  - mkdir -p $HOME/ssh-test
+  - rm -f $HOME/ssh-test/remote_cmd.sh

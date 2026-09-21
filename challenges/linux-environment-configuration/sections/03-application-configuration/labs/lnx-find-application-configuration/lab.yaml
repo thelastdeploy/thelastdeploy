@@ -1,13 +1,10 @@
 id: lnx-find-application-configuration
-title: "Locate System Configuration Files"
+title: Locate System Configuration Files
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/env-test/sys_etc/nginx"
-    - "mkdir -p $HOME/env-test/sys_etc/redis"
-    - "touch $HOME/env-test/sys_etc/nginx/nginx.conf"
-    - "touch $HOME/env-test/sys_etc/redis/redis.conf"
-    - "rm -f $HOME/env-test/config_files.list"
-version: 1
+  - mkdir -p $HOME/env-test/sys_etc/nginx
+  - mkdir -p $HOME/env-test/sys_etc/redis
+  - touch $HOME/env-test/sys_etc/nginx/nginx.conf
+  - touch $HOME/env-test/sys_etc/redis/redis.conf
+  - rm -f $HOME/env-test/config_files.list

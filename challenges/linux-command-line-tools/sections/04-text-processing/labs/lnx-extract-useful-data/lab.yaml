@@ -1,17 +1,14 @@
 id: lnx-extract-useful-data
-title: "Extract and count recurring log patterns"
+title: Extract and count recurring log patterns
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "rm -rf $HOME/text-test"
-    - "mkdir -p $HOME/text-test"
-    - "echo '10.0.0.1' > $HOME/text-test/ips.txt"
-    - "echo '192.168.1.50' >> $HOME/text-test/ips.txt"
-    - "echo '10.0.0.2' >> $HOME/text-test/ips.txt"
-    - "echo '192.168.1.50' >> $HOME/text-test/ips.txt"
-    - "echo '192.168.1.50' >> $HOME/text-test/ips.txt"
-    - "echo '10.0.0.1' >> $HOME/text-test/ips.txt"
-    - "echo '192.168.1.50' >> $HOME/text-test/ips.txt"
-version: 1
+  - rm -rf $HOME/text-test
+  - mkdir -p $HOME/text-test
+  - echo '10.0.0.1' > $HOME/text-test/ips.txt
+  - echo '192.168.1.50' >> $HOME/text-test/ips.txt
+  - echo '10.0.0.2' >> $HOME/text-test/ips.txt
+  - echo '192.168.1.50' >> $HOME/text-test/ips.txt
+  - echo '192.168.1.50' >> $HOME/text-test/ips.txt
+  - echo '10.0.0.1' >> $HOME/text-test/ips.txt
+  - echo '192.168.1.50' >> $HOME/text-test/ips.txt

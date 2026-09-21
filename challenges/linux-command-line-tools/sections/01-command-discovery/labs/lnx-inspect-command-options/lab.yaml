@@ -1,10 +1,7 @@
 id: lnx-inspect-command-options
-title: "Inspect shell builtins vs binary commands"
+title: Inspect shell builtins vs binary commands
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "rm -rf $HOME/cli-test"
-    - "mkdir -p $HOME/cli-test"
-version: 1
+  - rm -rf $HOME/cli-test
+  - mkdir -p $HOME/cli-test

@@ -1,13 +1,13 @@
 id: lnx-trace-production-incident
-title: "Trace Production Incident via Log Correlation"
+title: Trace Production Incident via Log Correlation
 xp: 55
-estimated_minutes: 10
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/incident-investigation/logs"
-    - "printf '2026-09-20 03:14:22 [ERROR] order-api.service: Main process exited, code=exited, status=137/OOM\n' > $HOME/incident-investigation/logs/journal.log"
-    - "printf '2026-09-20 03:14:20 [FATAL] Memory limit exceeded: allocated 4096MB\n' > $HOME/incident-investigation/logs/app.log"
-    - "printf '2026-09-20 03:14:22 kernel: Out of memory: Kill process 8912 (order-api)\n' > $HOME/incident-investigation/logs/syslog"
-    - "rm -f $HOME/incident-investigation/incident_report.txt"
-version: 1
+  - mkdir -p $HOME/incident-investigation/logs
+  - 'printf ''2026-09-20 03:14:22 [ERROR] order-api.service: Main process exited,
+    code=exited, status=137/OOM\n'' > $HOME/incident-investigation/logs/journal.log'
+  - 'printf ''2026-09-20 03:14:20 [FATAL] Memory limit exceeded: allocated 4096MB\n''
+    > $HOME/incident-investigation/logs/app.log'
+  - 'printf ''2026-09-20 03:14:22 kernel: Out of memory: Kill process 8912 (order-api)\n''
+    > $HOME/incident-investigation/logs/syslog'
+  - rm -f $HOME/incident-investigation/incident_report.txt

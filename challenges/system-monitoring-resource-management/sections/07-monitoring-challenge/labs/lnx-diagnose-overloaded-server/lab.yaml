@@ -1,26 +1,16 @@
-id: "lnx-diagnose-overloaded-server"
-title: "Diagnose Overloaded Server"
-summary: "Identify the rogue process responsible for system overload and complete the incident remediation record."
+id: lnx-diagnose-overloaded-server
+title: Diagnose Overloaded Server
+summary: Identify the rogue process responsible for system overload and complete the
+  incident remediation record.
 xp: 60
 duration_minutes: 30
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/mon-challenge/incident"
-  cat << 'EOF' > "$HOME/mon-challenge/incident/top_dump.txt"
-  PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
- 7782 rogue_app  20   0 4892012 3.1g  12040 R  99.9  82.4  45:12.10 rogue_process
- 1102 root       20   0  168244 9812   4012 S   0.1   0.1   0:02.10 systemd
-  EOF
-  cat << 'EOF' > "$HOME/mon-challenge/incident/report.txt"
-  STATUS: INVESTIGATING
-  ROGUE_PID: UNKNOWN
-  BOTTLENECK: UNKNOWN
-  EOF
-instructions: |
-  1. Inspect `$HOME/mon-challenge/incident/top_dump.txt`.
-  2. Identify the rogue process PID (`7782`) consuming 99.9% CPU and 82.4% MEM.
-  3. Update `$HOME/mon-challenge/incident/report.txt` so it contains:
-     STATUS: RESOLVED
-     ROGUE_PID: 7782
-     BOTTLENECK: cpu_memory
+instructions: "\n1. Inspect `$HOME/mon-challenge/incident/top_dump.txt`.\n2. Identify\
+  \ the rogue process PID (`7782`) consuming 99.9% CPU and 82.4% MEM.\n3. Update `$HOME/mon-challenge/incident/report.txt`\
+  \ so it contains:\n   STATUS: RESOLVED\n   ROGUE_PID: 7782\n   BOTTLENECK: cpu_memory\n"
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/mon-challenge/incident'
+  - '"printf ''%s'
+  - '"printf ''%s'

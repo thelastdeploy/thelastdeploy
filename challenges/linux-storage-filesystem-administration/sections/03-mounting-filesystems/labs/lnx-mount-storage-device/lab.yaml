@@ -1,10 +1,7 @@
 id: lnx-mount-storage-device
-title: "Mount and Unmount Storage Devices"
+title: Mount and Unmount Storage Devices
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/storage-test"
-    - "rm -f $HOME/storage-test/mount_cmd.sh"
-version: 1
+  - mkdir -p $HOME/storage-test
+  - rm -f $HOME/storage-test/mount_cmd.sh

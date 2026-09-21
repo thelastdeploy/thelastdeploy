@@ -1,11 +1,9 @@
 id: lnx-match-text-patterns
-title: "Match Text Patterns with Grep Anchors"
+title: Match Text Patterns with Grep Anchors
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/text-test"
-    - "printf '[INFO] Boot complete\n[ERROR] Disk full\n[WARN] High memory\n[ERROR] Network drop\n' > $HOME/text-test/system.log"
-    - "rm -f $HOME/text-test/errors.log"
-version: 1
+  - mkdir -p $HOME/text-test
+  - printf '[INFO] Boot complete\n[ERROR] Disk full\n[WARN] High memory\n[ERROR] Network
+    drop\n' > $HOME/text-test/system.log
+  - rm -f $HOME/text-test/errors.log

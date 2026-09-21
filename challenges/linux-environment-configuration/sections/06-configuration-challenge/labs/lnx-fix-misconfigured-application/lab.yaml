@@ -1,13 +1,10 @@
 id: lnx-fix-misconfigured-application
-title: "Fix Misconfigured Application and Environment"
+title: Fix Misconfigured Application and Environment
 xp: 50
-estimated_minutes: 10
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/config-challenge"
-    - "printf 'DB_HOST=localhost_invalid\nPORT=0\n' > $HOME/config-challenge/app.conf"
-    - "printf 'APP_KEY=secret_key_123\n' > $HOME/config-challenge/.env.template"
-    - "rm -f $HOME/config-challenge/.env"
-    - "rm -f $HOME/config-challenge/fix_report.txt"
-version: 1
+  - mkdir -p $HOME/config-challenge
+  - printf 'DB_HOST=localhost_invalid\nPORT=0\n' > $HOME/config-challenge/app.conf
+  - printf 'APP_KEY=secret_key_123\n' > $HOME/config-challenge/.env.template
+  - rm -f $HOME/config-challenge/.env
+  - rm -f $HOME/config-challenge/fix_report.txt

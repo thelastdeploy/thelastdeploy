@@ -1,22 +1,22 @@
-id: "lnx-trace-resource-exhaustion"
-title: "Trace Resource Exhaustion"
-summary: "Correlate system metric logs to determine root cause bottleneck category."
+id: lnx-trace-resource-exhaustion
+title: Trace Resource Exhaustion
+summary: Correlate system metric logs to determine root cause bottleneck category.
 xp: 45
 duration_minutes: 20
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/mon-test/correlate"
-  cat << 'EOF' > "$HOME/mon-test/correlate/system_report.txt"
-  --- CPU ---
-  %Cpu(s): 12.0 us,  2.5 sy, 82.5 wa
-  --- MEMORY ---
-  Mem: 16Gi total, 1.1Gi free, 14.2Gi buff/cache
-  --- IOSTAT ---
-  sdb: %util 99.9%, await 120.5ms
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect `$HOME/mon-test/correlate/system_report.txt`.
+
   2. Correlate `wa` (82.5%), `iostat` `%util` (99.9%), and `await` (120.5ms).
+
   3. Determine the primary bottleneck category (`disk_io`).
+
   4. Write `disk_io` into `$HOME/mon-test/root_cause.txt`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/mon-test/correlate'
+  - '"printf ''%s'

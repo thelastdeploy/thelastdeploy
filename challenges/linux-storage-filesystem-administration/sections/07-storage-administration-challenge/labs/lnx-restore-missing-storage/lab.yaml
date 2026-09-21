@@ -1,24 +1,28 @@
-id: "lnx-restore-missing-storage"
-title: "Restore Missing Storage"
-summary: "Investigate and restore storage availability and permissions for an offline application service."
+id: lnx-restore-missing-storage
+title: Restore Missing Storage
+summary: Investigate and restore storage availability and permissions for an offline
+  application service.
 xp: 55
 duration_minutes: 25
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/storage-challenge/app"
-  mkdir -p "$HOME/storage-challenge/mounts/app_data"
-  chmod 700 "$HOME/storage-challenge/mounts/app_data"
-  cat << 'EOF' > "$HOME/storage-challenge/app/fstab_config"
-  # Production storage layout
-  UUID=9999-8888 /mnt/wrong_path ext4 defaults 0 2
-  EOF
-  cat << 'EOF' > "$HOME/storage-challenge/app/status.txt"
-  STATUS: FAILED
-  REASON: Unable to write to storage mount
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect the configuration in `$HOME/storage-challenge/app/fstab_config`.
-  2. Notice that the UUID entry references `/mnt/wrong_path`. Update the entry in `$HOME/storage-challenge/app/fstab_config` to point to `$HOME/storage-challenge/mounts/app_data`.
-  3. Fix the directory permissions on `$HOME/storage-challenge/mounts/app_data` so that it has permissions `775` (rwxrwxr-x).
+
+  2. Notice that the UUID entry references `/mnt/wrong_path`. Update the entry in
+  `$HOME/storage-challenge/app/fstab_config` to point to `$HOME/storage-challenge/mounts/app_data`.
+
+  3. Fix the directory permissions on `$HOME/storage-challenge/mounts/app_data` so
+  that it has permissions `775` (rwxrwxr-x).
+
   4. Update `$HOME/storage-challenge/app/status.txt` to contain exactly `STATUS: OK`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/storage-challenge/app'
+  - mkdir -p '$HOME/storage-challenge/mounts/app_data'
+  - chmod 700 '$HOME/storage-challenge/mounts/app_data'
+  - '"printf ''%s'
+  - '"printf ''%s'

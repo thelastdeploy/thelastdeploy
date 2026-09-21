@@ -1,13 +1,10 @@
 id: lnx-automate-file-cleanup
-title: "Automate Directory Cleanup and Logging"
+title: Automate Directory Cleanup and Logging
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/cron-test/tmp_logs"
-    - "touch $HOME/cron-test/tmp_logs/old.old"
-    - "touch $HOME/cron-test/tmp_logs/keep.txt"
-    - "rm -f $HOME/cron-test/cleanup_job.sh"
-    - "rm -f $HOME/cron-test/cleanup.log"
-version: 1
+  - mkdir -p $HOME/cron-test/tmp_logs
+  - touch $HOME/cron-test/tmp_logs/old.old
+  - touch $HOME/cron-test/tmp_logs/keep.txt
+  - rm -f $HOME/cron-test/cleanup_job.sh
+  - rm -f $HOME/cron-test/cleanup.log

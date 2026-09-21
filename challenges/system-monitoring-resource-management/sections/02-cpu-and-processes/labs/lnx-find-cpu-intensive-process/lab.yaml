@@ -1,19 +1,20 @@
-id: "lnx-find-cpu-intensive-process"
-title: "Find CPU Intensive Process"
-summary: "Identify the PID of the highest CPU consuming process from ps output."
+id: lnx-find-cpu-intensive-process
+title: Find CPU Intensive Process
+summary: Identify the PID of the highest CPU consuming process from ps output.
 xp: 35
 duration_minutes: 20
-difficulty: "intermediate"
+difficulty: intermediate
 order: 2
-setup: |
-  mkdir -p "$HOME/mon-test/ps"
-  cat << 'EOF' > "$HOME/mon-test/ps/ps_output.txt"
-  USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-  root         1  0.0  0.1 168244  9812 ?        Ss   09:00   0:02 /sbin/init
-  appuser   3912 98.5  2.4 849200 40120 ?        R    09:15  12:40 python3 crypto_miner.py
-  appuser   1204  1.2  0.5 120400  8120 ?        S    09:02   0:15 nginx: worker process
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect `$HOME/mon-test/ps/ps_output.txt`.
+
   2. Find the process consuming the highest `%CPU` (98.5%).
+
   3. Write its PID (`3912`) into `$HOME/mon-test/top_cpu_pid.txt`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/mon-test/ps'
+  - '"printf ''%s'

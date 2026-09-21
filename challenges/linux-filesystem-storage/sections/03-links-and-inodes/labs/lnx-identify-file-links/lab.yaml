@@ -1,14 +1,11 @@
 id: lnx-identify-file-links
-title: "Identify hard-linked files using inode numbers"
+title: Identify hard-linked files using inode numbers
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "rm -rf $HOME/link-test"
-    - "mkdir -p $HOME/link-test/check_zone"
-    - "echo 'Shared inode payload' > $HOME/link-test/check_zone/original.txt"
-    - "echo 'Different file content' > $HOME/link-test/check_zone/file_a.txt"
-    - "ln $HOME/link-test/check_zone/original.txt $HOME/link-test/check_zone/file_b.txt"
-    - "echo 'Third content' > $HOME/link-test/check_zone/file_c.txt"
-version: 1
+  - rm -rf $HOME/link-test
+  - mkdir -p $HOME/link-test/check_zone
+  - echo 'Shared inode payload' > $HOME/link-test/check_zone/original.txt
+  - echo 'Different file content' > $HOME/link-test/check_zone/file_a.txt
+  - ln $HOME/link-test/check_zone/original.txt $HOME/link-test/check_zone/file_b.txt
+  - echo 'Third content' > $HOME/link-test/check_zone/file_c.txt

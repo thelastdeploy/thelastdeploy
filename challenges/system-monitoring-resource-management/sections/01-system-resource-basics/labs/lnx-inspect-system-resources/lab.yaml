@@ -1,18 +1,21 @@
-id: "lnx-inspect-system-resources"
-title: "Inspect System Resources"
-summary: "Inspect free memory output and record total system RAM."
+id: lnx-inspect-system-resources
+title: Inspect System Resources
+summary: Inspect free memory output and record total system RAM.
 xp: 20
 duration_minutes: 10
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/mon-test"
-  cat << 'EOF' > "$HOME/mon-test/free_output.txt"
-                 total        used        free      shared  buff/cache   available
-  Mem:           16Gi       4.2Gi       8.1Gi       256Mi       3.7Gi      11.2Gi
-  Swap:         2.0Gi          0B       2.0Gi
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect `$HOME/mon-test/free_output.txt`.
+
   2. Identify the total system memory capacity (e.g., `16Gi`).
+
   3. Write the total memory value (`16Gi`) into `$HOME/mon-test/total_ram.txt`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mon-test
+  - 'printf ''               total        used        free      shared  buff/cache   available\nMem:           16Gi       4.2Gi       8.1Gi       256Mi       3.7Gi      11.2Gi\nSwap:         2.0Gi          0B       2.0Gi\n''
+    > $HOME/mon-test/free_output.txt'

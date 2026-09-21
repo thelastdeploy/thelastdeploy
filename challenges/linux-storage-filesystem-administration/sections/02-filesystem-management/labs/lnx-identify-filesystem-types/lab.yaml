@@ -1,11 +1,10 @@
 id: lnx-identify-filesystem-types
-title: "Identify Filesystem Formats and UUIDs"
+title: Identify Filesystem Formats and UUIDs
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/storage-test"
-    - "printf '/dev/sda1: UUID=\"a1b2c3d4-e5f6-7890-abcd-1234567890ab\" TYPE=\"ext4\" PARTUUID=\"1111-2222\"\n/dev/sdb1: UUID=\"f9e8d7c6-b5a4-3210-fedc-0987654321ba\" TYPE=\"xfs\" PARTUUID=\"3333-4444\"\n' > $HOME/storage-test/blkid_output.txt"
-    - "rm -f $HOME/storage-test/fs_summary.txt"
-version: 1
+  - mkdir -p $HOME/storage-test
+  - 'printf ''/dev/sda1: UUID=''a1b2c3d4-e5f6-7890-abcd-1234567890ab'' TYPE=''ext4''
+    PARTUUID=''1111-2222''\n/dev/sdb1: UUID=''f9e8d7c6-b5a4-3210-fedc-0987654321ba''
+    TYPE=''xfs'' PARTUUID=''3333-4444''\n'' > $HOME/storage-test/blkid_output.txt'
+  - rm -f $HOME/storage-test/fs_summary.txt

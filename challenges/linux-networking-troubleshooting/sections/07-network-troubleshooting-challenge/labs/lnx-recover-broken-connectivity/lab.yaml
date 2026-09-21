@@ -1,24 +1,27 @@
-id: "lnx-recover-broken-connectivity"
-title: "Recover Broken Connectivity"
-summary: "Diagnose and repair misconfigured DNS resolver settings and service port bindings in an incident scenario."
+id: lnx-recover-broken-connectivity
+title: Recover Broken Connectivity
+summary: Diagnose and repair misconfigured DNS resolver settings and service port
+  bindings in an incident scenario.
 xp: 60
 duration_minutes: 30
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/net-challenge/config"
-  mkdir -p "$HOME/net-challenge/status"
-  cat << 'EOF' > "$HOME/net-challenge/config/resolv.conf"
-  nameserver 1.1.1.1
-  EOF
-  cat << 'EOF' > "$HOME/net-challenge/config/server.env"
-  LISTEN_IP="127.0.0.1" # Broken: limits access to loopback
-  LISTEN_PORT=8080
-  EOF
-  cat << 'EOF' > "$HOME/net-challenge/status/app.status"
-  CONNECTIVITY: FAILED
-  EOF
-instructions: |
-  1. Inspect `$HOME/net-challenge/config/server.env`. Update `LISTEN_IP="127.0.0.1"` to `LISTEN_IP="0.0.0.0"`.
-  2. Inspect `$HOME/net-challenge/config/resolv.conf`. Ensure it contains `nameserver 8.8.8.8` (replace or add line).
-  3. Update `$HOME/net-challenge/status/app.status` to contain exactly `CONNECTIVITY: RESTORED`.
+instructions: '
+
+  1. Inspect `$HOME/net-challenge/config/server.env`. Update `LISTEN_IP="127.0.0.1"`
+  to `LISTEN_IP="0.0.0.0"`.
+
+  2. Inspect `$HOME/net-challenge/config/resolv.conf`. Ensure it contains `nameserver
+  8.8.8.8` (replace or add line).
+
+  3. Update `$HOME/net-challenge/status/app.status` to contain exactly `CONNECTIVITY:
+  RESTORED`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/net-challenge/config'
+  - mkdir -p '$HOME/net-challenge/status'
+  - '"printf ''%s'
+  - '"printf ''%s'
+  - '"printf ''%s'

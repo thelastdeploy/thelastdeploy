@@ -1,10 +1,7 @@
 id: lnx-inspect-sudo-access
-title: "Inspect Sudo Privileges with Sudo List"
+title: Inspect Sudo Privileges with Sudo List
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/sec-test"
-    - "rm -f $HOME/sec-test/check_sudo.sh"
-version: 1
+  - mkdir -p $HOME/sec-test
+  - rm -f $HOME/sec-test/check_sudo.sh

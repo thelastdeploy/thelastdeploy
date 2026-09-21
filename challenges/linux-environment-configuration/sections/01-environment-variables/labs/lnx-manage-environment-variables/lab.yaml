@@ -1,10 +1,7 @@
 id: lnx-manage-environment-variables
-title: "Export Environment Variables for Child Processes"
+title: Export Environment Variables for Child Processes
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/env-test"
-    - "rm -f $HOME/env-test/export_cmd.sh"
-version: 1
+  - mkdir -p $HOME/env-test
+  - rm -f $HOME/env-test/export_cmd.sh

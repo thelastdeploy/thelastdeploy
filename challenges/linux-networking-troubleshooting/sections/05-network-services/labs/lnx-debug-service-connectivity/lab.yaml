@@ -1,20 +1,21 @@
-id: "lnx-debug-service-connectivity"
-title: "Debug Service Connectivity"
-summary: "Identify why remote users cannot connect to an application bound only to localhost."
+id: lnx-debug-service-connectivity
+title: Debug Service Connectivity
+summary: Identify why remote users cannot connect to an application bound only to
+  localhost.
 xp: 30
 duration_minutes: 15
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/net-test/service_debug"
-  cat << 'EOF' > "$HOME/net-test/service_debug/app.conf"
-  # Web application server configuration
-  BIND_ADDRESS="127.0.0.1" # Only localhost accessible
-  PORT=8000
-  EOF
-  cat << 'EOF' > "$HOME/net-test/service_debug/issue.txt"
-  PROBLEM: External clients on local LAN cannot access port 8000. Bind to all interfaces (0.0.0.0).
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect `$HOME/net-test/service_debug/app.conf`.
-  2. Change `BIND_ADDRESS="127.0.0.1"` to `BIND_ADDRESS="0.0.0.0"` so the service listens on all network interfaces.
+
+  2. Change `BIND_ADDRESS="127.0.0.1"` to `BIND_ADDRESS="0.0.0.0"` so the service
+  listens on all network interfaces.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/net-test/service_debug'
+  - '"printf ''%s'
+  - '"printf ''%s'

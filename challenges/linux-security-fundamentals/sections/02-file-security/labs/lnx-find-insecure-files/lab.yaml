@@ -1,14 +1,11 @@
 id: lnx-find-insecure-files
-title: "Find Insecure World-Writable Files"
+title: Find Insecure World-Writable Files
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/sec-test/audit_dir"
-    - "touch $HOME/sec-test/audit_dir/secret.key"
-    - "chmod 666 $HOME/sec-test/audit_dir/secret.key"
-    - "touch $HOME/sec-test/audit_dir/safe.txt"
-    - "chmod 644 $HOME/sec-test/audit_dir/safe.txt"
-    - "rm -f $HOME/sec-test/insecure_files.txt"
-version: 1
+  - mkdir -p $HOME/sec-test/audit_dir
+  - touch $HOME/sec-test/audit_dir/secret.key
+  - chmod 666 $HOME/sec-test/audit_dir/secret.key
+  - touch $HOME/sec-test/audit_dir/safe.txt
+  - chmod 644 $HOME/sec-test/audit_dir/safe.txt
+  - rm -f $HOME/sec-test/insecure_files.txt

@@ -1,15 +1,12 @@
 id: lnx-extract-patterned-data
-title: "Extract HTTP error codes using regex patterns"
+title: Extract HTTP error codes using regex patterns
 xp: 35
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "rm -rf $HOME/regex-test"
-    - "mkdir -p $HOME/regex-test"
-    - "echo 'GET /index.html 200 OK' > $HOME/regex-test/web.log"
-    - "echo 'GET /missing.css 404 Not Found' >> $HOME/regex-test/web.log"
-    - "echo 'POST /api/login 200 OK' >> $HOME/regex-test/web.log"
-    - "echo 'GET /bad.js 404 Not Found' >> $HOME/regex-test/web.log"
-    - "echo 'POST /api/checkout 500 Error' >> $HOME/regex-test/web.log"
-version: 1
+  - rm -rf $HOME/regex-test
+  - mkdir -p $HOME/regex-test
+  - echo 'GET /index.html 200 OK' > $HOME/regex-test/web.log
+  - echo 'GET /missing.css 404 Not Found' >> $HOME/regex-test/web.log
+  - echo 'POST /api/login 200 OK' >> $HOME/regex-test/web.log
+  - echo 'GET /bad.js 404 Not Found' >> $HOME/regex-test/web.log
+  - echo 'POST /api/checkout 500 Error' >> $HOME/regex-test/web.log

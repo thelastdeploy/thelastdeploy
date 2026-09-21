@@ -1,11 +1,11 @@
 id: lnx-build-text-processing-pipeline
-title: "Build a Multi-Stage Text Processing Pipeline"
+title: Build a Multi-Stage Text Processing Pipeline
 xp: 40
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/text-test"
-    - "printf '192.168.1.10 - 200 GET /index.html\n10.0.0.5 - 500 POST /api/v1\n192.168.1.10 - 500 GET /login\n10.0.0.5 - 500 GET /api/v1\n172.16.0.2 - 200 GET /status\n' > $HOME/text-test/audit.log"
+    - "printf '192.168.1.10 - 200 GET /index.html\\n10.0.0.5 - 500 POST /api/v1\\n192.168.1.10 - 500 GET /login\\n10.0.0.5 - 500 GET /api/v1\\n172.16.0.2 - 200 GET /status\\n' > $HOME/text-test/audit.log"
     - "rm -f $HOME/text-test/top_error_ips.txt"
-version: 1
+instructions: |
+  1. Inspect `$HOME/text-test/audit.log`.
+  2. Filter lines containing `500` status code, extract client IP address, count occurrences per IP, and write the top offending IP into `$HOME/text-test/top_error_ips.txt`.

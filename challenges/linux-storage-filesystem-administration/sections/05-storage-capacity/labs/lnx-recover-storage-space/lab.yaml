@@ -1,15 +1,23 @@
-id: "lnx-recover-storage-space"
-title: "Recover Storage Space"
-summary: "Locate and remove stale log archives to recover storage capacity."
+id: lnx-recover-storage-space
+title: Recover Storage Space
+summary: Locate and remove stale log archives to recover storage capacity.
 xp: 40
 duration_minutes: 20
-difficulty: "intermediate"
+difficulty: intermediate
 order: 2
-setup: |
-  mkdir -p "$HOME/storage-test/cleanup_target/logs"
-  dd if=/dev/zero of="$HOME/storage-test/cleanup_target/logs/app.log" bs=1M count=2 2>/dev/null
-  dd if=/dev/zero of="$HOME/storage-test/cleanup_target/logs/old_app_log.bak" bs=1M count=30 2>/dev/null
-instructions: |
+instructions: '
+
   1. Inspect `$HOME/storage-test/cleanup_target/logs`.
+
   2. Locate the stale log backup file ending with `.bak`.
+
   3. Delete the `.bak` file to reclaim storage space.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/storage-test/cleanup_target/logs'
+  - dd if=/dev/zero of='$HOME/storage-test/cleanup_target/logs/app.log' bs=1M count=2
+    2>/dev/null
+  - dd if=/dev/zero of='$HOME/storage-test/cleanup_target/logs/old_app_log.bak' bs=1M
+    count=30 2>/dev/null

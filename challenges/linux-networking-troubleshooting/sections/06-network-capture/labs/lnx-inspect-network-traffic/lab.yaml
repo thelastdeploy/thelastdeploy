@@ -1,18 +1,20 @@
-id: "lnx-inspect-network-traffic"
-title: "Inspect Network Traffic"
-summary: "Analyze a tcpdump capture log to identify client IP and flag states."
+id: lnx-inspect-network-traffic
+title: Inspect Network Traffic
+summary: Analyze a tcpdump capture log to identify client IP and flag states.
 xp: 45
 duration_minutes: 20
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/net-test/capture"
-  cat << 'EOF' > "$HOME/net-test/capture/tcpdump.log"
-  20:15:02.102394 IP 192.168.1.50.54321 > 10.0.0.5.80: Flags [S], seq 12345678, win 64240, length 0
-  20:15:02.102812 IP 10.0.0.5.80 > 192.168.1.50.54321: Flags [S.], seq 87654321, ack 12345679, win 65160, length 0
-  20:15:02.103102 IP 192.168.1.50.54321 > 10.0.0.5.80: Flags [.], ack 87654322, win 502, length 0
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect `$HOME/net-test/capture/tcpdump.log`.
+
   2. Identify the client source IP initiating the TCP handshake (`Flags [S]`).
+
   3. Write the client IP address (`192.168.1.50`) into `$HOME/net-test/client_ip.txt`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/net-test/capture'
+  - '"printf ''%s'

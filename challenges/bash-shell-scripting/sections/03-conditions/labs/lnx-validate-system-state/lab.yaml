@@ -1,12 +1,9 @@
 id: lnx-validate-system-state
-title: "Validate System State and File Properties"
+title: Validate System State and File Properties
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/script-test"
-    - "rm -f $HOME/script-test/check_file.sh"
-    - "touch $HOME/script-test/empty_sample.txt"
-    - "echo 'hello world' > $HOME/script-test/active_sample.txt"
-version: 1
+  - mkdir -p $HOME/script-test
+  - rm -f $HOME/script-test/check_file.sh
+  - touch $HOME/script-test/empty_sample.txt
+  - echo 'hello world' > $HOME/script-test/active_sample.txt

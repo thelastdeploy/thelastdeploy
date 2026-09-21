@@ -1,10 +1,7 @@
 id: lnx-query-system-journal
-title: "Query Systemd Journal by Unit and Time"
+title: Query Systemd Journal by Unit and Time
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/log-test"
-    - "rm -f $HOME/log-test/journal_query_cmd.sh"
-version: 1
+  - mkdir -p $HOME/log-test
+  - rm -f $HOME/log-test/journal_query_cmd.sh

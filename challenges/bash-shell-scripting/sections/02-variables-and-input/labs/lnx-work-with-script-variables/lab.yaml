@@ -1,10 +1,7 @@
 id: lnx-work-with-script-variables
-title: "Work with Script Variables and Arguments"
+title: Work with Script Variables and Arguments
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/script-test"
-    - "rm -f $HOME/script-test/vars.sh"
-version: 1
+  - mkdir -p $HOME/script-test
+  - rm -f $HOME/script-test/vars.sh

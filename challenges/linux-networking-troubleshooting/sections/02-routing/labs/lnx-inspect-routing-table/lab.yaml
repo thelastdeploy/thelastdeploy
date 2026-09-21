@@ -1,18 +1,20 @@
-id: "lnx-inspect-routing-table"
-title: "Inspect Routing Table"
-summary: "Inspect kernel IP routing rules and record default gateway IP address."
+id: lnx-inspect-routing-table
+title: Inspect Routing Table
+summary: Inspect kernel IP routing rules and record default gateway IP address.
 xp: 25
 duration_minutes: 15
-difficulty: "intermediate"
+difficulty: intermediate
 order: 1
-setup: |
-  mkdir -p "$HOME/net-test/routing"
-  cat << 'EOF' > "$HOME/net-test/routing/routes.txt"
-  default via 192.168.1.1 dev eth0 proto dhcp src 192.168.1.105 metric 100
-  10.0.0.0/24 dev eth1 proto kernel scope link src 10.0.0.50
-  192.168.1.0/24 dev eth0 proto kernel scope link src 192.168.1.105 metric 100
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect `$HOME/net-test/routing/routes.txt` (simulating `ip route` output).
+
   2. Locate the default gateway IP address.
+
   3. Write the default gateway IP (`192.168.1.1`) into `$HOME/net-test/default_gateway.txt`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/net-test/routing'
+  - '"printf ''%s'

@@ -1,10 +1,7 @@
 id: lnx-diagnose-ssh-connection
-title: "Diagnose Connection Failures with Verbose Mode"
+title: Diagnose Connection Failures with Verbose Mode
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/ssh-test"
-    - "rm -f $HOME/ssh-test/debug_cmd.sh"
-version: 1
+  - mkdir -p $HOME/ssh-test
+  - rm -f $HOME/ssh-test/debug_cmd.sh

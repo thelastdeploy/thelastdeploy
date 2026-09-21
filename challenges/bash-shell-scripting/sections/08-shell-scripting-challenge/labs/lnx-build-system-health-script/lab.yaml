@@ -1,11 +1,8 @@
 id: lnx-build-system-health-script
-title: "Build a System Health Monitoring Script"
+title: Build a System Health Monitoring Script
 xp: 50
-estimated_minutes: 10
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/script-challenge"
-    - "rm -f $HOME/script-challenge/system_health.sh"
-    - "rm -f $HOME/script-challenge/report.txt"
-version: 1
+  - mkdir -p $HOME/script-challenge
+  - rm -f $HOME/script-challenge/system_health.sh
+  - rm -f $HOME/script-challenge/report.txt

@@ -1,13 +1,11 @@
 id: lnx-repair-scheduled-maintenance
-title: "Repair Scheduled System Maintenance Setup"
+title: Repair Scheduled System Maintenance Setup
 xp: 50
-estimated_minutes: 10
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/cron-challenge"
-    - "printf '60 25 * * * maint_script.sh\n' > $HOME/cron-challenge/maint.crontab"
-    - "printf '#!/bin/bash\necho \"[$(date)] System maintenance run complete\" >> $HOME/cron-challenge/maint.log\n' > $HOME/cron-challenge/maint_script.sh"
-    - "chmod -x $HOME/cron-challenge/maint_script.sh"
-    - "rm -f $HOME/cron-challenge/status.txt"
-version: 1
+  - mkdir -p $HOME/cron-challenge
+  - printf '60 25 * * * maint_script.sh\n' > $HOME/cron-challenge/maint.crontab
+  - printf '#!/bin/bash\necho '[$(date)] System maintenance run complete' >> $HOME/cron-challenge/maint.log\n'
+    > $HOME/cron-challenge/maint_script.sh
+  - chmod -x $HOME/cron-challenge/maint_script.sh
+  - rm -f $HOME/cron-challenge/status.txt

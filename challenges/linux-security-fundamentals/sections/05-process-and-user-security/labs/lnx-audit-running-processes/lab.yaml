@@ -1,11 +1,9 @@
 id: lnx-audit-running-processes
-title: "Audit Process User Ownership"
+title: Audit Process User Ownership
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/sec-test"
-    - "printf 'PID USER COMMAND\n101 root systemd\n202 www-data nginx: master\n203 www-data nginx: worker\n304 postgres postgres: main\n' > $HOME/sec-test/ps_dump.txt"
-    - "rm -f $HOME/sec-test/www_processes.txt"
-version: 1
+  - mkdir -p $HOME/sec-test
+  - 'printf ''PID USER COMMAND\n101 root systemd\n202 www-data nginx: master\n203
+    www-data nginx: worker\n304 postgres postgres: main\n'' > $HOME/sec-test/ps_dump.txt'
+  - rm -f $HOME/sec-test/www_processes.txt

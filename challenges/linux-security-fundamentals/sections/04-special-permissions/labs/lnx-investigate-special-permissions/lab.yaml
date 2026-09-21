@@ -1,15 +1,12 @@
 id: lnx-investigate-special-permissions
-title: "Investigate Special SUID/SGID/Sticky Bit Permissions"
+title: Investigate Special SUID/SGID/Sticky Bit Permissions
 xp: 35
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/sec-test/bin_audit/shared_dir"
-    - "chmod 1777 $HOME/sec-test/bin_audit/shared_dir"
-    - "touch $HOME/sec-test/bin_audit/suid_tool"
-    - "chmod 4755 $HOME/sec-test/bin_audit/suid_tool"
-    - "touch $HOME/sec-test/bin_audit/normal_tool"
-    - "chmod 0755 $HOME/sec-test/bin_audit/normal_tool"
-    - "rm -f $HOME/sec-test/suid_files.txt"
-version: 1
+  - mkdir -p $HOME/sec-test/bin_audit/shared_dir
+  - chmod 1777 $HOME/sec-test/bin_audit/shared_dir
+  - touch $HOME/sec-test/bin_audit/suid_tool
+  - chmod 4755 $HOME/sec-test/bin_audit/suid_tool
+  - touch $HOME/sec-test/bin_audit/normal_tool
+  - chmod 0755 $HOME/sec-test/bin_audit/normal_tool
+  - rm -f $HOME/sec-test/suid_files.txt

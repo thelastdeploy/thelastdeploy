@@ -1,10 +1,7 @@
 id: lnx-schedule-recurring-task
-title: "Schedule Recurring Tasks with Redirection"
+title: Schedule Recurring Tasks with Redirection
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/cron-test"
-    - "rm -f $HOME/cron-test/my_cron.txt"
-version: 1
+  - mkdir -p $HOME/cron-test
+  - rm -f $HOME/cron-test/my_cron.txt

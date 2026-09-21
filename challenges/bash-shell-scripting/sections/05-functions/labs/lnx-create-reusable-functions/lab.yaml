@@ -1,10 +1,7 @@
 id: lnx-create-reusable-functions
-title: "Create Reusable Functions"
+title: Create Reusable Functions
 xp: 25
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/script-test"
-    - "rm -f $HOME/script-test/log_helper.sh"
-version: 1
+  - mkdir -p $HOME/script-test
+  - rm -f $HOME/script-test/log_helper.sh

@@ -1,11 +1,10 @@
 id: lnx-identify-storage-devices
-title: "Identify Storage Devices and Block Topology"
+title: Identify Storage Devices and Block Topology
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/storage-test"
-    - "printf 'NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT\nsda    8:0    0  50G  0 disk \n├─sda1 8:1    0  49G  0 part /\nsdb    8:16   0  20G  0 disk \n└─sdb1 8:17   0  20G  0 part /mnt/data\n' > $HOME/storage-test/device_dump.txt"
-    - "rm -f $HOME/storage-test/block_devices.txt"
-version: 1
+  - mkdir -p $HOME/storage-test
+  - printf 'NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT\nsda    8:0    0  50G  0 disk
+    \n├─sda1 8:1    0  49G  0 part /\nsdb    8:16   0  20G  0 disk \n└─sdb1 8:17   0  20G  0
+    part /mnt/data\n' > $HOME/storage-test/device_dump.txt
+  - rm -f $HOME/storage-test/block_devices.txt

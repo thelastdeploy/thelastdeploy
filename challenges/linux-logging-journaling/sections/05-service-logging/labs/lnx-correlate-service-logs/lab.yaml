@@ -1,11 +1,10 @@
 id: lnx-correlate-service-logs
-title: "Correlate Service Status with Journal Logs"
+title: Correlate Service Status with Journal Logs
 xp: 30
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/log-test"
-    - "printf '● payment-processor.service - Payment Gateway Daemon\n   Loaded: loaded (/lib/systemd/system/payment-processor.service; enabled)\n   Active: failed (Result: exit-code)\n' > $HOME/log-test/service_status.txt"
-    - "rm -f $HOME/log-test/failing_unit.txt"
-version: 1
+  - mkdir -p $HOME/log-test
+  - 'printf ''● payment-processor.service - Payment Gateway Daemon\n   Loaded: loaded
+    (/lib/systemd/system/payment-processor.service; enabled)\n   Active: failed (Result:
+    exit-code)\n'' > $HOME/log-test/service_status.txt'
+  - rm -f $HOME/log-test/failing_unit.txt

@@ -1,21 +1,21 @@
-id: "lnx-trace-application-connection"
-title: "Trace Application Connection"
-summary: "Trace HTTP connection response headers to determine the upstream failure code."
+id: lnx-trace-application-connection
+title: Trace Application Connection
+summary: Trace HTTP connection response headers to determine the upstream failure
+  code.
 xp: 40
 duration_minutes: 20
-difficulty: "intermediate"
+difficulty: intermediate
 order: 2
-setup: |
-  mkdir -p "$HOME/net-test/app_trace"
-  cat << 'EOF' > "$HOME/net-test/app_trace/curl_headers.txt"
-  HTTP/1.1 502 Bad Gateway
-  Server: nginx/1.18.0
-  Date: Mon, 21 Sep 2026 20:00:00 GMT
-  Content-Type: text/html
-  Content-Length: 157
-  Connection: keep-alive
-  EOF
-instructions: |
+instructions: '
+
   1. Inspect `$HOME/net-test/app_trace/curl_headers.txt`.
+
   2. Identify the HTTP status code returned by the gateway server (e.g., `502`).
+
   3. Write the numerical status code (`502`) into `$HOME/net-test/status_code.txt`.
+
+  '
+setup:
+  seed_commands:
+  - mkdir -p '$HOME/net-test/app_trace'
+  - '"printf ''%s'

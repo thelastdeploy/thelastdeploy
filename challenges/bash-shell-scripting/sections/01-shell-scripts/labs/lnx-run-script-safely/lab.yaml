@@ -1,10 +1,7 @@
 id: lnx-run-script-safely
-title: "Run Scripts Safely with Strict Options"
+title: Run Scripts Safely with Strict Options
 xp: 20
-estimated_minutes: 5
 setup:
-  type: shell
   seed_commands:
-    - "mkdir -p $HOME/script-test"
-    - "rm -f $HOME/script-test/safe.sh"
-version: 1
+  - mkdir -p $HOME/script-test
+  - rm -f $HOME/script-test/safe.sh
