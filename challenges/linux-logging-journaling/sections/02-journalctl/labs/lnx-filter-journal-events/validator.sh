@@ -20,7 +20,7 @@ if ! echo "$CONTENT" | grep -Eq "journalctl .*(-p err|-p 3)"; then
     exit 1
 fi
 
-if ! echo "$CONTENT" | grep -Eq "-o json-pretty"; then
+if ! echo "$CONTENT" | grep -Eq -- "-o json-pretty"; then
     echo "FAIL: $SCRIPT_PATH missing output format option '-o json-pretty'."
     exit 1
 fi
