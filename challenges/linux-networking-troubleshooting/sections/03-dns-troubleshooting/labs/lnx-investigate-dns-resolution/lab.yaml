@@ -1,0 +1,18 @@
+id: "lnx-investigate-dns-resolution"
+title: "Investigate DNS Resolution"
+summary: "Query a simulated DNS record output to identify resolved IPv4 addresses."
+xp: 25
+duration_minutes: 15
+difficulty: "intermediate"
+order: 1
+setup: |
+  mkdir -p "$HOME/net-test/dns"
+  cat << 'EOF' > "$HOME/net-test/dns/dig_output.txt"
+  ; <<>> DiG 9.18.1 <<>> internal.service.local
+  ;; ANSWER SECTION:
+  internal.service.local. 300 IN A 10.250.0.15
+  EOF
+instructions: |
+  1. Inspect the DNS query log in `$HOME/net-test/dns/dig_output.txt`.
+  2. Identify the resolved IP address for `internal.service.local`.
+  3. Save the resolved IP (`10.250.0.15`) into `$HOME/net-test/resolved_ip.txt`.

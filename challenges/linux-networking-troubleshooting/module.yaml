@@ -1,0 +1,6 @@
+id: "linux-networking-troubleshooting"
+title: "Linux Networking Troubleshooting"
+description: "Diagnose and resolve network issues, routing problems, DNS failures, socket states, and service connectivity on Linux systems."
+difficulty: "intermediate"
+estimated_time_minutes: 75
+order: 17

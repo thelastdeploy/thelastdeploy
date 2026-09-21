@@ -1,0 +1,4 @@
+id: "01-system-resource-basics"
+title: "System Resource Basics"
+description: "CPU, memory, disk I/O, load, and what those measurements actually mean."
+order: 1

@@ -1,0 +1,4 @@
+id: "07-network-troubleshooting-challenge"
+title: "Network Troubleshooting Challenge"
+description: "An internal application suddenly becomes unreachable. Investigate interface, routes, DNS, listening ports, and network traffic to identify failure and restore connectivity."
+order: 7

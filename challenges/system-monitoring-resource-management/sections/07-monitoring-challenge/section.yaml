@@ -1,0 +1,4 @@
+id: "07-monitoring-challenge"
+title: "Monitoring Challenge"
+description: "A production server has become extremely slow. CPU usage is high, memory is under pressure, and application response times have increased. Investigate the system, identify the resource bottleneck, determine which process is responsible, and take appropriate corrective action."
+order: 7

@@ -1,0 +1,18 @@
+id: "lnx-identify-resource-pressure"
+title: "Identify Resource Pressure"
+summary: "Identify which resource metric is under pressure from vmstat output."
+xp: 25
+duration_minutes: 15
+difficulty: "intermediate"
+order: 2
+setup: |
+  mkdir -p "$HOME/mon-test/pressure"
+  cat << 'EOF' > "$HOME/mon-test/pressure/vmstat.log"
+  procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+   r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+   1  4      0 120400   4050  82300    0    0 45000 12000 1200 4500  5 10 15 70  0
+  EOF
+instructions: |
+  1. Inspect `$HOME/mon-test/pressure/vmstat.log`.
+  2. Examine CPU columns (`us`, `sy`, `id`, `wa`). Notice `wa` (iowait) is at 70%.
+  3. Save the pressure metric type (`iowait`) into `$HOME/mon-test/bottleneck.txt`.

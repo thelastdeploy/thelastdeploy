@@ -1,0 +1,21 @@
+id: "lnx-diagnose-routing-problem"
+title: "Diagnose Routing Problem"
+summary: "Identify misconfigured static route in a simulated routing manifest."
+xp: 35
+duration_minutes: 20
+difficulty: "intermediate"
+order: 2
+setup: |
+  mkdir -p "$HOME/net-test/routing_problem"
+  cat << 'EOF' > "$HOME/net-test/routing_problem/routes.conf"
+  # System Routing Configuration
+  ROUTE_1="10.100.0.0/16 via 10.0.0.1 dev eth0"
+  ROUTE_2="172.16.0.0/12 via 192.168.99.99 dev eth1" # BROKEN GATEWAY
+  EOF
+  cat << 'EOF' > "$HOME/net-test/routing_problem/diag.txt"
+  ISSUE: Gateway 192.168.99.99 is unreachable. Correct gateway is 10.0.0.254.
+  EOF
+instructions: |
+  1. Inspect `$HOME/net-test/routing_problem/routes.conf` and `$HOME/net-test/routing_problem/diag.txt`.
+  2. Notice that `ROUTE_2` has an unreachable gateway `192.168.99.99`.
+  3. Fix `$HOME/net-test/routing_problem/routes.conf` by updating the gateway in `ROUTE_2` to `10.0.0.254`.

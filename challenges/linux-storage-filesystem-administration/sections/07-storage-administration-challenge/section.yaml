@@ -1,0 +1,4 @@
+id: "07-storage-administration-challenge"
+title: "Storage Administration Challenge"
+description: "A server has an additional storage volume that an application can no longer access. Determine whether device, partition, filesystem, mount, or permissions are responsible, and restore storage access."
+order: 7

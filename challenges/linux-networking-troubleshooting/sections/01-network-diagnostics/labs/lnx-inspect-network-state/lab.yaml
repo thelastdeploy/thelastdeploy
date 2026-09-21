@@ -1,0 +1,13 @@
+id: "lnx-inspect-network-state"
+title: "Inspect Network State"
+summary: "Inspect network interfaces and identify the primary IPv4 loopback address."
+xp: 20
+duration_minutes: 10
+difficulty: "intermediate"
+order: 1
+setup: |
+  mkdir -p "$HOME/net-test"
+instructions: |
+  1. Inspect local network interfaces using `ip addr` or `ifconfig`.
+  2. Locate the loopback interface (`lo`).
+  3. Write the default IPv4 loopback IP address (e.g., `127.0.0.1`) into `$HOME/net-test/loopback.txt`.

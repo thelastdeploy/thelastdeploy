@@ -1,0 +1,4 @@
+id: "05-system-load"
+title: "System Load"
+description: "Learn what load average actually represents and avoid the classic mistake of treating it as simply 'CPU percentage.'"
+order: 5

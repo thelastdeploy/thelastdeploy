@@ -1,0 +1,16 @@
+id: "lnx-interpret-system-load"
+title: "Interpret System Load"
+summary: "Extract 15-minute load average from uptime output."
+xp: 30
+duration_minutes: 15
+difficulty: "intermediate"
+order: 1
+setup: |
+  mkdir -p "$HOME/mon-test/load"
+  cat << 'EOF' > "$HOME/mon-test/load/uptime_output.txt"
+   20:45:12 up 14 days,  3:22,  2 users,  load average: 1.25, 4.50, 8.75
+  EOF
+instructions: |
+  1. Inspect `$HOME/mon-test/load/uptime_output.txt`.
+  2. Locate the 15-minute load average value (`8.75`).
+  3. Write the 15-minute load average (`8.75`) into `$HOME/mon-test/load_15m.txt`.

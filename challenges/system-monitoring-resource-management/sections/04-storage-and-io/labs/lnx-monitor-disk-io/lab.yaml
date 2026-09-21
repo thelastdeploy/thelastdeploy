@@ -1,0 +1,18 @@
+id: "lnx-monitor-disk-io"
+title: "Monitor Disk I/O"
+summary: "Identify the device name experiencing 100% utilization from iostat output."
+xp: 30
+duration_minutes: 15
+difficulty: "intermediate"
+order: 1
+setup: |
+  mkdir -p "$HOME/mon-test/io"
+  cat << 'EOF' > "$HOME/mon-test/io/iostat_report.txt"
+  Device:            r/s     w/s     rkB/s     wkB/s   rrqm/s   wrqm/s  %rrqm  %wrqm r_await w_await aqu-sz rareq-sz wareq-sz  svctm  %util
+  sda               2.00   15.00     32.00    256.00     0.00     2.00   0.00  11.76    1.20    4.50   0.08    16.00    17.07   3.10   5.27
+  sdb             450.00 1200.00  18200.00  45000.00    10.00   150.00   2.17  11.11   42.10   85.30  12.40    40.44    37.50   0.61  99.80
+  EOF
+instructions: |
+  1. Inspect `$HOME/mon-test/io/iostat_report.txt`.
+  2. Find the disk device with elevated `%util` (approx 100%).
+  3. Write the device name (`sdb`) into `$HOME/mon-test/saturated_device.txt`.

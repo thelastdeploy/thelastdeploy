@@ -1,0 +1,10 @@
+id: lnx-configure-persistent-mount
+title: "Configure Persistent Mounts in Fstab"
+xp: 35
+estimated_minutes: 5
+setup:
+  type: shell
+  seed_commands:
+    - "mkdir -p $HOME/storage-test"
+    - "printf '# /etc/fstab: static file system information.\nLABEL=cloudimg-rootfs   /               ext4    defaults        0 1\n' > $HOME/storage-test/mock_fstab"
+version: 1

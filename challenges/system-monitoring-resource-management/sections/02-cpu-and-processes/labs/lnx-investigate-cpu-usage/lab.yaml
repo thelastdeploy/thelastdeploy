@@ -1,0 +1,16 @@
+id: "lnx-investigate-cpu-usage"
+title: "Investigate CPU Usage"
+summary: "Identify user space CPU utilization percentage from top output."
+xp: 25
+duration_minutes: 15
+difficulty: "intermediate"
+order: 1
+setup: |
+  mkdir -p "$HOME/mon-test/cpu"
+  cat << 'EOF' > "$HOME/mon-test/cpu/top_snapshot.txt"
+  %Cpu(s): 85.2 us,  4.1 sy,  0.0 ni, 10.2 id,  0.5 wa,  0.0 hi,  0.0 si,  0.0 st
+  EOF
+instructions: |
+  1. Inspect `$HOME/mon-test/cpu/top_snapshot.txt`.
+  2. Locate the user space CPU percentage (`us`).
+  3. Write the numerical percentage (`85.2`) into `$HOME/mon-test/user_cpu.txt`.

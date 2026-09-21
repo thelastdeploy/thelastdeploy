@@ -1,0 +1,18 @@
+id: "lnx-investigate-listening-services"
+title: "Investigate Listening Services"
+summary: "Identify which process PID is listening on port 8080 from socket output."
+xp: 30
+duration_minutes: 15
+difficulty: "intermediate"
+order: 1
+setup: |
+  mkdir -p "$HOME/net-test/sockets"
+  cat << 'EOF' > "$HOME/net-test/sockets/ss_output.txt"
+  Netid State  Recv-Q Send-Q Local Address:Port  Peer Address:Port Process
+  tcp   LISTEN 0      128    0.0.0.0:22          0.0.0.0:*         users:(("sshd",pid=1102,fd=3))
+  tcp   LISTEN 0      511    0.0.0.0:8080        0.0.0.0:*         users:(("nginx",pid=4251,fd=6))
+  EOF
+instructions: |
+  1. Inspect `$HOME/net-test/sockets/ss_output.txt`.
+  2. Identify the process name and PID listening on port `8080`.
+  3. Write the PID of the listening process (`4251`) into `$HOME/net-test/port_8080_pid.txt`.

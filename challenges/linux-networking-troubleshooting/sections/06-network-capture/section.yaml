@@ -1,0 +1,4 @@
+id: "06-network-capture"
+title: "Network Capture"
+description: "Introduce packet inspection with tools such as tcpdump to observe what's actually happening on the wire."
+order: 6

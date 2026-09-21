@@ -1,0 +1,20 @@
+id: "lnx-diagnose-filesystem-problem"
+title: "Diagnose Filesystem Problem"
+summary: "Diagnose why a simulated storage mount configuration fails and fix the issue."
+xp: 40
+duration_minutes: 20
+difficulty: "intermediate"
+order: 1
+setup: |
+  mkdir -p "$HOME/storage-test/broken_app"
+  cat << 'EOF' > "$HOME/storage-test/broken_app/fstab_mock"
+  # Mock fstab configuration
+  UUID=1234-5678 /mnt/missing_data ext4 defaults 0 2
+  EOF
+  mkdir -p "$HOME/storage-test/broken_app/diag"
+  echo "REASON: Mount point directory /mnt/missing_data does not exist on filesystem" > "$HOME/storage-test/broken_app/diag/issue.txt"
+instructions: |
+  1. Inspect `$HOME/storage-test/broken_app/fstab_mock`.
+  2. Notice that the entry references mount point `/mnt/missing_data`.
+  3. Create the missing mount target directory at `$HOME/storage-test/broken_app/mnt_missing_data`.
+  4. Update `$HOME/storage-test/broken_app/fstab_mock` so the mount point points to `$HOME/storage-test/broken_app/mnt_missing_data`.

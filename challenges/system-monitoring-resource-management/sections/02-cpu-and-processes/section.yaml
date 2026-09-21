@@ -1,0 +1,4 @@
+id: "02-cpu-and-processes"
+title: "CPU & Processes"
+description: "Find processes consuming CPU and determine whether the usage is expected or problematic."
+order: 2

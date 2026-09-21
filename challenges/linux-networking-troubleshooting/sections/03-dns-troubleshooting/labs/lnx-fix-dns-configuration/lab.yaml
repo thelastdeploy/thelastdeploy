@@ -1,0 +1,18 @@
+id: "lnx-fix-dns-configuration"
+title: "Fix DNS Configuration"
+summary: "Fix invalid resolver configuration in a simulated resolv.conf file."
+xp: 35
+duration_minutes: 20
+difficulty: "intermediate"
+order: 2
+setup: |
+  mkdir -p "$HOME/net-test/resolv_fix"
+  cat << 'EOF' > "$HOME/net-test/resolv_fix/resolv.conf"
+  # Invalid nameserver IP
+  nameserver 0.0.0.0
+  search internal.net
+  EOF
+instructions: |
+  1. Inspect `$HOME/net-test/resolv_fix/resolv.conf`.
+  2. Notice that the nameserver is set to `0.0.0.0`.
+  3. Update `$HOME/net-test/resolv_fix/resolv.conf` so that the nameserver line reads `nameserver 8.8.8.8`.

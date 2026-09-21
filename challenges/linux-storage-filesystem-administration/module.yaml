@@ -1,0 +1,30 @@
+id: linux-storage-filesystem-administration
+title: "Storage & Filesystem Administration"
+description: "Master Linux storage administration: disk block devices, partitioning (fdisk, parted), filesystem types (ext4, xfs), mounting, persistent fstab configuration, inode/capacity recovery, and storage troubleshooting."
+topic: linux
+difficulty: intermediate
+estimated_minutes: 75
+tags:
+  - storage
+  - filesystem
+  - fstab
+  - mount
+  - disk-usage
+  - linux
+sections:
+  - id: 01-disks-and-partitions
+    order: 1
+  - id: 02-filesystem-management
+    order: 2
+  - id: 03-mounting-filesystems
+    order: 3
+  - id: 04-filesystem-permissions-and-ownership
+    order: 4
+  - id: 05-storage-capacity
+    order: 5
+  - id: 06-filesystem-troubleshooting
+    order: 6
+  - id: 07-storage-administration-challenge
+    order: 7
+verified: true
+version: 1

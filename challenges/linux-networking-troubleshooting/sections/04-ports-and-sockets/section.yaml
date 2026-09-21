@@ -1,0 +1,4 @@
+id: "04-ports-and-sockets"
+title: "Ports & Sockets"
+description: "Find what is listening, which process owns a socket, and whether a service is actually reachable."
+order: 4

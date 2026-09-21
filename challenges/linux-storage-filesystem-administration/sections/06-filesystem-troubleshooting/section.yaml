@@ -1,0 +1,4 @@
+id: "06-filesystem-troubleshooting"
+title: "Filesystem Troubleshooting"
+description: "Give them a broken/unavailable filesystem scenario and make them determine what went wrong."
+order: 6

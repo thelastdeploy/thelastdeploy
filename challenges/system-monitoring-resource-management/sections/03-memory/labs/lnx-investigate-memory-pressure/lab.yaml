@@ -1,0 +1,17 @@
+id: "lnx-investigate-memory-pressure"
+title: "Investigate Memory Pressure"
+summary: "Identify the process terminated by kernel OOM killer from dmesg logs."
+xp: 35
+duration_minutes: 20
+difficulty: "intermediate"
+order: 2
+setup: |
+  mkdir -p "$HOME/mon-test/oom"
+  cat << 'EOF' > "$HOME/mon-test/oom/dmesg_oom.log"
+  [ 4210.120300] Out of memory: Kill process 5812 (java_backend) score 850 or sacrifice child
+  [ 4210.120412] Killed process 5812 (java_backend) total-vm:1420500kB, anon-rss:980100kB
+  EOF
+instructions: |
+  1. Inspect `$HOME/mon-test/oom/dmesg_oom.log`.
+  2. Identify the process name killed by the kernel OOM killer (`java_backend`).
+  3. Write the killed process name (`java_backend`) into `$HOME/mon-test/oom_process.txt`.

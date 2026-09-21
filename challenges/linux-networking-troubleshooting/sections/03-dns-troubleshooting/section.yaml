@@ -1,0 +1,4 @@
+id: "03-dns-troubleshooting"
+title: "DNS Troubleshooting"
+description: "Separate 'the network is broken' from 'DNS is broken.' That's an important operational distinction."
+order: 3

@@ -1,0 +1,4 @@
+id: "02-routing"
+title: "Routing"
+description: "Understand default routes, routing tables, and how packets decide where to go."
+order: 2

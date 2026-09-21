@@ -1,0 +1,18 @@
+id: "lnx-investigate-io-bottleneck"
+title: "Investigate I/O Bottleneck"
+summary: "Identify process PID generating excessive write IOPS from iotop log."
+xp: 40
+duration_minutes: 20
+difficulty: "intermediate"
+order: 2
+setup: |
+  mkdir -p "$HOME/mon-test/iotop"
+  cat << 'EOF' > "$HOME/mon-test/iotop/iotop_log.txt"
+  TID  PRIO  USER     DISK READ  DISK WRITE  SWAPIN     IO>    COMMAND
+  1050 be/4 root        0.00 B/s    4.00 K/s  0.00 %  0.05 % systemd-journald
+  6891 be/4 appuser     0.00 B/s   85.40 M/s  0.00 % 92.40 % postgres: writer process [PID 6891]
+  EOF
+instructions: |
+  1. Inspect `$HOME/mon-test/iotop/iotop_log.txt`.
+  2. Locate the process causing high disk write I/O (`85.40 M/s`).
+  3. Write its PID (`6891`) into `$HOME/mon-test/io_hog_pid.txt`.

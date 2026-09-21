@@ -1,0 +1,6 @@
+id: "system-monitoring-resource-management"
+title: "System Monitoring & Resource Management"
+description: "Inspect CPU, memory, disk I/O, system load averages, and correlate resource pressure signals to diagnose performance bottlenecks."
+difficulty: "intermediate"
+estimated_time_minutes: 75
+order: 18

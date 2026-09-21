@@ -1,0 +1,4 @@
+id: "01-network-diagnostics"
+title: "Network Diagnostics"
+description: "Use the available Linux networking tools to establish what the machine's network actually looks like."
+order: 1
