@@ -8,3 +8,4 @@ setup:
     state:        clean\nErrors behavior:          Continue\nBlock count:              2621440\nInode
     count:              655360\n'' > $HOME/storage-test/tune2fs_output.txt'
   - rm -f $HOME/storage-test/fs_health.txt
+version: 2

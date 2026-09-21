@@ -6,3 +6,4 @@ setup:
   - mkdir -p $HOME/script-challenge
   - rm -f $HOME/script-challenge/system_health.sh
   - rm -f $HOME/script-challenge/report.txt
+version: 2

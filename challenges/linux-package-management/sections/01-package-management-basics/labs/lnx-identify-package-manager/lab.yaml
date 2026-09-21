@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - rm -rf $HOME/pkg-test
   - mkdir -p $HOME/pkg-test
+version: 2

@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/sec-test
   - rm -f $HOME/sec-test/check_sudo.sh
+version: 2

@@ -12,3 +12,4 @@ setup:
   - echo '192.168.1.50' >> $HOME/text-test/ips.txt
   - echo '10.0.0.1' >> $HOME/text-test/ips.txt
   - echo '192.168.1.50' >> $HOME/text-test/ips.txt
+version: 2

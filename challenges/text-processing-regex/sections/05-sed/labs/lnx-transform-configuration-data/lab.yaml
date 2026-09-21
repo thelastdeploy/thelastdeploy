@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/text-test
   - printf 'PORT=8080\nDEBUG=true\nENV=development\n' > $HOME/text-test/app.conf
+version: 2

@@ -8,3 +8,4 @@ setup:
   - touch $HOME/pkg-challenge/locks/frontend.lock
   - 'echo ''Package: nginx Status: installed'' > $HOME/pkg-challenge/status.log'
   - 'echo ''Package: app-service Status: half-configured'' >> $HOME/pkg-challenge/status.log'
+version: 2

@@ -8,3 +8,4 @@ setup:
   - 'echo ''Package: nginx Status: install ok installed'' > $HOME/broken-test/dpkg_status.log'
   - 'echo ''Package: custom-app Status: install ok half-installed'' >> $HOME/broken-test/dpkg_status.log'
   - 'echo ''Package: curl Status: install ok installed'' >> $HOME/broken-test/dpkg_status.log'
+version: 2

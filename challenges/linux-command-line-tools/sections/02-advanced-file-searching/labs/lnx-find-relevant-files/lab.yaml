@@ -7,3 +7,4 @@ setup:
   - mkdir -p $HOME/search-test/audits
   - touch $HOME/search-test/audits/sec_01.audit $HOME/search-test/audits/sec_02.audit
     $HOME/search-test/audits/sec_03.audit $HOME/search-test/audits/notes.txt
+version: 2

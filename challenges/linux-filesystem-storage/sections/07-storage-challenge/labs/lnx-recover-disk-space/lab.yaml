@@ -9,3 +9,4 @@ setup:
   - echo 'Active service log stream' > $HOME/storage-challenge/active_service.log
   - truncate -s 100M $HOME/storage-challenge/archives/crash_2025.dump
   - truncate -s 50M $HOME/storage-challenge/archives/old_logs.tar.gz
+version: 2

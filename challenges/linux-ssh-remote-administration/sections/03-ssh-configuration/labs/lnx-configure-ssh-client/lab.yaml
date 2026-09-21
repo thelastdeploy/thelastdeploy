@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test/config_dir
   - rm -f $HOME/ssh-test/config_dir/config
+version: 2

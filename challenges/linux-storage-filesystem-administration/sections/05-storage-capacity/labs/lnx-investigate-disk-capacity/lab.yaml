@@ -24,3 +24,4 @@ setup:
     count=25 2>/dev/null
   - dd if=/dev/zero of='$HOME/storage-test/capacity_audit/app_logs/service.log' bs=1M
     count=5 2>/dev/null
+version: 2

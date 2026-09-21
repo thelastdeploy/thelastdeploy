@@ -6,3 +6,4 @@ setup:
   - rm -rf $HOME/link-test
   - mkdir -p $HOME/link-test/configs
   - echo 'PORT=8080' > $HOME/link-test/configs/app_v2.conf
+version: 2

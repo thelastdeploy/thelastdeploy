@@ -10,3 +10,4 @@ setup:
   - touch $HOME/sec-test/bin_audit/normal_tool
   - chmod 0755 $HOME/sec-test/bin_audit/normal_tool
   - rm -f $HOME/sec-test/suid_files.txt
+version: 2

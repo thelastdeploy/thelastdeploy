@@ -10,3 +10,4 @@ setup:
   - echo 'POST /api/login 200 OK' >> $HOME/regex-test/web.log
   - echo 'GET /bad.js 404 Not Found' >> $HOME/regex-test/web.log
   - echo 'POST /api/checkout 500 Error' >> $HOME/regex-test/web.log
+version: 2

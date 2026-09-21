@@ -8,3 +8,4 @@ setup:
     2: User in group, group mode rw- -> read attempt\nScenario 3: Other mode r--,
     user non-owner/non-group -> read attempt\n'' > $HOME/sec-test/perm_eval.txt'
   - rm -f $HOME/sec-test/eval_result.txt
+version: 2

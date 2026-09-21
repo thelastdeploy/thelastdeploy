@@ -7,3 +7,4 @@ setup:
   - 'printf ''PID USER COMMAND\n101 root systemd\n202 www-data nginx: master\n203
     www-data nginx: worker\n304 postgres postgres: main\n'' > $HOME/sec-test/ps_dump.txt'
   - rm -f $HOME/sec-test/www_processes.txt
+version: 2

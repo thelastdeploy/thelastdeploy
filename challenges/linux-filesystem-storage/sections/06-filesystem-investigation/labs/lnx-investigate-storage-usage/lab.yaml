@@ -7,3 +7,4 @@ setup:
   - mkdir -p $HOME/storage-investigation/sub_logs
   - echo 'normal log entry' > $HOME/storage-investigation/sub_logs/app.log
   - truncate -s 50M $HOME/storage-investigation/sub_logs/.hidden_dump.log
+version: 2

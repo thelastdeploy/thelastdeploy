@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/script-test
   - rm -f $HOME/script-test/log_helper.sh
+version: 2

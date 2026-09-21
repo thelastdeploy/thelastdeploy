@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - rm -rf $HOME/mount-test
   - mkdir -p $HOME/mount-test
+version: 2

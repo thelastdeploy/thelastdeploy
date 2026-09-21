@@ -9,3 +9,4 @@ setup:
   - touch $HOME/sec-test/audit_dir/safe.txt
   - chmod 644 $HOME/sec-test/audit_dir/safe.txt
   - rm -f $HOME/sec-test/insecure_files.txt
+version: 2

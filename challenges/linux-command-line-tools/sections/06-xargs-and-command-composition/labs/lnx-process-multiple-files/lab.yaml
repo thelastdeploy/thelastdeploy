@@ -9,3 +9,4 @@ setup:
   - 'echo ''INFO: System start'' > $HOME/xargs-test/batch/sys.log'
   - 'echo ''FAIL: Storage full'' >> $HOME/xargs-test/batch/sys.log'
   - 'echo ''FAIL: Service crash'' > $HOME/xargs-test/batch/app.log'
+version: 2

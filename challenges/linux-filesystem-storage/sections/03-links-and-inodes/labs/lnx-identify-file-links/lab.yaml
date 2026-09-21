@@ -9,3 +9,4 @@ setup:
   - echo 'Different file content' > $HOME/link-test/check_zone/file_a.txt
   - ln $HOME/link-test/check_zone/original.txt $HOME/link-test/check_zone/file_b.txt
   - echo 'Third content' > $HOME/link-test/check_zone/file_c.txt
+version: 2

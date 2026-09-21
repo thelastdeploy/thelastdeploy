@@ -8,3 +8,4 @@ setup:
   - touch $HOME/cron-test/tmp_logs/keep.txt
   - rm -f $HOME/cron-test/cleanup_job.sh
   - rm -f $HOME/cron-test/cleanup.log
+version: 2

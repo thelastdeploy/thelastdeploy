@@ -6,3 +6,4 @@ setup:
   - mkdir -p $HOME/text-test
   - echo 'SYSTEM ERROR REPORT - SEVERITY HIGH' > $HOME/text-test/messy.txt
   - rm -f $HOME/text-test/clean.txt
+version: 2

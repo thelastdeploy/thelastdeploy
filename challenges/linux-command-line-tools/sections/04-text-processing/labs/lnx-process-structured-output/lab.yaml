@@ -8,3 +8,4 @@ setup:
   - echo '1,alice,admin' > $HOME/text-test/users.csv
   - echo '2,bob,developer' >> $HOME/text-test/users.csv
   - echo '3,charlie,ops' >> $HOME/text-test/users.csv
+version: 2

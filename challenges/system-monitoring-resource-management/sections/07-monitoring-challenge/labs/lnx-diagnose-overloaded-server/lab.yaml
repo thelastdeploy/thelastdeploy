@@ -14,3 +14,4 @@ setup:
   - mkdir -p '$HOME/mon-challenge/incident'
   - '"printf ''%s'
   - '"printf ''%s'
+version: 2

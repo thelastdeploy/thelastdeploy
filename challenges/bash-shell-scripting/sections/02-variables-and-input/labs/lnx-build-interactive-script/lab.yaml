@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/script-test
   - rm -f $HOME/script-test/interactive.sh
+version: 2

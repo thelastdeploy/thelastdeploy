@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/script-test/target_dir
   - rm -f $HOME/script-test/resilient.sh
+version: 2

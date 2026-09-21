@@ -21,3 +21,4 @@ setup:
     2>/dev/null
   - dd if=/dev/zero of='$HOME/storage-test/cleanup_target/logs/old_app_log.bak' bs=1M
     count=30 2>/dev/null
+version: 2

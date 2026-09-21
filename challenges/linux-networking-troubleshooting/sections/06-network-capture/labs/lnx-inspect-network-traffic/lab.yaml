@@ -18,3 +18,4 @@ setup:
   seed_commands:
   - mkdir -p '$HOME/net-test/capture'
   - '"printf ''%s'
+version: 2

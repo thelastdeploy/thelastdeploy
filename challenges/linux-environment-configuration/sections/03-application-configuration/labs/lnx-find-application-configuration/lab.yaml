@@ -8,3 +8,4 @@ setup:
   - touch $HOME/env-test/sys_etc/nginx/nginx.conf
   - touch $HOME/env-test/sys_etc/redis/redis.conf
   - rm -f $HOME/env-test/config_files.list
+version: 2

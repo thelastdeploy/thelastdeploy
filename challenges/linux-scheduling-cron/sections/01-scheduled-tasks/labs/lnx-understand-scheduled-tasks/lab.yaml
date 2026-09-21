@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/cron-test
   - rm -f $HOME/cron-test/daily_backup.cron
+version: 2

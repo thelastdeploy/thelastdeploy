@@ -19,3 +19,4 @@ setup:
   seed_commands:
   - mkdir -p '$HOME/net-test/resolv_fix'
   - '"printf ''%s'
+version: 2

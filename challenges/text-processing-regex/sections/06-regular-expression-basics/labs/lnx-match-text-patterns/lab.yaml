@@ -7,3 +7,4 @@ setup:
   - printf '[INFO] Boot complete\n[ERROR] Disk full\n[WARN] High memory\n[ERROR] Network
     drop\n' > $HOME/text-test/system.log
   - rm -f $HOME/text-test/errors.log
+version: 2

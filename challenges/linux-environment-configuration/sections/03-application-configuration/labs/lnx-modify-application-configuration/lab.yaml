@@ -6,3 +6,4 @@ setup:
   - mkdir -p $HOME/env-test
   - printf 'MAX_CONNECTIONS=100\nTIMEOUT=30\n' > $HOME/env-test/service.conf
   - rm -f $HOME/env-test/service.conf.bak
+version: 2

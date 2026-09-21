@@ -9,3 +9,4 @@ setup:
   - 'echo ''Fatal exception: SIGSEGV encountered'' >> $HOME/grep-test/service.log'
   - echo 'Core dump written to /var/dumps/core.9902' >> $HOME/grep-test/service.log
   - echo 'Shutting down service worker' >> $HOME/grep-test/service.log
+version: 2

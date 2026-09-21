@@ -8,3 +8,4 @@ setup:
   - 'echo ''sshd: Failed password for root'' > $HOME/log-test/sys_logs/auth.log'
   - 'echo ''cron: task completed'' > $HOME/log-test/sys_logs/syslog'
   - rm -f $HOME/log-test/auth_file.txt
+version: 2

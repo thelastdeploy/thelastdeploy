@@ -17,3 +17,4 @@ instructions: '
 setup:
   seed_commands:
   - mkdir -p '$HOME/net-test'
+version: 2

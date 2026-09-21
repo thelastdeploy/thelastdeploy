@@ -7,3 +7,4 @@ setup:
   - printf 'PID USER CPU COMMAND\n101 root 1.2 systemd\n102 nginx 8.5 worker\n103
     db 12.0 mysqld\n104 user 0.5 bash\n' > $HOME/text-test/ps_output.txt
   - rm -f $HOME/text-test/high_cpu.txt
+version: 2

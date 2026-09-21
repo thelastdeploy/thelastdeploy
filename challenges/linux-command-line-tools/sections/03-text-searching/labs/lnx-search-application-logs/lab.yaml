@@ -10,3 +10,4 @@ setup:
   - echo '2026-01-01 DEBUG Retrying connection' >> $HOME/grep-test/app.log
   - echo '2026-01-01 CRITICAL Out of memory in worker 2' >> $HOME/grep-test/app.log
   - echo '2026-01-01 INFO Service stopped' >> $HOME/grep-test/app.log
+version: 2

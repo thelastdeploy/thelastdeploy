@@ -8,3 +8,4 @@ setup:
   - printf 'APP_KEY=secret_key_123\n' > $HOME/config-challenge/.env.template
   - rm -f $HOME/config-challenge/.env
   - rm -f $HOME/config-challenge/fix_report.txt
+version: 2

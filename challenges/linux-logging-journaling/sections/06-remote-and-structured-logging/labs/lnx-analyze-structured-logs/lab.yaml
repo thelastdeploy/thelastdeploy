@@ -8,3 +8,4 @@ setup:
     expired'}\n{'timestamp':'12:02:00','level':'error','service':'db','msg':'connection
     timeout'}\n' > $HOME/log-test/events.json
   - rm -f $HOME/log-test/json_errors.txt
+version: 2

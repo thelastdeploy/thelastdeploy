@@ -6,3 +6,4 @@ setup:
   - mkdir -p $HOME/ssh-test
   - rm -f $HOME/ssh-test/audit_remote.sh
   - rm -f $HOME/ssh-test/audit_report.txt
+version: 2

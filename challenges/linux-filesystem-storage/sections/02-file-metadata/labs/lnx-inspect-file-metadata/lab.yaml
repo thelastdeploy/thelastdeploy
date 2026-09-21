@@ -6,3 +6,4 @@ setup:
   - rm -rf $HOME/metadata-test
   - mkdir -p $HOME/metadata-test
   - echo 'DevOps Linux Lab Metadata Content 2026' > $HOME/metadata-test/target_file.txt
+version: 2

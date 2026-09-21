@@ -19,3 +19,4 @@ setup:
   - mkdir -p '$HOME/net-test/service_debug'
   - '"printf ''%s'
   - '"printf ''%s'
+version: 2

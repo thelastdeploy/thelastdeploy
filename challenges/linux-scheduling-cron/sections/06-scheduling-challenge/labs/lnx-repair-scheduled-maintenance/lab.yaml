@@ -9,3 +9,4 @@ setup:
     > $HOME/cron-challenge/maint_script.sh
   - chmod -x $HOME/cron-challenge/maint_script.sh
   - rm -f $HOME/cron-challenge/status.txt
+version: 2

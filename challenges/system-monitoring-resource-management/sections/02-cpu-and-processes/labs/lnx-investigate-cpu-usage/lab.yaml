@@ -18,3 +18,4 @@ setup:
   seed_commands:
   - mkdir -p '$HOME/mon-test/cpu'
   - '"printf ''%s'
+version: 2

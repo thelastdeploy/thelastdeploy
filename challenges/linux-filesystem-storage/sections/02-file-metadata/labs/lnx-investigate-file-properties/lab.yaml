@@ -6,3 +6,4 @@ setup:
   - rm -rf $HOME/metadata-test
   - mkdir -p $HOME/metadata-test
   - echo 'H4sICAAAAAAA/0tKLS5JLEnUrSguzcxL1yvNTy0BAA3/VfEFAAAA' | base64 -d > $HOME/metadata-test/unknown_file
+version: 2

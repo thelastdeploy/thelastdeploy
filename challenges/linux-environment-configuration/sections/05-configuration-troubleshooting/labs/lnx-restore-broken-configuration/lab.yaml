@@ -6,3 +6,4 @@ setup:
   - mkdir -p $HOME/env-test
   - printf 'CORRUPTED_SYNTAX_ERRORS_XXXXX\n' > $HOME/env-test/corrupted_server.conf
   - printf 'PORT=8080\nHOST=0.0.0.0\nDB_NAME=production\n' > $HOME/env-test/corrupted_server.conf.bak
+version: 2

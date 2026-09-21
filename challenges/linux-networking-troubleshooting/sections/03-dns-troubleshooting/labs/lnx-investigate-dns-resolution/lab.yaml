@@ -18,3 +18,4 @@ setup:
   seed_commands:
   - mkdir -p '$HOME/net-test/dns'
   - '"printf ''%s'
+version: 2

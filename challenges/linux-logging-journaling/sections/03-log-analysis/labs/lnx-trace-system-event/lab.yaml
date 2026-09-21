@@ -8,3 +8,4 @@ setup:
     session_id=1041 PROCESS\n10:00:04 session_id=1042 PAYLOAD_FAIL\n10:00:05 session_id=1042
     TERMINATED\n' > $HOME/log-test/system_trace.log
   - rm -f $HOME/log-test/session_1042_trace.log
+version: 2

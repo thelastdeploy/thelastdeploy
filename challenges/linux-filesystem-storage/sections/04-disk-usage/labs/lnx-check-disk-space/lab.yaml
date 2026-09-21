@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - rm -rf $HOME/disk-test
   - mkdir -p $HOME/disk-test
+version: 2

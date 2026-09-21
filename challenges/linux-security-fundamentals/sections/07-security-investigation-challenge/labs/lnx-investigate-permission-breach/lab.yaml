@@ -12,3 +12,4 @@ setup:
   - touch $HOME/security-breach/config/db_pass.key
   - chmod 777 $HOME/security-breach/config/db_pass.key
   - rm -f $HOME/security-breach/breach_report.txt
+version: 2

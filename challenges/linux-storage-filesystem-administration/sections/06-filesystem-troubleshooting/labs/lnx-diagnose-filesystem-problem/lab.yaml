@@ -24,3 +24,4 @@ setup:
   - mkdir -p '$HOME/storage-test/broken_app/diag'
   - 'echo ''REASON: Mount point directory /mnt/missing_data does not exist on filesystem''
     > ''$HOME/storage-test/broken_app/diag/issue.txt'''
+version: 2

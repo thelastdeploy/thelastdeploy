@@ -7,3 +7,4 @@ setup:
   - printf '# Default HTTP Port\n# PORT=80\nPORT=8080\n# Max Workers\nWORKERS=4\n'
     > $HOME/env-test/web.conf
   - rm -f $HOME/env-test/active_settings.txt
+version: 2

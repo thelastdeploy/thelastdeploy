@@ -7,3 +7,4 @@ setup:
   - printf 'PID USER COMMAND\n1001 root nginx\n2045 guest nc -l -p 4444 -e /bin/bash\n3012
     db postgres\n' > $HOME/sec-test/proc_snapshot.txt
   - rm -f $HOME/sec-test/suspicious_proc.txt
+version: 2

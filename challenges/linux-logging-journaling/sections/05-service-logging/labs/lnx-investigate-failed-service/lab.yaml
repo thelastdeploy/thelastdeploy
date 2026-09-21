@@ -7,3 +7,4 @@ setup:
   - printf '[INFO] Starting postgresql.service...\n[FATAL] Port 5432 already in use
     by process 2104\n[ERROR] Failed to start server daemon\n' > $HOME/log-test/failed_service_journal.log
   - rm -f $HOME/log-test/service_root_cause.txt
+version: 2

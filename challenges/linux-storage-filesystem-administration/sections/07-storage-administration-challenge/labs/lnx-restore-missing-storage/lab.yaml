@@ -26,3 +26,4 @@ setup:
   - chmod 700 '$HOME/storage-challenge/mounts/app_data'
   - '"printf ''%s'
   - '"printf ''%s'
+version: 2

@@ -9,3 +9,4 @@ setup:
   - echo 'curl/stable 7.68.0 kept-back' >> $HOME/pkg-test/upgrades.log
   - echo 'openssl/stable 1.1.1f upgradable' >> $HOME/pkg-test/upgrades.log
   - echo 'bash/stable 5.0.17 upgradable' >> $HOME/pkg-test/upgrades.log
+version: 2

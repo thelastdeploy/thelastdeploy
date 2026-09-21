@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - rm -rf $HOME/cli-test
   - mkdir -p $HOME/cli-test
+version: 2

@@ -9,3 +9,4 @@ setup:
   - echo 'auth failure' > $HOME/script-test/logs/auth.log
   - rm -f $HOME/script-test/backup_logs.sh
   - rm -f $HOME/script-test/backup/*.bak
+version: 2

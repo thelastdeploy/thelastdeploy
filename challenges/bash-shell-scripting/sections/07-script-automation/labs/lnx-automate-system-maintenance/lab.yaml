@@ -8,3 +8,4 @@ setup:
   - echo 'obsolete log' > $HOME/script-test/active_logs/stale.old
   - rm -f $HOME/script-test/clean_old_logs.sh
   - rm -f $HOME/script-test/maintenance.log
+version: 2

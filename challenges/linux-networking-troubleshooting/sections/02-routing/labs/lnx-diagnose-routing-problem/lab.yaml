@@ -20,3 +20,4 @@ setup:
   - mkdir -p '$HOME/net-test/routing_problem'
   - '"printf ''%s'
   - '"printf ''%s'
+version: 2

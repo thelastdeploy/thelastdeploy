@@ -8,3 +8,4 @@ setup:
     (/lib/systemd/system/payment-processor.service; enabled)\n   Active: failed (Result:
     exit-code)\n'' > $HOME/log-test/service_status.txt'
   - rm -f $HOME/log-test/failing_unit.txt
+version: 2

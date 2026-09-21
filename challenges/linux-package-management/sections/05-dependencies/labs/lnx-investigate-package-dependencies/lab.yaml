@@ -9,3 +9,4 @@ setup:
   - 'echo ''  Depends: libc6 (>= 2.27)'' >> $HOME/pkg-test/deps.log'
   - 'echo ''  Depends: libssl-dev (>= 1.1.1)'' >> $HOME/pkg-test/deps.log'
   - 'echo ''  Recommends: nginx-light'' >> $HOME/pkg-test/deps.log'
+version: 2

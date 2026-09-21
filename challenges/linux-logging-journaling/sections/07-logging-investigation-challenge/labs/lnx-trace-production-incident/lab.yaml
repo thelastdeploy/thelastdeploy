@@ -11,3 +11,4 @@ setup:
   - 'printf ''2026-09-20 03:14:22 kernel: Out of memory: Kill process 8912 (order-api)\n''
     > $HOME/incident-investigation/logs/syslog'
   - rm -f $HOME/incident-investigation/incident_report.txt
+version: 2

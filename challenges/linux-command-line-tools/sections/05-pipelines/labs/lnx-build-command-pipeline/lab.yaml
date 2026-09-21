@@ -11,3 +11,4 @@ setup:
   - echo '10.0.0.99 - - [01/Jan/2026] 'POST /api/data HTTP/1.1' 200' >> $HOME/pipe-test/access.log
   - echo '10.0.0.99 - - [01/Jan/2026] 'POST /logout HTTP/1.1' 200' >> $HOME/pipe-test/access.log
   - echo '10.0.0.1 - - [01/Jan/2026] 'POST /feedback HTTP/1.1' 200' >> $HOME/pipe-test/access.log
+version: 2

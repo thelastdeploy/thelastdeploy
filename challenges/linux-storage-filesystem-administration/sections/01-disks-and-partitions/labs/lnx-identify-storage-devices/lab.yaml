@@ -8,3 +8,4 @@ setup:
     \n├─sda1 8:1    0  49G  0 part /\nsdb    8:16   0  20G  0 disk \n└─sdb1 8:17   0  20G  0
     part /mnt/data\n' > $HOME/storage-test/device_dump.txt
   - rm -f $HOME/storage-test/block_devices.txt
+version: 2

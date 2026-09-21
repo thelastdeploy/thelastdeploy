@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test
   - rm -f $HOME/ssh-test/debug_cmd.sh
+version: 2

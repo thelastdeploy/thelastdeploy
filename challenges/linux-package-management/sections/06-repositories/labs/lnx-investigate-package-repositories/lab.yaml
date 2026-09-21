@@ -7,3 +7,4 @@ setup:
   - mkdir -p $HOME/repo-test
   - echo 'deb http://archive.ubuntu.com/ubuntu focal main universe' > $HOME/repo-test/sources.list
   - echo 'deb http://archive.ubuntu.com/ubuntu focal-updates main universe' >> $HOME/repo-test/sources.list
+version: 2

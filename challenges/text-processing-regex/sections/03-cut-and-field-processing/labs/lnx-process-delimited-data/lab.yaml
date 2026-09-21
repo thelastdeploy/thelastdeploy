@@ -6,3 +6,4 @@ setup:
   - mkdir -p $HOME/text-test
   - printf 'alice,admin,1001\nbob,user,1002\ncharlie,dev,1003\n' > $HOME/text-test/users.csv
   - rm -f $HOME/text-test/user_uids.txt
+version: 2

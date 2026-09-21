@@ -6,3 +6,4 @@ setup:
   - mkdir -p $HOME/text-test
   - printf '2026-09-20 ID:1001 STATUS:OK\n2026-09-21 ID:1002 STATUS:WARN\n' > $HOME/text-test/fixed_data.txt
   - rm -f $HOME/text-test/timestamps.txt
+version: 2

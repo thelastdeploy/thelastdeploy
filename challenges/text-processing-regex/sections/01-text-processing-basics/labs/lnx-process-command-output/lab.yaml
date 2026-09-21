@@ -6,3 +6,4 @@ setup:
   - mkdir -p $HOME/text-test
   - seq 1 20 | sed 's/^/Line /' > $HOME/text-test/raw_logs.txt
   - rm -f $HOME/text-test/first_five.txt
+version: 2

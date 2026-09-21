@@ -9,3 +9,4 @@ setup:
     10:03:00 172.16.0.2 STATUS:200 TIME:30ms\n2026-09-20 10:04:00 10.0.0.5 STATUS:500
     TIME:950ms\n' > $HOME/text-challenge/server.log
   - rm -f $HOME/text-challenge/analysis_report.txt
+version: 2

@@ -7,3 +7,4 @@ setup:
   - printf '192.168.1.1\n10.0.0.1\n192.168.1.1\n172.16.0.1\n192.168.1.1\n10.0.0.1\n'
     > $HOME/text-test/access_ips.txt
   - rm -f $HOME/text-test/ip_counts.txt
+version: 2

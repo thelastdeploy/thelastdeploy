@@ -7,3 +7,4 @@ setup:
   - chmod 777 $HOME/ssh-test/broken_ssh/.ssh
   - touch $HOME/ssh-test/broken_ssh/.ssh/authorized_keys
   - chmod 666 $HOME/ssh-test/broken_ssh/.ssh/authorized_keys
+version: 2

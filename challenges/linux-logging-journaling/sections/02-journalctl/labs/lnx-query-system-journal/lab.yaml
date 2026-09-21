@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/log-test
   - rm -f $HOME/log-test/journal_query_cmd.sh
+version: 2

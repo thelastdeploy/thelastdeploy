@@ -7,3 +7,4 @@ setup:
   - rm -f $HOME/script-test/check_file.sh
   - touch $HOME/script-test/empty_sample.txt
   - echo 'hello world' > $HOME/script-test/active_sample.txt
+version: 2

@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/sec-test
   - rm -f $HOME/sec-test/user_context.txt
+version: 2

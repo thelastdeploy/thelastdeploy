@@ -7,3 +7,4 @@ setup:
   - printf '[INFO] Server started\n[ERROR] Connection timeout\n[INFO] Request processed\n[FATAL]
     Out of memory\n' > $HOME/log-test/app.log
   - rm -f $HOME/log-test/error_summary.log
+version: 2

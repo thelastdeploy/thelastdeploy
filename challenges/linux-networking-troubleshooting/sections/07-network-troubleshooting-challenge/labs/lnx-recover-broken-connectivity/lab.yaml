@@ -25,3 +25,4 @@ setup:
   - '"printf ''%s'
   - '"printf ''%s'
   - '"printf ''%s'
+version: 2

@@ -8,3 +8,4 @@ setup:
   - truncate -s 500k $HOME/search-test/logs/app.log
   - truncate -s 10M $HOME/search-test/logs/oversized.log
   - truncate -s 2M $HOME/search-test/logs/db.log
+version: 2

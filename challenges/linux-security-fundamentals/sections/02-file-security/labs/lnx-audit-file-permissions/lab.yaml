@@ -9,3 +9,4 @@ setup:
   - touch $HOME/sec-test/configs/db.conf
   - chmod 644 $HOME/sec-test/configs/db.conf
   - rm -f $HOME/sec-test/permission_audit.txt
+version: 2

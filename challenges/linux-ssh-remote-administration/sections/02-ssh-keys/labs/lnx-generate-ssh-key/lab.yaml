@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test/key_dir
   - rm -f $HOME/ssh-test/key_dir/id_ed25519*
+version: 2

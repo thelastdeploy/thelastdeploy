@@ -6,3 +6,4 @@ setup:
   - mkdir -p $HOME/sec-test
   - rm -f $HOME/sec-test/audit_script.sh
   - rm -f $HOME/sec-test/audit_findings.txt
+version: 2

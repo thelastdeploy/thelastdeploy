@@ -8,3 +8,4 @@ setup:
   - 'printf ''[ERROR] Failed to bind to port INVALID_PORT_STRING: integer expected\n''
     > $HOME/env-test/app_error.log'
   - rm -f $HOME/env-test/diagnosis.txt
+version: 2

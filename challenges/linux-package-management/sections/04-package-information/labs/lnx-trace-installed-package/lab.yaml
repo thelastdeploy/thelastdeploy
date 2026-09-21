@@ -8,3 +8,4 @@ setup:
   - 'echo ''/usr/bin/curl: curl'' > $HOME/pkg-test/pkg_query.log'
   - 'echo ''/usr/bin/git: git'' >> $HOME/pkg-test/pkg_query.log'
   - 'echo ''/usr/bin/tar: tar'' >> $HOME/pkg-test/pkg_query.log'
+version: 2

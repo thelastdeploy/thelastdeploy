@@ -7,3 +7,4 @@ setup:
   - printf 'PORT=5000\nLOG_LEVEL=debug\n' > $HOME/env-test/app.env
   - rm -f $HOME/env-test/run_app.sh
   - rm -f $HOME/env-test/app_runtime.log
+version: 2

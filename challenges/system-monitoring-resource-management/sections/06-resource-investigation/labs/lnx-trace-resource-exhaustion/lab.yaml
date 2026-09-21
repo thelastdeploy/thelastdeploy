@@ -20,3 +20,4 @@ setup:
   seed_commands:
   - mkdir -p '$HOME/mon-test/correlate'
   - '"printf ''%s'
+version: 2

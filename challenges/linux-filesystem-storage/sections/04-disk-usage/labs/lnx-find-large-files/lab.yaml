@@ -9,3 +9,4 @@ setup:
   - truncate -s 5M $HOME/disk-test/logs/small_archive.tar
   - truncate -s 25M $HOME/disk-test/logs/heavy_dump.log
   - truncate -s 2M $HOME/disk-test/logs/error.log
+version: 2

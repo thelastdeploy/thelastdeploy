@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/cron-test
   - printf '* * * * * backup.sh\n' > $HOME/cron-test/broken_crontab
+version: 2

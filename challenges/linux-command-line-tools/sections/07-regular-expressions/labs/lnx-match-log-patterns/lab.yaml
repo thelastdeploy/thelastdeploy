@@ -10,3 +10,4 @@ setup:
   - echo 'Connection from 10.0.0.42 accepted' >> $HOME/regex-test/network.log
   - echo 'Connection from 10.255.0.99 closed' >> $HOME/regex-test/network.log
   - echo 'Invalid IP 999.999.999.999 ignored' >> $HOME/regex-test/network.log
+version: 2

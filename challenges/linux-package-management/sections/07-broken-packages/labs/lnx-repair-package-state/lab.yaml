@@ -6,3 +6,4 @@ setup:
   - rm -rf $HOME/broken-test
   - mkdir -p $HOME/broken-test/lock_zone
   - touch $HOME/broken-test/lock_zone/dpkg_lock.lock
+version: 2

@@ -19,3 +19,4 @@ setup:
   - mkdir -p $HOME/mon-test
   - 'printf ''               total        used        free      shared  buff/cache   available\nMem:           16Gi       4.2Gi       8.1Gi       256Mi       3.7Gi      11.2Gi\nSwap:         2.0Gi          0B       2.0Gi\n''
     > $HOME/mon-test/free_output.txt'
+version: 2

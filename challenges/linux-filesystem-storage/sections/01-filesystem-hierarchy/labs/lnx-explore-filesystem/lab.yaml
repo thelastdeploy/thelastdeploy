@@ -4,3 +4,4 @@ xp: 15
 setup:
   seed_commands:
   - rm -f $HOME/log_path.txt
+version: 2

@@ -5,3 +5,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/storage-test/mounted_dir
   - chmod 700 $HOME/storage-test/mounted_dir
+version: 2

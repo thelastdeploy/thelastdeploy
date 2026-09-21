@@ -8,3 +8,4 @@ setup:
     Size Id Type\n/dev/sdb1        2048 20971519 20969472  10G 83 Linux\n/dev/sdb2    20971520
     41943039 20971520  10G 83 Linux\n'' > $HOME/storage-test/fdisk_dump.txt'
   - rm -f $HOME/storage-test/partition_info.txt
+version: 2

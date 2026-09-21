@@ -19,3 +19,4 @@ setup:
   seed_commands:
   - mkdir -p '$HOME/net-test/app_trace'
   - '"printf ''%s'
+version: 2
