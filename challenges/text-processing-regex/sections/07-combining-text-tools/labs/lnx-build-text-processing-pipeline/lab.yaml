@@ -4,9 +4,7 @@ xp: 40
 setup:
   seed_commands:
   - mkdir -p $HOME/text-test
-  - printf '192.168.1.10 - 200 GET /index.html\n10.0.0.5 - 500 POST /api/v1\n192.168.1.10
-    - 500 GET /login\n10.0.0.5 - 500 GET /api/v1\n172.16.0.2 - 200 GET /status\n'
-    > $HOME/text-test/audit.log
+  - printf '192.168.1.10 - 200 GET /index.html\n10.0.0.5 - 500 POST /api/v1\n192.168.1.10 - 500 GET /login\n10.0.0.5 - 500 GET /api/v1\n172.16.0.2 - 200 GET /status\n' > $HOME/text-test/audit.log
   - rm -f $HOME/text-test/top_error_ips.txt
 instructions: '1. Inspect `$HOME/text-test/audit.log`.
 
