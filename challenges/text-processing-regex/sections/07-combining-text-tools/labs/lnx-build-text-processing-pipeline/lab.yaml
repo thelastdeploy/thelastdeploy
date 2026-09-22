@@ -16,4 +16,4 @@ instructions: '1. Inspect `$HOME/text-test/audit.log`.
   per IP, and write the top offending IP into `$HOME/text-test/top_error_ips.txt`.
 
   '
-version: 2
+version: 3
