@@ -7,14 +7,13 @@ import { useParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { ModuleDetail, Section } from "@/lib/types";
-import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { DifficultyBadge } from "@/components/challenges/difficulty-badge";
 import { SectionSidebar } from "@/components/modules/section-sidebar";
 import { SectionContent } from "@/components/modules/section-content";
 import { CompletionToast } from "@/components/modules/completion-toast";
 import { useSectionComplete } from "@/lib/module-detail/use-section-complete";
 import { updateModuleInMemoryCache } from "@/hooks/use-modules";
-import { updateDashboardCacheModule } from "@/lib/dashboard/use-dashboard-cache";
+import { readCache, updateDashboardCacheModule } from "@/lib/dashboard/use-dashboard-cache";
 import { ArrowLeft, Zap } from "lucide-react";
 import Link from "next/link";
 
@@ -33,6 +32,70 @@ interface Toast {
   xpAwarded: number;
 }
 
+// ── Skeleton: shown on true cache miss (new tab before login cache is warm) ──
+
+function ModuleDetailSkeleton() {
+  return (
+    <div className="flex flex-col h-[calc(100vh-64px)] animate-pulse">
+      {/* Header */}
+      <div className="border-b border-border px-4 py-4 flex items-center justify-between gap-4 shrink-0 bg-card">
+        <div className="flex items-center gap-4">
+          <div className="h-4 w-16 bg-muted rounded-lg" />
+          <div className="w-px h-4 bg-border" />
+          <div className="h-5 w-8 bg-muted rounded-lg" />
+          <div className="h-5 w-48 bg-muted rounded-lg" />
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="h-5 w-16 bg-muted rounded-full" />
+          <div className="h-1.5 w-24 bg-muted rounded-full" />
+          <div className="h-4 w-12 bg-muted rounded-lg" />
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-64 shrink-0 border-r border-border bg-card hidden md:block p-4">
+          <div className="h-3 w-24 bg-muted rounded mb-5" />
+          <div className="flex flex-col gap-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-start gap-4 px-3 py-3.5">
+                <div className="w-5 h-5 rounded-full bg-muted shrink-0 mt-0.5" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-3 bg-muted rounded w-full" />
+                  <div className="h-2.5 bg-muted/60 rounded w-2/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </aside>
+
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto bg-background/50">
+          <div className="max-w-3xl mx-auto px-6 py-8 space-y-3">
+            <div className="h-7 bg-muted rounded w-2/3 mb-8" />
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-4 bg-muted rounded"
+                style={{ width: `${70 + Math.sin(i * 1.7) * 25}%` }}
+              />
+            ))}
+            <div className="h-32 bg-muted/50 rounded-xl mt-6" />
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div
+                key={i + 10}
+                className="h-4 bg-muted rounded"
+                style={{ width: `${60 + Math.sin(i * 2.3) * 30}%` }}
+              />
+            ))}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
+
 export default function ModuleDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user, refreshUser } = useAuth();
@@ -47,23 +110,47 @@ export default function ModuleDetailPage() {
   // Optimistic section completion tracking (before API confirms)
   const [optimisticCompleted, setOptimisticCompleted] = useState<Set<string>>(new Set());
 
-  const fetchModule = useCallback(async () => {
-    try {
-      const data = await api.getModule(id);
-      setModule(data);
-      updateModuleInMemoryCache(data);
-      updateDashboardCacheModule(data);
-      setActiveSection((prev) =>
-        prev ? data.sections.find((s) => s.id === prev.id) ?? data.sections[0] : data.sections[0] ?? null
-      );
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to load");
-    } finally {
-      setLoading(false);
-    }
-  }, [id]);
+  const applyModuleData = useCallback((data: ModuleDetail) => {
+    setModule(data);
+    updateModuleInMemoryCache(data);
+    updateDashboardCacheModule(data);
+    setActiveSection((prev) =>
+      prev ? data.sections.find((s) => s.id === prev.id) ?? data.sections[0] : data.sections[0] ?? null
+    );
+  }, []);
 
-  useEffect(() => { fetchModule(); }, [fetchModule]);
+  // ── Cache-first loading ──────────────────────────────────────────────────
+  // 1. Check sessionStorage dashboard cache immediately — if module is there,
+  //    render it instantly (sections list from /all/full, no content field yet).
+  // 2. Always fire a background fetch for the full detail (with section.content).
+  //    When it resolves, swap in the full data silently — no loading flash.
+  // 3. On a true cache miss, show the skeleton and wait for the network response.
+  useEffect(() => {
+    let cancelled = false;
+
+    // Step 1: instant render from cache
+    const cache = readCache();
+    const cachedModule = cache?.modules.find((m) => m.id === id);
+    if (cachedModule && cachedModule.sections && cachedModule.sections.length > 0) {
+      if (!cancelled) {
+        applyModuleData(cachedModule as ModuleDetail);
+        setLoading(false);
+      }
+    }
+
+    // Step 2: always fetch full detail in background (cache lacks section.content)
+    api.getModule(id)
+      .then((data) => { if (!cancelled) applyModuleData(data); })
+      .catch((e: unknown) => {
+        // Only surface the error if we have nothing to show
+        if (!cancelled && !cachedModule) {
+          setError(e instanceof Error ? e.message : "Failed to load");
+        }
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+
+    return () => { cancelled = true; };
+  }, [id, applyModuleData]);
 
   // Reset scroll on section change
   useEffect(() => {
@@ -95,9 +182,13 @@ export default function ModuleDetailPage() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await fetchModule();
-    await refreshUser();
-    setRefreshing(false);
+    try {
+      const data = await api.getModule(id);
+      applyModuleData(data);
+      await refreshUser();
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const isSectionComplete = useCallback(
@@ -107,7 +198,9 @@ export default function ModuleDetailPage() {
     [optimisticCompleted]
   );
 
-  if (loading) return <LoadingSpinner className="py-40" />;
+  // Skeleton only on a true cache miss (no module data yet)
+  if (loading && !module) return <ModuleDetailSkeleton />;
+
   if (error || !module) return (
     <div className="text-center py-40 text-red-400 text-sm">{error ?? "Module not found"}</div>
   );

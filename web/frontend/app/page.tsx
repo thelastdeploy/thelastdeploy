@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import Link from "next/link";
 import { ArrowRight, Container, GitBranch, Monitor, Server } from "lucide-react";
-import { LoadingSpinner } from "@/components/shared/loading-spinner";
+
 
 const features = [
   {
@@ -101,18 +101,16 @@ export default function HomePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
+  // Redirect logged-in users without blocking the initial paint.
+  // The landing page renders immediately; if auth resolves to a logged-in
+  // user, the router.replace fires and the page transitions to /dashboard.
   useEffect(() => {
     if (!loading && user) router.replace("/dashboard");
   }, [user, loading, router]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[calc(100vh-64px)]">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-  if (user) return null;
+  // Don't render landing content if we know the user is logged in
+  // (avoids a brief flash of the hero before redirect completes)
+  if (!loading && user) return null;
 
   return (
     <div className="flex flex-col min-h-[calc(100vh-64px)] justify-between relative overflow-hidden">

@@ -1,7 +1,9 @@
 # web/backend/app/routers/modules.py
 
+import asyncio
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from app.dependencies import get_db, get_current_user, get_optional_user
@@ -41,9 +43,16 @@ def _total_xp(sections: list[Section], labs: list[Lab]) -> int:
 
 @router.get("/modules", response_model=ModuleListResponse)
 async def list_modules(
+    response: Response,
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
 ):
+    # Cache-Control: public list is stable; authenticated responses are user-specific
+    if current_user:
+        response.headers["Cache-Control"] = "private, max-age=0, must-revalidate"
+    else:
+        response.headers["Cache-Control"] = "public, max-age=30, stale-while-revalidate=120"
+
     # 1. Scalar subquery for completed sections for the current user
     completed_sections_sub = (
         select(func.count(SectionProgress.id))
@@ -112,10 +121,16 @@ async def list_modules(
 
 @router.get("/modules/all/full", response_model=list[ModuleDetail])
 async def get_all_modules_full(
+    response: Response,
     exclude_content: bool = True,
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
 ):
+    if current_user:
+        response.headers["Cache-Control"] = "private, max-age=0, must-revalidate"
+    else:
+        response.headers["Cache-Control"] = "public, max-age=30, stale-while-revalidate=120"
+
     from sqlalchemy.orm import selectinload
 
     # 1. Eagerly load all modules, sections, labs, and author in 3 database queries
@@ -208,6 +223,7 @@ async def get_all_modules_full(
 @router.get("/modules/{module_id}/full", response_model=ModuleDetail)
 async def get_module_full(
     module_id: str,
+    background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
 ):
@@ -221,15 +237,16 @@ async def get_module_full(
     if not module:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
 
-    sec_result = await db.execute(
-        select(Section).where(Section.module_id == module_id).order_by(Section.order)
+    # Fetch sections and labs in parallel
+    sec_stmt = select(Section).where(Section.module_id == module_id).order_by(Section.order)
+    lab_stmt = select(Lab).where(Lab.module_id == module_id).order_by(Lab.order)
+    sec_result, lab_result = await asyncio.gather(
+        db.execute(sec_stmt),
+        db.execute(lab_stmt),
     )
     sections = sec_result.scalars().all()
-
-    lab_result = await db.execute(
-        select(Lab).where(Lab.module_id == module_id).order_by(Lab.order)
-    )
     all_labs = lab_result.scalars().all()
+
     labs_by_section: dict[str, list[Lab]] = {}
     for lab in all_labs:
         labs_by_section.setdefault(lab.section_id, []).append(lab)
@@ -238,22 +255,22 @@ async def get_module_full(
     completed_section_ids: set[str] = set()
 
     if current_user:
-        lp_result = await db.execute(
-            select(LabProgress).where(
-                LabProgress.user_id == current_user.id,
-                LabProgress.module_id == module_id,
-            )
+        # Fetch lab and section progress in parallel
+        lp_stmt = select(LabProgress).where(
+            LabProgress.user_id == current_user.id,
+            LabProgress.module_id == module_id,
+        )
+        sp_stmt = select(SectionProgress.section_id).where(
+            SectionProgress.user_id == current_user.id,
+            SectionProgress.module_id == module_id,
+            SectionProgress.completed == True,
+        )
+        lp_result, sp_result = await asyncio.gather(
+            db.execute(lp_stmt),
+            db.execute(sp_stmt),
         )
         for p in lp_result.scalars().all():
             lab_progress_map[p.lab_id] = p
-
-        sp_result = await db.execute(
-            select(SectionProgress.section_id).where(
-                SectionProgress.user_id == current_user.id,
-                SectionProgress.module_id == module_id,
-                SectionProgress.completed == True,
-            )
-        )
         completed_section_ids = {row[0] for row in sp_result.fetchall()}
 
     section_schemas = []
@@ -287,7 +304,9 @@ async def get_module_full(
             version=s.version,
         ))
 
-    analytics.track(
+    # Fire analytics in background — never blocks the response
+    background_tasks.add_task(
+        analytics.track,
         "anonymous",
         AnalyticsEvent.MODULE_STARTED,
         {
