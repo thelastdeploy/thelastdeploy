@@ -1,0 +1,32 @@
+id: linux-incident-response
+title: "Linux Incident Response"
+description: "Master Linux incident response and digital forensics methodology: volatile memory & system state preservation, volatile process/network evidence collection, chronological timeline construction & security log correlation, suspicious process & persistence mechanism investigation (cron/systemd/bashrc/sshd), compromise scope assessment, isolated system containment & safe recovery, and full forensic compromise investigation capstone."
+topic: linux
+difficulty: expert
+estimated_minutes: 120
+tags:
+  - incident-response
+  - forensics
+  - security
+  - timeline
+  - persistence
+  - containment
+  - linux
+  - expert
+sections:
+  - id: 01-incident-preparation
+    order: 1
+  - id: 02-evidence-collection
+    order: 2
+  - id: 03-log-and-timeline-analysis
+    order: 3
+  - id: 04-suspicious-activity
+    order: 4
+  - id: 05-scope-and-impact
+    order: 5
+  - id: 06-containment-and-recovery
+    order: 6
+  - id: 07-incident-response-challenge
+    order: 7
+verified: true
+version: 1

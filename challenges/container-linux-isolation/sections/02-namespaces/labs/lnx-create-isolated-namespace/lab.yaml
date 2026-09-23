@@ -1,0 +1,11 @@
+id: lnx-create-isolated-namespace
+title: Create Isolated Namespace Environment
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/ns-test
+  - rm -f $HOME/ns-test/unshare_summary.txt
+instructions: '1. Create directory `$HOME/ns-test`.
+2. Use `unshare` syntax to create isolated PID, MNT, and UTS namespace environments (`unshare --uts --pid --fork`).
+3. Write summary `UNSHARE_NAMESPACE_CREATED` to `$HOME/ns-test/unshare_summary.txt`.'
+version: 1

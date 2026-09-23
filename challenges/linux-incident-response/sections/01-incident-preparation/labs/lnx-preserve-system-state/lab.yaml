@@ -1,0 +1,11 @@
+id: lnx-preserve-system-state
+title: Preserve Volatile System State
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/ir-test
+  - rm -f $HOME/ir-test/volatile_state.txt
+instructions: '1. Create directory `$HOME/ir-test`.
+2. Capture volatile system state (sockets, processes, login history).
+3. Write evidence output line `VOLATILE_SYSTEM_STATE_PRESERVED` to `$HOME/ir-test/volatile_state.txt`.'
+version: 1

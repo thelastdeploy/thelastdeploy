@@ -1,0 +1,11 @@
+id: lnx-analyze-memory-behavior
+title: Analyze Kernel Memory Allocator Behavior
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mem-opt-test
+  - rm -f $HOME/mem-opt-test/mem_behavior.txt
+instructions: '1. Create directory `$HOME/mem-opt-test`.
+2. Inspect dirty page writeback ratios, swap tendency, and VFS cache pressure (`/proc/sys/vm/`).
+3. Write output summary line `MEMORY_BEHAVIOR_ANALYZED` to `$HOME/mem-opt-test/mem_behavior.txt`.'
+version: 1

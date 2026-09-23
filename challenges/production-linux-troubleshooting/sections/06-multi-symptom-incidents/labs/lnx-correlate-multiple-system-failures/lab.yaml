@@ -1,0 +1,11 @@
+id: lnx-correlate-multiple-system-failures
+title: Correlate Multiple Concurrent System Failures
+xp: 60
+setup:
+  seed_commands:
+  - mkdir -p $HOME/multi-inc-test
+  - rm -f $HOME/multi-inc-test/correlation_matrix.txt
+instructions: '1. Create directory `$HOME/multi-inc-test`.
+2. Correlate multiple concurrent log errors across network, storage, and service layers.
+3. Write output correlation matrix line `FAILURES_CORRELATED: PRIMARY_CAUSE_ISOLATED` to `$HOME/multi-inc-test/correlation_matrix.txt`.'
+version: 1

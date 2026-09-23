@@ -1,0 +1,11 @@
+id: lnx-investigate-service-outage
+title: Investigate Production Service Outage
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/svc-outage-test
+  - rm -f $HOME/svc-outage-test/outage_diag.txt
+instructions: '1. Create directory `$HOME/svc-outage-test`.
+2. Investigate multi-tier service stack outage using `journalctl` and `systemctl status`.
+3. Write output summary line `SERVICE_OUTAGE_DIAGNOSED` to `$HOME/svc-outage-test/outage_diag.txt`.'
+version: 1

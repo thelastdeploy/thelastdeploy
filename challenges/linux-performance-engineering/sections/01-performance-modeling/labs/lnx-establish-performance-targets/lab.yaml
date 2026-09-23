@@ -1,0 +1,11 @@
+id: lnx-establish-performance-targets
+title: Establish SLA and Performance Targets
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/perf-eng-test
+  - rm -f $HOME/perf-eng-test/sla_targets.txt
+instructions: '1. Create directory `$HOME/perf-eng-test`.
+2. Define SLA target latency (p95 / p99) and throughput benchmark targets.
+3. Write target document output line `PERFORMANCE_SLA_TARGETS_DEFINED` to `$HOME/perf-eng-test/sla_targets.txt`.'
+version: 1

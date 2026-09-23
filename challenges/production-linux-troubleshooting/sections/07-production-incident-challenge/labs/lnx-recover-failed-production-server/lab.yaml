@@ -1,0 +1,11 @@
+id: lnx-recover-failed-production-server
+title: Recover Failed Production Server Capstone
+xp: 100
+setup:
+  seed_commands:
+  - mkdir -p $HOME/incident-capstone
+  - rm -f $HOME/incident-capstone/post_mortem.log
+instructions: '1. Create directory `$HOME/incident-capstone`.
+2. Diagnose and recover failed production server (isolate root cause, fix broken dependencies/ports/storage, verify service health).
+3. Write post-mortem report line `PRODUCTION_INCIDENT_RESOLVED: SYSTEM_HEALTHY` into `$HOME/incident-capstone/post_mortem.log`.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-tune-system-performance
+title: Tune System Performance Parameters
+xp: 60
+setup:
+  seed_commands:
+  - mkdir -p $HOME/kernel-opt-test
+  - rm -f $HOME/kernel-opt-test/system_tuned.txt
+instructions: '1. Create directory `$HOME/kernel-opt-test`.
+2. Apply persistent sysctl tuning rules for high-throughput server workloads.
+3. Write configuration summary line `SYSTEM_PERFORMANCE_TUNED` to `$HOME/kernel-opt-test/system_tuned.txt`.'
+version: 1

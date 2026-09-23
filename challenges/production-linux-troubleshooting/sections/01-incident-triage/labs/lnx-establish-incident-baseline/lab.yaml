@@ -1,0 +1,11 @@
+id: lnx-establish-incident-baseline
+title: Establish Incident State Baseline
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/triage-test
+  - rm -f $HOME/triage-test/incident_baseline.txt
+instructions: '1. Create directory `$HOME/triage-test`.
+2. Document active incident state metrics prior to system remediation.
+3. Write output line `INCIDENT_BASELINE_ESTABLISHED` into `$HOME/triage-test/incident_baseline.txt`.'
+version: 1

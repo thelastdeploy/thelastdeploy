@@ -1,0 +1,11 @@
+id: lnx-debug-broken-container-isolation
+title: Debug Broken Container Isolation Capstone
+xp: 85
+setup:
+  seed_commands:
+  - mkdir -p $HOME/isolation-challenge
+  - rm -f $HOME/isolation-challenge/isolation_fix.log
+instructions: '1. Create directory `$HOME/isolation-challenge`.
+2. Identify isolation flaws across namespaces, cgroups, and OverlayFS, applying fixes.
+3. Write proof summary line `CONTAINER_ISOLATION_REPAIRED: SUCCESS` into `$HOME/isolation-challenge/isolation_fix.log`.'
+version: 1

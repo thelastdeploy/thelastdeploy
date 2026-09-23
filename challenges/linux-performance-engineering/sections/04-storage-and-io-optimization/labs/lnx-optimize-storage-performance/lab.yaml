@@ -1,0 +1,11 @@
+id: lnx-optimize-storage-performance
+title: Optimize Storage I/O Performance
+xp: 60
+setup:
+  seed_commands:
+  - mkdir -p $HOME/io-opt-test
+  - rm -f $HOME/io-opt-test/io_tuning.txt
+instructions: '1. Create directory `$HOME/io-opt-test`.
+2. Configure block device I/O scheduler (`mq-deadline`/`none`) and read-ahead parameters.
+3. Write output summary line `STORAGE_IO_PERFORMANCE_OPTIMIZED` to `$HOME/io-opt-test/io_tuning.txt`.'
+version: 1

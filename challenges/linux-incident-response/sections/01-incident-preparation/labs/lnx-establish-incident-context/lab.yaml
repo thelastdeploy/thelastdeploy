@@ -1,0 +1,11 @@
+id: lnx-establish-incident-context
+title: Establish Incident Context and Initial Observation
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/ir-test
+  - rm -f $HOME/ir-test/context.txt
+instructions: '1. Create directory `$HOME/ir-test`.
+2. Perform non-destructive incident observation (`w`, `who`, `uptime`).
+3. Write observation summary line `INCIDENT_CONTEXT_ESTABLISHED` to `$HOME/ir-test/context.txt`.'
+version: 1

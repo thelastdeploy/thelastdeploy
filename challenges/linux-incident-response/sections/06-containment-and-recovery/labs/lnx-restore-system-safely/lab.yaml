@@ -1,0 +1,11 @@
+id: lnx-restore-system-safely
+title: Restore System Safely from Known Good State
+xp: 65
+setup:
+  seed_commands:
+  - mkdir -p $HOME/recovery-test
+  - rm -f $HOME/recovery-test/restoration_report.txt
+instructions: '1. Create directory `$HOME/recovery-test`.
+2. Execute safe system restoration (remove persistence, rotate credentials, verify integrity).
+3. Write report summary line `SYSTEM_RESTORED_SAFELY` to `$HOME/recovery-test/restoration_report.txt`.'
+version: 1

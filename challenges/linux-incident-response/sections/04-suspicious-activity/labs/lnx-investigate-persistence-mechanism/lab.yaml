@@ -1,0 +1,11 @@
+id: lnx-investigate-persistence-mechanism
+title: Investigate Malicious Persistence Mechanisms
+xp: 60
+setup:
+  seed_commands:
+  - mkdir -p $HOME/suspicious-test
+  - rm -f $HOME/suspicious-test/persistence_report.txt
+instructions: '1. Create directory `$HOME/suspicious-test`.
+2. Audit persistence locations (`/etc/cron*`, `/etc/systemd/system/`, `~/.bashrc`, `~/.ssh/authorized_keys`).
+3. Write output summary `PERSISTENCE_MECHANISM_DISCOVERED` to `$HOME/suspicious-test/persistence_report.txt`.'
+version: 1

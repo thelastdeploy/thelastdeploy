@@ -1,0 +1,11 @@
+id: lnx-optimize-memory-pressure
+title: Optimize Memory Subsystem Tuneables
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mem-opt-test
+  - rm -f $HOME/mem-opt-test/mem_tuning.txt
+instructions: '1. Create directory `$HOME/mem-opt-test`.
+2. Tune kernel memory sysctl parameters (`vm.swappiness`, `vm.dirty_background_ratio`, `vm.dirty_ratio`).
+3. Write output line `MEMORY_SUBSYSTEM_OPTIMIZED` to `$HOME/mem-opt-test/mem_tuning.txt`.'
+version: 1

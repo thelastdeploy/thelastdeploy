@@ -1,0 +1,11 @@
+id: lnx-trace-container-network-isolation
+title: Trace Container Network Isolation and veth Pairs
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/container-net-test
+  - rm -f $HOME/container-net-test/net_trace.txt
+instructions: '1. Create directory `$HOME/container-net-test`.
+2. Trace network packet flow from container namespace across `veth` pair and bridge.
+3. Write output summary line `CONTAINER_NET_TRACE_VERIFIED` to `$HOME/container-net-test/net_trace.txt`.'
+version: 1

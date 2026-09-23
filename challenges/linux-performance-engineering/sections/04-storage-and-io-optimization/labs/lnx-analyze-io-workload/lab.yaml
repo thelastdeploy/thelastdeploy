@@ -1,0 +1,11 @@
+id: lnx-analyze-io-workload
+title: Analyze Storage I/O Workload Patterns
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/io-opt-test
+  - rm -f $HOME/io-opt-test/io_profile.txt
+instructions: '1. Create directory `$HOME/io-opt-test`.
+2. Analyze storage I/O workload patterns (sequential vs random, block sizes, queue depth).
+3. Write output summary line `STORAGE_IO_WORKLOAD_ANALYZED` to `$HOME/io-opt-test/io_profile.txt`.'
+version: 1

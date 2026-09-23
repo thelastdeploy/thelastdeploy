@@ -1,0 +1,11 @@
+id: lnx-explore-linux-process-isolation
+title: Explore Linux Process Isolation
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/iso-test
+  - rm -f $HOME/iso-test/isolation_basics.txt
+instructions: '1. Create directory `$HOME/iso-test`.
+2. Inspect process isolation mechanisms and host process visibility.
+3. Write output summary line `PROCESS_ISOLATION_EXPLORED` to `$HOME/iso-test/isolation_basics.txt`.'
+version: 1

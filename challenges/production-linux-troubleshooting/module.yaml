@@ -1,0 +1,32 @@
+id: production-linux-troubleshooting
+title: "Production Linux Troubleshooting"
+description: "Master production incident response and Linux server recovery: emergency incident triage & baseline assessment, complex service dependency outages, severe resource exhaustion & cascading failures, multi-interface network failure recovery, storage & filesystem crash recovery, multi-symptom incident correlation & root cause analysis, and production server outage recovery capstone."
+topic: linux
+difficulty: expert
+estimated_minutes: 120
+tags:
+  - troubleshooting
+  - incident-response
+  - production
+  - outage
+  - root-cause
+  - recovery
+  - linux
+  - expert
+sections:
+  - id: 01-incident-triage
+    order: 1
+  - id: 02-service-failures
+    order: 2
+  - id: 03-resource-exhaustion
+    order: 3
+  - id: 04-network-failures
+    order: 4
+  - id: 05-storage-and-filesystem-failures
+    order: 5
+  - id: 06-multi-symptom-incidents
+    order: 6
+  - id: 07-production-incident-challenge
+    order: 7
+verified: true
+version: 1

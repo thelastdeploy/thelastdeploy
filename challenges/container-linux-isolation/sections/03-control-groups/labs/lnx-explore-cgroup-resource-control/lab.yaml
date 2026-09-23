@@ -1,0 +1,11 @@
+id: lnx-explore-cgroup-resource-control
+title: Explore cgroup Resource Control Hierarchy
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/cgroup-test
+  - rm -f $HOME/cgroup-test/cgroup_info.txt
+instructions: '1. Create directory `$HOME/cgroup-test`.
+2. Inspect cgroup v2 hierarchy at `/sys/fs/cgroup/` (`memory.max`, `cpu.max`, `pids.max`).
+3. Write output summary line `CGROUP_HIERARCHY_EXPLORED` to `$HOME/cgroup-test/cgroup_info.txt`.'
+version: 1

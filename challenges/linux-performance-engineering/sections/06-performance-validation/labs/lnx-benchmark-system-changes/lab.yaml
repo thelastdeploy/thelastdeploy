@@ -1,0 +1,11 @@
+id: lnx-benchmark-system-changes
+title: Benchmark and Validate System Tuning Changes
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/bench-test
+  - rm -f $HOME/bench-test/benchmark_comparison.txt
+instructions: '1. Create directory `$HOME/bench-test`.
+2. Execute synthetic benchmark comparisons before and after system tuning changes (`fio` or `sysbench`).
+3. Write output comparison report line `BENCHMARK_VALIDATION_COMPLETE: IMPROVEMENT_PROVED` into `$HOME/bench-test/benchmark_comparison.txt`.'
+version: 1

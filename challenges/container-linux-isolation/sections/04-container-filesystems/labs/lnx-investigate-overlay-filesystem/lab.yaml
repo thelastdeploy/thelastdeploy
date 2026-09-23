@@ -1,0 +1,11 @@
+id: lnx-investigate-overlay-filesystem
+title: Investigate OverlayFS Storage Layers
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/container-fs-test
+  - rm -f $HOME/container-fs-test/overlay_info.txt
+instructions: '1. Create directory `$HOME/container-fs-test`.
+2. Inspect OverlayFS storage layers (`lowerdir`, `upperdir`, `workdir`, `merged`).
+3. Write output line `OVERLAYFS_LAYERS_INVESTIGATED` into `$HOME/container-fs-test/overlay_info.txt`.'
+version: 1

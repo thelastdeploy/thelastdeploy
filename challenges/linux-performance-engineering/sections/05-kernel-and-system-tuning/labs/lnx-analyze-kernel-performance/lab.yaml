@@ -1,0 +1,11 @@
+id: lnx-analyze-kernel-performance
+title: Analyze Kernel Subsystem Tuneables
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/kernel-opt-test
+  - rm -f $HOME/kernel-opt-test/sysctl_analysis.txt
+instructions: '1. Create directory `$HOME/kernel-opt-test`.
+2. Inspect kernel network stack tuneables (`net.core.somaxconn`, TCP window sizing, file descriptor limits).
+3. Write output summary line `KERNEL_TUNEABLES_ANALYZED` to `$HOME/kernel-opt-test/sysctl_analysis.txt`.'
+version: 1

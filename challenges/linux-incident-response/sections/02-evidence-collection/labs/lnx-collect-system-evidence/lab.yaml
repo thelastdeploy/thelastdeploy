@@ -1,0 +1,11 @@
+id: lnx-collect-system-evidence
+title: Collect System File & Environment Evidence
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/evidence-test
+  - rm -f $HOME/evidence-test/system_evidence.txt
+instructions: '1. Create directory `$HOME/evidence-test`.
+2. Collect system file and environment variable evidence (`/proc/<pid>/environ`, authorized_keys).
+3. Write output summary line `SYSTEM_EVIDENCE_COLLECTED` to `$HOME/evidence-test/system_evidence.txt`.'
+version: 1

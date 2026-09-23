@@ -1,0 +1,11 @@
+id: lnx-collect-process-and-network-evidence
+title: Collect Volatile Process and Network Evidence
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/evidence-test
+  - rm -f $HOME/evidence-test/proc_net_evidence.txt
+instructions: '1. Create directory `$HOME/evidence-test`.
+2. Collect volatile network connections (`ss -anp`) and process open file handles (`lsof`).
+3. Write output summary `PROC_NET_EVIDENCE_COLLECTED` to `$HOME/evidence-test/proc_net_evidence.txt`.'
+version: 1

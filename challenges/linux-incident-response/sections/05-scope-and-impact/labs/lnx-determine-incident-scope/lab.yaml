@@ -1,0 +1,11 @@
+id: lnx-determine-incident-scope
+title: Determine Incident Scope and Lateral Movement
+xp: 60
+setup:
+  seed_commands:
+  - mkdir -p $HOME/scope-test
+  - rm -f $HOME/scope-test/incident_scope.txt
+instructions: '1. Create directory `$HOME/scope-test`.
+2. Audit system package integrity (`debsums`/`rpm -V`) and outbound lateral network connections.
+3. Write output summary line `INCIDENT_SCOPE_DETERMINED` into `$HOME/scope-test/incident_scope.txt`.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-model-system-workload
+title: Model System Workload Profile
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/perf-eng-test
+  - rm -f $HOME/perf-eng-test/workload_model.txt
+instructions: '1. Create directory `$HOME/perf-eng-test`.
+2. Model system workload classification (CPU-bound vs I/O-bound vs memory-bound).
+3. Write output summary line `WORKLOAD_MODEL_ESTABLISHED` to `$HOME/perf-eng-test/workload_model.txt`.'
+version: 1

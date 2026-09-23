@@ -1,0 +1,11 @@
+id: lnx-recover-failing-storage-system
+title: Recover Failing Storage & Filesystem System
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/storage-outage-test
+  - rm -f $HOME/storage-outage-test/storage_recovered.txt
+instructions: '1. Create directory `$HOME/storage-outage-test`.
+2. Diagnose and recover failing storage system (release unlinked open files or repair mount state).
+3. Write output summary line `STORAGE_SYSTEM_RECOVERED` to `$HOME/storage-outage-test/storage_recovered.txt`.'
+version: 1

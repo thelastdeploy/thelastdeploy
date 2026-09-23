@@ -1,0 +1,11 @@
+id: lnx-recover-dependent-services
+title: Recover Dependent Service Stack
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/svc-outage-test
+  - rm -f $HOME/svc-outage-test/stack_recovery.txt
+instructions: '1. Create directory `$HOME/svc-outage-test`.
+2. Repair broken upstream service dependency and restart application stack.
+3. Write output summary `DEPENDENT_STACK_RECOVERED` to `$HOME/svc-outage-test/stack_recovery.txt`.'
+version: 1

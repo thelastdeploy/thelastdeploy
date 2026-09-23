@@ -1,0 +1,11 @@
+id: lnx-recover-broken-network-service
+title: Recover Broken Network Service
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/net-outage-test
+  - rm -f $HOME/net-outage-test/net_recovered.txt
+instructions: '1. Create directory `$HOME/net-outage-test`.
+2. Repair broken firewall rule or socket binding to restore network service flow.
+3. Write output summary `BROKEN_NETWORK_SERVICE_RECOVERED` to `$HOME/net-outage-test/net_recovered.txt`.'
+version: 1

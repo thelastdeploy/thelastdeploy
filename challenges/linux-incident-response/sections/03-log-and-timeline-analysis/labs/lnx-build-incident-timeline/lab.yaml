@@ -1,0 +1,11 @@
+id: lnx-build-incident-timeline
+title: Build Chronological Incident Timeline
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/timeline-test
+  - rm -f $HOME/timeline-test/incident_timeline.txt
+instructions: '1. Create directory `$HOME/timeline-test`.
+2. Construct chronological incident timeline combining system auth logs and journal timestamps.
+3. Write output line `INCIDENT_TIMELINE_BUILT` to `$HOME/timeline-test/incident_timeline.txt`.'
+version: 1

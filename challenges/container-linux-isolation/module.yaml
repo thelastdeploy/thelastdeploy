@@ -1,0 +1,32 @@
+id: container-linux-isolation
+title: "Container & Linux Isolation Internals"
+description: "Master Linux container and process isolation primitives: process isolation concepts, Linux namespaces (PID, NET, MNT, IPC, UTS, USER, CGROUP), Control Groups v1/v2 resource limits (cgroups), container layered filesystems (OverlayFS / chroot / pivot_root), container network isolation & veth bridges, container security capabilities & seccomp, and broken container isolation troubleshooting."
+topic: linux
+difficulty: expert
+estimated_minutes: 90
+tags:
+  - containers
+  - namespaces
+  - cgroups
+  - overlayfs
+  - isolation
+  - security
+  - linux
+  - expert
+sections:
+  - id: 01-linux-isolation
+    order: 1
+  - id: 02-namespaces
+    order: 2
+  - id: 03-control-groups
+    order: 3
+  - id: 04-container-filesystems
+    order: 4
+  - id: 05-container-networking
+    order: 5
+  - id: 06-container-security
+    order: 6
+  - id: 07-isolation-challenge
+    order: 7
+verified: true
+version: 1

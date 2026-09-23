@@ -1,0 +1,11 @@
+id: lnx-investigate-container-security
+title: Investigate Container Security Capabilities and Seccomp
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/container-sec-test
+  - rm -f $HOME/container-sec-test/sec_caps.txt
+instructions: '1. Create directory `$HOME/container-sec-test`.
+2. Inspect Linux process capabilities (`CapEff` in `/proc/self/status`) and Seccomp profiles.
+3. Write output line `CONTAINER_CAPABILITIES_INVESTIGATED` to `$HOME/container-sec-test/sec_caps.txt`.'
+version: 1

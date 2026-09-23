@@ -1,0 +1,11 @@
+id: lnx-contain-compromised-system
+title: Contain Compromised System Safely
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/recovery-test
+  - rm -f $HOME/recovery-test/containment_summary.txt
+instructions: '1. Create directory `$HOME/recovery-test`.
+2. Apply containment rules isolating malicious outbound traffic while maintaining management access.
+3. Write output line `COMPROMISED_SYSTEM_CONTAINED` to `$HOME/recovery-test/containment_summary.txt`.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-optimize-production-workload
+title: Optimize Production Workload Capstone
+xp: 110
+setup:
+  seed_commands:
+  - mkdir -p $HOME/perf-capstone
+  - rm -f $HOME/perf-capstone/optimization_validation.log
+instructions: '1. Create directory `$HOME/perf-capstone`.
+2. Execute the 7-step performance engineering loop (Model, Measure, Find Bottleneck, Apply Cross-Layer Tuning, Benchmark, Compare, Validate SLA).
+3. Write master optimization report line `PRODUCTION_WORKLOAD_OPTIMIZED_AND_VALIDATED` into `$HOME/perf-capstone/optimization_validation.log`.'
+version: 1

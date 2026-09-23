@@ -1,0 +1,11 @@
+id: lnx-correlate-security-events
+title: Correlate Security Logs and Event Signatures
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/timeline-test
+  - rm -f $HOME/timeline-test/event_correlation.txt
+instructions: '1. Create directory `$HOME/timeline-test`.
+2. Correlate SSH authentication logs, sudo execution entries, and file creation events.
+3. Write summary line `SECURITY_EVENTS_CORRELATED` to `$HOME/timeline-test/event_correlation.txt`.'
+version: 1

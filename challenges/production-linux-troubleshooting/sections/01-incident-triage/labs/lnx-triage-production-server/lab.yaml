@@ -1,0 +1,11 @@
+id: lnx-triage-production-server
+title: Triage Production Server Incident
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/triage-test
+  - rm -f $HOME/triage-test/triage_summary.txt
+instructions: '1. Create directory `$HOME/triage-test`.
+2. Execute first-responder triage checklist on degraded server (`uptime`, `df -h`, `free -m`, `systemctl --failed`).
+3. Write triage summary line `PRODUCTION_SERVER_TRIAGED` to `$HOME/triage-test/triage_summary.txt`.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-investigate-isolated-processes
+title: Investigate Isolated Process States
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/iso-test
+  - rm -f $HOME/iso-test/proc_isolation.txt
+instructions: '1. Create directory `$HOME/iso-test`.
+2. Investigate process attributes in isolated environments vs host namespace (`/proc/<pid>/ns/`).
+3. Write summary output `ISOLATED_PROCESSES_INVESTIGATED` to `$HOME/iso-test/proc_isolation.txt`.'
+version: 1

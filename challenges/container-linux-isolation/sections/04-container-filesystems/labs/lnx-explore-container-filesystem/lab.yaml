@@ -1,0 +1,11 @@
+id: lnx-explore-container-filesystem
+title: Explore Container Filesystem Abstractions
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/container-fs-test
+  - rm -f $HOME/container-fs-test/rootfs_summary.txt
+instructions: '1. Create directory `$HOME/container-fs-test`.
+2. Inspect container rootfs directory structures (`chroot`, `pivot_root`).
+3. Write output summary line `CONTAINER_ROOTFS_EXPLORED` to `$HOME/container-fs-test/rootfs_summary.txt`.'
+version: 1

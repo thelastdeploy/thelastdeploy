@@ -1,0 +1,11 @@
+id: lnx-investigate-suspicious-process
+title: Investigate Suspicious Process Activity
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/suspicious-test
+  - rm -f $HOME/suspicious-test/process_analysis.txt
+instructions: '1. Create directory `$HOME/suspicious-test`.
+2. Inspect suspicious process activity (unlinked deleted binaries, hidden network sockets).
+3. Write output summary line `SUSPICIOUS_PROCESS_INVESTIGATED` to `$HOME/suspicious-test/process_analysis.txt`.'
+version: 1

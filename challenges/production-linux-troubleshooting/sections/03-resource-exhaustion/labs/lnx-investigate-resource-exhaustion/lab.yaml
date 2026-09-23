@@ -1,0 +1,11 @@
+id: lnx-investigate-resource-exhaustion
+title: Investigate Severe Resource Exhaustion
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/res-outage-test
+  - rm -f $HOME/res-outage-test/exhaustion_report.txt
+instructions: '1. Create directory `$HOME/res-outage-test`.
+2. Investigate severe resource exhaustion and OOM killer log entries.
+3. Write output summary line `RESOURCE_EXHAUSTION_DIAGNOSED` to `$HOME/res-outage-test/exhaustion_report.txt`.'
+version: 1

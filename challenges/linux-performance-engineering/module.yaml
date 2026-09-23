@@ -1,0 +1,33 @@
+id: linux-performance-engineering
+title: "Linux Performance Engineering"
+description: "Master Linux performance engineering and workload optimization methodologies: workload performance modeling, SLA targets & throughput baselines, CPU scheduler tuning & affinity (taskset, numactl, cgroups), memory allocator tuning & page cache optimization (sysctl vm.*), storage I/O scheduler & queue tuning (bfq, kyber, nvme, iostat), kernel sysctl tuneables & network stack optimization, benchmark validation (sysbench, fio), and production multi-subsystem workload optimization capstone."
+topic: linux
+difficulty: expert
+estimated_minutes: 120
+tags:
+  - performance
+  - tuning
+  - optimization
+  - benchmarking
+  - sysctl
+  - fio
+  - sysbench
+  - linux
+  - expert
+sections:
+  - id: 01-performance-modeling
+    order: 1
+  - id: 02-cpu-optimization
+    order: 2
+  - id: 03-memory-optimization
+    order: 3
+  - id: 04-storage-and-io-optimization
+    order: 4
+  - id: 05-kernel-and-system-tuning
+    order: 5
+  - id: 06-performance-validation
+    order: 6
+  - id: 07-performance-engineering-challenge
+    order: 7
+verified: true
+version: 1

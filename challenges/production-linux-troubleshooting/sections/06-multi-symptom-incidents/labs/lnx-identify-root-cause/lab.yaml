@@ -1,0 +1,11 @@
+id: lnx-identify-root-cause
+title: Identify Root Cause of Production Outage
+xp: 70
+setup:
+  seed_commands:
+  - mkdir -p $HOME/multi-inc-test
+  - rm -f $HOME/multi-inc-test/root_cause_proof.txt
+instructions: '1. Create directory `$HOME/multi-inc-test`.
+2. Isolate true root cause behind multi-symptom production outage and document evidence.
+3. Write output proof line `ROOT_CAUSE_PROVED: DISK_FULL_TRIGGERED_DB_FAIL` into `$HOME/multi-inc-test/root_cause_proof.txt`.'
+version: 1

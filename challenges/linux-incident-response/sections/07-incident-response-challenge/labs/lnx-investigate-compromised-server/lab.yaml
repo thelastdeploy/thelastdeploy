@@ -1,0 +1,11 @@
+id: lnx-investigate-compromised-server
+title: Investigate Compromised Server Forensic Capstone
+xp: 100
+setup:
+  seed_commands:
+  - mkdir -p $HOME/ir-capstone
+  - rm -f $HOME/ir-capstone/forensic_investigation.log
+instructions: '1. Create directory `$HOME/ir-capstone`.
+2. Perform end-to-end digital forensics and incident response (observe, preserve, collect evidence, build timeline, discover persistence, contain, restore).
+3. Write master forensic report line `FORENSIC_INVESTIGATION_COMPLETE_SYSTEM_SECURED` into `$HOME/ir-capstone/forensic_investigation.log`.'
+version: 1

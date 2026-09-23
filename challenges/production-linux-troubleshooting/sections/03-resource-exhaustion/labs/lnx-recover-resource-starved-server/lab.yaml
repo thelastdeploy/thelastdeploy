@@ -1,0 +1,11 @@
+id: lnx-recover-resource-starved-server
+title: Recover Resource-Starved Production Server
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/res-outage-test
+  - rm -f $HOME/res-outage-test/server_recovered.txt
+instructions: '1. Create directory `$HOME/res-outage-test`.
+2. Terminate runaway memory leak process and restore system responsiveness.
+3. Write proof line `RESOURCE_STARVED_SERVER_RECOVERED` to `$HOME/res-outage-test/server_recovered.txt`.'
+version: 1

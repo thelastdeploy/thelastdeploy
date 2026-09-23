@@ -1,0 +1,11 @@
+id: lnx-limit-process-resources
+title: Limit Process Resources with cgroups
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/cgroup-test
+  - rm -f $HOME/cgroup-test/limits_summary.txt
+instructions: '1. Create directory `$HOME/cgroup-test`.
+2. Document cgroup resource limit assignment syntax (`memory.max`, `cpu.max`, `cgroup.procs`).
+3. Write output summary line `PROCESS_RESOURCES_LIMITED_VIA_CGROUP` to `$HOME/cgroup-test/limits_summary.txt`.'
+version: 1

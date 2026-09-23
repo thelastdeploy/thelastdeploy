@@ -1,0 +1,11 @@
+id: lnx-investigate-production-connectivity
+title: Investigate Production Network Connectivity Failure
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/net-outage-test
+  - rm -f $HOME/net-outage-test/net_diag.txt
+instructions: '1. Create directory `$HOME/net-outage-test`.
+2. Investigate network connectivity failure using `ss`, `curl`, and `iptables`.
+3. Write output summary line `NETWORK_CONNECTIVITY_FAILURE_DIAGNOSED` to `$HOME/net-outage-test/net_diag.txt`.'
+version: 1
