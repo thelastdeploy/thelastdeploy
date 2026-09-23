@@ -1,0 +1,5 @@
+id: 02-namespaces
+title: "Linux Namespaces (PID, NET, MNT, IPC, UTS, USER)"
+order: 2
+xp: 130
+version: 1

@@ -1,0 +1,5 @@
+id: 02-kernel-and-initramfs
+title: "Kernel Initialization & initramfs Mechanics"
+order: 2
+xp: 70
+version: 1

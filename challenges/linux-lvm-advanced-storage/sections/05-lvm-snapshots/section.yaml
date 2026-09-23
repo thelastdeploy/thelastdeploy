@@ -1,0 +1,5 @@
+id: 05-lvm-snapshots
+title: "LVM Snapshots & Point-in-Time Recovery"
+order: 5
+xp: 45
+version: 1

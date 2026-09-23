@@ -1,0 +1,5 @@
+id: 05-kernel-and-devices
+title: "Kernel Information Interfaces (/proc, /sys, /dev)"
+order: 5
+xp: 40
+version: 1

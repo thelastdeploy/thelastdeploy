@@ -1,0 +1,5 @@
+id: 03-filesystem-hardening
+title: "Filesystem & Executable Hardening"
+order: 3
+xp: 75
+version: 1
