@@ -1,0 +1,11 @@
+id: lnx-disable-unnecessary-services
+title: Disable Unnecessary Services and Daemons
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/svc-sec-test
+  - rm -f $HOME/svc-sec-test/disabled_svcs.txt
+instructions: '1. Create directory `$HOME/svc-sec-test`.
+2. Identify non-essential daemons and document `systemctl disable --now` procedures.
+3. Write summary `UNNECESSARY_SERVICES_DISABLED` into `$HOME/svc-sec-test/disabled_svcs.txt`.'
+version: 1

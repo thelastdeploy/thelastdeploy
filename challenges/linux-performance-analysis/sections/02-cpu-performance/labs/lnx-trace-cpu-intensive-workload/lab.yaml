@@ -1,0 +1,11 @@
+id: lnx-trace-cpu-intensive-workload
+title: Trace CPU-Intensive Workload Process
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/cpu-perf-test
+  - rm -f $HOME/cpu-perf-test/offending_pid.txt
+instructions: '1. Create directory `$HOME/cpu-perf-test`.
+2. Identify process consuming CPU time using `ps aux --sort=-%cpu` or `pidstat -u`.
+3. Write output line `OFFENDING_CPU_PROCESS_IDENTIFIED` into `$HOME/cpu-perf-test/offending_pid.txt`.'
+version: 1

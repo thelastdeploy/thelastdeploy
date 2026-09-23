@@ -1,0 +1,11 @@
+id: lnx-recover-system-from-rescue-mode
+title: Recover System from Rescue Target
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/rescue-test
+  - rm -f $HOME/rescue-test/rescue_summary.txt
+instructions: '1. Create directory `$HOME/rescue-test`.
+2. Document root filesystem remount command syntax (`mount -o remount,rw /`).
+3. Write summary `RESCUE_MODE_RECOVERY_VERIFIED` to `$HOME/rescue-test/rescue_summary.txt`.'
+version: 1

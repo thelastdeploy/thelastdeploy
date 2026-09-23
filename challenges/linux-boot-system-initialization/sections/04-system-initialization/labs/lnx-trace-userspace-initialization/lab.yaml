@@ -1,0 +1,11 @@
+id: lnx-trace-userspace-initialization
+title: Trace Userspace Initialization Sequence
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/sys-init-test
+  - rm -f $HOME/sys-init-test/boot_time.txt
+instructions: '1. Create directory `$HOME/sys-init-test`.
+2. Run `systemd-analyze` to measure boot performance.
+3. Write output summary line `BOOT_TIME_ANALYZED` to `$HOME/sys-init-test/boot_time.txt`.'
+version: 1

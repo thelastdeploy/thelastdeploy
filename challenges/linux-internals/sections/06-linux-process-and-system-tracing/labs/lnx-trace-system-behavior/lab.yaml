@@ -1,0 +1,11 @@
+id: lnx-trace-system-behavior
+title: Trace System Execution Behavior
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/trace-test
+  - rm -f $HOME/trace-test/system_trace.log
+instructions: '1. Create directory `$HOME/trace-test`.
+2. Trace system execution behavior using `strace` or `ltrace`.
+3. Write output summary line `SYSTEM_BEHAVIOR_TRACED` to `$HOME/trace-test/system_trace.log`.'
+version: 1

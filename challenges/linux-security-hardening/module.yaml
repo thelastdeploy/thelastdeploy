@@ -1,0 +1,33 @@
+id: linux-security-hardening
+title: "Linux Security & Hardening"
+description: "Master Linux security auditing and system hardening: security baselines & audit policies, access control & PAM/sudo privilege restriction, filesystem permission hardening & SUID/SGID audit, network service & firewall restriction, systemd service sandboxing & service minimization, security verification, and compromised server hardening."
+topic: linux
+difficulty: advanced
+estimated_minutes: 90
+tags:
+  - security
+  - hardening
+  - pam
+  - sudo
+  - suid
+  - permissions
+  - firewall
+  - linux
+  - advanced
+sections:
+  - id: 01-security-baseline
+    order: 1
+  - id: 02-access-control
+    order: 2
+  - id: 03-filesystem-hardening
+    order: 3
+  - id: 04-network-hardening
+    order: 4
+  - id: 05-service-and-system-hardening
+    order: 5
+  - id: 06-security-verification
+    order: 6
+  - id: 07-hardening-challenge
+    order: 7
+verified: true
+version: 1

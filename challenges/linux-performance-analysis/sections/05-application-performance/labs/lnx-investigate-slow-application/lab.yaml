@@ -1,0 +1,11 @@
+id: lnx-investigate-slow-application
+title: Investigate Slow Application Response
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/app-perf-test
+  - rm -f $HOME/app-perf-test/app_latency.txt
+instructions: '1. Create directory `$HOME/app-perf-test`.
+2. Correlate application response latency against system metrics.
+3. Write summary output `APPLICATION_LATENCY_INVESTIGATED` into `$HOME/app-perf-test/app_latency.txt`.'
+version: 1

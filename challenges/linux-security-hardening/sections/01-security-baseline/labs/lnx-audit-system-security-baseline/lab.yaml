@@ -1,0 +1,11 @@
+id: lnx-audit-system-security-baseline
+title: Audit System Security Baseline
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/sec-test
+  - rm -f $HOME/sec-test/baseline_report.txt
+instructions: '1. Create directory `$HOME/sec-test`.
+2. Perform system security baseline inspection.
+3. Write output summary line `SECURITY_BASELINE_AUDITED` to `$HOME/sec-test/baseline_report.txt`.'
+version: 1

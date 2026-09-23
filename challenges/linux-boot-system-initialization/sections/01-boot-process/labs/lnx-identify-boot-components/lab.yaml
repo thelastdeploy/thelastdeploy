@@ -1,0 +1,11 @@
+id: lnx-identify-boot-components
+title: Identify Core Boot Components
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/boot-test
+  - rm -f $HOME/boot-test/boot_files.txt
+instructions: '1. Create directory `$HOME/boot-test`.
+2. Inspect boot files in `/boot` directory.
+3. Write output summary line `BOOT_COMPONENTS_INSPECTED` to `$HOME/boot-test/boot_files.txt`.'
+version: 1

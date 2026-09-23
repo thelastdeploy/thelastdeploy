@@ -1,0 +1,11 @@
+id: lnx-inspect-kernel-device-interface
+title: Inspect Kernel and Device Interfaces in sysfs and procfs
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/sysfs-test
+  - rm -f $HOME/sysfs-test/interfaces.txt
+instructions: '1. Create directory `$HOME/sysfs-test`.
+2. Inspect virtual filesystems (`/proc`, `/sys`, `/dev`).
+3. Write output summary line `KERNEL_DEVICE_INTERFACES_INSPECTED` to `$HOME/sysfs-test/interfaces.txt`.'
+version: 1

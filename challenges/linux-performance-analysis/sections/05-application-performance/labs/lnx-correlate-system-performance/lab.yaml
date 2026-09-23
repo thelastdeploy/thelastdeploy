@@ -1,0 +1,11 @@
+id: lnx-correlate-system-performance
+title: Correlate System Performance Metrics
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/app-perf-test
+  - rm -f $HOME/app-perf-test/correlation_report.txt
+instructions: '1. Create directory `$HOME/app-perf-test`.
+2. Correlate multi-subsystem metrics (CPU, Memory, Disk I/O).
+3. Write output summary line `METRICS_CORRELATED: SYSTEM_HEALTHY` into `$HOME/app-perf-test/correlation_report.txt`.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-trace-network-connection
+title: Trace Network Connection Flow
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/svc-net-test
+  - rm -f $HOME/svc-net-test/trace_summary.txt
+instructions: '1. Create directory `$HOME/svc-net-test`.
+2. Document packet tracing command syntax (`tcpdump -i lo -c 1 icmp`).
+3. Write summary `PACKET_TRACE_VERIFIED` to `$HOME/svc-net-test/trace_summary.txt`.'
+version: 1

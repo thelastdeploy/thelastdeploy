@@ -1,0 +1,11 @@
+id: lnx-investigate-network-isolation
+title: Investigate Network Isolation Issues
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/net-inv-test
+  - rm -f $HOME/net-inv-test/diag_report.txt
+instructions: '1. Create directory `$HOME/net-inv-test`.
+2. Perform multi-layer network diagnostic investigation.
+3. Write diagnosis line `ISOLATION_CHECK: ALL_LAYERS_HEALTHY` into `$HOME/net-inv-test/diag_report.txt`.'
+version: 1

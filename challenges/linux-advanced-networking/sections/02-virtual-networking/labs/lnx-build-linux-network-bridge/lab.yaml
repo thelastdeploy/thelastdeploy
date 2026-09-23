@@ -1,0 +1,11 @@
+id: lnx-build-linux-network-bridge
+title: Build Linux Network Bridge
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/vnet-test
+  - rm -f $HOME/vnet-test/bridge_summary.txt
+instructions: '1. Create directory `$HOME/vnet-test`.
+2. Write bridge creation and attachment commands into `$HOME/vnet-test/bridge_setup.sh` (`ip link add br-test type bridge`, `ip link set br-test up`).
+3. Write summary `BRIDGE_CREATED: br-test` into `$HOME/vnet-test/bridge_summary.txt`.'
+version: 1

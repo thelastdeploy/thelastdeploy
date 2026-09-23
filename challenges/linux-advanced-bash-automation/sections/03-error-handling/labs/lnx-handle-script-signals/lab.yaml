@@ -1,0 +1,14 @@
+id: lnx-handle-script-signals
+title: Handle Script Traps and Signals
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/trap-test
+  - rm -f $HOME/trap-test/trap_demo.sh $HOME/trap-test/cleanup_log.txt $HOME/trap-test/work.lock
+instructions: '1. Create directory `$HOME/trap-test`.
+2. Create executable script `$HOME/trap-test/trap_demo.sh`.
+3. Script requirements:
+   - Touch lock file `$HOME/trap-test/work.lock`.
+   - Register `trap` for `EXIT SIGINT SIGTERM` that removes `$HOME/trap-test/work.lock` and appends `Cleaned up lock file` to `$HOME/trap-test/cleanup_log.txt`.
+4. Execute `$HOME/trap-test/trap_demo.sh` to trigger trap completion.'
+version: 1

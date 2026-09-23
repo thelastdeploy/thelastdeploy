@@ -1,0 +1,31 @@
+id: linux-advanced-bash-automation
+title: "Advanced Bash & Automation"
+description: "Master advanced shell scripting and robust Linux automation: indexed & associative arrays, parameter expansion, command substitution & process management, exit codes & trap signals, modular reusable shell libraries, background execution & parallel processing, idempotent script design, safe rerun patterns, and production maintenance automation."
+topic: linux
+difficulty: advanced
+estimated_minutes: 90
+tags:
+  - bash
+  - scripting
+  - automation
+  - devops
+  - linux
+sections:
+  - id: 01-advanced-shell-variables
+    order: 1
+  - id: 02-command-substitution-and-processes
+    order: 2
+  - id: 03-error-handling
+    order: 3
+  - id: 04-advanced-functions
+    order: 4
+  - id: 05-parallel-and-background-execution
+    order: 5
+  - id: 06-safe-automation
+    order: 6
+  - id: 07-production-automation
+    order: 7
+  - id: 08-advanced-bash-challenge
+    order: 8
+verified: true
+version: 1

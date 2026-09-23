@@ -1,0 +1,11 @@
+id: lnx-diagnose-lvm-problem
+title: Diagnose LVM Configuration Problems
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/lvm-diag
+  - rm -f $HOME/lvm-diag/diag_report.txt
+instructions: '1. Create directory `$HOME/lvm-diag`.
+2. Inspect LVM scanner commands (`pvscan`, `vgscan`, `lvscan`).
+3. Write output line `LVM_DIAGNOSTICS_COMPLETED` to `$HOME/lvm-diag/diag_report.txt`.'
+version: 1

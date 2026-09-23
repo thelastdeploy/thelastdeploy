@@ -1,0 +1,11 @@
+id: lnx-inspect-process-internals
+title: Inspect Process Task Internals in /proc
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/proc-internals-test
+  - rm -f $HOME/proc-internals-test/proc_info.txt
+instructions: '1. Create directory `$HOME/proc-internals-test`.
+2. Inspect process state and file descriptors in `/proc/self/` or `/proc/1/`.
+3. Write output summary line `PROCESS_INTERNALS_INSPECTED` to `$HOME/proc-internals-test/proc_info.txt`.'
+version: 1

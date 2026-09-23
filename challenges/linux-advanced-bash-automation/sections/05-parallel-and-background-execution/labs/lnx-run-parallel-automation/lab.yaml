@@ -1,0 +1,12 @@
+id: lnx-run-parallel-automation
+title: Run Parallel Automation Tasks
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/parallel-test/data $HOME/parallel-test/results
+  - rm -f $HOME/parallel-test/results/*
+  - for i in {1..5}; do echo "sample data $i" > $HOME/parallel-test/data/f$i.txt; done
+instructions: '1. Create `$HOME/parallel-test/data/` with 5 text files `f1.txt` ... `f5.txt` containing lowercase text `sample data X`.
+2. Write `$HOME/parallel-test/batch_processor.sh` to process all files in `$HOME/parallel-test/data/` in parallel, converting text to uppercase and saving outputs in `$HOME/parallel-test/results/`.
+3. Execute `$HOME/parallel-test/batch_processor.sh`.'
+version: 1

@@ -1,0 +1,12 @@
+id: lnx-inspect-systemd-units
+title: Inspect systemd Units
+xp: 25
+setup:
+  seed_commands:
+  - mkdir -p $HOME/systemd-test
+  - rm -f $HOME/systemd-test/units_info.txt
+instructions: '1. Create directory `$HOME/systemd-test`.
+2. Write commands to inspect systemd unit types and write summary output into `$HOME/systemd-test/units_info.txt`:
+   - Line 1: `SERVICES_COUNT: <number of loaded service units>`
+   - Line 2: `TIMERS_COUNT: <number of loaded timer units>`'
+version: 1

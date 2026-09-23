@@ -1,0 +1,11 @@
+id: lnx-restrict-unnecessary-ports
+title: Restrict Unnecessary Network Ports
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/net-sec-test
+  - rm -f $HOME/net-sec-test/ports_summary.txt
+instructions: '1. Create directory `$HOME/net-sec-test`.
+2. Inspect listening sockets and document port restriction firewall rules.
+3. Write output line `UNNECESSARY_PORTS_RESTRICTED` to `$HOME/net-sec-test/ports_summary.txt`.'
+version: 1

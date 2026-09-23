@@ -1,0 +1,11 @@
+id: lnx-configure-lvm-filesystem
+title: Configure Filesystem on Logical Volume
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/lv-test
+  - rm -f $HOME/lv-test/mount_info.txt
+instructions: '1. Create directory `$HOME/lv-test`.
+2. Document formatting and fstab mount entry syntax for Logical Volumes.
+3. Write summary `LV_FILESYSTEM_CONFIGURED` into `$HOME/lv-test/mount_info.txt`.'
+version: 1

@@ -1,0 +1,14 @@
+id: lnx-connect-network-namespaces
+title: Connect Network Namespaces with veth Pairs
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/netns-test
+  - rm -f $HOME/netns-test/veth_summary.txt
+instructions: '1. Create directory `$HOME/netns-test`.
+2. Write script `$HOME/netns-test/connect_ns.sh` that demonstrates veth configuration syntax:
+   - `ip netns add ns-demo`
+   - `ip link add veth-h type veth peer name veth-n`
+   - `ip link set veth-n netns ns-demo`
+3. Write summary `VETH_PAIR_CONFIGURED` to `$HOME/netns-test/veth_summary.txt`.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-observe-system-calls
+title: Observe System Call Boundary
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/syscall-test
+  - rm -f $HOME/syscall-test/syscall_basics.txt
+instructions: '1. Create directory `$HOME/syscall-test`.
+2. Observe user/kernel space system call boundary.
+3. Write summary output `SYSTEM_CALL_BOUNDARY_OBSERVED` into `$HOME/syscall-test/syscall_basics.txt`.'
+version: 1

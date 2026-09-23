@@ -1,0 +1,11 @@
+id: lnx-migrate-lvm-storage
+title: Migrate LVM Storage Online
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mig-test
+  - rm -f $HOME/mig-test/pvmove_info.txt
+instructions: '1. Create directory `$HOME/mig-test`.
+2. Document `pvmove` data migration procedure syntax.
+3. Write output summary `PVMOVE_MIGRATION_VERIFIED` to `$HOME/mig-test/pvmove_info.txt`.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-investigate-system-from-internals
+title: Investigate System Behavior using Linux Internals Capstone
+xp: 80
+setup:
+  seed_commands:
+  - mkdir -p $HOME/internals-challenge
+  - rm -f $HOME/internals-challenge/investigation.log
+instructions: '1. Create directory `$HOME/internals-challenge`.
+2. Investigate system behavior using `/proc`, `strace`, `lsof`, and syscall tracing.
+3. Write output summary line `SYSTEM_BEHAVIOR_INVESTIGATED_FROM_INTERNALS: ROOT_CAUSE_PROVED` into `$HOME/internals-challenge/investigation.log`.'
+version: 1

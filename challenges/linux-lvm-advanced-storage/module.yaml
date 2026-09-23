@@ -1,0 +1,34 @@
+id: linux-lvm-advanced-storage
+title: "LVM & Advanced Storage"
+description: "Master Linux Logical Volume Manager (LVM) and advanced storage administration: Physical Volumes (pvcreate/pvs), Volume Groups (vgcreate/vgs/vgextend), Logical Volumes (lvcreate/lvs/lvextend), online filesystem expansion (resize2fs/xfs_growfs), safe storage reduction, LVM snapshots & restoration, storage migration (pvmove), LVM layer troubleshooting, and production volume expansion."
+topic: linux
+difficulty: advanced
+estimated_minutes: 90
+tags:
+  - lvm
+  - storage
+  - pvcreate
+  - vgcreate
+  - lvcreate
+  - filesystem
+  - linux
+  - advanced
+sections:
+  - id: 01-lvm-fundamentals
+    order: 1
+  - id: 02-physical-volumes
+    order: 2
+  - id: 03-logical-volumes
+    order: 3
+  - id: 04-resizing-storage
+    order: 4
+  - id: 05-lvm-snapshots
+    order: 5
+  - id: 06-storage-migration
+    order: 6
+  - id: 07-lvm-troubleshooting
+    order: 7
+  - id: 08-lvm-challenge
+    order: 8
+verified: true
+version: 1

@@ -1,0 +1,14 @@
+id: lnx-build-failure-safe-script
+title: Build a Failure-Safe Script with strict mode
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/err-test
+  - rm -f $HOME/err-test/safe_run.sh
+instructions: '1. Create directory `$HOME/err-test`.
+2. Create executable script `$HOME/err-test/safe_run.sh`.
+3. Script requirements:
+   - Must include `set -euo pipefail`.
+   - Must check if `$1` is provided. If missing, print `Usage: safe_run.sh <file>` and exit code 2.
+   - If `$1` is provided, print `Processing $1` and exit code 0.'
+version: 1

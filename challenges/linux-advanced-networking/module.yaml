@@ -1,0 +1,34 @@
+id: linux-advanced-networking
+title: "Advanced Linux Networking"
+description: "Master Linux network isolation and virtual networking primitives: network namespaces (ip netns), virtual interfaces (veth pairs), Linux network bridges (brctl/ip link), policy routing & multiple routing tables, nftables/iptables packet filtering, tc traffic control & qdisc, network service investigation, and building isolated multi-namespace topologies."
+topic: linux
+difficulty: advanced
+estimated_minutes: 100
+tags:
+  - networking
+  - iproute2
+  - namespaces
+  - bridge
+  - firewall
+  - routing
+  - linux
+  - advanced
+sections:
+  - id: 01-network-namespaces
+    order: 1
+  - id: 02-virtual-networking
+    order: 2
+  - id: 03-advanced-routing
+    order: 3
+  - id: 04-firewalling
+    order: 4
+  - id: 05-traffic-control
+    order: 5
+  - id: 06-network-services
+    order: 6
+  - id: 07-advanced-network-investigation
+    order: 7
+  - id: 08-advanced-networking-challenge
+    order: 8
+verified: true
+version: 1

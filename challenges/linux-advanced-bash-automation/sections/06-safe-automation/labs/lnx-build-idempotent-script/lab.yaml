@@ -1,0 +1,14 @@
+id: lnx-build-idempotent-script
+title: Build an Idempotent Automation Script
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/idempotent-test
+  - echo 'MAX_CONNECTIONS=100' > $HOME/idempotent-test/app.conf
+  - rm -f $HOME/idempotent-test/deploy.sh
+instructions: '1. Create directory `$HOME/idempotent-test` and seed `$HOME/idempotent-test/app.conf` with `MAX_CONNECTIONS=100`.
+2. Write executable script `$HOME/idempotent-test/deploy.sh` that:
+   - Sets `TIMEOUT=30` and updates `MAX_CONNECTIONS=200` in `app.conf`.
+   - Ensures running `deploy.sh` multiple times produces exact same `app.conf` without duplicate lines.
+3. Execute `deploy.sh` twice.'
+version: 1

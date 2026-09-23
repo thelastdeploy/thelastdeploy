@@ -1,0 +1,11 @@
+id: lnx-investigate-memory-mapping
+title: Investigate Shared Memory and Anonymous Mappings
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mem-internals-test
+  - rm -f $HOME/mem-internals-test/smaps_summary.txt
+instructions: '1. Create directory `$HOME/mem-internals-test`.
+2. Inspect detailed memory mappings in `/proc/self/smaps`.
+3. Write summary output `SMAPS_MAPPINGS_INVESTIGATED` to `$HOME/mem-internals-test/smaps_summary.txt`.'
+version: 1

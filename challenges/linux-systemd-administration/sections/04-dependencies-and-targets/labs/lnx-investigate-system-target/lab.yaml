@@ -1,0 +1,11 @@
+id: lnx-investigate-system-target
+title: Investigate System Target
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/target-test
+  - rm -f $HOME/target-test/target_info.txt
+instructions: '1. Create directory `$HOME/target-test`.
+2. Run `systemctl get-default` to determine default system boot target.
+3. Write output `DEFAULT_TARGET: <target_name>` into `$HOME/target-test/target_info.txt`.'
+version: 1

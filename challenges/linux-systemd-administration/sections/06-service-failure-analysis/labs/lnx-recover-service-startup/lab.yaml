@@ -1,0 +1,12 @@
+id: lnx-recover-service-startup
+title: Recover Service Startup
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/fail-test
+  - echo -e '[Unit]\nDescription=Broken Service\n[Service]\nExecStart=/bin/missing_binary' > $HOME/fail-test/broken.service
+  - rm -f $HOME/fail-test/fixed.service
+instructions: '1. Inspect `$HOME/fail-test/broken.service`.
+2. Repair `ExecStart` path to point to valid executable `/bin/echo Service Restored`.
+3. Save repaired unit file to `$HOME/fail-test/fixed.service`.'
+version: 1

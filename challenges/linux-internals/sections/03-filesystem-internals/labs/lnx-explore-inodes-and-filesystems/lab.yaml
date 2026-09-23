@@ -1,0 +1,11 @@
+id: lnx-explore-inodes-and-filesystems
+title: Explore Inodes and Filesystem Metadata
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/vfs-test
+  - rm -f $HOME/vfs-test/inode_report.txt
+instructions: '1. Create directory `$HOME/vfs-test`.
+2. Inspect inode metadata (`stat`) and system inode usage (`df -i`).
+3. Write output summary line `INODE_METADATA_EXPLORED` to `$HOME/vfs-test/inode_report.txt`.'
+version: 1

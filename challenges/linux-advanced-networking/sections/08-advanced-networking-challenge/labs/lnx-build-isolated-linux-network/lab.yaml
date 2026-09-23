@@ -1,0 +1,11 @@
+id: lnx-build-isolated-linux-network
+title: Build Isolated Linux Network Topology Capstone
+xp: 75
+setup:
+  seed_commands:
+  - mkdir -p $HOME/net-challenge
+  - rm -f $HOME/net-challenge/topology.log $HOME/net-challenge/setup_topology.sh
+instructions: '1. Create directory `$HOME/net-challenge`.
+2. Write script `$HOME/net-challenge/setup_topology.sh` configuring an isolated network topology with two namespaces (`ns-web` and `ns-db`) connected via bridge `br-prod`.
+3. Write verification summary line `TOPOLOGY_BUILD_COMPLETE` to `$HOME/net-challenge/topology.log`.'
+version: 1

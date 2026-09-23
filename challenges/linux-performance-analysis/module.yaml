@@ -1,0 +1,32 @@
+id: linux-performance-analysis
+title: "Linux Performance Analysis"
+description: "Master Linux performance analysis and bottleneck investigation methodologies: performance baselining, CPU saturation & load average correlation (top/uptime/mpstat), memory pressure & swap thrashing (free/vmstat/sar), storage I/O bottlenecks & queue depth (iostat/pidstat), application latency correlation, and production performance troubleshooting."
+topic: linux
+difficulty: advanced
+estimated_minutes: 90
+tags:
+  - performance
+  - troubleshooting
+  - cpu
+  - memory
+  - storage
+  - iostat
+  - vmstat
+  - sar
+  - linux
+  - advanced
+sections:
+  - id: 01-performance-basics
+    order: 1
+  - id: 02-cpu-performance
+    order: 2
+  - id: 03-memory-performance
+    order: 3
+  - id: 04-storage-performance
+    order: 4
+  - id: 05-application-performance
+    order: 5
+  - id: 06-performance-challenge
+    order: 6
+verified: true
+version: 1

@@ -1,0 +1,32 @@
+id: linux-boot-system-initialization
+title: "Linux Boot & System Initialization"
+description: "Master Linux boot architecture and recovery: firmware (UEFI/BIOS), bootloaders (GRUB2), kernel parameters (/proc/cmdline), initramfs & initrd mechanics, systemd userspace initialization, boot ordering & dependencies, boot failure troubleshooting, rescue/emergency targets, and unbootable system recovery."
+topic: linux
+difficulty: advanced
+estimated_minutes: 90
+tags:
+  - boot
+  - kernel
+  - initramfs
+  - grub
+  - systemd
+  - linux
+  - recovery
+  - advanced
+sections:
+  - id: 01-boot-process
+    order: 1
+  - id: 02-kernel-and-initramfs
+    order: 2
+  - id: 03-bootloader
+    order: 3
+  - id: 04-system-initialization
+    order: 4
+  - id: 05-boot-failure-troubleshooting
+    order: 5
+  - id: 06-recovery-and-rescue
+    order: 6
+  - id: 07-boot-challenge
+    order: 7
+verified: true
+version: 1

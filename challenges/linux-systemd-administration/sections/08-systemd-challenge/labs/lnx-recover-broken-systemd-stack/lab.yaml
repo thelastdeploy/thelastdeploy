@@ -1,0 +1,13 @@
+id: lnx-recover-broken-systemd-stack
+title: Recover Broken systemd Service Stack
+xp: 70
+setup:
+  seed_commands:
+  - mkdir -p $HOME/systemd-challenge
+  - rm -f $HOME/systemd-challenge/*.service
+instructions: '1. Create directory `$HOME/systemd-challenge`.
+2. Inspect two misconfigured unit files:
+   - `db.service`: missing `Type=simple` and `ExecStart=/bin/echo DB Ready`
+   - `app.service`: missing `Requires=db.service` and `After=db.service`
+3. Create repaired versions `$HOME/systemd-challenge/db.service` and `$HOME/systemd-challenge/app.service` ensuring correct dependencies and startup commands.'
+version: 1

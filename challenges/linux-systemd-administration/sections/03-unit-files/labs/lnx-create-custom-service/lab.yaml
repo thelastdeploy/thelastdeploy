@@ -1,0 +1,13 @@
+id: lnx-create-custom-service
+title: Create Custom systemd Service
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/unit-test
+  - rm -f $HOME/unit-test/custom-app.service
+instructions: '1. Create directory `$HOME/unit-test`.
+2. Create unit file `$HOME/unit-test/custom-app.service` containing:
+   - `[Unit]` with `Description=Custom App`
+   - `[Service]` with `Type=simple`, `ExecStart=/usr/bin/echo Hello`, `Restart=on-failure`
+   - `[Install]` with `WantedBy=multi-user.target`'
+version: 1

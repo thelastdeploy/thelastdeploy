@@ -1,0 +1,11 @@
+id: lnx-recover-unbootable-system
+title: Recover Unbootable Linux Server Capstone
+xp: 75
+setup:
+  seed_commands:
+  - mkdir -p $HOME/boot-capstone
+  - rm -f $HOME/boot-capstone/recovery.log $HOME/boot-capstone/repair_boot.sh
+instructions: '1. Create directory `$HOME/boot-capstone`.
+2. Create recovery script `$HOME/boot-capstone/repair_boot.sh` that fixes corrupted boot settings.
+3. Write summary line `UNBOOTABLE_SYSTEM_RECOVERED` into `$HOME/boot-capstone/recovery.log`.'
+version: 1

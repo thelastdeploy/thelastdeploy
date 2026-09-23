@@ -1,0 +1,11 @@
+id: lnx-inspect-firewall-rules
+title: Inspect Firewall Rules and Packet Chains
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/fw-test
+  - rm -f $HOME/fw-test/fw_summary.txt
+instructions: '1. Create directory `$HOME/fw-test`.
+2. Inspect firewall rule chains (`iptables -L -n` or `nft list ruleset`).
+3. Write output summary `FIREWALL_CHAINS_INSPECTED` to `$HOME/fw-test/fw_summary.txt`.'
+version: 1

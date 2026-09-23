@@ -1,0 +1,11 @@
+id: lnx-analyze-boot-service-order
+title: Analyze Boot Service Startup Order
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/sys-init-test
+  - rm -f $HOME/sys-init-test/critical_chain.txt
+instructions: '1. Create directory `$HOME/sys-init-test`.
+2. Run `systemd-analyze critical-chain` to inspect critical boot ordering path.
+3. Write summary `CRITICAL_CHAIN_INSPECTED` to `$HOME/sys-init-test/critical_chain.txt`.'
+version: 1

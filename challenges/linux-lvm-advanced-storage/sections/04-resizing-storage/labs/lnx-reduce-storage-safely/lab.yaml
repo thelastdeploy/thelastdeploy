@@ -1,0 +1,15 @@
+id: lnx-reduce-storage-safely
+title: Reduce Storage Capacity Safely
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/resize-test
+  - rm -f $HOME/resize-test/safe_reduce_steps.txt
+instructions: '1. Create directory `$HOME/resize-test`.
+2. Document the 5 mandatory safe ext4 reduction steps in order into `$HOME/resize-test/safe_reduce_steps.txt`:
+   - `1. umount`
+   - `2. e2fsck -f`
+   - `3. resize2fs`
+   - `4. lvreduce`
+   - `5. mount`'
+version: 1

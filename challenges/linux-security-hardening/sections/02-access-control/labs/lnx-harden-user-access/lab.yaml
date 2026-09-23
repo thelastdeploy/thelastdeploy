@@ -1,0 +1,11 @@
+id: lnx-harden-user-access
+title: Harden User Access Controls
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/access-test
+  - rm -f $HOME/access-test/access_summary.txt
+instructions: '1. Create directory `$HOME/access-test`.
+2. Document user access hardening policies (password expiration, account locking, nologin shells).
+3. Write output summary line `USER_ACCESS_HARDENED` to `$HOME/access-test/access_summary.txt`.'
+version: 1

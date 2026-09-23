@@ -1,0 +1,11 @@
+id: lnx-harden-compromised-server
+title: Harden Compromised Linux Server Capstone
+xp: 75
+setup:
+  seed_commands:
+  - mkdir -p $HOME/sec-challenge
+  - rm -f $HOME/sec-challenge/hardening.log $HOME/sec-challenge/harden_server.sh
+instructions: '1. Create directory `$HOME/sec-challenge`.
+2. Write server hardening remediation script `$HOME/sec-challenge/harden_server.sh`.
+3. Write output summary line `COMPROMISED_SERVER_HARDENED` into `$HOME/sec-challenge/hardening.log`.'
+version: 1

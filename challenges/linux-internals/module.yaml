@@ -1,0 +1,33 @@
+id: linux-internals
+title: "Linux Internals"
+description: "Master Linux kernel internals and system tracing primitives: process task structures & PID namespaces (/proc/<pid>/), virtual memory mappings & page allocation (/proc/<pid>/maps, pmap), VFS architecture & inode metadata, system call boundary & strace intercept, kernel device interfaces (/sys, /dev, /proc), system behavior tracing (strace/ltrace/perf), and internal system activity investigation."
+topic: linux
+difficulty: advanced
+estimated_minutes: 90
+tags:
+  - internals
+  - kernel
+  - procfs
+  - sysfs
+  - strace
+  - inodes
+  - syscalls
+  - linux
+  - advanced
+sections:
+  - id: 01-process-internals
+    order: 1
+  - id: 02-memory-internals
+    order: 2
+  - id: 03-filesystem-internals
+    order: 3
+  - id: 04-system-calls
+    order: 4
+  - id: 05-kernel-and-devices
+    order: 5
+  - id: 06-linux-process-and-system-tracing
+    order: 6
+  - id: 07-linux-internals-challenge
+    order: 7
+verified: true
+version: 1

@@ -1,0 +1,14 @@
+id: lnx-protect-automation-from-failure
+title: Protect Automation with Lock Files and Atomic Swaps
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/atomic-test
+  - echo 'initial_data' > $HOME/atomic-test/target.txt
+  - rm -f $HOME/atomic-test/safe_update.sh $HOME/atomic-test/script.lock
+instructions: '1. Create directory `$HOME/atomic-test`.
+2. Write executable script `$HOME/atomic-test/safe_update.sh` that:
+   - Uses a lock file `$HOME/atomic-test/script.lock` to prevent concurrent runs.
+   - Writes updated data to temporary file first before atomically replacing `$HOME/atomic-test/target.txt` (`mv temp file target.txt`).
+3. Execute `$HOME/atomic-test/safe_update.sh`.'
+version: 1

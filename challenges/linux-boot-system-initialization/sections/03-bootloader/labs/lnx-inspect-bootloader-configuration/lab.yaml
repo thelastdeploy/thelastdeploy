@@ -1,0 +1,11 @@
+id: lnx-inspect-bootloader-configuration
+title: Inspect Bootloader Configuration
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/grub-test
+  - rm -f $HOME/grub-test/grub_summary.txt
+instructions: '1. Create directory `$HOME/grub-test`.
+2. Inspect `/etc/default/grub` file settings.
+3. Write summary line `GRUB_CONFIG_INSPECTED` to `$HOME/grub-test/grub_summary.txt`.'
+version: 1

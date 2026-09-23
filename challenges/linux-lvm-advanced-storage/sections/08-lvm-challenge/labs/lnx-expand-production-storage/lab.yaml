@@ -1,0 +1,11 @@
+id: lnx-expand-production-storage
+title: Expand Production Application Storage Capstone
+xp: 75
+setup:
+  seed_commands:
+  - mkdir -p $HOME/lvm-capstone
+  - rm -f $HOME/lvm-capstone/expansion.log $HOME/lvm-capstone/expand_app.sh
+instructions: '1. Create directory `$HOME/lvm-capstone`.
+2. Write storage expansion automation script `$HOME/lvm-capstone/expand_app.sh` that demonstrates online expansion (`lvextend -r`).
+3. Write summary line `PRODUCTION_EXPANSION_COMPLETE` to `$HOME/lvm-capstone/expansion.log`.'
+version: 1

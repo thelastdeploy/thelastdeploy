@@ -1,0 +1,11 @@
+id: lnx-debug-advanced-network-service
+title: Debug Advanced Network Service Binding
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/svc-net-test
+  - rm -f $HOME/svc-net-test/sockets.txt
+instructions: '1. Create directory `$HOME/svc-net-test`.
+2. Run `ss -tulpn` or `ss -tun` to inspect listening network sockets.
+3. Write output summary `SOCKET_BINDINGS_INSPECTED` to `$HOME/svc-net-test/sockets.txt`.'
+version: 1

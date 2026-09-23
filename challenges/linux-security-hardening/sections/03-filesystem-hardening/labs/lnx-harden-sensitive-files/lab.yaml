@@ -1,0 +1,11 @@
+id: lnx-harden-sensitive-files
+title: Harden Sensitive System Files
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/fs-sec-test
+  - rm -f $HOME/fs-sec-test/file_perms.txt
+instructions: '1. Create directory `$HOME/fs-sec-test`.
+2. Document permissions baseline for `/etc/shadow`, `/etc/passwd`, and `/etc/ssh/sshd_config`.
+3. Write audit line `FILE_PERMISSIONS_HARDENED` to `$HOME/fs-sec-test/file_perms.txt`.'
+version: 1

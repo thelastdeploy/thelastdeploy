@@ -1,0 +1,14 @@
+id: lnx-build-reusable-shell-library
+title: Build a Reusable Shell Library
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/lib-test
+  - rm -f $HOME/lib-test/utils.sh $HOME/lib-test/test_runner.sh
+instructions: '1. Create directory `$HOME/lib-test`.
+2. Create reusable shell library `$HOME/lib-test/utils.sh` with:
+   - `log_info`: prints `[INFO] <message>`
+   - `log_error`: prints `[ERROR] <message>` to stderr
+   - `is_file_empty`: accepts filename `$1`, returns 0 if file is empty or does not exist, returns 1 if file has size > 0.
+3. Create `$HOME/lib-test/test_runner.sh` sourcing `utils.sh` and exercising these functions.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-inspect-unit-configuration
+title: Inspect Unit Configuration
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/unit-test
+  - rm -f $HOME/unit-test/directives.txt
+instructions: '1. Create directory `$HOME/unit-test`.
+2. Inspect unit file directives of systemd service using `systemctl cat` or `systemd-analyze cat-config`.
+3. Output extracted line `EXEC_START_FOUND` into `$HOME/unit-test/directives.txt`.'
+version: 1

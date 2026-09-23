@@ -1,0 +1,15 @@
+id: lnx-configure-production-service
+title: Configure Production systemd Service
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/prod-service-test
+  - rm -f $HOME/prod-service-test/prod-api.service
+instructions: '1. Create directory `$HOME/prod-service-test`.
+2. Create production unit file `$HOME/prod-service-test/prod-api.service` featuring:
+   - `EnvironmentFile=/etc/default/prod-api`
+   - `Restart=always`
+   - `LimitNOFILE=65536`
+   - `NoNewPrivileges=true`
+   - `WantedBy=multi-user.target`'
+version: 1

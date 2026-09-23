@@ -1,0 +1,12 @@
+id: lnx-investigate-failed-boot
+title: Investigate Failed Boot Configuration
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/boot-fail-test
+  - echo 'UUID=ffff-ffff /data ext4 defaults 0 2' > $HOME/boot-fail-test/fstab.broken
+  - rm -f $HOME/boot-fail-test/diag_report.txt
+instructions: '1. Create directory `$HOME/boot-fail-test`.
+2. Inspect sample broken `/etc/fstab` entries in `$HOME/boot-fail-test/fstab.broken` (referencing non-existent UUID `UUID=ffff-ffff`).
+3. Write diagnosis line `BOOT_FAIL_REASON: invalid_fstab_uuid` to `$HOME/boot-fail-test/diag_report.txt`.'
+version: 1

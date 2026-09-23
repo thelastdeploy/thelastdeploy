@@ -1,0 +1,11 @@
+id: lnx-verify-system-hardening
+title: Verify System Hardening and Compliance
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/audit-test
+  - rm -f $HOME/audit-test/compliance.log $HOME/audit-test/check_compliance.sh
+instructions: '1. Create directory `$HOME/audit-test`.
+2. Write automated security verification script `$HOME/audit-test/check_compliance.sh`.
+3. Write compliance verification summary `SYSTEM_HARDENING_VERIFIED: PASS` into `$HOME/audit-test/compliance.log`.'
+version: 1

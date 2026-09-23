@@ -1,0 +1,15 @@
+id: lnx-manage-command-substitution
+title: Manage Advanced Process Substitution
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/proc-sub-test
+  - echo -e 'nginx\nredis\nmysql' > $HOME/proc-sub-test/old_list.txt
+  - echo -e 'nginx\nredis\npostgresql' > $HOME/proc-sub-test/new_list.txt
+  - rm -f $HOME/proc-sub-test/diff_report.txt
+instructions: '1. Create directory `$HOME/proc-sub-test`.
+2. Seed two files:
+   - `old_list.txt` containing `nginx`, `redis`, `mysql`
+   - `new_list.txt` containing `nginx`, `redis`, `postgresql`
+3. Use process substitution with `comm` or `grep` to compare sorted inputs without intermediate temporary files, and write the newly added service (`postgresql`) into `$HOME/proc-sub-test/diff_report.txt`.'
+version: 1

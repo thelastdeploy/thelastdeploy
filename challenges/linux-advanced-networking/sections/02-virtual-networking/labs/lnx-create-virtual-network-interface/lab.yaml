@@ -1,0 +1,11 @@
+id: lnx-create-virtual-network-interface
+title: Create Virtual Network Interfaces
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/vnet-test
+  - rm -f $HOME/vnet-test/vif_summary.txt
+instructions: '1. Create directory `$HOME/vnet-test`.
+2. Document virtual interface creation syntax (`ip link add dummy0 type dummy`).
+3. Write output `DUMMY_INTERFACE_VERIFIED` to `$HOME/vnet-test/vif_summary.txt`.'
+version: 1

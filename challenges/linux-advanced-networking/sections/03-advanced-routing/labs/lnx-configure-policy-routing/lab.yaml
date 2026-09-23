@@ -1,0 +1,11 @@
+id: lnx-configure-policy-routing
+title: Configure Policy Routing Rules
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/route-test
+  - rm -f $HOME/route-test/rules_summary.txt
+instructions: '1. Create directory `$HOME/route-test`.
+2. Inspect existing routing rules using `ip rule show`.
+3. Output rule summary line `POLICY_ROUTING_INSPECTED` into `$HOME/route-test/rules_summary.txt`.'
+version: 1

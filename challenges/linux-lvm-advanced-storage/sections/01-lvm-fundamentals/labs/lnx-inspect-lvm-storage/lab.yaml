@@ -1,0 +1,11 @@
+id: lnx-inspect-lvm-storage
+title: Inspect LVM Storage Allocation
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/lvm-test
+  - rm -f $HOME/lvm-test/storage_summary.txt
+instructions: '1. Create directory `$HOME/lvm-test`.
+2. Run LVM inspection tools (`pvs`, `vgs`, `lvs` or display commands).
+3. Write output summary line `LVM_STORAGE_INSPECTED` into `$HOME/lvm-test/storage_summary.txt`.'
+version: 1

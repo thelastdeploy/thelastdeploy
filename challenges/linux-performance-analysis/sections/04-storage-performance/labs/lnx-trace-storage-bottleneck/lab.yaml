@@ -1,0 +1,11 @@
+id: lnx-trace-storage-bottleneck
+title: Trace Process Storage I/O Bottleneck
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/io-perf-test
+  - rm -f $HOME/io-perf-test/io_pid.txt
+instructions: '1. Create directory `$HOME/io-perf-test`.
+2. Trace process disk read/write throughput using `pidstat -d`.
+3. Write output line `OFFENDING_IO_PROCESS_TRACED` to `$HOME/io-perf-test/io_pid.txt`.'
+version: 1

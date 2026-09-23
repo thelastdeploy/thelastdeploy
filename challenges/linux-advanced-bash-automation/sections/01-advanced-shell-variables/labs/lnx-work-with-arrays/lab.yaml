@@ -1,0 +1,11 @@
+id: lnx-work-with-arrays
+title: Work with Arrays in Bash
+xp: 25
+setup:
+  seed_commands:
+  - mkdir -p $HOME/array-test
+  - rm -f $HOME/array-test/servers.txt $HOME/array-test/config.txt
+instructions: '1. Create `$HOME/array-test/` directory.
+2. Write a script or bash commands that build an indexed array of servers `('web-01' 'db-01' 'app-01')`, sort them alphabetically, and output each server on a new line to `$HOME/array-test/servers.txt`.
+3. Build an associative array with keys `port=8080` and `env=production`, and write each key=value pair to `$HOME/array-test/config.txt`.'
+version: 1

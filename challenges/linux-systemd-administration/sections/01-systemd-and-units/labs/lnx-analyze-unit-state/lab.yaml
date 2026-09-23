@@ -1,0 +1,11 @@
+id: lnx-analyze-unit-state
+title: Analyze Unit State
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/systemd-test
+  - rm -f $HOME/systemd-test/failed_units.txt
+instructions: '1. Create directory `$HOME/systemd-test`.
+2. Run systemctl to list units in a failed state.
+3. Output the list of failed units (or line `FAILED_UNITS_CHECKED`) to `$HOME/systemd-test/failed_units.txt`.'
+version: 1

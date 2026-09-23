@@ -1,0 +1,11 @@
+id: lnx-analyze-memory-pressure
+title: Analyze Memory Pressure and Page Cache
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mem-perf-test
+  - rm -f $HOME/mem-perf-test/mem_report.txt
+instructions: '1. Create directory `$HOME/mem-perf-test`.
+2. Inspect available RAM and page cache allocations (`free -m` and `/proc/meminfo`).
+3. Write summary line `MEMORY_PRESSURE_ANALYZED` to `$HOME/mem-perf-test/mem_report.txt`.'
+version: 1

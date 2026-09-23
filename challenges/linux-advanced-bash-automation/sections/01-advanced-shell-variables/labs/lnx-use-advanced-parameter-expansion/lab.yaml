@@ -1,0 +1,14 @@
+id: lnx-use-advanced-parameter-expansion
+title: Use Advanced Parameter Expansion
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/param-test
+  - rm -f $HOME/param-test/processed.txt
+instructions: '1. Create directory `$HOME/param-test`.
+2. Given the path variable `FILEPATH="/var/log/app/service.log"` and string `MODE="dev_environment"`:
+   - Line 1: Change file extension `.log` to `.bak` using parameter expansion `${FILEPATH%.log}.bak`.
+   - Line 2: Extract filename `service.log` using `${FILEPATH##*/}`.
+   - Line 3: Convert `MODE` to uppercase `DEV_ENVIRONMENT` using `${MODE^^}`.
+3. Write these 3 lines into `$HOME/param-test/processed.txt`.'
+version: 1

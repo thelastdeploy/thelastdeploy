@@ -1,0 +1,11 @@
+id: lnx-inspect-running-kernel
+title: Inspect Running Kernel and Parameters
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/kernel-test
+  - rm -f $HOME/kernel-test/cmdline_info.txt
+instructions: '1. Create directory `$HOME/kernel-test`.
+2. Inspect `/proc/cmdline` and kernel version (`uname -r`).
+3. Write output summary line `KERNEL_CMDLINE_INSPECTED` to `$HOME/kernel-test/cmdline_info.txt`.'
+version: 1

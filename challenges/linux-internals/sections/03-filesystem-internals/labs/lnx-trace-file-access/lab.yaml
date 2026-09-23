@@ -1,0 +1,11 @@
+id: lnx-trace-file-access
+title: Trace File Access and Open File Table
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/vfs-test
+  - rm -f $HOME/vfs-test/file_locks.txt
+instructions: '1. Create directory `$HOME/vfs-test`.
+2. Inspect open file tables (`lsof`) and file locks (`/proc/locks`).
+3. Write output line `FILE_LOCKS_TRACED` into `$HOME/vfs-test/file_locks.txt`.'
+version: 1

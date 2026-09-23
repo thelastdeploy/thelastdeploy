@@ -1,0 +1,11 @@
+id: lnx-trace-process-lifecycle
+title: Trace Process Execution Lifecycle
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/proc-internals-test
+  - rm -f $HOME/proc-internals-test/lifecycle.txt
+instructions: '1. Create directory `$HOME/proc-internals-test`.
+2. Trace process parent-child hierarchy and lifecycle states (`pstree` or `ps -ef`).
+3. Write summary line `PROCESS_LIFECYCLE_TRACED` to `$HOME/proc-internals-test/lifecycle.txt`.'
+version: 1

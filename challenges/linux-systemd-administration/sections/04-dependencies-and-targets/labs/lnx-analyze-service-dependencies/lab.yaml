@@ -1,0 +1,11 @@
+id: lnx-analyze-service-dependencies
+title: Analyze Service Dependencies
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/target-test
+  - rm -f $HOME/target-test/deps.txt
+instructions: '1. Create directory `$HOME/target-test`.
+2. Inspect dependencies of `multi-user.target` using `systemctl list-dependencies`.
+3. Output summary line `DEPENDENCIES_ANALYZED` to `$HOME/target-test/deps.txt`.'
+version: 1

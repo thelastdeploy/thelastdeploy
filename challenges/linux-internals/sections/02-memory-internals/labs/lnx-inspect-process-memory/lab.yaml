@@ -1,0 +1,11 @@
+id: lnx-inspect-process-memory
+title: Inspect Process Memory Layout
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mem-internals-test
+  - rm -f $HOME/mem-internals-test/memory_layout.txt
+instructions: '1. Create directory `$HOME/mem-internals-test`.
+2. Inspect process memory layout using `/proc/self/maps` or `pmap -x $$`.
+3. Write output line `PROCESS_MEMORY_LAYOUT_INSPECTED` to `$HOME/mem-internals-test/memory_layout.txt`.'
+version: 1

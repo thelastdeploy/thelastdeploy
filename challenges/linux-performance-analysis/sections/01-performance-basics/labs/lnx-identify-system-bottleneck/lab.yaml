@@ -1,0 +1,11 @@
+id: lnx-identify-system-bottleneck
+title: Identify System Resource Bottlenecks
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/perf-test
+  - rm -f $HOME/perf-test/bottleneck.txt
+instructions: '1. Create directory `$HOME/perf-test`.
+2. Analyze system load average and resource utilization metrics to identify primary constrained subsystem.
+3. Write output line `BOTTLENECK_IDENTIFIED: CPU` to `$HOME/perf-test/bottleneck.txt`.'
+version: 1

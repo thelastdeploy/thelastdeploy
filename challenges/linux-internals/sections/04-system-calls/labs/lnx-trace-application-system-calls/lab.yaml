@@ -1,0 +1,11 @@
+id: lnx-trace-application-system-calls
+title: Trace Application System Calls with strace
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/syscall-test
+  - rm -f $HOME/syscall-test/strace_summary.txt
+instructions: '1. Create directory `$HOME/syscall-test`.
+2. Trace process system calls using `strace -c`.
+3. Write output summary line `STRACE_SUMMARY_VERIFIED` to `$HOME/syscall-test/strace_summary.txt`.'
+version: 1

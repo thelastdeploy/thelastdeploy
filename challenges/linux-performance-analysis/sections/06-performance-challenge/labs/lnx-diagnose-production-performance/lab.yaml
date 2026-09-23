@@ -1,0 +1,11 @@
+id: lnx-diagnose-production-performance
+title: Diagnose Production Performance Degradation Capstone
+xp: 75
+setup:
+  seed_commands:
+  - mkdir -p $HOME/perf-challenge
+  - rm -f $HOME/perf-challenge/root_cause.log
+instructions: '1. Create directory `$HOME/perf-challenge`.
+2. Follow the 4-step performance investigation methodology to diagnose system performance degradation.
+3. Write proof line `PRODUCTION_PERFORMANCE_DIAGNOSED: ROOT_CAUSE_PROVED` into `$HOME/perf-challenge/root_cause.log`.'
+version: 1

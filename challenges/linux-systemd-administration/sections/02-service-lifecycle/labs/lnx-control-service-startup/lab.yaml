@@ -1,0 +1,11 @@
+id: lnx-control-service-startup
+title: Control Service Boot Startup
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/service-test
+  - rm -f $HOME/service-test/boot_state.txt
+instructions: '1. Create directory `$HOME/service-test`.
+2. Check if unit `systemd-journald.service` or `cron.service` is enabled at boot using `systemctl is-enabled`.
+3. Write output `ENABLE_STATE: <enabled/static/disabled>` to `$HOME/service-test/boot_state.txt`.'
+version: 1

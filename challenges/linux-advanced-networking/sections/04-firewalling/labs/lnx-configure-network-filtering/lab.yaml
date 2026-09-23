@@ -1,0 +1,11 @@
+id: lnx-configure-network-filtering
+title: Configure Network Traffic Filtering
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/fw-test
+  - rm -f $HOME/fw-test/filter_summary.txt
+instructions: '1. Create directory `$HOME/fw-test`.
+2. Write firewall rule configuration script `$HOME/fw-test/filter_rules.sh` demonstrating TCP port 80/443 ALLOW rule definitions.
+3. Write summary `FILTERING_RULES_CONFIGURED` to `$HOME/fw-test/filter_summary.txt`.'
+version: 1

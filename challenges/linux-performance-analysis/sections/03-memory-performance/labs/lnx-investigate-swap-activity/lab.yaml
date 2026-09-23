@@ -1,0 +1,11 @@
+id: lnx-investigate-swap-activity
+title: Investigate Swap Activity and Page Faults
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mem-perf-test
+  - rm -f $HOME/mem-perf-test/swap_report.txt
+instructions: '1. Create directory `$HOME/mem-perf-test`.
+2. Inspect swap-in (`si`) and swap-out (`so`) statistics using `vmstat 1`.
+3. Write output summary line `SWAP_ACTIVITY_INVESTIGATED` to `$HOME/mem-perf-test/swap_report.txt`.'
+version: 1

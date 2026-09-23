@@ -1,0 +1,11 @@
+id: lnx-recover-broken-boot-configuration
+title: Recover Broken Boot Configuration
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/boot-fail-test
+  - echo 'UUID=ffff-ffff /data ext4 defaults 0 2' > $HOME/boot-fail-test/fstab.broken
+  - rm -f $HOME/boot-fail-test/fstab.fixed
+instructions: '1. Inspect `$HOME/boot-fail-test/fstab.broken`.
+2. Add `nofail` option or fix invalid UUID entry, writing repaired configuration to `$HOME/boot-fail-test/fstab.fixed`.'
+version: 1

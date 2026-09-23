@@ -1,0 +1,11 @@
+id: lnx-manage-volume-group
+title: Manage Volume Groups
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/pv-test
+  - rm -f $HOME/pv-test/vg_info.txt
+instructions: '1. Create directory `$HOME/pv-test`.
+2. Document `vgcreate` and `vgextend` syntax.
+3. Write summary `VG_MANAGEMENT_VERIFIED` to `$HOME/pv-test/vg_info.txt`.'
+version: 1

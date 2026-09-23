@@ -1,0 +1,11 @@
+id: lnx-manage-service-lifecycle
+title: Manage Service Lifecycle
+xp: 25
+setup:
+  seed_commands:
+  - mkdir -p $HOME/service-test
+  - rm -f $HOME/service-test/lifecycle_summary.txt
+instructions: '1. Create directory `$HOME/service-test`.
+2. Inspect status of active system service `cron` (or `systemd-journald`).
+3. Write active status output line `SERVICE_STATUS: active` into `$HOME/service-test/lifecycle_summary.txt`.'
+version: 1

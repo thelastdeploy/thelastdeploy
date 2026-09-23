@@ -1,0 +1,11 @@
+id: lnx-create-network-namespace
+title: Create and Inspect Network Namespace
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/netns-test
+  - rm -f $HOME/netns-test/ns_list.txt
+instructions: '1. Create directory `$HOME/netns-test`.
+2. Write commands to inspect existing network namespaces using `ip netns list`.
+3. Write namespace list output line `NETNS_INSPECTED` to `$HOME/netns-test/ns_list.txt`.'
+version: 1

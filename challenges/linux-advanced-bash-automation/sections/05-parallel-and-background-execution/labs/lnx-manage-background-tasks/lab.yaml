@@ -1,0 +1,15 @@
+id: lnx-manage-background-tasks
+title: Manage Background Tasks
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/bg-test
+  - rm -f $HOME/bg-test/bg_runner.sh $HOME/bg-test/jobs_complete.txt $HOME/bg-test/t*.txt
+instructions: '1. Create directory `$HOME/bg-test`.
+2. Write executable script `$HOME/bg-test/bg_runner.sh`.
+3. Script requirements:
+   - Launch 3 background tasks writing `task1`, `task2`, `task3` into `$HOME/bg-test/t1.txt`, `t2.txt`, `t3.txt`.
+   - Call `wait` to block until all tasks complete.
+   - Write `ALL_JOBS_DONE` into `$HOME/bg-test/jobs_complete.txt` after `wait` returns.
+4. Execute `$HOME/bg-test/bg_runner.sh`.'
+version: 1

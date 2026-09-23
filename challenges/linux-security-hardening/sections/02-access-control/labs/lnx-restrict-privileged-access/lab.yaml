@@ -1,0 +1,11 @@
+id: lnx-restrict-privileged-access
+title: Restrict Privileged Access with sudo
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/access-test
+  - rm -f $HOME/access-test/sudo_summary.txt
+instructions: '1. Create directory `$HOME/access-test`.
+2. Document secure sudo configuration practices without wildcard NOPASSWD grants.
+3. Write output line `SUDO_PRIVILEGES_RESTRICTED` to `$HOME/access-test/sudo_summary.txt`.'
+version: 1

@@ -1,0 +1,12 @@
+id: lnx-diagnose-failed-service
+title: Diagnose Failed Service
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/fail-test
+  - echo -e '[Unit]\nDescription=Broken Service\n[Service]\nExecStart=/bin/missing_binary' > $HOME/fail-test/broken.service
+  - rm -f $HOME/fail-test/diag_report.txt
+instructions: '1. Create directory `$HOME/fail-test`.
+2. Inspect sample broken service unit `$HOME/fail-test/broken.service` (which references non-existent path `/bin/missing_binary`).
+3. Write diagnosis line `REASON: missing_executable` into `$HOME/fail-test/diag_report.txt`.'
+version: 1

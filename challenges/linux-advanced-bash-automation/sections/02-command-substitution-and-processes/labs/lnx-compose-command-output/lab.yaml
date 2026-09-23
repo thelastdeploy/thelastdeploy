@@ -1,0 +1,13 @@
+id: lnx-compose-command-output
+title: Compose Command Output in Scripts
+xp: 25
+setup:
+  seed_commands:
+  - mkdir -p $HOME/sub-test
+  - rm -f $HOME/sub-test/system_info.txt
+instructions: '1. Create directory `$HOME/sub-test`.
+2. Write a script or bash commands that capture system details into `$HOME/sub-test/system_info.txt`:
+   - `ARCH: <uname -m>`
+   - `USER: <whoami>`
+   - `DATE: <date +%Y-%m-%d>`'
+version: 1

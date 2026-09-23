@@ -1,0 +1,15 @@
+id: lnx-trace-linux-boot-process
+title: Trace Linux Boot Process Stages
+xp: 25
+setup:
+  seed_commands:
+  - mkdir -p $HOME/boot-test
+  - rm -f $HOME/boot-test/boot_stages.txt
+instructions: '1. Create directory `$HOME/boot-test`.
+2. Write the 5 Linux boot stages in order into `$HOME/boot-test/boot_stages.txt`:
+   - Line 1: `1. FIRMWARE`
+   - Line 2: `2. BOOTLOADER`
+   - Line 3: `3. KERNEL`
+   - Line 4: `4. INITRAMFS`
+   - Line 5: `5. SYSTEMD`'
+version: 1

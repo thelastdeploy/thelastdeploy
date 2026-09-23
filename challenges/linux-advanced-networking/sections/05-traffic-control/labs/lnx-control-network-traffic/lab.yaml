@@ -1,0 +1,11 @@
+id: lnx-control-network-traffic
+title: Control Network Traffic Shaping with tc
+xp: 45
+setup:
+  seed_commands:
+  - mkdir -p $HOME/tc-test
+  - rm -f $HOME/tc-test/tc_summary.txt
+instructions: '1. Create directory `$HOME/tc-test`.
+2. Inspect traffic control queuing disciplines using `tc qdisc show`.
+3. Write output summary `TC_QDISC_INSPECTED` to `$HOME/tc-test/tc_summary.txt`.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-debug-multi-route-network
+title: Debug Multi-Route Network Configuration
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/route-test
+  - rm -f $HOME/route-test/route_debug.txt
+instructions: '1. Create directory `$HOME/route-test`.
+2. Perform route lookup test using `ip route get 127.0.0.1`.
+3. Write output line `ROUTE_LOOKUP_SUCCESS: 127.0.0.1` into `$HOME/route-test/route_debug.txt`.'
+version: 1

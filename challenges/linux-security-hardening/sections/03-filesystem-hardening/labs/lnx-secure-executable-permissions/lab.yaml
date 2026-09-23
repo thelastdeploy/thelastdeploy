@@ -1,0 +1,11 @@
+id: lnx-secure-executable-permissions
+title: Secure SUID/SGID Executable Permissions
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/fs-sec-test
+  - rm -f $HOME/fs-sec-test/suid_summary.txt
+instructions: '1. Create directory `$HOME/fs-sec-test`.
+2. Audit SUID/SGID binaries and document removal of unauthorized SUID bits (`chmod u-s`).
+3. Write output summary `SUID_PERMISSIONS_AUDITED` to `$HOME/fs-sec-test/suid_summary.txt`.'
+version: 1

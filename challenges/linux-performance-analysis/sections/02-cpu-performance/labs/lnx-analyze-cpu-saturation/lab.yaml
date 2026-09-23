@@ -1,0 +1,11 @@
+id: lnx-analyze-cpu-saturation
+title: Analyze CPU Saturation and Run Queue
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/cpu-perf-test
+  - rm -f $HOME/cpu-perf-test/cpu_analysis.txt
+instructions: '1. Create directory `$HOME/cpu-perf-test`.
+2. Analyze CPU run-queue length (`vmstat 1`) and per-core CPU breakdown (`mpstat -P ALL`).
+3. Write output line `CPU_SATURATION_ANALYZED` to `$HOME/cpu-perf-test/cpu_analysis.txt`.'
+version: 1

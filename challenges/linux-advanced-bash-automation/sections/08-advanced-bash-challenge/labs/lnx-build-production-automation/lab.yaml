@@ -1,0 +1,16 @@
+id: lnx-build-production-automation
+title: Build Production Automation Tool Capstone
+xp: 70
+setup:
+  seed_commands:
+  - mkdir -p $HOME/bash-challenge
+  - rm -f $HOME/bash-challenge/production_tool.sh $HOME/bash-challenge/status.log $HOME/bash-challenge/temp.lock $HOME/bash-challenge/app.env
+instructions: '1. Create directory `$HOME/bash-challenge/`.
+2. Write executable script `$HOME/bash-challenge/production_tool.sh` that implements all robust production practices:
+   - Set `set -euo pipefail`.
+   - Acquire lock file `$HOME/bash-challenge/temp.lock` and set `trap` on `EXIT` to remove `$HOME/bash-challenge/temp.lock`.
+   - Define helper functions `log_info` and `log_error`.
+   - Ensure idempotent file creation of `$HOME/bash-challenge/app.env` with `ENV=production` and `VERSION=2.0`.
+   - Write line `PRODUCTION_AUTOMATION_COMPLETE` to `$HOME/bash-challenge/status.log`.
+3. Execute `$HOME/bash-challenge/production_tool.sh`.'
+version: 1

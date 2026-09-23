@@ -1,0 +1,15 @@
+id: lnx-identify-lvm-components
+title: Identify LVM Components and Layer Hierarchy
+xp: 25
+setup:
+  seed_commands:
+  - mkdir -p $HOME/lvm-test
+  - rm -f $HOME/lvm-test/lvm_hierarchy.txt
+instructions: '1. Create directory `$HOME/lvm-test`.
+2. Write the 5 LVM hierarchy layers in order into `$HOME/lvm-test/lvm_hierarchy.txt`:
+   - Line 1: `1. Physical Volume (PV)`
+   - Line 2: `2. Volume Group (VG)`
+   - Line 3: `3. Logical Volume (LV)`
+   - Line 4: `4. Filesystem`
+   - Line 5: `5. Mount Point`'
+version: 1

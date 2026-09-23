@@ -1,0 +1,18 @@
+id: lnx-automate-system-maintenance
+title: Automate System Maintenance Task
+xp: 50
+setup:
+  seed_commands:
+  - mkdir -p $HOME/maint-test/logs
+  - echo 'old log 1' > $HOME/maint-test/logs/old1.log
+  - echo 'old log 2' > $HOME/maint-test/logs/old2.log
+  - echo 'old log 3' > $HOME/maint-test/logs/old3.log
+  - echo 'active log' > $HOME/maint-test/logs/active.log
+  - rm -f $HOME/maint-test/maint.sh $HOME/maint-test/maint_summary.log
+instructions: '1. Create directory `$HOME/maint-test/logs`.
+2. Seed 3 old log files (`old1.log`, `old2.log`, `old3.log`) and 1 active log (`active.log`).
+3. Write executable script `$HOME/maint-test/maint.sh` that:
+   - Compresses all `old*.log` files into `.gz` format (`gzip`).
+   - Appends `MAINTENANCE_SUCCESS: 3 logs compressed` to `$HOME/maint-test/maint_summary.log`.
+4. Execute `$HOME/maint-test/maint.sh`.'
+version: 1

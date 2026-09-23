@@ -1,0 +1,11 @@
+id: lnx-establish-performance-baseline
+title: Establish System Performance Baseline
+xp: 25
+setup:
+  seed_commands:
+  - mkdir -p $HOME/perf-test
+  - rm -f $HOME/perf-test/baseline.txt
+instructions: '1. Create directory `$HOME/perf-test`.
+2. Measure baseline CPU, memory, and disk metrics (`uptime`, `free -h`, `df -h`).
+3. Write baseline output summary line `PERFORMANCE_BASELINE_ESTABLISHED` to `$HOME/perf-test/baseline.txt`.'
+version: 1

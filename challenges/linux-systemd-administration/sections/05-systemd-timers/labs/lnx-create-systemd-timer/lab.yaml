@@ -1,0 +1,11 @@
+id: lnx-create-systemd-timer
+title: Create a systemd Timer Unit
+xp: 35
+setup:
+  seed_commands:
+  - mkdir -p $HOME/timer-test
+  - rm -f $HOME/timer-test/maint.service $HOME/timer-test/maint.timer
+instructions: '1. Create directory `$HOME/timer-test`.
+2. Create service unit `$HOME/timer-test/maint.service` with `[Unit]`, `[Service]` (`Type=oneshot`, `ExecStart=/bin/echo Maint`).
+3. Create matching timer unit `$HOME/timer-test/maint.timer` with `[Unit]`, `[Timer]` (`OnCalendar=daily`, `Persistent=true`), `[Install]` (`WantedBy=timers.target`).'
+version: 1

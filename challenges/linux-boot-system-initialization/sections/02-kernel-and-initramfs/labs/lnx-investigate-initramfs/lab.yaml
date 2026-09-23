@@ -1,0 +1,11 @@
+id: lnx-investigate-initramfs
+title: Investigate initramfs Image Contents
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/kernel-test
+  - rm -f $HOME/kernel-test/initramfs_summary.txt
+instructions: '1. Create directory `$HOME/kernel-test`.
+2. Inspect initramfs image structure in `/boot/` using `lsinitramfs` or `ls -l /boot/initrd*`.
+3. Write output summary `INITRAMFS_INSPECTED` to `$HOME/kernel-test/initramfs_summary.txt`.'
+version: 1

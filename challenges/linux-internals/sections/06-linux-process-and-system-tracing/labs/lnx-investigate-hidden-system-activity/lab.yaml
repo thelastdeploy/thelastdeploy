@@ -1,0 +1,11 @@
+id: lnx-investigate-hidden-system-activity
+title: Investigate Hidden System and File Activity
+xp: 55
+setup:
+  seed_commands:
+  - mkdir -p $HOME/trace-test
+  - rm -f $HOME/trace-test/hidden_activity.txt
+instructions: '1. Create directory `$HOME/trace-test`.
+2. Investigate deleted files held open by processes (`lsof +L1` or `/proc/*/fd/`).
+3. Write output line `HIDDEN_ACTIVITY_INVESTIGATED` to `$HOME/trace-test/hidden_activity.txt`.'
+version: 1

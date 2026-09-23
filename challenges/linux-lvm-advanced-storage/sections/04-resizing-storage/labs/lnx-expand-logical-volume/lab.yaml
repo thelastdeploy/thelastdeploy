@@ -1,0 +1,11 @@
+id: lnx-expand-logical-volume
+title: Expand Logical Volume and Filesystem
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/resize-test
+  - rm -f $HOME/resize-test/expand_summary.txt
+instructions: '1. Create directory `$HOME/resize-test`.
+2. Document `lvextend -r` syntax for online storage expansion.
+3. Write output summary line `LV_EXPAND_SYNTAX_VERIFIED` to `$HOME/resize-test/expand_summary.txt`.'
+version: 1

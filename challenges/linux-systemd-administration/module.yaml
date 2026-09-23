@@ -1,0 +1,32 @@
+id: linux-systemd-administration
+title: "systemd Administration"
+description: "Master Linux systemd init system and unit management: systemctl status & unit types, service lifecycle & boot state, custom unit file creation ([Unit], [Service], [Install]), dependency management (Wants, Requires, After, Before), systemd timers & event activation, service crash & failure diagnosis, production service hardening, and multi-service stack recovery."
+topic: linux
+difficulty: advanced
+estimated_minutes: 90
+tags:
+  - systemd
+  - systemctl
+  - services
+  - init
+  - linux
+  - administration
+sections:
+  - id: 01-systemd-and-units
+    order: 1
+  - id: 02-service-lifecycle
+    order: 2
+  - id: 03-unit-files
+    order: 3
+  - id: 04-dependencies-and-targets
+    order: 4
+  - id: 05-systemd-timers
+    order: 5
+  - id: 06-service-failure-analysis
+    order: 6
+  - id: 07-systemd-administration
+    order: 7
+  - id: 08-systemd-challenge
+    order: 8
+verified: true
+version: 1

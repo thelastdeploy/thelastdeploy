@@ -1,0 +1,10 @@
+id: lnx-manage-kernel-boot-options
+title: Manage Kernel Boot Parameters
+xp: 40
+setup:
+  seed_commands:
+  - mkdir -p $HOME/grub-test
+  - rm -f $HOME/grub-test/kernel_flags.txt
+instructions: '1. Create directory `$HOME/grub-test`.
+2. Create file `$HOME/grub-test/kernel_flags.txt` containing custom kernel flags configuration line `GRUB_CMDLINE_LINUX="quiet splash systemd.unit=multi-user.target"`.'
+version: 1

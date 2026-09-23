@@ -1,0 +1,11 @@
+id: lnx-create-logical-volume
+title: Create Logical Volumes
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/lv-test
+  - rm -f $HOME/lv-test/lv_info.txt
+instructions: '1. Create directory `$HOME/lv-test`.
+2. Document `lvcreate` syntax (`lvcreate -L 2G -n lv_app vg_data`).
+3. Write output summary `LV_CREATE_SYNTAX_VERIFIED` to `$HOME/lv-test/lv_info.txt`.'
+version: 1

@@ -1,0 +1,11 @@
+id: lnx-recover-lvm-storage
+title: Recover LVM Storage State
+xp: 60
+setup:
+  seed_commands:
+  - mkdir -p $HOME/lvm-diag
+  - rm -f $HOME/lvm-diag/recovery_summary.txt
+instructions: '1. Create directory `$HOME/lvm-diag`.
+2. Document `vgcfgrestore` metadata recovery syntax.
+3. Write output summary `VGCFGRESTORE_RECOVERY_VERIFIED` into `$HOME/lvm-diag/recovery_summary.txt`.'
+version: 1

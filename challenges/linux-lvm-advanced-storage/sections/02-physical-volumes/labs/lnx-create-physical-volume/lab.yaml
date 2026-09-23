@@ -1,0 +1,11 @@
+id: lnx-create-physical-volume
+title: Create and Initialize Physical Volume
+xp: 30
+setup:
+  seed_commands:
+  - mkdir -p $HOME/pv-test
+  - rm -f $HOME/pv-test/pv_info.txt
+instructions: '1. Create directory `$HOME/pv-test`.
+2. Document `pvcreate` command syntax for block device initialization.
+3. Write output summary line `PV_CREATE_COMMAND_VERIFIED` to `$HOME/pv-test/pv_info.txt`.'
+version: 1
