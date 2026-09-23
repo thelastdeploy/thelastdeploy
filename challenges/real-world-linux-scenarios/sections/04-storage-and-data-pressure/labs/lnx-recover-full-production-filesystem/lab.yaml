@@ -1,0 +1,4 @@
+id: lnx-recover-full-production-filesystem
+title: "Recover Full Production Filesystem"
+xp: 55
+description: "Diagnose and resolve a 100% full filesystem caused by unlinked open file descriptors holding space."

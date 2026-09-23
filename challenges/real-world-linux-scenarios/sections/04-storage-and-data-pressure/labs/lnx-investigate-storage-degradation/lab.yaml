@@ -1,0 +1,4 @@
+id: lnx-investigate-storage-degradation
+title: "Investigate Storage Performance Degradation"
+xp: 70
+description: "Identify I/O latency spikes caused by severe inode table contention and journal writeback bottlenecks."

@@ -1,0 +1,4 @@
+id: lnx-recover-unavailable-application
+title: "Recover Unavailable Application"
+xp: 55
+description: "Triage a completely crashed web application stack and resolve socket path permission errors."

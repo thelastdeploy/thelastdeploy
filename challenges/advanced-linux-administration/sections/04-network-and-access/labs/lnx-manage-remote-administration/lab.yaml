@@ -1,0 +1,4 @@
+id: lnx-manage-remote-administration
+title: "Manage Remote Administration"
+xp: 55
+description: "Harden OpenSSH daemon configuration, restrict sudo privilege escalation, and enable audit logging."

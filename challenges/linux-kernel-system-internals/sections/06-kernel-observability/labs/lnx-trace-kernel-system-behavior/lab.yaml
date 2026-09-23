@@ -1,0 +1,4 @@
+id: lnx-trace-kernel-system-behavior
+title: "Trace Kernel System Behavior"
+xp: 65
+description: "Use ftrace and tracefs to observe kernel function execution graph and tracepoint events."

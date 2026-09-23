@@ -1,0 +1,4 @@
+id: lnx-optimize-linux-workload
+title: "Optimize Linux Workload"
+xp: 85
+description: "Optimize a high-concurrency production workload through CPU affinity, dirty writeback tuning, and blk-mq queue scheduler selection."

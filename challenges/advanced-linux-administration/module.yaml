@@ -1,0 +1,32 @@
+id: advanced-linux-administration
+title: "Advanced Linux Administration"
+description: "Master senior Linux system administration by integrating multi-subsystem operations: full system auditing & baselining, enterprise systemd service stack dependency architecture, production storage & LVM volume capacity management, network security & hardened SSH administration, automated maintenance workflows & scheduled operations, operational reliability & health check automation, and a comprehensive 125 XP production server takeover & operationalization capstone challenge."
+topic: linux
+difficulty: expert
+estimated_minutes: 150
+tags:
+  - administration
+  - systemd
+  - lvm
+  - security
+  - automation
+  - reliability
+  - production
+  - expert
+sections:
+  - id: 01-system-administration
+    order: 1
+  - id: 02-service-management
+    order: 2
+  - id: 03-storage-and-capacity
+    order: 3
+  - id: 04-network-and-access
+    order: 4
+  - id: 05-automation-and-maintenance
+    order: 5
+  - id: 06-operational-reliability
+    order: 6
+  - id: 07-administration-challenge
+    order: 7
+verified: true
+version: 1

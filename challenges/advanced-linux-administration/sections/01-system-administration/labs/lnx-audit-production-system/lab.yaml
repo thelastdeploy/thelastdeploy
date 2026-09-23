@@ -1,0 +1,4 @@
+id: lnx-audit-production-system
+title: "Audit Production System"
+xp: 40
+description: "Perform comprehensive inventory and vulnerability audit of an inherited Linux server."

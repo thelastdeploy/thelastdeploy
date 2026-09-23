@@ -1,0 +1,33 @@
+id: real-world-linux-scenarios
+title: "Real-World Linux Scenarios"
+description: "Master multi-layered real-world Linux operational incidents and complex troubleshooting scenarios: web application outage recovery, intermittent request failure root-cause analysis, severe CPU/memory resource exhaustion triage, unexplained load average investigation, network connectivity & firewall breakages, storage I/O degradation & hidden unlinked file inode leaks, compromised service containment & security incident recovery, cross-subsystem cascading failure correlation, and a 130 XP production environment recovery capstone challenge."
+topic: linux
+difficulty: expert
+estimated_minutes: 180
+tags:
+  - real-world
+  - troubleshooting
+  - incidents
+  - performance
+  - storage
+  - network
+  - security
+  - production
+  - expert
+sections:
+  - id: 01-application-outage
+    order: 1
+  - id: 02-server-resource-crisis
+    order: 2
+  - id: 03-network-and-service-failure
+    order: 3
+  - id: 04-storage-and-data-pressure
+    order: 4
+  - id: 05-security-and-access-incident
+    order: 5
+  - id: 06-complex-system-failure
+    order: 6
+  - id: 07-real-world-operations-challenge
+    order: 7
+verified: true
+version: 1

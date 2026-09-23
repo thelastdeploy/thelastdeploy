@@ -1,0 +1,33 @@
+id: linux-kernel-system-internals
+title: "Kernel & System Internals"
+description: "Explore the Linux kernel subsystem interfaces from userspace: procfs, sysfs, process scheduler internals (CFS/EEVDF, task_struct, state transitions), virtual memory management (page tables, page faults, anonymous vs file-backed mappings, slab allocator), VFS (Virtual File System) abstraction & inode operations, kernel modules & device drivers (sysfs attributes, character/block interfaces), kernel tracing & observability (ftrace, tracepoints, perf, kprobes), and deep kernel-level failure root-cause analysis."
+topic: linux
+difficulty: expert
+estimated_minutes: 135
+tags:
+  - kernel
+  - internals
+  - procfs
+  - sysfs
+  - vfs
+  - scheduler
+  - memory
+  - ftrace
+  - expert
+sections:
+  - id: 01-kernel-interface
+    order: 1
+  - id: 02-process-and-scheduling
+    order: 2
+  - id: 03-memory-management
+    order: 3
+  - id: 04-filesystem-and-vfs
+    order: 4
+  - id: 05-kernel-modules-and-devices
+    order: 5
+  - id: 06-kernel-observability
+    order: 6
+  - id: 07-kernel-investigation-challenge
+    order: 7
+verified: true
+version: 1

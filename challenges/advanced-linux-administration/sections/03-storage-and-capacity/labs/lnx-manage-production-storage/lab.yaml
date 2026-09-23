@@ -1,0 +1,4 @@
+id: lnx-manage-production-storage
+title: "Manage Production Storage"
+xp: 55
+description: "Perform live online LVM logical volume expansion and filesystem resize under active workload."

@@ -1,0 +1,35 @@
+id: linux-mastery-challenges
+title: "Linux Mastery Challenges"
+description: "Demonstrate track-wide Linux mastery across all operational domains: core foundation & file system management, advanced administration & storage/network orchestration, production automation & scripting, enterprise security hardening & access control, performance engineering & CPU/memory/IO tuning, incident response & forensic timeline correlation, kernel/system internals investigation, and the 150 XP grand capstone Linux mastery challenge."
+topic: linux
+difficulty: expert
+estimated_minutes: 240
+tags:
+  - mastery
+  - capstone
+  - administration
+  - automation
+  - security
+  - performance
+  - internals
+  - troubleshooting
+  - expert
+sections:
+  - id: 01-foundation-mastery
+    order: 1
+  - id: 02-administration-mastery
+    order: 2
+  - id: 03-automation-mastery
+    order: 3
+  - id: 04-security-mastery
+    order: 4
+  - id: 05-performance-mastery
+    order: 5
+  - id: 06-incident-mastery
+    order: 6
+  - id: 07-system-mastery
+    order: 7
+  - id: 08-linux-mastery-final
+    order: 8
+verified: true
+version: 1

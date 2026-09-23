@@ -1,0 +1,4 @@
+id: lnx-secure-server-network
+title: "Secure Server Network"
+xp: 45
+description: "Configure stateful host firewall rules, drop unapproved inbound traffic, and secure listening interfaces."

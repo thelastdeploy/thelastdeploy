@@ -1,0 +1,4 @@
+id: lnx-investigate-vfs-behavior
+title: "Investigate VFS Abstraction Behavior"
+xp: 45
+description: "Inspect open file descriptors, inode locks, and VFS mount point tables."

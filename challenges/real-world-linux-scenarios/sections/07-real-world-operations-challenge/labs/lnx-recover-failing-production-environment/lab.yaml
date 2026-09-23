@@ -1,0 +1,4 @@
+id: lnx-recover-failing-production-environment
+title: "Recover Failing Production Environment Capstone"
+xp: 130
+description: "Execute complete end-to-end triage and recovery of a critically degraded production Linux environment suffering from multi-subsystem failures."

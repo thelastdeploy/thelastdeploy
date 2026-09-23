@@ -1,0 +1,4 @@
+id: lnx-automate-linux-operations
+title: "Automate Linux Operations"
+xp: 70
+description: "Build an idempotent, production-grade Linux maintenance script with automated error recovery and hash verification."

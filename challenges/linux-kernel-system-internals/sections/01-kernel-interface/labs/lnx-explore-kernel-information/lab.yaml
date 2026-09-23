@@ -1,0 +1,4 @@
+id: lnx-explore-kernel-information
+title: "Explore Kernel Information"
+xp: 40
+description: "Inspect kernel version details, build parameters, command line parameters, and loaded symbol tables."

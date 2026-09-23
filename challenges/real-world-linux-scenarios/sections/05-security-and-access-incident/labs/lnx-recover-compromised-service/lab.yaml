@@ -1,0 +1,4 @@
+id: lnx-recover-compromised-service
+title: "Recover Compromised Service"
+xp: 75
+description: "Detect a rogue background process, clean unauthorized cron/systemd persistence, and restore service integrity."

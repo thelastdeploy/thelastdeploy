@@ -1,0 +1,4 @@
+id: lnx-trace-intermittent-network-failure
+title: "Trace Intermittent Network Drops"
+xp: 70
+description: "Trace intermittent packet drops caused by TCP SYN queue overflow and interface MTU fragmentation."

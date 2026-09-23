@@ -1,0 +1,4 @@
+id: lnx-master-linux-administration
+title: "Master Linux Administration"
+xp: 65
+description: "Demonstrate mastery over systemd unit file architectures, custom targets, and logging journal controls."

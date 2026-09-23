@@ -1,0 +1,4 @@
+id: lnx-investigate-kernel-modules
+title: "Investigate Kernel Modules"
+xp: 45
+description: "Inspect loaded kernel modules, module dependencies, memory allocations, and parameters in sysfs."
