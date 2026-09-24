@@ -25,6 +25,7 @@ from app.schemas import (
     CLIAuthorizeRequest,
     CLITokenRequest,
     GitHubLoginRequest,
+    GoogleLoginRequest,
 )
 from app.email import send_verification_email, send_reset_password_email
 from app.analytics import analytics, AnalyticsEvent
@@ -488,6 +489,112 @@ async def github_auth(body: GitHubLoginRequest, db: AsyncSession = Depends(get_d
                 "anonymous",
                 AnalyticsEvent.USER_VERIFIED,
                 {"auth_provider": "github"},
+            )
+
+    # Ensure device key exists
+    _ensure_device_key(user)
+    db.add(user)
+    await db.commit()
+
+    token = create_access_token(user.id)
+    return TokenResponse(access_token=token, device_key=user.device_key)
+
+
+@router.post("/google", response_model=TokenResponse)
+async def google_auth(body: GoogleLoginRequest, db: AsyncSession = Depends(get_db)):
+    if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
+        raise HTTPException(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED,
+            detail="Google OAuth is not configured on the server.",
+        )
+
+    # 1. Exchange authorization code for access token
+    async with httpx.AsyncClient() as client:
+        token_response = await client.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "code": body.code,
+                "client_id": settings.GOOGLE_CLIENT_ID,
+                "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                "redirect_uri": body.redirect_uri,
+                "grant_type": "authorization_code",
+            },
+            timeout=10.0,
+        )
+        token_data = token_response.json()
+        google_access_token = token_data.get("access_token")
+        if not google_access_token:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=token_data.get("error_description", "Invalid code or configuration."),
+            )
+
+        # 2. Fetch user profile from Google
+        profile_response = await client.get(
+            "https://www.googleapis.com/oauth2/v2/userinfo",
+            headers={"Authorization": f"Bearer {google_access_token}"},
+            timeout=10.0,
+        )
+        if profile_response.status_code != 200:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Failed to retrieve Google profile info.",
+            )
+        google_user = profile_response.json()
+        email = google_user.get("email")
+        google_name = google_user.get("name") or google_user.get("given_name", "")
+
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email address not found from Google profile.",
+        )
+
+    # 3. Check if user exists by email
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+
+    if not user:
+        # Derive a username from the Google display name or email prefix
+        base_username = (google_name or email.split("@")[0]).replace(" ", "").lower()[:40]
+        username_check = await db.execute(select(User).where(User.username == base_username))
+        final_username = base_username
+        if username_check.scalar_one_or_none():
+            final_username = f"{base_username}_{secrets.token_hex(3)}"
+
+        user = User(
+            email=email,
+            username=final_username,
+            password_hash=hash_password(secrets.token_urlsafe(32)),  # secure placeholder
+            is_verified=True,  # Google-verified accounts are trusted
+            device_key=secrets.token_hex(32),
+        )
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+
+        analytics.track(
+            "anonymous",
+            AnalyticsEvent.USER_REGISTERED,
+            {"auth_provider": "google"},
+        )
+        analytics.track(
+            "anonymous",
+            AnalyticsEvent.USER_VERIFIED,
+            {"auth_provider": "google"},
+        )
+    else:
+        # If user existed but wasn't verified, mark verified since Google verified it
+        if not user.is_verified:
+            user.is_verified = True
+            db.add(user)
+            await db.commit()
+            await db.refresh(user)
+
+            analytics.track(
+                "anonymous",
+                AnalyticsEvent.USER_VERIFIED,
+                {"auth_provider": "google"},
             )
 
     # Ensure device key exists

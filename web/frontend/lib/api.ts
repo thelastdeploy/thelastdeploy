@@ -84,6 +84,15 @@ export const api = {
     return res;
   },
 
+  loginWithGoogle: async (code: string, redirectUri: string) => {
+    const res = await request<{ access_token: string; device_key: string }>("/google", {
+      method: "POST",
+      body: JSON.stringify({ code, redirect_uri: redirectUri }),
+    });
+    await warmCache(res.access_token);
+    return res;
+  },
+
   checkUsername: async (username: string) => {
     return request<{ available: boolean; detail?: string }>(`/check-username?username=${encodeURIComponent(username)}`);
   },

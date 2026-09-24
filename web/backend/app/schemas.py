@@ -52,6 +52,10 @@ class CLITokenRequest(BaseModel):
 class GitHubLoginRequest(BaseModel):
     code: str
 
+class GoogleLoginRequest(BaseModel):
+    code: str
+    redirect_uri: str   # Must match what was sent in the authorization URL
+
 
 # --- User Updates ---
 
