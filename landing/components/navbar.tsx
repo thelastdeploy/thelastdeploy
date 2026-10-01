@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { SOCIAL_LINKS } from "@/lib/constants";
+import { SOCIAL_LINKS, DOCS_URL } from "@/lib/constants";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -72,7 +72,7 @@ export default function Navbar() {
           <nav className="navbar-desktop" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
             {/* Docs */}
             <a
-              href="https://docs.thelastdeploy.com"
+              href={DOCS_URL}
               target="_blank"
               rel="noopener noreferrer"
               style={{

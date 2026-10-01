@@ -1,0 +1,105 @@
+name: tld-local
+
+services:
+  # 1. Local Database (PostgreSQL 16)
+  db:
+    image: postgres:16-alpine
+    container_name: tld-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: tld_db
+      POSTGRES_USER: tld
+      POSTGRES_PASSWORD: tld_password
+    volumes:
+      - tld_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U tld -d tld_db" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - tld-net
+
+  # 2. Automated Database Seeder
+  db-seeder:
+    container_name: tld-db-seeder
+    build:
+      context: ../..
+      dockerfile: infra/local/Dockerfile.seeder
+    environment:
+      DATABASE_URL: postgresql+asyncpg://tld:tld_password@db:5432/tld_db
+      ENVIRONMENT: development
+      CHALLENGES_DIR: /app/challenges
+    volumes:
+      - ../../challenges:/app/challenges:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - tld-net
+
+  # 3. Backend API Service
+  backend:
+    container_name: tld-backend
+    build:
+      context: ../..
+      dockerfile: infra/local/Dockerfile.backend
+    restart: unless-stopped
+    ports:
+      - "9001:9001"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://tld:tld_password@db:5432/tld_db
+      SECRET_KEY: tld-local-secret-key-change-in-prod
+      ENVIRONMENT: development
+      FRONTEND_URL: http://localhost:9000
+      ANALYTICS_ENABLED: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+      db-seeder:
+        condition: service_completed_successfully
+    networks:
+      - tld-net
+
+  # 4. Frontend Platform App (UI)
+  frontend:
+    container_name: tld-frontend
+    build:
+      context: ../..
+      dockerfile: infra/local/Dockerfile.frontend
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:9001
+      PORT: "9000"
+    depends_on:
+      - backend
+    networks:
+      - tld-net
+
+  # 5. Landing Page & Documentation App
+  landing:
+    container_name: tld-landing
+    build:
+      context: ../..
+      dockerfile: infra/local/Dockerfile.landing
+    restart: unless-stopped
+    ports:
+      - "9002:9002"
+    environment:
+      PORT: "9002"
+      NEXT_PUBLIC_DOCS_URL: /docs/introduction/welcome
+      NEXT_PUBLIC_APP_URL: http://localhost:9000
+    networks:
+      - tld-net
+
+networks:
+  tld-net:
+    driver: bridge
+
+volumes:
+  tld_db_data:

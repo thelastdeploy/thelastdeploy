@@ -2,6 +2,18 @@ export const LAUNCH_DATE = new Date("2026-08-08T00:00:00Z");
 
 export const SITE_URL = "https://thelastdeploy.dev";
 
+export const DOCS_URL =
+  process.env.NEXT_PUBLIC_DOCS_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://docs.thelastdeploy.com"
+    : "/docs/introduction/welcome");
+
+export const APP_URL =
+  process.env.NEXT_PUBLIC_APP_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://app.thelastdeploy.com"
+    : "http://localhost:9000");
+
 export const SOCIAL_LINKS = {
   github: "https://github.com/thelastdeploy/thelastdeploy",
   discord: "https://discord.gg/tgShvdV8f",

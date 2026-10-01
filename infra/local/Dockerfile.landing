@@ -1,0 +1,15 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY landing/package*.json ./
+RUN npm ci
+
+COPY landing .
+
+ENV PORT=9002
+ENV HOSTNAME="0.0.0.0"
+
+EXPOSE 9002
+
+CMD ["npx", "next", "dev", "-p", "9002", "-H", "0.0.0.0"]

@@ -69,21 +69,41 @@ You don't need to write code to contribute. Here's everything we welcome:
 
 ## Development Setup
 
-### Prerequisites
+### ⚡ Fast Track: One-Command Isolated Local Docker Setup (Recommended)
+
+Contributors do **not** need to manually set up local databases, execute migrations, or seed challenges. Run the complete isolated local stack with:
+
+```bash
+make dev-up     # Starts Postgres 16, Backend API, Frontend UI, Landing/Docs & runs Seeder
+make dev-logs   # Stream logs for all containers
+make dev-seed   # Re-run challenge seeder on demand
+make dev-down   # Tear down local containers
+```
+
+- **Frontend Platform UI:** [http://localhost:9000](http://localhost:9000)
+- **Backend API:** [http://localhost:9001](http://localhost:9001)
+- **Landing & Docs:** [http://localhost:9002](http://localhost:9002)
+- **Pre-Seeded Dev Credentials:** `dev@example.com` / `password123`
+
+---
+
+### Manual Setup (Without Docker)
+
+#### Prerequisites
 
 - Go 1.21+
 - Node.js 18+
 - Python 3.11+
 - Docker 24+
 
-### CLI (agent)
+#### CLI (agent)
 
 ```bash
 make build          # builds to ./bin/tld
 make install        # builds + installs to /usr/local/bin
 ```
 
-### Web backend
+#### Web backend
 
 ```bash
 cd web/backend
@@ -92,14 +112,14 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-### Web frontend
+#### Web frontend
 
 ```bash
 cd web/frontend
 npm install && npm run dev
 ```
 
-### Landing page
+#### Landing page
 
 ```bash
 cd landing
