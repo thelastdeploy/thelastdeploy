@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import type { TocEntry } from "@/lib/docs-content/types";
+import type { TocEntry } from "@/lib/docs/types";
 
 interface OnPageTocProps {
   entries: TocEntry[];

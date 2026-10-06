@@ -1,4 +1,4 @@
-import type { LabEntry } from "@/lib/docs-content/types";
+import type { LabEntry } from "@/lib/docs/types";
 
 const difficultyColors = {
   beginner: { bg: "rgba(34,197,94,0.08)", border: "rgba(34,197,94,0.2)", text: "#22c55e" },
