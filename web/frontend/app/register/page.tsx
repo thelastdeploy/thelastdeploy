@@ -231,6 +231,8 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 
+  const [registrationDetail, setRegistrationDetail] = useState<string | null>(null);
+
   // Username checking states
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
@@ -286,7 +288,8 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      await api.register(email, username, password);
+      const res = await api.register(email, username, password);
+      setRegistrationDetail(res.detail);
       setIsRegistered(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Registration failed");
@@ -295,10 +298,14 @@ export default function RegisterPage() {
     }
   };
 
+  const isDevEnv =
+    process.env.NEXT_PUBLIC_ENVIRONMENT === "development" ||
+    process.env.NODE_ENV === "development";
+
   const handleGithubLogin = () => {
     const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-    if (!clientId) {
-      setError("GitHub Client ID is not configured on the client.");
+    if (isDevEnv || !clientId) {
+      setError("Google and GitHub sign in is disabled in local development.");
       return;
     }
     const redirectUri = `${window.location.origin}/login/callback`;
@@ -310,8 +317,8 @@ export default function RegisterPage() {
 
   const handleGoogleLogin = () => {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    if (!clientId) {
-      setError("Google Client ID is not configured on the client.");
+    if (isDevEnv || !clientId) {
+      setError("Google and GitHub sign in is disabled in local development.");
       return;
     }
     const redirectUri = `${window.location.origin}/login/google/callback`;
@@ -340,18 +347,25 @@ export default function RegisterPage() {
         <div className="w-full max-w-sm relative z-10">
           {isRegistered ? (
             <div className="space-y-6 text-center">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-500 animate-bounce">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M3 19v-8.93a2 2 0 01.89-1.664l8-5.333a2 2 0 012.22 0l8 5.333A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-2.25-1.5a2 2 0 00-2.22 0l-2.25 1.5" />
-                </svg>
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-500">
+                <CheckCircleIcon className="w-8 h-8" />
               </div>
               <div className="space-y-2">
-                <h1 className="text-2xl font-black text-foreground">Check your email</h1>
+                <h1 className="text-2xl font-black text-foreground">
+                  {registrationDetail?.includes("skipped") || isDevEnv
+                    ? "Account Created!"
+                    : "Check your email"}
+                </h1>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  We&apos;ve sent a verification link to <span className="font-bold text-foreground">{email}</span>.
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  Please click the link in the email to activate your account.
+                  {registrationDetail?.includes("skipped") || isDevEnv ? (
+                    <>
+                      Account created for <span className="font-bold text-foreground">{email}</span>. Email verification is skipped in development mode. You can log in directly.
+                    </>
+                  ) : (
+                    <>
+                      We&apos;ve sent a verification link to <span className="font-bold text-foreground">{email}</span>. Please click the link in the email to activate your account.
+                    </>
+                  )}
                 </p>
               </div>
               <Link

@@ -240,10 +240,14 @@ function LoginContent() {
     }
   };
 
+  const isDevEnv =
+    process.env.NEXT_PUBLIC_ENVIRONMENT === "development" ||
+    process.env.NODE_ENV === "development";
+
   const handleGithubLogin = () => {
     const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
-    if (!clientId) {
-      setError("GitHub Client ID is not configured on the client.");
+    if (isDevEnv || !clientId) {
+      setError("Google and GitHub sign in is disabled in local development.");
       return;
     }
     const redirectUri = `${window.location.origin}/login/callback`;
@@ -255,8 +259,8 @@ function LoginContent() {
 
   const handleGoogleLogin = () => {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
-    if (!clientId) {
-      setError("Google Client ID is not configured on the client.");
+    if (isDevEnv || !clientId) {
+      setError("Google and GitHub sign in is disabled in local development.");
       return;
     }
     const redirectUri = `${window.location.origin}/login/google/callback`;

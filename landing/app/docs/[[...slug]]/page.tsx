@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
-import { getPage } from "@/lib/docs-content";
+import { getPage } from "@/lib/docs/content";
+import { renderMarkdown } from "@/lib/docs/markdown";
 import { getPrevNext } from "@/lib/docs-nav";
-import PageRenderer from "@/components/docs/page-renderer";
 import OnPageToc from "@/components/docs/on-page-toc";
 import PrevNextNav from "@/components/docs/prev-next-nav";
 import Badge from "@/components/docs/badge";
@@ -45,14 +45,24 @@ export default async function DocsPage({ params }: PageProps) {
           <div className="docs-page-meta">
             <Badge variant="available">{page.section}</Badge>
           </div>
-          <h1 className="docs-prose" style={{ fontSize: "2rem", fontWeight: 800, letterSpacing: "-0.04em", color: "#f0f0ff", margin: 0, lineHeight: 1.2 }}>
+          <h1
+            className="docs-prose"
+            style={{
+              fontSize: "2rem",
+              fontWeight: 800,
+              letterSpacing: "-0.04em",
+              color: "#f0f0ff",
+              margin: 0,
+              lineHeight: 1.2,
+            }}
+          >
             {page.title}
           </h1>
           <p className="docs-page-description">{page.description}</p>
         </div>
 
         {/* Content */}
-        <PageRenderer blocks={page.content} />
+        {renderMarkdown(page.content)}
 
         {/* Prev/Next */}
         <PrevNextNav isSubdomain={isSubdomain} prev={prev} next={next} />
