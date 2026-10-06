@@ -31,3 +31,13 @@ export interface DocPage extends DocMetadata {
   toc: TocEntry[];
   content: string; // Raw markdown/MDX content
 }
+
+export interface LabEntry {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  track: string;
+  timeEstimate: string;
+}
+
