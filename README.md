@@ -116,7 +116,37 @@ tld version     # Display CLI version info
 
 ## Running the Web Application (Local Development)
 
-### Backend API (FastAPI)
+### ⚡ One-Command Isolated Docker Setup (Recommended)
+
+Run the entire application stack locally (PostgreSQL 16, Backend API, Frontend UI, Landing/Docs, and Automated Challenge Seeder) with a single command — **no cloud database provisioning required**:
+
+```bash
+# Spin up the entire environment (Postgres + Backend + Frontend + Landing + Seeder)
+make dev-up
+
+# Tail live logs across all containers
+make dev-logs
+
+# Re-trigger database seeding anytime
+make dev-seed
+
+# Stop all local development containers
+make dev-down
+```
+
+#### Local Endpoints & Pre-Seeded Accounts:
+- **Frontend UI Platform:** [http://localhost:9000](http://localhost:9000)
+- **Backend API:** [http://localhost:9001](http://localhost:9001) (API Docs: [http://localhost:9001/docs](http://localhost:9001/docs))
+- **Landing & Docs Platform:** [http://localhost:9002](http://localhost:9002)
+- **Pre-seeded Maintainer Account:** `dev@example.com` / `password123`
+
+---
+
+### Manual / Non-Docker Setup
+
+If you prefer to run services individually outside Docker:
+
+#### Backend API (FastAPI)
 
 ```bash
 cd web/backend
@@ -125,7 +155,7 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
-### Web Dashboard (Next.js)
+#### Web Dashboard (Next.js)
 
 ```bash
 cd web/frontend
@@ -133,7 +163,7 @@ npm install
 npm run dev   # runs on http://localhost:3000
 ```
 
-### Landing Page & Docs (Next.js)
+#### Landing Page & Docs (Next.js)
 
 ```bash
 cd landing

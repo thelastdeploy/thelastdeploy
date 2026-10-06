@@ -56,26 +56,33 @@ async def register(
             detail="Email or username already registered",
         )
 
-    verification_token = secrets.token_urlsafe(32)
+    is_dev = settings.ENVIRONMENT.lower() == "development"
+    verification_token = None if is_dev else secrets.token_urlsafe(32)
     user = User(
         email=body.email,
         username=body.username,
         password_hash=hash_password(body.password),
         device_key=secrets.token_hex(32),  # assign at registration
-        is_verified=False,
+        is_verified=True if is_dev else False,
         verification_token=verification_token,
     )
     db.add(user)
     await db.commit()
     await db.refresh(user)
 
-    send_verification_email(user.email, verification_token, background_tasks)
+    if not is_dev:
+        send_verification_email(user.email, verification_token, background_tasks)
 
     analytics.track(
         "anonymous",
         AnalyticsEvent.USER_REGISTERED,
         {"auth_provider": "email"},
     )
+
+    if is_dev:
+        return MessageResponse(
+            detail="Registration successful. Email verification is skipped in development mode. You can log in directly."
+        )
 
     return MessageResponse(detail="Verification email sent. Please check your inbox.")
 
@@ -102,10 +109,15 @@ async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
         )
 
     if not user.is_verified:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Please verify your email address before logging in.",
-        )
+        if settings.ENVIRONMENT.lower() == "development":
+            user.is_verified = True
+            db.add(user)
+            await db.commit()
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Please verify your email address before logging in.",
+            )
 
     # Ensure device_key exists (handles existing users who registered before this change)
     _ensure_device_key(user)
@@ -366,6 +378,11 @@ async def cli_token(body: CLITokenRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/github", response_model=TokenResponse)
 async def github_auth(body: GitHubLoginRequest, db: AsyncSession = Depends(get_db)):
+    if settings.ENVIRONMENT.lower() == "development":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Google and GitHub sign in is disabled in local development."
+        )
     if not settings.GITHUB_CLIENT_ID or not settings.GITHUB_CLIENT_SECRET:
         raise HTTPException(
             status_code=status.HTTP_501_NOT_IMPLEMENTED,
@@ -502,6 +519,11 @@ async def github_auth(body: GitHubLoginRequest, db: AsyncSession = Depends(get_d
 
 @router.post("/google", response_model=TokenResponse)
 async def google_auth(body: GoogleLoginRequest, db: AsyncSession = Depends(get_db)):
+    if settings.ENVIRONMENT.lower() == "development":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Google and GitHub sign in is disabled in local development.",
+        )
     if not settings.GOOGLE_CLIENT_ID or not settings.GOOGLE_CLIENT_SECRET:
         raise HTTPException(
             status_code=status.HTTP_501_NOT_IMPLEMENTED,

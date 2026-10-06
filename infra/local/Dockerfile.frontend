@@ -1,0 +1,15 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY web/frontend/package*.json ./
+RUN npm ci
+
+COPY web/frontend .
+
+ENV PORT=9000
+ENV HOSTNAME="0.0.0.0"
+
+EXPOSE 9000
+
+CMD ["npx", "next", "dev", "-p", "9000", "-H", "0.0.0.0"]

@@ -1,0 +1,19 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY web/backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY web/backend .
+COPY infra/local/run_seeder.py seed/run_seeder.py
+
+ENV PYTHONPATH=/app
+
+CMD ["python", "seed/run_seeder.py"]

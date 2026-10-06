@@ -12,8 +12,11 @@ from sqlalchemy import select
 from app.database import AsyncSessionLocal
 from app.models import Module, Section, Lab
 
-CHALLENGES_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "..", "..", "challenges")
+CHALLENGES_DIR = os.getenv(
+    "CHALLENGES_DIR",
+    os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "..", "..", "challenges")
+    ),
 )
 
 

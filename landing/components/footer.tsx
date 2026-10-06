@@ -1,10 +1,10 @@
 "use client";
 
-import { SOCIAL_LINKS } from "@/lib/constants";
+import { SOCIAL_LINKS, APP_URL, DOCS_URL } from "@/lib/constants";
 
 const footerLinks = [
-  { label: "App", href: "https://app.thelastdeploy.com" },
-  { label: "Docs", href: "https://docs.thelastdeploy.com" },
+  { label: "App", href: APP_URL },
+  { label: "Docs", href: DOCS_URL },
   { label: "GitHub", href: SOCIAL_LINKS.github },
   { label: "Discord", href: SOCIAL_LINKS.discord },
   { label: "LinkedIn", href: SOCIAL_LINKS.linkedin },

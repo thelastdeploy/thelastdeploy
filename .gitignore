@@ -16,6 +16,9 @@ env/
 
 # Environment variables — NEVER commit these
 .env
+.env.local
+.env.docker
+.env.*.local
 *.env
 !.env.example
 

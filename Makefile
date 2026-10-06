@@ -10,7 +10,8 @@ CLI      := $(BIN_DIR)/tld
 .PHONY: \
 	build dist install clean \
 	fmt vet test verify \
-	sync start stop check status login logout doctor publish
+	sync start stop check status login logout doctor publish \
+	dev-up dev-down dev-logs dev-seed
 
 # ==========================================================
 # Verification
@@ -122,6 +123,23 @@ doctor: build
 
 publish: build
 	./$(CLI) publish
+
+COMPOSE_FILE := infra/local/docker-compose.yml
+
+dev-up:
+	@echo "==> Starting isolated local development environment..."
+	docker compose -f $(COMPOSE_FILE) up --build -d
+
+dev-down:
+	@echo "==> Stopping local development containers..."
+	docker compose -f $(COMPOSE_FILE) down
+
+dev-logs:
+	docker compose -f $(COMPOSE_FILE) logs -f
+
+dev-seed:
+	@echo "==> Re-running automated database seeder..."
+	docker compose -f $(COMPOSE_FILE) run --rm db-seeder
 
 # ==========================================================
 # Cleanup

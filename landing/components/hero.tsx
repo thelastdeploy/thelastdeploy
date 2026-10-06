@@ -1,6 +1,6 @@
 "use client";
 
-import { SOCIAL_LINKS } from "@/lib/constants";
+import { SOCIAL_LINKS, DOCS_URL } from "@/lib/constants";
 
 
 export default function Hero() {
@@ -157,7 +157,7 @@ export default function Hero() {
           }}
         >
           <a
-            href="https://docs.thelastdeploy.com"
+            href={DOCS_URL}
             target="_blank"
             rel="noopener noreferrer"
             style={{
