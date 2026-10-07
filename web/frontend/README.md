@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TLD Web Dashboard (`web/frontend`)
 
-## Getting Started
+The web frontend for **The Last Deploy** — an interactive dashboard for managing user accounts, tracking lab progress, viewing global leaderboards, and exploring DevOps learning paths.
 
-First, run the development server:
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router, React 19)
+- **Styling**: Tailwind CSS, Vanilla CSS Design System (Light/Dark mode)
+- **Icons & Visuals**: Lucide Icons, Mermaid.js, Dynamic Theme System
+- **State & API Integration**: Next.js Client & Server Components, Axios / Fetch API connected to FastAPI backend (`http://localhost:9001`)
+
+---
+
+## Local Development
+
+### 1 — Isolated Docker Setup (Recommended)
+
+Run the frontend together with PostgreSQL, FastAPI backend, and Landing/Docs using the root Makefile:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# From repository root:
+make dev-up
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Access the frontend at: **[http://localhost:9000](http://localhost:9000)**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2 — Standalone Local Execution
 
-## Learn More
+```bash
+# Install dependencies
+npm install
 
-To learn more about Next.js, take a look at the following resources:
+# Run dev server on port 9000 (or default 3000)
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Environment Variables (`.env.local`)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+NEXT_PUBLIC_API_URL=http://localhost:9001
+NEXT_PUBLIC_LANDING_URL=http://localhost:9002
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — Start Next.js development server
+- `npm run build` — Build production bundle
+- `npm run start` — Run production server
+- `npm run lint` — Run ESLint code checks

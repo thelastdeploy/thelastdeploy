@@ -141,6 +141,11 @@ dev-seed:
 	@echo "==> Re-running automated database seeder..."
 	docker compose -f $(COMPOSE_FILE) run --rm db-seeder
 
+sync-readme:
+	@echo "==> Dynamically calculating track statistics and updating README.md..."
+	python3 scripts/sync_readme_tracks.py
+
+
 # ==========================================================
 # Cleanup
 # ==========================================================

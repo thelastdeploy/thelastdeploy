@@ -1,0 +1,37 @@
+name: Sync README Track Cards
+
+on:
+  push:
+    paths:
+      - 'challenges/**'
+      - 'scripts/sync_readme_tracks.py'
+    branches:
+      - main
+      - dev
+  workflow_dispatch:
+
+jobs:
+  sync-tracks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Run Track Sync Script
+        run: python3 scripts/sync_readme_tracks.py
+
+      - name: Commit & Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(readme): auto-update dynamic track cards and module counts"
+          file_pattern: "README.md"

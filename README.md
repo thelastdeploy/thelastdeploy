@@ -21,12 +21,12 @@
 Instead of watching videos or copying commands from tutorials, you:
 
 1. **Spin up a local lab** on your actual machine with a single CLI command (`tld start <lab-id>`)
-2. **Encounter a deliberately broken system** — a misconfigured Nginx proxy, a crashed container, a corrupted state file, or broken git history
+2. **Encounter a deliberately broken system** — misconfigured proxies, crashed containers, state file corruptions, or broken git history
 3. **Troubleshoot and fix it** using real terminal tools
-4. **Validate your fix** with `tld check` — an automated validator script that verifies exact state requirements
-5. **Earn XP and progress** across 6 comprehensive tracks at your own pace
+4. **Validate your fix** with `tld check` — an automated validator engine that verifies exact system state requirements
+5. **Track progress and earn XP** across comprehensive DevOps learning tracks at your own pace
 
-Everything runs locally. No account required to start. No cloud costs. Forever free.
+Everything runs locally in isolated sandboxes. No cloud costs. Forever free and open-source.
 
 ---
 
@@ -34,22 +34,21 @@ Everything runs locally. No account required to start. No cloud costs. Forever f
 
 ```
 /
-├── agent/          # tld CLI (v1.1.0) — written in Go
-│   ├── cmd/        # Command implementations (start, check, stop, status, sync, doctor, publish, etc.)
-│   └── internal/   # Core internal logic (cache, local server, validator engine)
-├── challenges/     # 37 lab modules across 6 DevOps tracks
-│   ├── linux-*     # Fundamentals, Users & Permissions, Processes & Services, Networking
-│   ├── git-*       # Fundamentals, Branching, Remotes, History & Recovery, Troubleshooting
-│   ├── docker-*    # Fundamentals, Containers, Images, Networking, Storage, Compose, Troubleshooting
-│   ├── k8s-*       # Fundamentals, Pods, Workloads, Services & Networking, Config & Storage, Troubleshooting
-│   ├── terraform-* # Fundamentals, HCL, Resources, Expressions & Variables, State, Modules, Troubleshooting
-│   └── nginx-*     # Fundamentals, Serving Content, Configuration, Routing, Reverse Proxy, Security & Performance, Troubleshooting
+├── agent/          # TLD CLI (v1.1.0) — Go client & validator runner
+│   ├── cmd/        # Command handlers (sync, start, check, stop, status, doctor, etc.)
+│   └── internal/   # Core logic (cache, local server, validator engine)
+├── challenges/     # Lab modules and challenge definitions across DevOps domains
+├── landing/        # Marketing site & documentation platform — Next.js 15 / Tailwind CSS
+│   ├── docs/       # Content pages (Markdown / MDX architecture & guides)
+│   └── navigation.yaml # Dynamic documentation navigation configuration
 ├── web/
-│   ├── backend/    # Platform REST API — Python / FastAPI + Alembic
-│   └── frontend/   # Web dashboard — Next.js 15 / React / Tailwind CSS
-├── landing/        # Marketing landing page & docs platform — Next.js 15
-├── bin/            # Compiled local CLI binaries (gitignored)
-├── Makefile        # Developer build system & shortcuts
+│   ├── backend/    # Platform REST API & seeder — Python / FastAPI + Alembic
+│   └── frontend/   # User web dashboard & lab progress UI — Next.js 15
+├── infra/
+│   └── local/      # Local multi-container development environment (Docker Compose)
+├── bin/            # Compiled CLI binaries (gitignored)
+├── Makefile        # Developer workflow shortcuts & setup scripts
+├── SECURITY.md     # Security disclosure policy & contacts
 └── LICENSE         # Apache 2.0
 ```
 
@@ -59,16 +58,18 @@ Everything runs locally. No account required to start. No cloud costs. Forever f
 
 ### Prerequisites
 
-| Tool | Version | Notes |
-|------|---------|-------|
-| Go   | 1.21+   | Required for CLI build |
-| Node | 18+     | Required for web dashboard & landing |
+| Tool | Version | Purpose |
+|------|---------|---------|
+| Go | 1.21+ | Required for CLI build |
+| Node.js | 18+ | Required for landing page, docs, & web frontend |
 | Python | 3.11+ | Required for backend API |
-| Docker | 24+    | Required for running containerized labs |
+| Docker | 24+ | Required for running containerized labs |
 
 ---
 
-### 1 — Build & Install the CLI (`v1.1.0`)
+### CLI Quickstart
+
+#### 1 — Build & Install the CLI (`v1.1.0`)
 
 ```bash
 # Build and install tld binary to /usr/local/bin
@@ -78,128 +79,185 @@ make install
 make build
 ```
 
-### 2 — Authenticate (optional for local self-hosted use)
+#### 2 — Authenticate (Optional for local self-hosted use)
 
 ```bash
 tld login
 ```
 
-### 3 — Sync Challenges
+#### 3 — Sync Challenges
+
+Fetch available challenge modules and labs from the platform:
 
 ```bash
 tld sync --all
 ```
 
-### 4 — Start a Lab
+#### 4 — Start a Lab
 
 ```bash
-tld start docker-fundamentals
+tld start <lab-id>
 ```
 
-### 5 — Validate Your Fix
+#### 5 — Validate Your Fix
+
+Run the automated validator to verify your solution:
 
 ```bash
 tld check
 ```
 
-### 6 — Additional CLI Commands
+#### 6 — CLI Command Summary
 
-```bash
-tld status      # View active lab status and progress
-tld stop        # Stop active lab environment
-tld doctor      # Run local environment diagnostics
-tld publish     # Package and publish custom challenge modules
-tld version     # Display CLI version info
-```
+| Command | Usage | Description |
+|---------|-------|-------------|
+| `tld sync` | `tld sync --all` | Download and update local lab challenge modules |
+| `tld start` | `tld start <lab-id>` | Spin up a local lab environment |
+| `tld check` | `tld check` | Run validation scripts against active lab |
+| `tld stop` | `tld stop` | Stop active lab environment and server |
+| `tld status` | `tld status` | Display authentication state, synced content, & active lab |
+| `tld doctor` | `tld doctor` | Run system diagnostics (Docker, Go, permissions) |
+| `tld login` | `tld login` | Authenticate CLI with TLD platform |
+| `tld logout` | `tld logout` | Remove stored authentication tokens |
+| `tld publish` | `tld publish <path>` | Package & publish local challenge module directory |
+| `tld version` | `tld version` | Display CLI version information |
 
 ---
 
 ## Running the Web Application (Local Development)
 
-### ⚡ One-Command Isolated Docker Setup (Recommended)
+### ⚡ One-Command Stack Setup (Recommended)
 
-Run the entire application stack locally (PostgreSQL 16, Backend API, Frontend UI, Landing/Docs, and Automated Challenge Seeder) with a single command — **no cloud database provisioning required**:
+Run the full platform stack locally (PostgreSQL 16, Backend API, Web Dashboard, Landing/Docs, and Seeder) with Docker Compose:
 
 ```bash
-# Spin up the entire environment (Postgres + Backend + Frontend + Landing + Seeder)
+# Spin up full stack (Postgres + Backend + Web Frontend + Landing + Seeder)
 make dev-up
 
-# Tail live logs across all containers
+# View live logs across containers
 make dev-logs
 
-# Re-trigger database seeding anytime
+# Re-run database seeding
 make dev-seed
 
-# Stop all local development containers
+# Stop development containers
 make dev-down
 ```
 
-#### Local Endpoints & Pre-Seeded Accounts:
-- **Frontend UI Platform:** [http://localhost:9000](http://localhost:9000)
-- **Backend API:** [http://localhost:9001](http://localhost:9001) (API Docs: [http://localhost:9001/docs](http://localhost:9001/docs))
-- **Landing & Docs Platform:** [http://localhost:9002](http://localhost:9002)
-- **Pre-seeded Maintainer Account:** `dev@example.com` / `password123`
+#### Local Endpoints & Test Accounts:
+- **Web Dashboard:** [http://localhost:9000](http://localhost:9000)
+- **Backend API & Swagger Docs:** [http://localhost:9001](http://localhost:9001) / [http://localhost:9001/docs](http://localhost:9001/docs)
+- **Landing & Documentation Platform:** [http://localhost:9002](http://localhost:9002)
+- **Default Seeded Account:** `dev@example.com` / `password123`
 
 ---
 
-### Manual / Non-Docker Setup
+### Manual Service Execution
 
-If you prefer to run services individually outside Docker:
-
-#### Backend API (FastAPI)
+If developing individual services outside Docker:
 
 ```bash
+# Backend API (FastAPI)
 cd web/backend
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload
-```
+uvicorn main:app --reload --port 9001
 
-#### Web Dashboard (Next.js)
-
-```bash
+# Web Frontend (Next.js)
 cd web/frontend
 npm install
-npm run dev   # runs on http://localhost:3000
-```
+npm run dev # runs on http://localhost:9000
 
-#### Landing Page & Docs (Next.js)
-
-```bash
+# Landing & Documentation Platform (Next.js)
 cd landing
 npm install
-npm run dev   # runs on http://localhost:3002
+npm run dev # runs on http://localhost:9002
 ```
 
 ---
 
-## Available Tracks & Content Status
+## Tracks & Learning Domains
 
-| Track | Sub-Modules | Status |
-|-------|-------------|--------|
-| **Linux** | Fundamentals, Users & Permissions, Processes & Services, Networking, Broken Permissions | ✅ Available (5 modules) |
-| **Git** | Fundamentals, Branching, Remotes & Collaboration, History & Recovery, Troubleshooting | ✅ Available (5 modules) |
-| **Docker** | Fundamentals, Containers, Images, Networking, Storage, Compose, Troubleshooting | ✅ Available (7 modules) |
-| **Kubernetes** | Fundamentals, Pods, Workloads, Services & Networking, Config & Storage, Troubleshooting | ✅ Available (6 modules) |
-| **Terraform** | Fundamentals, HCL, Resources, Expressions & Variables, State, Modules, Troubleshooting | ✅ Available (7 modules) |
-| **Nginx** | Fundamentals, Serving Content, Configuration, Routing, Reverse Proxy, Security & Performance, Troubleshooting | ✅ Available (7 modules) |
-| **Jenkins** | CI/CD Pipelines & Automation | 🔜 Coming Soon |
-| **Monitoring** | Prometheus & Grafana Observability | 🔜 Coming Soon |
+The Last Deploy provides hands-on challenge modules across key DevOps & Cloud Infrastructure domains:
+
+<!-- TRACKS_START -->
+<table width="100%">
+<tr>
+<td width="50%" valign="top">
+  <h4>🐧 Linux Administration</h4>
+  <p>System fundamentals, process management, systemd, storage, LVM, networking & incident response.</p>
+  <p><sub>📦 Content: <b>34</b> modules &nbsp;|&nbsp; <a href="http://localhost:9002/docs"><img src="https://img.shields.io/badge/Status-Available-brightgreen?style=flat-square" alt="Available" /></a></sub></p>
+</td>
+<td width="50%" valign="top">
+  <h4>🐳 Docker & Containers</h4>
+  <p>Container runtime isolation, image optimization, multi-stage builds, networking, storage & Compose.</p>
+  <p><sub>📦 Content: <b>7</b> modules &nbsp;|&nbsp; <a href="http://localhost:9002/docs"><img src="https://img.shields.io/badge/Status-Available-brightgreen?style=flat-square" alt="Available" /></a></sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+  <h4>☸️ Kubernetes & Cloud Native</h4>
+  <p>Pod debugging, service routing, ConfigMaps, volume storage, workloads & cluster troubleshooting.</p>
+  <p><sub>📦 Content: <b>6</b> modules &nbsp;|&nbsp; <a href="http://localhost:9002/docs"><img src="https://img.shields.io/badge/Status-Available-brightgreen?style=flat-square" alt="Available" /></a></sub></p>
+</td>
+<td width="50%" valign="top">
+  <h4>🌐 Nginx & Web Servers</h4>
+  <p>Reverse proxying, load balancing, TLS configuration, rate limiting, location routing & security.</p>
+  <p><sub>📦 Content: <b>7</b> modules &nbsp;|&nbsp; <a href="http://localhost:9002/docs"><img src="https://img.shields.io/badge/Status-Available-brightgreen?style=flat-square" alt="Available" /></a></sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+  <h4>🏗️ Terraform & IaC</h4>
+  <p>HCL syntax, state management, module architecture, variable scoping & infrastructure drift.</p>
+  <p><sub>📦 Content: <b>7</b> modules &nbsp;|&nbsp; <a href="http://localhost:9002/docs"><img src="https://img.shields.io/badge/Status-Available-brightgreen?style=flat-square" alt="Available" /></a></sub></p>
+</td>
+<td width="50%" valign="top">
+  <h4>🔀 Git & Version Control</h4>
+  <p>Advanced workflows, rebase conflicts, detached HEADs, reflog recovery & history rewrites.</p>
+  <p><sub>📦 Content: <b>5</b> modules &nbsp;|&nbsp; <a href="http://localhost:9002/docs"><img src="https://img.shields.io/badge/Status-Available-brightgreen?style=flat-square" alt="Available" /></a></sub></p>
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+  <h4>🔄 CI/CD Pipelines</h4>
+  <p>Automated build pipelines, secret management, test integration & artifact deployment.</p>
+  <p><sub>📦 Content: <i>Upcoming</i> &nbsp;|&nbsp; <img src="https://img.shields.io/badge/Status-Coming%20Soon-orange?style=flat-square" alt="Coming Soon" /></sub></p>
+</td>
+<td width="50%" valign="top">
+  <h4>📊 Observability & Monitoring</h4>
+  <p>Metrics collection, Prometheus queries, Grafana dashboards, log aggregation & alerting.</p>
+  <p><sub>📦 Content: <i>Upcoming</i> &nbsp;|&nbsp; <img src="https://img.shields.io/badge/Status-Coming%20Soon-orange?style=flat-square" alt="Coming Soon" /></sub></p>
+</td>
+</tr>
+</table>
+<!-- TRACKS_END -->
+
+> 💡 **Live Catalog & Details**: Available labs and track modules expand continuously as new challenges are added. Run `tld sync --all` to retrieve the latest content locally, or explore the live documentation catalog at [http://localhost:9002/docs](http://localhost:9002/docs).
+
 
 ---
 
 ## Contributing
 
-We welcome contributions of all kinds — new lab challenges, bug fixes, validator enhancements, and documentation.
+We welcome contributions! Whether you are adding new lab challenges, improving validator checks, enhancing documentation, or fixing bugs:
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) to get started.
+- Check out [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines and module creation guides.
+- Open an issue or pull request to start a discussion.
 
 ---
 
-## Community
+## Security
+
+Security vulnerabilities should be reported directly to **`security@thelastdeploy.com`**.
+Please refer to our [SECURITY.md](./SECURITY.md) policy for response timelines and disclosure guidelines.
+
+---
+
+## Community & Support
 
 - 💬 **Discord** — [Join our Discord community](https://discord.gg/tgShvdV8f)
-- ⭐ **GitHub** — Star the repo on [GitHub](https://github.com/thelastdeploy/thelastdeploy) to follow progress
+- ⭐ **GitHub** — Star the repository on [GitHub](https://github.com/thelastdeploy/thelastdeploy)
 - 🔧 **Issues** — [Open an issue](https://github.com/thelastdeploy/thelastdeploy/issues) for bug reports or feature requests
 
 ---
