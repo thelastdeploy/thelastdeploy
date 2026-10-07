@@ -20,24 +20,21 @@ Because containers share the host kernel, they start in milliseconds without req
 * **Docker Image:** An immutable, layered tarball containing system binaries, application code, and metadata (environment variables, default entrypoint). Built from instructions in a `Dockerfile`.
 * **Container:** An active runtime instance of an image. Docker mounts a writeable copy-on-write (CoW) layer on top of the image's read-only layers.
 
-```text
-┌─────────────────────────────────────────────────────────────────────────┐
-│                               DOCKER HOST                               │
-│                                                                         │
-│   ┌─────────────────────┐             ┌─────────────────────────────┐   │
-│   │    Docker Daemon    │ <─────────> │     Local Image Cache       │   │
-│   │     (dockerd)       │             │ (alpine, nginx, postgres)   │   │
-│   └──────────▲──────────┘             └─────────────────────────────┘   │
-│              │                                                          │
-│              │ Manages Containers via runc / containerd                 │
-│              ▼                                                          │
-│   ┌─────────────────────────────────────────────────────────────────┐   │
-│   │                      Kernel Namespaces                          │   │
-│   │  ┌───────────────┐     ┌───────────────┐     ┌───────────────┐  │   │
-│   │  │ Container A   │     │ Container B   │     │ Container C   │  │   │
-│   │  └───────────────┘     └───────────────┘     └───────────────┘  │   │
-│   └─────────────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Docker Host
+        DAEMON["Docker Daemon<br/><i>(dockerd)</i>"]
+        CACHE[("Local Image Cache<br/><i>(alpine, nginx, postgres)</i>")]
+        DAEMON <--> CACHE
+
+        subgraph Kernel Namespaces
+            CA["Container A"]
+            CB["Container B"]
+            CC["Container C"]
+        end
+
+        DAEMON -- Manages via runc / containerd --> Kernel Namespaces
+    end
 ```
 
 ---

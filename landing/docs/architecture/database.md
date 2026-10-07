@@ -8,41 +8,54 @@ TLD uses PostgreSQL 16 Alpine as its primary datastore. Database tables are defi
 
 ## Database Schema Diagram
 
-```
-┌──────────────────────────┐             ┌──────────────────────────┐
-│          users           │             │     cli_device_auths     │
-├──────────────────────────┤             ├──────────────────────────┤
-│ id (PK)                 │ 1         * │ id (PK)                  │
-│ username (UQ)            │ ─────────── │ user_id (FK)             │
-│ email (UQ)               │             │ device_code (UQ, IDX)    │
-│ password_hash            │             │ user_code (UQ, IDX)      │
-│ xp                       │             │ status                   │
-│ streak_days              │             │ expires_at               │
-└──────────┬───────────────┘             └──────────────────────────┘
-           │ 1
-           │
-           │ *
-┌──────────┴───────────────┐             ┌──────────────────────────┐
-│       lab_progress       │ *         1 │           labs           │
-├──────────────────────────┤             ├──────────────────────────┤
-│ id (PK)                  │ ─────────── │ id (PK, String)          │
-│ user_id (FK, IDX)        │             │ module_id (FK)           │
-│ lab_id (FK, IDX)         │             │ section_id (FK)          │
-│ completed (Bool)         │             │ title                    │
-│ xp_awarded               │             │ xp                       │
-│ completed_at             │             │ validator_script         │
-└──────────────────────────┘             └─────────────▲────────────┘
-                                                       │ *
-                                                       │ 1
-┌──────────────────────────┐             ┌─────────────┴────────────┐
-│         modules          │ 1         * │         sections         │
-├──────────────────────────┤             ├──────────────────────────┤
-│ id (PK, String)          │ ─────────── │ id (PK, String)          │
-│ title                    │             │ module_id (FK)           │
-│ topic                    │             │ title                    │
-│ difficulty               │             │ order                    │
-│ total_xp                 │             │ xp                       │
-└──────────────────────────┘             └──────────────────────────┘
+```mermaid
+erDiagram
+    users ||--o{ cli_device_auths : "has many"
+    users ||--o{ lab_progress : "tracks"
+    modules ||--o{ sections : "contains"
+    sections ||--o{ labs : "contains"
+    labs ||--o{ lab_progress : "records"
+
+    users {
+        int id PK
+        string username UK
+        string email UK
+        int xp
+        int streak_days
+    }
+    cli_device_auths {
+        int id PK
+        int user_id FK
+        string device_code UK
+        string user_code UK
+        string status
+    }
+    modules {
+        string id PK
+        string title
+        string topic
+        string difficulty
+    }
+    sections {
+        string id PK
+        string module_id FK
+        string title
+        int order
+    }
+    labs {
+        string id PK
+        string module_id FK
+        string section_id FK
+        string title
+        int xp
+    }
+    lab_progress {
+        int id PK
+        int user_id FK
+        string lab_id FK
+        boolean completed
+        int xp_awarded
+    }
 ```
 
 ## Table Specifications

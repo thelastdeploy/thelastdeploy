@@ -10,23 +10,18 @@ The Lab Engine (`agent/internal/lab/` and `agent/internal/validator/`) provision
 
 When `tld lab start <id>` runs, the engine creates a dedicated Docker bridge network:
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          DOCKER HOST ENVIRONMENT                            │
-│                                                                             │
-│   Isolated Bridge Network: tld-net-<lab-id>                                 │
-│   ┌───────────────────────────┐         ┌───────────────────────────────┐   │
-│   │   Target Container        │         │   Auxiliary Container         │   │
-│   │   (e.g., Nginx Server)    │ <─────> │   (e.g., Postgres / Redis)    │   │
-│   │   Ports: 80 (Internal)    │         │   Ports: 5432 (Internal)      │   │
-│   └─────────────▲─────────────┘         └───────────────────────────────┘   │
-│                 │                                                           │
-│                 │ Exec / Local Socket Assertion                             │
-│   ┌─────────────┴─────────────┐                                             │
-│   │   Validator Execution     │                                             │
-│   │   (validator.sh)          │                                             │
-│   └───────────────────────────┘                                             │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Docker Host Environment
+        subgraph Isolated Bridge Network: tld-net-lab-id
+            TARGET["Target Container<br/><i>(e.g., Nginx Server)</i><br/>Ports: 80 (Internal)"]
+            AUX["Auxiliary Container<br/><i>(e.g., Postgres / Redis)</i><br/>Ports: 5432 (Internal)"]
+            TARGET <--> AUX
+        end
+        
+        VAL["Validator Execution<br/><i>(validator.sh)</i>"]
+        VAL -- Exec / Local Socket Assertion --> TARGET
+    end
 ```
 
 ## Isolation Rules

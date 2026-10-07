@@ -25,23 +25,25 @@ A stable network abstraction (ClusterIP, NodePort, LoadBalancer) providing a sta
 
 ## Control Plane & Node Components
 
-```text
-┌────────────────────────────────────────────────────────────────────────┐
-│                             CONTROL PLANE                              │
-│                                                                        │
-│   ┌───────────────┐     ┌───────────────┐     ┌────────────────────┐   │
-│   │ kube-apiserver│ <-> │     etcd      │ <-> │   kube-scheduler   │   │
-│   └───────────────┘     └───────────────┘     └────────────────────┘   │
-└──────────────────────────────────▲─────────────────────────────────────┘
-                                   │
-                                   ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                              WORKER NODE                               │
-│                                                                        │
-│   ┌───────────────┐     ┌───────────────┐     ┌────────────────────┐   │
-│   │    kubelet    │ <-> │  containerd   │ <-> │     kube-proxy     │   │
-│   └───────────────┘     └───────────────┘     └────────────────────┘   │
-└────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph Control Plane
+        API["kube-apiserver"]
+        ETCD[("etcd")]
+        SCHED["kube-scheduler"]
+        API <--> ETCD
+        ETCD <--> SCHED
+    end
+
+    subgraph Worker Node
+        KUBELET["kubelet"]
+        CR["containerd"]
+        PROXY["kube-proxy"]
+        KUBELET <--> CR
+        CR <--> PROXY
+    end
+
+    API <--> KUBELET
 ```
 
 * **kube-apiserver:** REST API gateway exposing the cluster interface to `kubectl` and internal components.

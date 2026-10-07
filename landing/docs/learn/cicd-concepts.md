@@ -14,14 +14,12 @@ section: "Learn"
 
 ## Pipeline Execution Lifecycle
 
-```text
- ┌────────────────────────────────────────────────────────────────────────┐
- │                      TYPICAL CI/CD PIPELINE STAGES                     │
- │                                                                        │
- │   [ Source ] ──> [ Build ] ──> [ Test ] ──> [ Security ] ──> [ Deploy ]│
- │    git push       docker       pytest        trivy / snyk      k8s /   │
- │                   build        go test       linting           ssh     │
- └────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    SRC["Source<br/><i>(git push)</i>"] --> BUILD["Build<br/><i>(docker build)</i>"]
+    BUILD --> TEST["Test<br/><i>(pytest / go test)</i>"]
+    TEST --> SEC["Security<br/><i>(trivy / snyk)</i>"]
+    SEC --> DEPLOY["Deploy<br/><i>(k8s / ssh)</i>"]
 ```
 
 ### Stage Breakdown

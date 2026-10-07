@@ -28,6 +28,27 @@ The CLI requests authorization credentials from the backend API:
 Waiting for authorization (press Ctrl+C to cancel)...
 ```
 
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant CLI as tld CLI Agent
+    participant Web as TLD Web Dashboard
+    participant API as FastAPI Backend
+
+    User->>CLI: tld login
+    CLI->>API: POST /api/v1/auth/cli/device-code
+    API-->>CLI: { user_code: "B7A2-9K1F", device_code: "dev_123" }
+    CLI->>User: Displays URL & user_code (B7A2-9K1F)
+    User->>Web: Opens /cli/auth & confirms user_code
+    Web->>API: Authorize device_code
+    loop Polling every 5s
+        CLI->>API: POST /api/v1/auth/cli/token
+    end
+    API-->>CLI: { access_token: "eyJhbG...", device_key: "..." }
+    CLI->>User: Saved to ~/.tld/config.json (Logged in!)
+```
+
 1. The CLI attempts to open `http://localhost:9000/cli/auth` in your default browser.
 2. Log in to your TLD account if you are not already authenticated.
 3. Confirm that the 8-character code matches `B7A2-9K1F` and click **Authorize CLI Device**.

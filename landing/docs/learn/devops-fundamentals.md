@@ -10,15 +10,16 @@ In traditional infrastructure models, software development and operational manag
 
 DevOps addresses this gap by standardizing environments, automating deployment pipelines, and integrating monitoring into application lifecycles.
 
-```text
- ┌────────────────────────────────────────────────────────────────────────┐
- │                           THE DEVOPS LOOP                              │
- │                                                                        │
- │     [ PLAN ]  ──────>  [ CODE ]  ──────>  [ BUILD ]  ──────>  [ TEST ] │
- │        ▲                                                          │    │
- │        │                                                          ▼    │
- │    [ MONITOR ] <─────  [ OPERATE ] <────  [ DEPLOY ] <──  [ RELEASE ]  │
- └────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    PLAN[PLAN] --> CODE[CODE]
+    CODE --> BUILD[BUILD]
+    BUILD --> TEST[TEST]
+    TEST --> RELEASE[RELEASE]
+    RELEASE --> DEPLOY[DEPLOY]
+    DEPLOY --> OPERATE[OPERATE]
+    OPERATE --> MONITOR[MONITOR]
+    MONITOR --> PLAN
 ```
 
 ---

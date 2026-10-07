@@ -533,7 +533,7 @@ html.light .docs-toc-item.active a {
 .docs-body {
   display: flex;
   flex: 1;
-  max-width: 1400px;
+  max-width: 1560px;
   margin: 0 auto;
   width: 100%;
   padding: 0 0;
@@ -570,7 +570,7 @@ html.light .docs-toc-item.active a {
   flex: 1;
   min-width: 0;
   padding: 40px 48px;
-  max-width: 760px;
+  max-width: 960px;
 }
 
 .docs-toc {
@@ -634,7 +634,7 @@ html.light .docs-toc-item.active a {
 }
 
 .docs-navbar-inner {
-  max-width: 1400px;
+  max-width: 1560px;
   margin: 0 auto;
   padding: 0 24px;
   height: 100%;
@@ -923,11 +923,18 @@ html.light .docs-toc-item.active a {
 }
 
 .docs-code-content .token-comment {
-  color: #3a4a3a;
+  color: #64748b;
+  font-style: italic;
 }
 
 .docs-code-content .token-keyword {
-  color: #86efac;
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.docs-code-content .token-key {
+  color: #38bdf8;
+  font-weight: 600;
 }
 
 .docs-code-content .token-string {
@@ -936,19 +943,20 @@ html.light .docs-toc-item.active a {
 
 .docs-code-content .token-prompt {
   color: #22c55e;
+  font-weight: 700;
   user-select: none;
 }
 
 .docs-code-content .token-muted {
-  color: #3a3a5a;
+  color: #475569;
 }
 
 .docs-code-content .token-flag {
-  color: #a78bfa;
+  color: #c084fc;
 }
 
 .docs-code-content .token-value {
-  color: #fb923c;
+  color: #38bdf8;
 }
 
 /* ─── Callout ───────────────────────────────────────────────── */
