@@ -1,0 +1,40 @@
+version: 1
+
+components:
+
+  cli:
+    description: "The Last Deploy CLI"
+    paths:
+      - "agent/**"
+      - "Makefile"
+    deployment: "github-release"
+    working_directory: "agent"
+
+  frontend:
+    description: "Frontend"
+    paths:
+      - "web/frontend/**"
+    deployment: "vercel"
+    working_directory: "web/frontend"
+
+  backend:
+    description: "Backend"
+    paths:
+      - "web/backend/**"
+    deployment: "vercel"
+    working_directory: "web/backend"
+
+  landing:
+    description: "Landing Page"
+    paths:
+      - "landing/**"
+    deployment: "vercel"
+    working_directory: "landing"
+
+  challenges:
+    description: "Challenge Modules"
+    paths:
+      - "challenges/**"
+      - "web/backend/seed/**"
+    deployment: "database-seed"
+    working_directory: "web/backend"
