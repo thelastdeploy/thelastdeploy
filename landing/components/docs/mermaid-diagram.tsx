@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import CodeBlock from "./code-block";
 
 interface MermaidDiagramProps {
   chart: string;
@@ -11,7 +12,7 @@ let idCounter = 0;
 export default function MermaidDiagram({ chart }: MermaidDiagramProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svgContent, setSvgContent] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -21,21 +22,45 @@ export default function MermaidDiagram({ chart }: MermaidDiagramProps) {
       try {
         const mermaid = (await import("mermaid")).default;
         const isLight = document.documentElement.classList.contains("light");
+
         mermaid.initialize({
           startOnLoad: false,
-          theme: isLight ? "default" : "dark",
+          theme: isLight ? "neutral" : "dark",
           securityLevel: "loose",
           fontFamily: "var(--font-sans)",
+          themeVariables: isLight
+            ? {
+                primaryColor: "#f8fafc",
+                primaryTextColor: "#0f172a",
+                primaryBorderColor: "#cbd5e1",
+                lineColor: "#475569",
+                secondaryColor: "#ffffff",
+                tertiaryColor: "#f1f5f9",
+                clusterBkg: "rgba(248, 250, 252, 0.7)",
+                clusterBorder: "#cbd5e1",
+                edgeLabelBackground: "#ffffff",
+              }
+            : {
+                primaryColor: "#13132a",
+                primaryTextColor: "#f0f0ff",
+                primaryBorderColor: "#2a2a4a",
+                lineColor: "#22c55e",
+                secondaryColor: "#1a1a2e",
+                tertiaryColor: "#0d0d1f",
+                clusterBkg: "rgba(13, 13, 31, 0.7)",
+                clusterBorder: "#1e1e38",
+                edgeLabelBackground: "#0d0d1f",
+              },
         });
 
-        const { svg } = await mermaid.render(uniqueId, chart);
+        const { svg } = await mermaid.render(uniqueId, chart.trim());
         if (isMounted) {
           setSvgContent(svg);
-          setError(null);
+          setError(false);
         }
       } catch (err: any) {
         if (isMounted) {
-          setError(err?.message || "Failed to render diagram");
+          setError(true);
         }
       }
     }
@@ -48,25 +73,7 @@ export default function MermaidDiagram({ chart }: MermaidDiagramProps) {
   }, [chart]);
 
   if (error) {
-    return (
-      <div
-        className="docs-mermaid-error"
-        style={{
-          padding: "16px",
-          margin: "20px 0",
-          background: "rgba(239, 68, 68, 0.06)",
-          border: "1px solid rgba(239, 68, 68, 0.2)",
-          borderRadius: "8px",
-        }}
-      >
-        <div style={{ color: "#ef4444", fontSize: "12px", fontFamily: "var(--font-mono)" }}>
-          Mermaid Render Error: {error}
-        </div>
-        <pre style={{ fontSize: "12px", color: "var(--color-muted-foreground)", marginTop: "8px", overflowX: "auto" }}>
-          {chart}
-        </pre>
-      </div>
-    );
+    return <CodeBlock lang="mermaid" code={chart} />;
   }
 
   return (
@@ -82,6 +89,7 @@ export default function MermaidDiagram({ chart }: MermaidDiagramProps) {
         border: "1px solid var(--color-border)",
         borderRadius: "12px",
         overflowX: "auto",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
       }}
       dangerouslySetInnerHTML={{ __html: svgContent }}
     />

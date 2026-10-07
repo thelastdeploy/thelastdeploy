@@ -9,28 +9,32 @@ The Last Deploy (TLD) is built around a local-first execution model. Instead of 
 ## System Topology
 
 ```mermaid
-graph TD
-    subgraph User Machine
-        CLI["tld CLI Agent<br/><i>(Go Binary - tld)</i>"]
-        LAB["Local Lab Environment<br/><i>(Docker Containers)</i>"]
-        TERM["Shell / Terminal<br/><i>(Investigate & Fix)</i>"]
-        CLI --> LAB
-        LAB --> TERM
+graph TB
+    subgraph UM["USER MACHINE (Local Hardware)"]
+        direction LR
+        CLI["<b>tld CLI Agent</b><br/><code>Go Binary (tld)</code>"]
+        LAB["<b>Local Lab Environment</b><br/><code>Docker Containers</code>"]
+        TERM["<b>Shell / Terminal</b><br/><code>Investigate & Fix</code>"]
+
+        CLI -->|Docker API| LAB
+        LAB -->|User Shell| TERM
     end
 
-    subgraph TLD Infrastructure
-        API["FastAPI Backend<br/><i>(Port 9001)</i>"]
-        DB[("PostgreSQL 16 Database<br/><i>(Users, Progress, XP)</i>")]
-        REG["Docker Registry<br/><i>(Lab Images)</i>"]
-        DASH["Next.js Dashboard<br/><i>(Port 9000)</i>"]
-        DOCS["Next.js Docs & Landing<br/><i>(docs.thelastdeploy.com)</i>"]
+    subgraph INFRA["TLD INFRASTRUCTURE (Cloud / Server)"]
+        direction LR
+        API["<b>FastAPI Backend</b><br/><code>Port 9001</code>"]
+        DB[("<b>PostgreSQL 16 Database</b><br/><code>Users, Progress, XP</code>")]
+        REG["<b>Docker Registry</b><br/><code>Lab Images</code>"]
+        DASH["<b>Next.js Dashboard</b><br/><code>Port 9000</code>"]
+        DOCS["<b>Next.js Docs & Landing</b><br/><code>Port 9002</code>"]
 
-        API --> DB
         DASH --> API
+        API --> DB
+        DOCS --> API
     end
 
-    CLI -- Device Auth / Sync / Results --> API
-    REG -- Pull Container Images --> LAB
+    CLI -->|Device Auth / Sync| API
+    REG -->|Pull Images| LAB
 ```
 
 ## Subsystem Breakdown

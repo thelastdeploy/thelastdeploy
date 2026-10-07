@@ -22,18 +22,18 @@ Because containers share the host kernel, they start in milliseconds without req
 
 ```mermaid
 graph TD
-    subgraph Docker Host
+    subgraph Host["Docker Host"]
         DAEMON["Docker Daemon<br/><i>(dockerd)</i>"]
         CACHE[("Local Image Cache<br/><i>(alpine, nginx, postgres)</i>")]
         DAEMON <--> CACHE
 
-        subgraph Kernel Namespaces
+        subgraph NS["Kernel Namespaces"]
             CA["Container A"]
             CB["Container B"]
             CC["Container C"]
         end
 
-        DAEMON -- Manages via runc / containerd --> Kernel Namespaces
+        DAEMON -->|Manages via runc / containerd| NS
     end
 ```
 
