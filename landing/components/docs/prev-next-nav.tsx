@@ -20,7 +20,7 @@ export default function PrevNextNav({ isSubdomain, prev, next }: PrevNextNavProp
             Previous
           </span>
           <span className="docs-prev-next-title">{prev.title}</span>
-          <span style={{ fontSize: "11px", color: "#3a3a5a" }}>{prev.section}</span>
+          <span className="docs-prev-next-section">{prev.section}</span>
         </Link>
       ) : (
         <div />
@@ -34,7 +34,7 @@ export default function PrevNextNav({ isSubdomain, prev, next }: PrevNextNavProp
             </svg>
           </span>
           <span className="docs-prev-next-title">{next.title}</span>
-          <span style={{ fontSize: "11px", color: "#3a3a5a" }}>{next.section}</span>
+          <span className="docs-prev-next-section">{next.section}</span>
         </Link>
       ) : (
         <div />

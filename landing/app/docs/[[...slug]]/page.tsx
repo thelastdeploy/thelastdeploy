@@ -45,17 +45,7 @@ export default async function DocsPage({ params }: PageProps) {
           <div className="docs-page-meta">
             <Badge variant="available">{page.section}</Badge>
           </div>
-          <h1
-            className="docs-prose"
-            style={{
-              fontSize: "2rem",
-              fontWeight: 800,
-              letterSpacing: "-0.04em",
-              color: "#f0f0ff",
-              margin: 0,
-              lineHeight: 1.2,
-            }}
-          >
+          <h1 className="docs-page-title">
             {page.title}
           </h1>
           <p className="docs-page-description">{page.description}</p>

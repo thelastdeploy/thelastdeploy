@@ -79,31 +79,29 @@ export default function DocsNavbar({
             >
               <img src="/logo.png" alt="TLD" style={{ height: "28px", width: "auto" }} />
               <div style={{ display: "flex", flexDirection: "column", lineHeight: 1 }}>
-                <span style={{ fontSize: "13px", fontWeight: 700, color: "#f0f0ff", letterSpacing: "-0.02em" }}>
+                <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-foreground)", letterSpacing: "-0.02em" }}>
                   The Last Deploy
                 </span>
-                <span style={{ fontSize: "10px", color: "#3a3a5a", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                <span style={{ fontSize: "10px", color: "var(--color-muted-foreground)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em" }}>
                   Docs
                 </span>
               </div>
             </a>
 
             {/* Divider */}
-            <div style={{ width: "1px", height: "20px", background: "rgba(255,255,255,0.06)" }} />
+            <div style={{ width: "1px", height: "20px", background: "var(--color-border)" }} />
 
             <a
               href={mainSiteUrl}
               style={{
                 fontSize: "12px",
-                color: "#4a4a6a",
+                color: "var(--color-muted-foreground)",
                 textDecoration: "none",
                 display: "flex",
                 alignItems: "center",
                 gap: "4px",
                 transition: "color 0.2s",
               }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#a0a0c0"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#4a4a6a"; }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="15 18 9 12 15 6" />

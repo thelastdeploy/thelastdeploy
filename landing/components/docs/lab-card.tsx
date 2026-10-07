@@ -40,7 +40,7 @@ export default function LabCard({ lab }: { lab: LabEntry }) {
         <span
           style={{
             fontSize: "11px",
-            color: "#3a3a5a",
+            color: "var(--color-muted-foreground)",
             display: "flex",
             alignItems: "center",
             gap: "4px",
@@ -52,7 +52,7 @@ export default function LabCard({ lab }: { lab: LabEntry }) {
           </svg>
           {lab.timeEstimate}
         </span>
-        <span style={{ fontSize: "11px", color: "#3a3a5a" }}>{lab.track}</span>
+        <span style={{ fontSize: "11px", color: "var(--color-muted-foreground)" }}>{lab.track}</span>
       </div>
     </div>
   );
