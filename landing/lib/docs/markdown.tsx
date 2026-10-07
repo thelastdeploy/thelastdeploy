@@ -5,6 +5,7 @@ import Collapsible from "@/components/docs/collapsible";
 import StepList from "@/components/docs/step-list";
 import LabCard from "@/components/docs/lab-card";
 import Badge from "@/components/docs/badge";
+import MermaidDiagram from "@/components/docs/mermaid-diagram";
 import { slugifyHeading } from "./toc";
 
 function renderInline(text: string): React.ReactNode[] {
@@ -52,7 +53,11 @@ export function renderMarkdown(markdown: string): React.ReactNode {
         i++;
       }
       i++; // Skip closing ```
-      elements.push(<CodeBlock key={elements.length} lang={lang} code={codeLines.join("\n")} />);
+      if (lang === "mermaid") {
+        elements.push(<MermaidDiagram key={elements.length} chart={codeLines.join("\n")} />);
+      } else {
+        elements.push(<CodeBlock key={elements.length} lang={lang} code={codeLines.join("\n")} />);
+      }
       continue;
     }
 

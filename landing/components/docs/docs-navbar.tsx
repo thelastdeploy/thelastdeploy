@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { SOCIAL_LINKS } from "@/lib/constants";
+import ThemeToggle from "@/components/theme-toggle";
 
 const DocsSearch = dynamic(() => import("./search"), { ssr: false });
 
@@ -189,6 +190,8 @@ export default function DocsNavbar({
               </svg>
               GitHub
             </a>
+
+            <ThemeToggle />
 
             <span
               style={{

@@ -8,31 +8,29 @@ The Last Deploy (TLD) is built around a local-first execution model. Instead of 
 
 ## System Topology
 
-```
-┌───────────────────────────────────────────────────────────────────────────────────────────┐
-│                                     USER MACHINE                                          │
-│                                                                                           │
-│   ┌─────────────────────┐       ┌────────────────────────┐      ┌─────────────────────┐   │
-│   │    tld CLI Agent    │ ────> │ Local Lab Environment  │ ────> │ Shell / Terminal    │   │
-│   │  (Go Binary - tld)  │       │ (Docker Containers)    │       │ (Investigate & Fix) │   │
-│   └──────────┬──────────┘       └────────────────────────┘      └─────────────────────┘   │
-└──────────────│────────────────────────────────────────────────────────────────────────────┘
-               │                                      ▲
-               │ Device Auth / Sync / Results         │ Pull Container Images
-               ▼                                      │
-┌───────────────────────────────────────────────────────────────────────────────────────────┐
-│                                   TLD INFRASTRUCTURE                                      │
-│                                                                                           │
-│   ┌─────────────────────┐       ┌────────────────────────┐      ┌─────────────────────┐   │
-│   │   FastAPI Backend   │ ────> │ PostgreSQL 16 Database │      │  Docker Registry    │   │
-│   │   (Port 9001)       │       │ (Users, Progress, XP)  │      │  (Lab Images)       │   │
-│   └──────────▲──────────┘       └────────────────────────┘      └─────────────────────┘   │
-│              │                                                                            │
-│   ┌──────────┴──────────┐       ┌────────────────────────┐                                │
-│   │ Next.js Dashboard   │       │ Next.js Docs & Landing │                                │
-│   │ (Port 9000)         │       │ (docs.thelastdeploy.com)│                                │
-│   └─────────────────────┘       └────────────────────────┘                                │
-└───────────────────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    subgraph User Machine
+        CLI["tld CLI Agent<br/><i>(Go Binary - tld)</i>"]
+        LAB["Local Lab Environment<br/><i>(Docker Containers)</i>"]
+        TERM["Shell / Terminal<br/><i>(Investigate & Fix)</i>"]
+        CLI --> LAB
+        LAB --> TERM
+    end
+
+    subgraph TLD Infrastructure
+        API["FastAPI Backend<br/><i>(Port 9001)</i>"]
+        DB[("PostgreSQL 16 Database<br/><i>(Users, Progress, XP)</i>")]
+        REG["Docker Registry<br/><i>(Lab Images)</i>"]
+        DASH["Next.js Dashboard<br/><i>(Port 9000)</i>"]
+        DOCS["Next.js Docs & Landing<br/><i>(docs.thelastdeploy.com)</i>"]
+
+        API --> DB
+        DASH --> API
+    end
+
+    CLI -- Device Auth / Sync / Results --> API
+    REG -- Pull Container Images --> LAB
 ```
 
 ## Subsystem Breakdown

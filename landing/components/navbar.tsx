@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { SOCIAL_LINKS, DOCS_URL } from "@/lib/constants";
+import ThemeToggle from "@/components/theme-toggle";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -136,6 +137,9 @@ export default function Navbar() {
               </svg>
               Star on GitHub
             </a>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Join Discord */}
             <a

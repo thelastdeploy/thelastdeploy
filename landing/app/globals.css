@@ -36,6 +36,113 @@ body {
   font-feature-settings: "rlig" 1, "calt" 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+html.light {
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+  --color-border: #e2e8f0;
+  --color-border-bright: #cbd5e1;
+  --color-primary: #16a34a;
+  --color-primary-foreground: #ffffff;
+  --color-primary-hover: #15803d;
+  --color-primary-glow: rgba(22, 163, 74, 0.15);
+  --color-card: #f8fafc;
+  --color-card-hover: #f1f5f9;
+  --color-accent: #9333ea;
+  --color-accent-glow: rgba(147, 51, 234, 0.12);
+}
+
+/* Light mode overrides for docs components */
+html.light .docs-navbar {
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom-color: var(--color-border);
+}
+
+html.light .docs-nav-section-header {
+  color: #64748b;
+}
+
+html.light .docs-nav-section-header:hover {
+  color: #0f172a;
+}
+
+html.light .docs-nav-link {
+  color: #475569;
+}
+
+html.light .docs-nav-link:hover {
+  color: #0f172a;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+html.light .docs-prose {
+  color: #334155;
+}
+
+html.light .docs-prose h1 {
+  color: #0f172a;
+}
+
+html.light .docs-prose h2 {
+  color: #1e293b;
+  border-bottom-color: var(--color-border);
+}
+
+html.light .docs-prose h3 {
+  color: #334155;
+}
+
+html.light .docs-prose h4 {
+  color: #475569;
+}
+
+html.light .docs-prose strong {
+  color: #0f172a;
+}
+
+html.light .docs-prose code {
+  background: rgba(22, 163, 74, 0.08);
+  border-color: rgba(22, 163, 74, 0.2);
+  color: #15803d;
+}
+
+html.light .docs-prose td {
+  color: #475569;
+  border-bottom-color: var(--color-border);
+}
+
+html.light .docs-prose th {
+  color: #64748b;
+  border-bottom-color: var(--color-border);
+}
+
+html.light .docs-prose blockquote {
+  background: rgba(22, 163, 74, 0.04);
+  color: #475569;
+}
+
+html.light .docs-page-description {
+  color: #64748b;
+}
+
+html.light .docs-toc-label {
+  color: #64748b;
+}
+
+html.light .docs-toc-item a {
+  color: #64748b;
+}
+
+html.light .docs-toc-item a:hover {
+  color: #0f172a;
+}
+
+html.light .docs-toc-item.active a {
+  color: #16a34a;
 }
 
 /* ─── Scrollbar ─────────────────────────────────────────────────── */
