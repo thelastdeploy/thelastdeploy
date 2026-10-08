@@ -24,6 +24,11 @@ func Execute() {
 			fmt.Fprintln(os.Stderr, "start:", err)
 			os.Exit(1)
 		}
+	case "attach":
+		if err := runAttach(os.Args[2:]); err != nil {
+			fmt.Fprintln(os.Stderr, "attach:", err)
+			os.Exit(1)
+		}
 	case "stop":
 		if err := runStop(os.Args[2:]); err != nil {
 			fmt.Fprintln(os.Stderr, "stop:", err)
@@ -97,9 +102,10 @@ Commands:
   sync --all            Download all modules and labs
   sync -m <module-id>   Sync a specific module
   sync -l <lab-id>      Sync a specific lab
-  start <lab-id>        Start a lab environment (non-blocking)
-  stop                  Stop the running lab and local server
-  check                 Run the validator and report pass/fail
+  start <lab-id>        Start a lab environment in disposable container
+  attach                Re-enter active lab container shell
+  stop                  Stop running lab and destroy environment
+  check                 Run the validator inside container and report pass/fail
   status                Show auth, synced content, and active lab
   login                 Authenticate with The Last Deploy API
   logout                Remove saved credentials

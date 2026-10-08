@@ -2,6 +2,7 @@
 package validator
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -15,6 +16,7 @@ import (
 
 	"github.com/thelastdeploy/agent/internal/config"
 	"github.com/thelastdeploy/agent/internal/device"
+	"github.com/thelastdeploy/agent/internal/runtime"
 )
 
 // Result holds the outcome of a validation run.
@@ -26,6 +28,68 @@ type Result struct {
 	RanAt         time.Time `json:"ran_at"`
 	Signature     string    `json:"signature"`
 	ValidatorHash string    `json:"validator_hash"`
+}
+
+// RunContainerized executes the validator script INSIDE the active runtime container.
+func RunContainerized(ctx context.Context, eng runtime.Engine, containerID, labID, sectionID, scriptPath, deviceKeyPath string) (*Result, error) {
+	if _, err := os.Stat(scriptPath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("validator script not found: %s", scriptPath)
+	}
+
+	valHash, err := Sha256Sum(scriptPath)
+	if err != nil {
+		return nil, fmt.Errorf("calculate validator hash: %w", err)
+	}
+
+	// 1. Ensure /tld directory exists in container
+	_, _ = eng.Exec(ctx, containerID, []string{"mkdir", "-p", "/tld"})
+
+	// 2. Copy validator script into container at /tld/validator
+	targetScript := "/tld/validator.sh"
+	if strings.HasSuffix(scriptPath, ".py") {
+		targetScript = "/tld/validator.py"
+	}
+
+	if err := eng.CopyFileToInstance(ctx, containerID, scriptPath, targetScript); err != nil {
+		return nil, fmt.Errorf("copy validator to container: %w", err)
+	}
+	_, _ = eng.Exec(ctx, containerID, []string{"chmod", "+x", targetScript})
+
+	// 3. Execute validator inside container
+	var cmd []string
+	if strings.HasSuffix(scriptPath, ".py") {
+		cmd = []string{"python3", targetScript}
+	} else {
+		cmd = []string{"/bin/bash", targetScript}
+	}
+
+	execRes, err := eng.Exec(ctx, containerID, cmd)
+	if err != nil {
+		return nil, fmt.Errorf("container validation execution error: %w", err)
+	}
+
+	output := execRes.Stdout
+	if output == "" {
+		output = execRes.Stderr
+	}
+
+	passed := execRes.ExitCode == 0
+
+	result := &Result{
+		LabID:         labID,
+		SectionID:     sectionID,
+		Passed:        passed,
+		Output:        output,
+		RanAt:         time.Now(),
+		ValidatorHash: valHash,
+	}
+
+	key, err := device.Key(deviceKeyPath)
+	if err != nil {
+		return nil, fmt.Errorf("device key: %w", err)
+	}
+	result.Signature = sign(result, key)
+	return result, nil
 }
 
 // Run executes the validator script and returns a signed Result.
