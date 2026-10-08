@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/thelastdeploy/agent/internal/config"
 )
 
 // Session represents an active lab session written to ~/.tld/session.json
@@ -21,11 +23,11 @@ type Session struct {
 }
 
 func sessionPath() (string, error) {
-	home, err := os.UserHomeDir()
+	dir, err := config.TLDDir()
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(home, ".tld", "session.json"), nil
+	return filepath.Join(dir, "session.json"), nil
 }
 
 func WriteSession(s *Session) error {

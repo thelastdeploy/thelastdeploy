@@ -4,6 +4,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 func Execute() {
@@ -73,6 +74,11 @@ func Execute() {
 }
 
 func printUsage() {
+	binName := filepath.Base(os.Args[0])
+	if binName == "" {
+		binName = "tld"
+	}
+
 	fmt.Println("\x1b[1;36m" + ` _________  ___       ________     
 |\___   ___\\  \     |\   ___ \    
 \|___ \  \_\ \  \    \ \  \_|\ \   
@@ -82,10 +88,10 @@ func printUsage() {
         \|__|  \|_______|\|_______|
 
     T H E   L A S T   D E P L O Y` + "\x1b[0m")
-	fmt.Println(`The Last Deploy — local DevOps practice platform
+	fmt.Printf(`The Last Deploy — local DevOps practice platform
 
 Usage:
-  tld <command> [args]
+  %s <command> [args]
 
 Commands:
   sync --all            Download all modules and labs
@@ -100,5 +106,6 @@ Commands:
   publish <folder-path> Publish a local module directory to the builder API
   doctor                Check if your system is ready to run TLD labs
   version               Show CLI version information
-  help                  Show this help message`)
+  help                  Show this help message
+`, binName)
 }

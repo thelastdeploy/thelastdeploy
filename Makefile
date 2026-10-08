@@ -6,9 +6,10 @@ GO_DIR   := agent
 BIN_DIR  := bin
 DIST_DIR := dist
 CLI      := $(BIN_DIR)/tld
+CLI_DEV  := $(BIN_DIR)/tld-dev
 
 .PHONY: \
-	build dist install clean \
+	build build-dev dist install install-dev clean \
 	fmt vet test verify \
 	sync start stop check status login logout doctor publish \
 	dev-up dev-down dev-logs dev-seed
@@ -44,12 +45,23 @@ verify: fmt vet test
 
 VERSION  ?= v1.1.0
 LDFLAGS  := -s -w -X github.com/thelastdeploy/agent/cmd.Version=$(VERSION)
+DEV_LDFLAGS := -s -w \
+	-X github.com/thelastdeploy/agent/cmd.Version=$(VERSION)-dev \
+	-X github.com/thelastdeploy/agent/internal/config.BuildEnvironment=local \
+	-X github.com/thelastdeploy/agent/internal/config.DefaultAPIBaseURL=http://localhost:9001 \
+	-X github.com/thelastdeploy/agent/internal/config.DefaultConfigDirName=.tld-dev
 
 build:
-	@echo "==> Building CLI..."
+	@echo "==> Building Production CLI (tld)..."
 	@mkdir -p $(BIN_DIR)
 	@cd $(GO_DIR) && go build -ldflags="$(LDFLAGS)" -o ../$(CLI) .
-	@echo "✓ CLI built successfully"
+	@echo "✓ Production CLI built successfully: ./$(CLI)"
+
+build-dev:
+	@echo "==> Building Local Dev CLI (tld-dev)..."
+	@mkdir -p $(BIN_DIR)
+	@cd $(GO_DIR) && go build -ldflags="$(DEV_LDFLAGS)" -o ../$(CLI_DEV) .
+	@echo "✓ Local Dev CLI built successfully: ./$(CLI_DEV)"
 
 dist: verify
 	@echo "==> Creating release artifacts..."
@@ -91,7 +103,11 @@ dist: verify
 
 install: build
 	cp $(CLI) /usr/local/bin/tld
-	@echo "Installed to /usr/local/bin/tld"
+	@echo "Installed production CLI to /usr/local/bin/tld"
+
+install-dev: build-dev
+	cp $(CLI_DEV) /usr/local/bin/tld-dev
+	@echo "Installed local dev CLI to /usr/local/bin/tld-dev"
 
 # ==========================================================
 # Developer Commands
