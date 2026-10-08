@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/thelastdeploy/agent/internal/config"
 	"github.com/thelastdeploy/agent/internal/device"
 )
 
@@ -95,11 +96,11 @@ func Sha256Sum(path string) (string, error) {
 }
 
 func GetPythonInterpreter(labDir string) (string, error) {
-	home, err := os.UserHomeDir()
+	tldDir, err := config.TLDDir()
 	if err != nil {
-		return "", fmt.Errorf("user home dir: %w", err)
+		return "", fmt.Errorf("tld dir: %w", err)
 	}
-	venvPath := filepath.Join(home, ".tld", "venv")
+	venvPath := filepath.Join(tldDir, "venv")
 	pythonBin := filepath.Join(venvPath, "bin", "python3")
 	pipBin := filepath.Join(venvPath, "bin", "pip")
 
@@ -110,7 +111,7 @@ func GetPythonInterpreter(labDir string) (string, error) {
 
 	// 1. Check if venv exists, if not create it
 	if _, err := os.Stat(pythonBin); os.IsNotExist(err) {
-		fmt.Println("🐍 Bootstrapping Python virtual environment (~/.tld/venv)...")
+		fmt.Printf("🐍 Bootstrapping Python virtual environment (%s)...\n", filepath.Join(tldDir, "venv"))
 		if err := os.MkdirAll(venvPath, 0755); err != nil {
 			return "", fmt.Errorf("create venv dir: %w", err)
 		}

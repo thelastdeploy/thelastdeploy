@@ -131,7 +131,11 @@ func FindLab(baseDir, labID string) (*Lab, error) {
 			}
 		}
 	}
-	return nil, fmt.Errorf("lab '%s' not found — run 'tld sync' first", labID)
+	binName := filepath.Base(os.Args[0])
+	if binName == "" {
+		binName = "tld"
+	}
+	return nil, fmt.Errorf("lab '%s' not found — run '%s sync --all' first", labID, binName)
 }
 
 func LoadLabsForModule(baseDir, moduleID string) ([]*Lab, error) {

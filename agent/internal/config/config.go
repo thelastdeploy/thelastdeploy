@@ -15,10 +15,39 @@ type Config struct {
 	AuthToken      string
 	Username       string
 	ChallengesRepo string
+	Environment    string // "production" or "local"
 }
 
-const defaultAPIBaseURL = "https://api.thelastdeploy.com"
+var (
+	// DefaultAPIBaseURL is the fallback API base URL. Can be overridden via -ldflags.
+	DefaultAPIBaseURL = "https://api.thelastdeploy.com"
+	// DefaultConfigDirName is the directory name in user home dir. Can be overridden via -ldflags.
+	DefaultConfigDirName = ".tld"
+	// BuildEnvironment is the build environment name ("production" or "local"). Can be overridden via -ldflags.
+	BuildEnvironment = "production"
+)
+
 const defaultChallengesRepo = "thelastdeploy/thelastdeploy"
+
+func IsDevEnv(cfg *Config) bool {
+	if cfg == nil {
+		return false
+	}
+	return cfg.Environment == "local" || cfg.Environment == "dev" || strings.Contains(cfg.APIBaseURL, "localhost") || strings.Contains(cfg.APIBaseURL, "127.0.0.1")
+}
+
+func getEnvMode() string {
+	if env := strings.ToLower(os.Getenv("TLD_ENV")); env != "" {
+		if env == "local" || env == "dev" || env == "development" {
+			return "local"
+		}
+		return env
+	}
+	if strings.ToLower(BuildEnvironment) == "local" || strings.ToLower(BuildEnvironment) == "dev" {
+		return "local"
+	}
+	return "production"
+}
 
 func Load() (*Config, error) {
 	path, err := configPath()
@@ -51,11 +80,21 @@ func Save(cfg *Config) error {
 }
 
 func TLDDir() (string, error) {
+	if customDir := os.Getenv("TLD_DIR"); customDir != "" {
+		return expandHome(customDir), nil
+	}
+
+	mode := getEnvMode()
+	dirName := DefaultConfigDirName
+	if mode == "local" && dirName == ".tld" {
+		dirName = ".tld-dev"
+	}
+
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(home, ".tld"), nil
+	return filepath.Join(home, dirName), nil
 }
 
 func configPath() (string, error) {
@@ -67,12 +106,23 @@ func configPath() (string, error) {
 }
 
 func defaults() *Config {
-	home, _ := os.UserHomeDir()
+	dir, _ := TLDDir()
+	mode := getEnvMode()
+
+	baseURL := DefaultAPIBaseURL
+	if mode == "local" && baseURL == "https://api.thelastdeploy.com" {
+		baseURL = "http://localhost:9001"
+	}
+	if override := os.Getenv("TLD_API_URL"); override != "" {
+		baseURL = override
+	}
+
 	return &Config{
-		APIBaseURL:     defaultAPIBaseURL,
-		DeviceKeyPath:  filepath.Join(home, ".tld", "device.key"),
-		ChallengesDir:  filepath.Join(home, ".tld", "challenges"),
+		APIBaseURL:     baseURL,
+		DeviceKeyPath:  filepath.Join(dir, "device.key"),
+		ChallengesDir:  filepath.Join(dir, "challenges"),
 		ChallengesRepo: defaultChallengesRepo,
+		Environment:    mode,
 	}
 }
 
@@ -110,8 +160,25 @@ func parse(raw string) *Config {
 			cfg.AuthToken = val
 		case "username":
 			cfg.Username = val
+		case "environment":
+			if val != "" {
+				cfg.Environment = val
+			}
 		}
 	}
+
+	// Environment variable overrides ALWAYS take precedence
+	mode := getEnvMode()
+	if mode == "local" {
+		cfg.Environment = "local"
+		if cfg.APIBaseURL == "https://api.thelastdeploy.com" {
+			cfg.APIBaseURL = "http://localhost:9001"
+		}
+	}
+	if override := os.Getenv("TLD_API_URL"); override != "" {
+		cfg.APIBaseURL = override
+	}
+
 	return cfg
 }
 
@@ -124,8 +191,8 @@ func write(path string, cfg *Config) error {
 	if cfg.Username != "" {
 		userLine = fmt.Sprintf("username: %s\n", strings.TrimSpace(cfg.Username))
 	}
-	content := fmt.Sprintf("# The Last Deploy — agent configuration\n# Generated automatically on first run. Safe to edit.\napi_base_url: %s\ndevice_key_path: %s\nchallenges_dir: %s\nchallenges_repo: %s\n%s%s",
-		cfg.APIBaseURL, cfg.DeviceKeyPath, cfg.ChallengesDir, cfg.ChallengesRepo, authLine, userLine)
+	content := fmt.Sprintf("# The Last Deploy — agent configuration\n# Generated automatically on first run. Safe to edit.\nenvironment: %s\napi_base_url: %s\ndevice_key_path: %s\nchallenges_dir: %s\nchallenges_repo: %s\n%s%s",
+		cfg.Environment, cfg.APIBaseURL, cfg.DeviceKeyPath, cfg.ChallengesDir, cfg.ChallengesRepo, authLine, userLine)
 	return os.WriteFile(path, []byte(content), 0600)
 }
 

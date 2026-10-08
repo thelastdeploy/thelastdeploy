@@ -49,7 +49,9 @@ desktop.ini
 *.sublime-workspace
 
 # Go
+/bin/
 /bin/tld
+/bin/tld-dev
 *.exe
 *.test
 *.out

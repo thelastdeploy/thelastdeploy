@@ -25,6 +25,16 @@ func runStatus(args []string) error {
 
 	tldDir := filepath.Dir(cfg.DeviceKeyPath)
 
+	// ── Environment ──────────────────────────────────────────────────────
+	fmt.Println()
+	if config.IsDevEnv(cfg) {
+		fmt.Printf("● Environment: \x1b[1;33mLOCAL DEV\x1b[0m (%s)\n", cfg.APIBaseURL)
+		fmt.Printf("  Config dir:  %s\n", tldDir)
+	} else {
+		fmt.Printf("● Environment: \x1b[1;32mPRODUCTION\x1b[0m (%s)\n", cfg.APIBaseURL)
+		fmt.Printf("  Config dir:  %s\n", tldDir)
+	}
+
 	// ── Auth ─────────────────────────────────────────────────────────────
 	fmt.Println()
 	fmt.Println("● Auth")
