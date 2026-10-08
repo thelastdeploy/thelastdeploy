@@ -2,6 +2,7 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -11,6 +12,7 @@ import (
 	"github.com/thelastdeploy/agent/internal/config"
 	"github.com/thelastdeploy/agent/internal/lab"
 	"github.com/thelastdeploy/agent/internal/queue"
+	"github.com/thelastdeploy/agent/internal/runtime/docker"
 	"github.com/thelastdeploy/agent/internal/validator"
 )
 
@@ -27,7 +29,13 @@ func runCheck(args []string) error {
 
 	fmt.Printf("Running validator for lab: %s\n\n", session.LabID)
 
-	result, err := validator.Run(session.LabID, session.SectionID, session.ValidatorPath, cfg.DeviceKeyPath)
+	ctx := context.Background()
+	eng := docker.New()
+	if err := eng.IsAvailable(ctx); err != nil {
+		return err
+	}
+
+	result, err := validator.RunContainerized(ctx, eng, session.ContainerID, session.LabID, session.SectionID, session.ValidatorPath, cfg.DeviceKeyPath)
 	if err != nil {
 		return fmt.Errorf("validator error: %w", err)
 	}

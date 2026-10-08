@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/thelastdeploy/agent/internal/environment"
 )
 
 type Module struct {
@@ -47,6 +49,7 @@ type Lab struct {
 	ResourcesMem  int
 	ValidatorPath string
 	Version       int
+	Environment   *environment.EnvironmentSpec
 }
 
 type moduleJSONFile struct {
@@ -374,7 +377,7 @@ func parseLabYAML(path string) (*Lab, error) {
 		return nil, err
 	}
 	lab := &Lab{}
-	var inSetup, inSeedCmds bool
+	var inSetup, inSeedCmds, inEnv, inEnvPkgs, inEnvCaps, inEnvPorts bool
 
 	for _, raw := range lines {
 		trimmed := strings.TrimSpace(raw)
@@ -385,6 +388,10 @@ func parseLabYAML(path string) (*Lab, error) {
 		if indent == 0 {
 			inSetup = false
 			inSeedCmds = false
+			inEnv = false
+			inEnvPkgs = false
+			inEnvCaps = false
+			inEnvPorts = false
 		}
 		key, val := splitKV(trimmed)
 		switch {
@@ -410,11 +417,56 @@ func parseLabYAML(path string) (*Lab, error) {
 			inSeedCmds = true
 		case inSeedCmds && indent == 4 && strings.HasPrefix(trimmed, "- "):
 			lab.SeedCommands = append(lab.SeedCommands, unquote(strings.TrimPrefix(trimmed, "- ")))
+		case indent == 0 && key == "environment":
+			inEnv = true
+			if lab.Environment == nil {
+				lab.Environment = &environment.EnvironmentSpec{}
+			}
+		case inEnv && indent == 2 && key == "profile":
+			if lab.Environment == nil {
+				lab.Environment = &environment.EnvironmentSpec{}
+			}
+			lab.Environment.Profile = unquote(val)
+		case inEnv && indent == 2 && key == "packages":
+			inEnvPkgs = true
+		case inEnvPkgs && indent == 4 && strings.HasPrefix(trimmed, "- "):
+			if lab.Environment == nil {
+				lab.Environment = &environment.EnvironmentSpec{}
+			}
+			lab.Environment.Packages = append(lab.Environment.Packages, unquote(strings.TrimPrefix(trimmed, "- ")))
+		case inEnv && indent == 2 && key == "capabilities":
+			inEnvCaps = true
+		case inEnvCaps && indent == 4 && strings.HasPrefix(trimmed, "- "):
+			if lab.Environment == nil {
+				lab.Environment = &environment.EnvironmentSpec{}
+			}
+			lab.Environment.Capabilities = append(lab.Environment.Capabilities, unquote(strings.TrimPrefix(trimmed, "- ")))
+		case inEnv && indent == 2 && key == "ports":
+			inEnvPorts = true
+		case inEnvPorts && indent == 4 && strings.HasPrefix(trimmed, "- "):
+			if lab.Environment == nil {
+				lab.Environment = &environment.EnvironmentSpec{}
+			}
+			lab.Environment.Ports = append(lab.Environment.Ports, unquote(strings.TrimPrefix(trimmed, "- ")))
 		}
 	}
 	if lab.ID == "" {
 		return nil, fmt.Errorf("lab.yaml missing required field: id")
 	}
+
+	// Fallback mapping for legacy labs without environment block
+	if lab.Environment == nil || lab.Environment.Profile == "" {
+		profile := "ubuntu-24.04-standard"
+		if lab.SetupType == "kind" || strings.HasPrefix(lab.ID, "nginx-") || strings.Contains(lab.ID, "service") || strings.Contains(lab.ID, "cron") || strings.Contains(lab.ID, "journal") {
+			profile = "ubuntu-24.04-systemd"
+		}
+		if lab.Environment == nil {
+			lab.Environment = &environment.EnvironmentSpec{Profile: profile}
+		} else {
+			lab.Environment.Profile = profile
+		}
+	}
+
 	return lab, nil
 }
 
