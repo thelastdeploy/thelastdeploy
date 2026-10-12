@@ -14,6 +14,12 @@ import (
 )
 
 func runStart(args []string) error {
+	if os.Getenv("TLD_IN_CONTAINER") == "1" {
+		fmt.Println("ℹ️  You are already inside an active lab container!")
+		fmt.Println("   Run 'tld check' to validate your work, or 'tld stop' / 'exit' when finished.")
+		return nil
+	}
+
 	if len(args) < 1 {
 		return errors.New("usage: tld start <lab-id>")
 	}
@@ -45,23 +51,20 @@ func runStart(args []string) error {
 		}
 	}
 
+	// Start the local server before attaching so it is accessible while the container runs
+	if !localserver.IsRunning() {
+		srv := localserver.New(cfg.DeviceKeyPath)
+		go func() {
+			if err := srv.StartBackground(); err != nil {
+				fmt.Fprintf(os.Stderr, "warn: local server stopped: %v\n", err)
+			}
+		}()
+		defer localserver.Shutdown()
+	}
+
 	if err := lab.Start(l); err != nil {
 		return err
 	}
 
-	// Start the local server in the background — non-blocking.
-	if localserver.IsRunning() {
-		fmt.Println("  (local server already running on :7842)")
-		return nil
-	}
-
-	srv := localserver.New(cfg.DeviceKeyPath)
-	go func() {
-		if err := srv.StartBackground(); err != nil {
-			fmt.Fprintf(os.Stderr, "warn: local server stopped: %v\n", err)
-		}
-	}()
-
-	fmt.Println("  Local API server started on http://127.0.0.1:7842")
 	return nil
 }

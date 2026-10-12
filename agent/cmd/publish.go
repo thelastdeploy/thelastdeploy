@@ -49,6 +49,12 @@ type BuilderModuleInput struct {
 }
 
 func runPublish(args []string) error {
+	if os.Getenv("TLD_IN_CONTAINER") == "1" {
+		fmt.Println("ℹ️  Module publishing is managed on your host machine.")
+		fmt.Println("   Please run 'tld publish' from your host terminal.")
+		return nil
+	}
+
 	if len(args) < 1 {
 		return fmt.Errorf("missing module folder path. Usage: tld publish <folder-path>")
 	}

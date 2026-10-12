@@ -16,7 +16,7 @@ import (
 	"github.com/thelastdeploy/agent/internal/validator"
 )
 
-const addr = "127.0.0.1:7842"
+const addr = "0.0.0.0:7842"
 
 var (
 	deviceKeyPath string
@@ -36,6 +36,7 @@ func New(keyPath string) *Server {
 	mux.HandleFunc("/status", s.handleStatus)
 	mux.HandleFunc("/check", s.handleCheck)
 	mux.HandleFunc("/session", s.handleSession)
+	mux.HandleFunc("/stop", s.handleStop)
 	s.httpServer = &http.Server{
 		Addr:         addr,
 		Handler:      corsMiddleware(mux),
@@ -159,6 +160,19 @@ func (s *Server) handleCheck(w http.ResponseWriter, r *http.Request) {
 		"ran_at":     result.RanAt,
 		"signature":  result.Signature,
 	})
+}
+
+func (s *Server) handleStop(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, http.StatusMethodNotAllowed, "POST required")
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"status": "stopping"})
+	go func() {
+		time.Sleep(300 * time.Millisecond)
+		_ = lab.Stop()
+		Shutdown()
+	}()
 }
 
 // ---------------------------------------------------------------------------

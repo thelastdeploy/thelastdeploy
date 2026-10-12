@@ -29,15 +29,34 @@ func runCheck(args []string) error {
 
 	fmt.Printf("Running validator for lab: %s\n\n", session.LabID)
 
-	ctx := context.Background()
-	eng := docker.New()
-	if err := eng.IsAvailable(ctx); err != nil {
-		return err
-	}
+	var result *validator.Result
+	if os.Getenv("TLD_IN_CONTAINER") == "1" {
+		valPath := session.ValidatorPath
+		if valPath == "" {
+			valPath = "/tld/validator.sh"
+		}
+		if _, statErr := os.Stat(valPath); os.IsNotExist(statErr) {
+			if _, pyErr := os.Stat("/tld/validator.py"); pyErr == nil {
+				valPath = "/tld/validator.py"
+			}
+		}
+		var valErr error
+		result, valErr = validator.Run(session.LabID, session.SectionID, valPath, cfg.DeviceKeyPath)
+		if valErr != nil {
+			return fmt.Errorf("validator error: %w", valErr)
+		}
+	} else {
+		ctx := context.Background()
+		eng := docker.New()
+		if err := eng.IsAvailable(ctx); err != nil {
+			return err
+		}
 
-	result, err := validator.RunContainerized(ctx, eng, session.ContainerID, session.LabID, session.SectionID, session.ValidatorPath, cfg.DeviceKeyPath)
-	if err != nil {
-		return fmt.Errorf("validator error: %w", err)
+		var valErr error
+		result, valErr = validator.RunContainerized(ctx, eng, session.ContainerID, session.LabID, session.SectionID, session.ValidatorPath, cfg.DeviceKeyPath)
+		if valErr != nil {
+			return fmt.Errorf("validator error: %w", valErr)
+		}
 	}
 
 	fmt.Printf("Output:\n  %s\n\n", result.Output)
