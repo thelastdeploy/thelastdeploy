@@ -37,6 +37,12 @@ type githubRelease struct {
 }
 
 func runUpdate(args []string) error {
+	if os.Getenv("TLD_IN_CONTAINER") == "1" {
+		fmt.Println("ℹ️  CLI updates are managed on your host machine.")
+		fmt.Println("   Please run 'tld update' from your host terminal.")
+		return nil
+	}
+
 	fs := flag.NewFlagSet("update", flag.ContinueOnError)
 	fs.Usage = func() {
 		fmt.Printf(`Usage:

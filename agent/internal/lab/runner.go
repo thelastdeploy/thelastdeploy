@@ -3,11 +3,15 @@ package lab
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/thelastdeploy/agent/internal/cache"
+	"github.com/thelastdeploy/agent/internal/config"
 	"github.com/thelastdeploy/agent/internal/environment"
 	"github.com/thelastdeploy/agent/internal/runtime/docker"
 )
@@ -39,6 +43,11 @@ func Start(lab *cache.Lab) error {
 	}
 
 	instanceSpec := environment.ResolveInstanceSpec(lab.ID, lab.Environment)
+	if instanceSpec.EnvironmentVars == nil {
+		instanceSpec.EnvironmentVars = make(map[string]string)
+	}
+	instanceSpec.EnvironmentVars["TLD_IN_CONTAINER"] = "1"
+	instanceSpec.EnvironmentVars["DEBIAN_FRONTEND"] = "noninteractive"
 
 	fmt.Printf("⚙  Provisioning disposable container environment (%s)...\n", instanceSpec.Image)
 	containerID, err := eng.Create(ctx, instanceSpec)
@@ -49,11 +58,15 @@ func Start(lab *cache.Lab) error {
 	// Ensure sudo wrapper exists for root container execution
 	_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "echo '#!/bin/sh\nexec \"$@\"' > /usr/local/bin/sudo && chmod +x /usr/local/bin/sudo"})
 
+	// Inject in-container tld binary, config, validator, and active session
+	injectInContainerTLD(ctx, eng, containerID, lab)
+
 	// Prepare environment packages if needed
 	if lab.Environment != nil && len(lab.Environment.Packages) > 0 {
 		fmt.Printf("  📦 Installing required lab packages (%s)...\n", fmt.Sprint(lab.Environment.Packages))
-		_, _ = eng.Exec(ctx, containerID, []string{"apt-get", "update", "-qq"})
-		installCmd := append([]string{"apt-get", "install", "-y", "-qq"}, lab.Environment.Packages...)
+		_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "DEBIAN_FRONTEND=noninteractive apt-get update -qq"})
+		pkgList := strings.Join(lab.Environment.Packages, " ")
+		installCmd := []string{"/bin/bash", "-c", "DEBIAN_FRONTEND=noninteractive apt-get install -y -qq " + pkgList}
 		if res, err := eng.Exec(ctx, containerID, installCmd); err != nil || res.ExitCode != 0 {
 			fmt.Fprintf(os.Stderr, "  warn: package installation notice: %s %s\n", res.Stdout, res.Stderr)
 		}
@@ -90,10 +103,93 @@ func Start(lab *cache.Lab) error {
 	printLab(lab)
 
 	fmt.Println("Entering interactive lab container shell...")
-	fmt.Println("(Type 'exit' to leave shell. Run 'tld check' in another terminal to validate.)")
+	fmt.Println("👉 Run 'tld check' right here inside this shell whenever you are ready to validate.")
+	fmt.Println("👉 Run 'tld stop' or type 'exit' when finished.")
 
 	_ = eng.Attach(ctx, containerID)
+
+	// Check if user ran 'tld stop' inside the container
+	chkRes, chkErr := eng.Exec(ctx, containerID, []string{"test", "-f", "/tld/stopped"})
+	if chkErr == nil && chkRes.ExitCode == 0 {
+		return Stop()
+	}
 	return nil
+}
+
+func injectInContainerTLD(ctx context.Context, eng *docker.DockerEngine, containerID string, l *cache.Lab) {
+	// 1. Ensure required base directories exist
+	_, _ = eng.Exec(ctx, containerID, []string{"mkdir", "-p", "/usr/local/bin", "/tld", "/root/.tld"})
+
+	// 2. Inject host tld binary
+	if hostExe, err := os.Executable(); err == nil {
+		if resolved, err := filepath.EvalSymlinks(hostExe); err == nil {
+			hostExe = resolved
+		}
+		if err := eng.CopyFileToInstance(ctx, containerID, hostExe, "/usr/local/bin/tld"); err == nil {
+			_, _ = eng.Exec(ctx, containerID, []string{"chmod", "+x", "/usr/local/bin/tld"})
+		}
+	}
+
+	// 3. Pre-stage validator script
+	targetScript := "/tld/validator.sh"
+	if strings.HasSuffix(l.ValidatorPath, ".py") {
+		targetScript = "/tld/validator.py"
+	}
+	if err := eng.CopyFileToInstance(ctx, containerID, l.ValidatorPath, targetScript); err == nil {
+		_, _ = eng.Exec(ctx, containerID, []string{"chmod", "+x", targetScript})
+	}
+
+	// 4. Inject config and device.key
+	if cfg, err := config.Load(); err == nil {
+		containerAPIBaseURL := cfg.APIBaseURL
+		if strings.Contains(containerAPIBaseURL, "localhost") || strings.Contains(containerAPIBaseURL, "127.0.0.1") {
+			containerAPIBaseURL = strings.Replace(containerAPIBaseURL, "localhost", "host.docker.internal", 1)
+			containerAPIBaseURL = strings.Replace(containerAPIBaseURL, "127.0.0.1", "host.docker.internal", 1)
+		}
+		containerCfg := fmt.Sprintf("# In-container TLD config\nenvironment: %s\napi_base_url: %s\ndevice_key_path: /root/.tld/device.key\nchallenges_dir: /tld/challenges\nchallenges_repo: %s\nauth_token: %s\nusername: %s\n",
+			cfg.Environment, containerAPIBaseURL, cfg.ChallengesRepo, cfg.AuthToken, cfg.Username)
+
+		if tmpCfgFile, err := os.CreateTemp("", "tld-cfg-*.yaml"); err == nil {
+			tmpCfgPath := tmpCfgFile.Name()
+			_, _ = tmpCfgFile.WriteString(containerCfg)
+			_ = tmpCfgFile.Close()
+			_ = eng.CopyFileToInstance(ctx, containerID, tmpCfgPath, "/root/.tld/config.yaml")
+			_ = os.Remove(tmpCfgPath)
+		}
+
+		if _, err := os.Stat(cfg.DeviceKeyPath); err == nil {
+			_ = eng.CopyFileToInstance(ctx, containerID, cfg.DeviceKeyPath, "/root/.tld/device.key")
+		}
+	}
+
+	// 5. In-container active session
+	containerSession := &Session{
+		LabID:         l.ID,
+		ModuleID:      l.ModuleID,
+		SectionID:     l.SectionID,
+		StartedAt:     time.Now(),
+		ValidatorPath: targetScript,
+		SetupType:     l.SetupType,
+		ContainerID:   containerID,
+	}
+	if tmpSessData, err := json.MarshalIndent(containerSession, "", "  "); err == nil {
+		if tmpSessFile, err := os.CreateTemp("", "tld-sess-*.json"); err == nil {
+			tmpSessPath := tmpSessFile.Name()
+			_, _ = tmpSessFile.Write(tmpSessData)
+			_ = tmpSessFile.Close()
+			_ = eng.CopyFileToInstance(ctx, containerID, tmpSessPath, "/root/.tld/session.json")
+			_ = os.Remove(tmpSessPath)
+		}
+	}
+
+	// 6. Ensure non-root users (like ubuntu) also have access to ~/.tld
+	_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "if [ -d /home/ubuntu ]; then cp -r /root/.tld /home/ubuntu/.tld && chown -R ubuntu:ubuntu /home/ubuntu/.tld; fi"})
+
+	// 7. Inject CA certificates if available on host so outbound HTTPS functions cleanly
+	if _, err := os.Stat("/etc/ssl/certs/ca-certificates.crt"); err == nil {
+		_, _ = eng.Exec(ctx, containerID, []string{"mkdir", "-p", "/etc/ssl/certs"})
+		_ = eng.CopyFileToInstance(ctx, containerID, "/etc/ssl/certs/ca-certificates.crt", "/etc/ssl/certs/ca-certificates.crt")
+	}
 }
 
 // Attach connects the terminal to the active lab container shell.
@@ -108,7 +204,12 @@ func Attach() error {
 		return err
 	}
 	fmt.Printf("Re-attaching to active lab container (%s)...\n\n", session.LabID)
-	return eng.Attach(ctx, session.ContainerID)
+	attachErr := eng.Attach(ctx, session.ContainerID)
+	chkRes, chkErr := eng.Exec(ctx, session.ContainerID, []string{"test", "-f", "/tld/stopped"})
+	if chkErr == nil && chkRes.ExitCode == 0 {
+		return Stop()
+	}
+	return attachErr
 }
 
 // Stop tears down the lab container environment and clears the session.
@@ -157,4 +258,11 @@ func truncate(s string, max int) string {
 		return s
 	}
 	return s[:max-1] + "…"
+}
+
+func shortID(id string) string {
+	if len(id) > 12 {
+		return id[:12]
+	}
+	return id
 }

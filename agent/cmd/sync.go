@@ -42,6 +42,12 @@ type moduleJSON struct {
 }
 
 func runSync(args []string) error {
+	if os.Getenv("TLD_IN_CONTAINER") == "1" {
+		fmt.Println("ℹ️  Challenge syncing is managed from your host machine.")
+		fmt.Println("   Please run 'tld sync' from your host terminal.")
+		return nil
+	}
+
 	cfg, err := config.Load()
 	if err != nil {
 		return fmt.Errorf("load config: %w", err)

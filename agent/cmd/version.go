@@ -8,7 +8,7 @@ import (
 	"github.com/thelastdeploy/agent/internal/config"
 )
 
-var Version = "v1.2.0"
+var Version = "v1.2.1"
 
 func runVersion(args []string) error {
 	cfg, _ := config.Load()

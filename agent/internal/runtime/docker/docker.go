@@ -41,6 +41,7 @@ func (d *DockerEngine) Create(ctx context.Context, spec *runtime.InstanceSpec) (
 	args := []string{
 		"run", "-d",
 		"--name", spec.InstanceID,
+		"--add-host=host.docker.internal:host-gateway",
 		"--rm",
 	}
 
