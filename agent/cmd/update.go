@@ -241,12 +241,7 @@ Options:
 }
 
 func fetchRelease(client *http.Client, tag string) (*githubRelease, error) {
-	var url string
-	if tag == "stable" {
-		url = fmt.Sprintf("%s/repos/%s/%s/releases/latest", githubAPIBase, githubRepoOwner, githubRepoName)
-	} else {
-		url = fmt.Sprintf("%s/repos/%s/%s/releases/tags/%s", githubAPIBase, githubRepoOwner, githubRepoName, tag)
-	}
+	url := fmt.Sprintf("%s/repos/%s/%s/releases/tags/%s", githubAPIBase, githubRepoOwner, githubRepoName, tag)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -260,21 +255,6 @@ func fetchRelease(client *http.Client, tag string) (*githubRelease, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound && tag == "stable" {
-		// Fallback to tags/stable if /releases/latest returns 404
-		url = fmt.Sprintf("%s/repos/%s/%s/releases/tags/stable", githubAPIBase, githubRepoOwner, githubRepoName)
-		req2, _ := http.NewRequest("GET", url, nil)
-		req2.Header.Set("User-Agent", "tld-cli/"+Version)
-		resp2, err2 := client.Do(req2)
-		if err2 == nil && resp2.StatusCode == http.StatusOK {
-			defer resp2.Body.Close()
-			var r githubRelease
-			if err := json.NewDecoder(resp2.Body).Decode(&r); err == nil {
-				return &r, nil
-			}
-		}
-	}
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("GitHub API returned status %d for %s", resp.StatusCode, url)

@@ -57,14 +57,8 @@ esac
 
 printf "Detected OS: ${BOLD}${OS}${RESET} (${ARCH})\n"
 
-# 3. Resolve Latest Version Tag
-TAG="v1.0.0"
-if command -v curl >/dev/null 2>&1; range_header=""; then
-  LATEST_TAG=$(curl -sL https://api.github.com/repos/thelastdeploy/thelastdeploy/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-  if [ -n "$LATEST_TAG" ]; then
-    TAG="$LATEST_TAG"
-  fi
-fi
+# 3. Resolve Version Tag (defaults to stable channel)
+TAG="${1:-${VERSION:-${TAG:-stable}}}"
 
 BINARY_NAME="tld-${OS}-${ARCH}"
 RELEASE_URL="https://github.com/thelastdeploy/thelastdeploy/releases/download/${TAG}/${BINARY_NAME}"

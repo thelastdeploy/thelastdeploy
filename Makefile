@@ -102,12 +102,22 @@ dist: verify
 # ==========================================================
 
 install: build
-	cp $(CLI) /usr/local/bin/tld
-	@echo "Installed production CLI to /usr/local/bin/tld"
+	@if [ -w /usr/local/bin ]; then \
+		cp $(CLI) /usr/local/bin/tld; \
+		echo "✓ Installed production CLI to /usr/local/bin/tld"; \
+	else \
+		echo "🔒 /usr/local/bin is not writable. Run: sudo make install"; \
+		exit 1; \
+	fi
 
 install-dev: build-dev
-	cp $(CLI_DEV) /usr/local/bin/tld-dev
-	@echo "Installed local dev CLI to /usr/local/bin/tld-dev"
+	@if [ -w /usr/local/bin ]; then \
+		cp $(CLI_DEV) /usr/local/bin/tld-dev; \
+		echo "✓ Installed local dev CLI to /usr/local/bin/tld-dev"; \
+	else \
+		echo "🔒 /usr/local/bin is not writable. Run: sudo make install-dev"; \
+		exit 1; \
+	fi
 
 # ==========================================================
 # Developer Commands
