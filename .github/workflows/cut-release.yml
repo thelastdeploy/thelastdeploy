@@ -34,25 +34,18 @@ jobs:
           fi
           echo "✓ Version format OK: ${{ inputs.version }}"
 
-      - name: Download latest release assets
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir -p dist
-          gh release download latest --dir dist --clobber
-          echo "Assets downloaded from latest:"
-          ls -lh dist/
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: agent/go.mod
+          cache-dependency-path: agent/go.sum
 
-      - name: Get latest release info
-        id: latest
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          sha=$(gh release view latest --json body \
-            | jq -r '.body' \
-            | grep -oP '(?<=`)[0-9a-f]{40}(?=`)' \
-            || echo "unknown")
-          echo "sha=$sha" >> $GITHUB_OUTPUT
+      - name: Build Release Artifacts
+        run: make dist VERSION=${{ inputs.version }}
+
+      - name: Get current commit SHA
+        id: commit_info
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Create versioned release
         env:
@@ -62,9 +55,9 @@ jobs:
             dist/tld-* \
             dist/checksums.txt \
             --title "tld cli ${{ inputs.version }}" \
-            --notes "Release **${{ inputs.version }}** cut from \`latest\` by **${{ github.actor }}**.
+            --notes "Release **${{ inputs.version }}** built from \`main\` by **${{ github.actor }}**.
 
-          **Source commit:** \`${{ steps.latest.outputs.sha }}\`
+          **Source commit:** \`${{ steps.commit_info.outputs.sha }}\`
           **Released at:** $(date -u '+%Y-%m-%d %H:%M UTC')"
 
       - name: Also update stable (if requested)

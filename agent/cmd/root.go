@@ -64,6 +64,11 @@ func Execute() {
 			fmt.Fprintln(os.Stderr, "doctor:", err)
 			os.Exit(1)
 		}
+	case "update":
+		if err := runUpdate(os.Args[2:]); err != nil {
+			fmt.Fprintln(os.Stderr, "update:", err)
+			os.Exit(1)
+		}
 	case "version", "-v", "--version":
 		if err := runVersion(os.Args[2:]); err != nil {
 			fmt.Fprintln(os.Stderr, "version:", err)
@@ -107,6 +112,7 @@ Commands:
   stop                  Stop running lab and destroy environment
   check                 Run the validator inside container and report pass/fail
   status                Show auth, synced content, and active lab
+  update                Update CLI to latest release (--edge for bleeding edge)
   login                 Authenticate with The Last Deploy API
   logout                Remove saved credentials
   publish <folder-path> Publish a local module directory to the builder API

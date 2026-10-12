@@ -230,7 +230,7 @@ jobs:
           cache-dependency-path: agent/go.sum
 
       - name: Build Release Artifacts
-        run: make dist
+        run: make dist VERSION=latest
 
       - name: Delete existing latest release (if any)
         env:

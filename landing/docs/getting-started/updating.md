@@ -9,8 +9,21 @@ section: "Getting Started"
 To update your local binary to the latest release:
 
 ```bash
+# Update to latest stable release
 tld update
+
+# Update to latest bleeding-edge build from main
+tld update --edge
+
+# Check if an update is available without installing
+tld update --check
+
+# Target a specific version
+tld update --version v1.1.2
 ```
+
+> [!NOTE]
+> If installed globally under `/usr/local/bin`, run with elevated privileges: `sudo tld update`.
 
 Alternatively, re-run the installation script:
 
