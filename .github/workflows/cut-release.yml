@@ -75,6 +75,6 @@ jobs:
             --title "tld cli: stable" \
             --notes "Stable release pinned to **${{ inputs.version }}** by **${{ github.actor }}**.
 
-          **Source commit:** \`${{ steps.latest.outputs.sha }}\`
+          **Source commit:** \`${{ steps.commit_info.outputs.sha }}\`
           **Promoted at:** $(date -u '+%Y-%m-%d %H:%M UTC')" \
             --latest
