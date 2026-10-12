@@ -230,7 +230,7 @@ jobs:
           cache-dependency-path: agent/go.sum
 
       - name: Build Release Artifacts
-        run: make dist VERSION=latest
+        run: make dist VERSION=edge-$(git rev-parse --short HEAD)
 
       - name: Delete existing latest release (if any)
         env:

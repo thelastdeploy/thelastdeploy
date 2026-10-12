@@ -2,10 +2,15 @@ name: Promote CLI to Stable
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag this promotion corresponds to (e.g. v1.2.0) — used to stamp binaries correctly"
+        required: true
+        type: string
 
 jobs:
   promote:
-    name: Promote latest → stable
+    name: Promote ${{ inputs.version }} → stable
     runs-on: ubuntu-latest
 
     permissions:
@@ -15,31 +20,33 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download latest release assets
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate version format
         run: |
-          mkdir -p dist
-          gh release download latest --dir dist --clobber
-          echo "Assets downloaded from latest:"
-          ls -lh dist/
+          if [[ ! "${{ inputs.version }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Invalid version format: ${{ inputs.version }}"
+            echo "   Expected format: v1.2.0"
+            exit 1
+          fi
+          echo "✓ Version format OK: ${{ inputs.version }}"
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: agent/go.mod
+          cache-dependency-path: agent/go.sum
+
+      - name: Build Release Artifacts
+        run: make dist VERSION=${{ inputs.version }}
+
+      - name: Get current commit SHA
+        id: commit_info
+        run: echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Delete existing stable release (if any)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release delete stable --yes --cleanup-tag 2>/dev/null || true
-
-      - name: Get latest release info
-        id: latest
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          sha=$(gh release view latest --json tagName,body \
-            | jq -r '.body' \
-            | grep -oP '(?<=`)[0-9a-f]{40}(?=`)' \
-            || echo "unknown")
-          echo "sha=$sha" >> $GITHUB_OUTPUT
 
       - name: Publish stable Release
         env:
@@ -49,8 +56,8 @@ jobs:
             dist/tld-* \
             dist/checksums.txt \
             --title "tld cli: stable" \
-            --notes "Stable release promoted from \`latest\` by **${{ github.actor }}**.
+            --notes "Stable release promoted to **${{ inputs.version }}** by **${{ github.actor }}**.
 
-          **Source commit:** \`${{ steps.latest.outputs.sha }}\`
+          **Source commit:** \`${{ steps.commit_info.outputs.sha }}\`
           **Promoted at:** $(date -u '+%Y-%m-%d %H:%M UTC')" \
             --latest
