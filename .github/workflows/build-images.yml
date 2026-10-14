@@ -1,0 +1,94 @@
+name: Build & Push Lab Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infra/images/**'
+  workflow_dispatch:
+    inputs:
+      force_all:
+        description: 'Rebuild all images from scratch'
+        required: false
+        default: 'true'
+
+jobs:
+  build-linux-base:
+    name: Build linux-base
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Downcase repo owner for image naming
+        id: repo_owner
+        run: echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Build & push linux-base
+        uses: docker/build-push-action@v5
+        with:
+          context: infra/images/linux-base
+          push: true
+          tags: |
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/linux-base:latest
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/linux-base:${{ github.sha }}
+          cache-from: type=gha,scope=linux-base
+          cache-to: type=gha,mode=max,scope=linux-base
+
+  build-dependent-images:
+    name: Build ${{ matrix.image }}
+    needs: [build-linux-base]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image:
+          - nginx-base
+          - docker-dind
+          - git-base
+          - terraform-base
+          - k8s-base
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Downcase repo owner for image naming
+        id: repo_owner
+        run: echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      - name: Build & push ${{ matrix.image }}
+        uses: docker/build-push-action@v5
+        with:
+          context: infra/images/${{ matrix.image }}
+          build-args: |
+            BASE_IMAGE=ghcr.io/${{ steps.repo_owner.outputs.owner }}/linux-base:latest
+          push: true
+          tags: |
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/${{ matrix.image }}:latest
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/${{ matrix.image }}:${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}

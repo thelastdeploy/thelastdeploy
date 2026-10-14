@@ -4,6 +4,7 @@ package cmd
 import (
 	"archive/zip"
 	"bytes"
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -18,7 +19,9 @@ import (
 
 	"github.com/thelastdeploy/agent/internal/cache"
 	"github.com/thelastdeploy/agent/internal/config"
+	"github.com/thelastdeploy/agent/internal/environment"
 	"github.com/thelastdeploy/agent/internal/queue"
+	"github.com/thelastdeploy/agent/internal/runtime/docker"
 	"github.com/thelastdeploy/agent/internal/validator"
 )
 
@@ -85,19 +88,49 @@ func runSync(args []string) error {
 	// Priority 1: Sync from local challenges folder if present (dev setup)
 	if _, err := os.Stat("challenges"); err == nil {
 		fmt.Println("Syncing from local challenges directory...")
-		return syncFromLocal(cfg.ChallengesDir, targetModule, targetLab)
+		err := syncFromLocal(cfg.ChallengesDir, targetModule, targetLab)
+		if err == nil {
+			modules, _ := cache.ListModules(cfg.ChallengesDir)
+			prePullModuleImages(modules)
+		}
+		return err
 	}
 
 	// Priority 2: Sync from GitHub by default
 	fmt.Printf("Syncing from GitHub repository %s...\n", cfg.ChallengesRepo)
 	err = syncFromGitHub(cfg.ChallengesRepo, cfg.ChallengesDir, targetModule, targetLab)
 	if err == nil {
+		modules, _ := cache.ListModules(cfg.ChallengesDir)
+		prePullModuleImages(modules)
 		return nil
 	}
 	fmt.Fprintf(os.Stderr, "GitHub sync failed: %v. Falling back to backend API...\n", err)
 
 	// Priority 3: Sync from API backend
-	return syncFromAPI(cfg.APIBaseURL, cfg.ChallengesDir, targetModule)
+	err = syncFromAPI(cfg.APIBaseURL, cfg.ChallengesDir, targetModule)
+	if err == nil {
+		modules, _ := cache.ListModules(cfg.ChallengesDir)
+		prePullModuleImages(modules)
+	}
+	return err
+}
+
+func prePullModuleImages(moduleIDs []string) {
+	if len(moduleIDs) == 0 {
+		return
+	}
+	go func() {
+		eng := docker.New()
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
+		defer cancel()
+		if err := eng.IsAvailable(ctx); err != nil {
+			return
+		}
+		images := environment.GetProfilesForModules(moduleIDs)
+		for _, img := range images {
+			_ = eng.Pull(ctx, img)
+		}
+	}()
 }
 
 // drainQueue attempts to POST any queued results to the API.

@@ -14,8 +14,31 @@ type EnvironmentSpec struct {
 	Ports        []string `json:"ports" yaml:"ports"`
 }
 
-func ResolveInstanceSpec(labID string, envSpec *EnvironmentSpec) *runtime.InstanceSpec {
-	profileName := "ubuntu-24.04-standard"
+// AutoDetectProfile returns the best-fit profile for a module based on its ID prefix.
+func AutoDetectProfile(moduleID string) string {
+	switch {
+	case strings.HasPrefix(moduleID, "nginx-"):
+		return "tld-nginx"
+	case strings.HasPrefix(moduleID, "docker-"),
+		strings.HasPrefix(moduleID, "container-"):
+		return "tld-docker"
+	case strings.HasPrefix(moduleID, "k8s-"):
+		return "tld-k8s"
+	case strings.HasPrefix(moduleID, "terraform-"):
+		return "tld-terraform"
+	case strings.HasPrefix(moduleID, "git-"):
+		return "tld-git"
+	default:
+		if moduleID != "" {
+			return "tld-linux"
+		}
+		return "ubuntu-24.04-standard"
+	}
+}
+
+// ResolveInstanceSpec computes the runtime instance configuration for a lab container.
+func ResolveInstanceSpec(moduleID, labID string, envSpec *EnvironmentSpec) *runtime.InstanceSpec {
+	profileName := AutoDetectProfile(moduleID)
 	if envSpec != nil && envSpec.Profile != "" {
 		profileName = envSpec.Profile
 	}
@@ -39,11 +62,27 @@ func ResolveInstanceSpec(labID string, envSpec *EnvironmentSpec) *runtime.Instan
 	}
 
 	return &runtime.InstanceSpec{
-		InstanceID:      instanceID,
-		Image:           profile.BaseImage,
-		RequiresSystemd: profile.RequiresSystemd,
-		Capabilities:    caps,
-		Ports:           ports,
-		WorkspaceDir:    "/workspace",
+		InstanceID:         instanceID,
+		Image:              profile.BaseImage,
+		RequiresSystemd:    profile.RequiresSystemd,
+		RequiresPrivileged: profile.RequiresSystemd,
+		Capabilities:       caps,
+		Ports:              ports,
+		WorkspaceDir:       "/workspace",
 	}
+}
+
+// GetProfilesForModules returns a deduplicated list of base images required by the given modules.
+func GetProfilesForModules(moduleIDs []string) []string {
+	seen := make(map[string]bool)
+	var images []string
+	for _, m := range moduleIDs {
+		pName := AutoDetectProfile(m)
+		prof := GetProfile(pName)
+		if prof != nil && prof.BaseImage != "" && !seen[prof.BaseImage] {
+			seen[prof.BaseImage] = true
+			images = append(images, prof.BaseImage)
+		}
+	}
+	return images
 }

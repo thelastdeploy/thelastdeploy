@@ -15,3 +15,7 @@ tags:
 - recovery
 verified: true
 version: 1
+shared_seed:
+  - "git config --global user.name 'TheLastDeploy Student'"
+  - "git config --global user.email 'student@thelastdeploy.com'"
+  - "git config --global init.defaultBranch main"

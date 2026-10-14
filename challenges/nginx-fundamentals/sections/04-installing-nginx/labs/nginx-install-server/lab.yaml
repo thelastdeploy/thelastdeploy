@@ -2,6 +2,7 @@ id: nginx-install-server
 title: "Install Nginx Server"
 xp: 20
 estimated_minutes: 5
+install_target: nginx
 setup:
   type: shell
   seed_commands:

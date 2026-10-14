@@ -42,12 +42,17 @@ func Start(lab *cache.Lab) error {
 		return err
 	}
 
-	instanceSpec := environment.ResolveInstanceSpec(lab.ID, lab.Environment)
+	instanceSpec := environment.ResolveInstanceSpec(lab.ModuleID, lab.ID, lab.Environment)
 	if instanceSpec.EnvironmentVars == nil {
 		instanceSpec.EnvironmentVars = make(map[string]string)
 	}
 	instanceSpec.EnvironmentVars["TLD_IN_CONTAINER"] = "1"
 	instanceSpec.EnvironmentVars["DEBIAN_FRONTEND"] = "noninteractive"
+
+	fmt.Printf("🐳 Checking lab environment image (%s)...\n", instanceSpec.Image)
+	if err := eng.Pull(ctx, instanceSpec.Image); err != nil {
+		fmt.Fprintf(os.Stderr, "  info: using local image: %v\n", err)
+	}
 
 	fmt.Printf("⚙  Provisioning disposable container environment (%s)...\n", instanceSpec.Image)
 	containerID, err := eng.Create(ctx, instanceSpec)
@@ -55,11 +60,28 @@ func Start(lab *cache.Lab) error {
 		return fmt.Errorf("failed to create environment: %w", err)
 	}
 
+	if instanceSpec.RequiresSystemd {
+		fmt.Println("  ⏳ Waiting for container init services...")
+		for i := 0; i < 20; i++ {
+			time.Sleep(300 * time.Millisecond)
+			res, err := eng.Exec(ctx, containerID, []string{"systemctl", "is-system-running"})
+			if err == nil && (res.Stdout == "running" || res.Stdout == "degraded") {
+				break
+			}
+		}
+	}
+
 	// Ensure sudo wrapper exists for root container execution
 	_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "echo '#!/bin/sh\nexec \"$@\"' > /usr/local/bin/sudo && chmod +x /usr/local/bin/sudo"})
 
 	// Inject in-container tld binary, config, validator, and active session
 	injectInContainerTLD(ctx, eng, containerID, lab)
+
+	// Strip pre-installed package for labs specifically testing installation
+	if lab.InstallTarget != "" {
+		fmt.Printf("  🔧 Lab requires you to install %s — removing pre-installed package...\n", lab.InstallTarget)
+		_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", fmt.Sprintf("DEBIAN_FRONTEND=noninteractive apt-get remove -y %s && apt-get autoremove -y", lab.InstallTarget)})
+	}
 
 	// Prepare environment packages if needed
 	if lab.Environment != nil && len(lab.Environment.Packages) > 0 {
@@ -72,7 +94,20 @@ func Start(lab *cache.Lab) error {
 		}
 	}
 
-	// Run seed commands INSIDE container
+	// 1. Run module shared baseline commands INSIDE container
+	if len(lab.ModuleSharedSeed) > 0 {
+		fmt.Println("⚙  Applying module environment baseline inside container...")
+		for _, cmdStr := range lab.ModuleSharedSeed {
+			fmt.Printf("  $ %s\n", cmdStr)
+			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", cmdStr})
+			if err != nil || res.ExitCode != 0 {
+				fmt.Fprintf(os.Stderr, "  warn: shared seed command exited with code %d: %s\n", res.ExitCode, res.Stderr)
+			}
+		}
+		fmt.Println()
+	}
+
+	// 2. Run seed commands INSIDE container
 	if len(lab.SeedCommands) > 0 {
 		fmt.Println("⚙  Applying lab scenario broken state inside container...")
 		for _, cmdStr := range lab.SeedCommands {

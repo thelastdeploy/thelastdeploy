@@ -16,9 +16,42 @@ func TestProfileResolution(t *testing.T) {
 		t.Errorf("expected ubuntu-24.04-systemd to exist and require systemd")
 	}
 
+	pLinux := GetProfile("tld-linux")
+	if pLinux == nil || !pLinux.RequiresSystemd {
+		t.Errorf("expected tld-linux to exist and require systemd")
+	}
+
+	pNginx := GetProfile("tld-nginx")
+	if pNginx == nil || !pNginx.RequiresSystemd {
+		t.Errorf("expected tld-nginx to exist and require systemd")
+	}
+
 	pFallback := GetProfile("non-existent-profile")
 	if pFallback == nil || pFallback.Name != "ubuntu-24.04-standard" {
 		t.Errorf("expected non-existent profile to fallback to ubuntu-24.04-standard")
+	}
+}
+
+func TestAutoDetectProfile(t *testing.T) {
+	tests := []struct {
+		moduleID string
+		expected string
+	}{
+		{"nginx-fundamentals", "tld-nginx"},
+		{"docker-compose", "tld-docker"},
+		{"container-linux-isolation", "tld-docker"},
+		{"k8s-pods", "tld-k8s"},
+		{"terraform-modules", "tld-terraform"},
+		{"git-branching", "tld-git"},
+		{"linux-fundamentals", "tld-linux"},
+		{"bash-shell-scripting", "tld-linux"},
+	}
+
+	for _, tt := range tests {
+		actual := AutoDetectProfile(tt.moduleID)
+		if actual != tt.expected {
+			t.Errorf("AutoDetectProfile(%q) = %q; want %q", tt.moduleID, actual, tt.expected)
+		}
 	}
 }
 
@@ -30,7 +63,7 @@ func TestResolveInstanceSpec(t *testing.T) {
 		Ports:        []string{"8080:80"},
 	}
 
-	instanceSpec := ResolveInstanceSpec("lnx-test-lab", spec)
+	instanceSpec := ResolveInstanceSpec("linux-fundamentals", "lnx-test-lab", spec)
 	if instanceSpec.InstanceID != "tld-lab-lnx-test-lab" {
 		t.Errorf("unexpected InstanceID: %s", instanceSpec.InstanceID)
 	}

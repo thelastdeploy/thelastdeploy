@@ -18,3 +18,7 @@ sections:
   order: 5
 verified: true
 version: 2
+shared_seed:
+  - "systemctl enable docker || true"
+  - "systemctl start docker || dockerd &>/var/log/dockerd.log &"
+  - "sleep 2"

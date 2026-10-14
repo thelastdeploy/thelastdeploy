@@ -30,6 +30,13 @@ func (d *DockerEngine) IsAvailable(ctx context.Context) error {
 	return nil
 }
 
+func (d *DockerEngine) Pull(ctx context.Context, image string) error {
+	cmd := exec.CommandContext(ctx, "docker", "pull", image)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
 func (d *DockerEngine) Create(ctx context.Context, spec *runtime.InstanceSpec) (string, error) {
 	if err := d.IsAvailable(ctx); err != nil {
 		return "", err
@@ -57,16 +64,21 @@ func (d *DockerEngine) Create(ctx context.Context, spec *runtime.InstanceSpec) (
 		args = append(args, "-e", fmt.Sprintf("%s=%s", k, v))
 	}
 
+	if spec.RequiresPrivileged || spec.RequiresSystemd {
+		args = append(args, "--privileged")
+	}
+
 	if spec.RequiresSystemd {
 		args = append(args,
 			"--cgroupns=host",
 			"-v", "/sys/fs/cgroup:/sys/fs/cgroup:rw",
-			"--tmpfs", "/run",
+			"--tmpfs", "/run:rw,nosuid,nodev",
 			"--tmpfs", "/run/lock",
 		)
+		args = append(args, spec.Image, "/sbin/init")
+	} else {
+		args = append(args, spec.Image, "sleep", "infinity")
 	}
-
-	args = append(args, spec.Image, "sleep", "infinity")
 
 	cmd := exec.CommandContext(ctx, "docker", args...)
 	out, err := cmd.CombinedOutput()

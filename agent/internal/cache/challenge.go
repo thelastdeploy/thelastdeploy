@@ -21,6 +21,7 @@ type Module struct {
 	Difficulty       string
 	EstimatedMinutes int
 	Sections         []SectionRef
+	SharedSeed       []string
 	Version          int
 }
 
@@ -37,19 +38,21 @@ type Section struct {
 }
 
 type Lab struct {
-	ID            string
-	Title         string
-	SectionID     string
-	ModuleID      string
-	SetupType     string
-	SeedCommands  []string
-	XP            int
-	EstimatedMins int
-	ResourcesCPU  int
-	ResourcesMem  int
-	ValidatorPath string
-	Version       int
-	Environment   *environment.EnvironmentSpec
+	ID               string
+	Title            string
+	SectionID        string
+	ModuleID         string
+	SetupType        string
+	SeedCommands     []string
+	ModuleSharedSeed []string
+	InstallTarget    string
+	XP               int
+	EstimatedMins    int
+	ResourcesCPU     int
+	ResourcesMem     int
+	ValidatorPath    string
+	Version          int
+	Environment      *environment.EnvironmentSpec
 }
 
 type moduleJSONFile struct {
@@ -62,6 +65,7 @@ type moduleJSONFile struct {
 	Tags             []string `json:"tags"`
 	TotalXP          int      `json:"total_xp"`
 	TotalSections    int      `json:"total_sections"`
+	SharedSeed       []string `json:"shared_seed"`
 	Version          int      `json:"version"`
 }
 
@@ -70,6 +74,7 @@ type labJSONFile struct {
 	Title         string   `json:"title"`
 	SetupType     string   `json:"setup_type"`
 	SeedCommands  []string `json:"seed_commands"`
+	InstallTarget string   `json:"install_target"`
 	XP            int      `json:"xp"`
 	EstimatedMins int      `json:"estimated_minutes"`
 	ResourcesCPU  int      `json:"resource_limits_cpu"`
@@ -221,6 +226,9 @@ func loadLab(baseDir, moduleID, sectionID, labID string) (*Lab, error) {
 	lab.ID = labID
 	lab.SectionID = sectionID
 	lab.ModuleID = moduleID
+	if parentMod, err := LoadModule(baseDir, moduleID); err == nil && parentMod != nil {
+		lab.ModuleSharedSeed = parentMod.SharedSeed
+	}
 	if lab.SetupType == "" {
 		lab.SetupType = "shell"
 	}
@@ -283,6 +291,7 @@ func parseModuleJSON(path string) (*Module, error) {
 		Topic:            jf.Topic,
 		Difficulty:       jf.Difficulty,
 		EstimatedMinutes: jf.EstimatedMinutes,
+		SharedSeed:       jf.SharedSeed,
 		Version:          jf.Version,
 	}, nil
 }
@@ -301,6 +310,7 @@ func parseLabJSON(path string) (*Lab, error) {
 		Title:         jf.Title,
 		SetupType:     jf.SetupType,
 		SeedCommands:  jf.SeedCommands,
+		InstallTarget: jf.InstallTarget,
 		XP:            jf.XP,
 		EstimatedMins: jf.EstimatedMins,
 		ResourcesCPU:  jf.ResourcesCPU,
@@ -315,7 +325,7 @@ func ParseModuleYAML(path string) (*Module, error) {
 		return nil, err
 	}
 	m := &Module{}
-	var inSections bool
+	var inSections, inSharedSeed bool
 	var currentSection *SectionRef
 
 	for _, raw := range lines {
@@ -326,6 +336,7 @@ func ParseModuleYAML(path string) (*Module, error) {
 		indent := countIndent(raw)
 		if indent == 0 {
 			inSections = false
+			inSharedSeed = false
 			if currentSection != nil {
 				m.Sections = append(m.Sections, *currentSection)
 				currentSection = nil
@@ -347,6 +358,10 @@ func ParseModuleYAML(path string) (*Module, error) {
 			m.EstimatedMinutes, _ = strconv.Atoi(val)
 		case indent == 0 && key == "version":
 			m.Version, _ = strconv.Atoi(val)
+		case indent == 0 && key == "shared_seed":
+			inSharedSeed = true
+		case inSharedSeed && indent == 2 && strings.HasPrefix(trimmed, "- "):
+			m.SharedSeed = append(m.SharedSeed, unquote(strings.TrimPrefix(trimmed, "- ")))
 		case indent == 0 && key == "sections":
 			inSections = true
 		case inSections && indent == 2 && strings.HasPrefix(trimmed, "- "):
@@ -405,6 +420,8 @@ func parseLabYAML(path string) (*Lab, error) {
 			lab.EstimatedMins, _ = strconv.Atoi(val)
 		case indent == 0 && key == "version":
 			lab.Version, _ = strconv.Atoi(val)
+		case indent == 0 && key == "install_target":
+			lab.InstallTarget = unquote(val)
 		case indent == 0 && key == "setup":
 			inSetup = true
 		case inSetup && indent == 2 && key == "type":
@@ -454,17 +471,8 @@ func parseLabYAML(path string) (*Lab, error) {
 		return nil, fmt.Errorf("lab.yaml missing required field: id")
 	}
 
-	// Fallback mapping for legacy labs without environment block
-	if lab.Environment == nil || lab.Environment.Profile == "" {
-		profile := "ubuntu-24.04-standard"
-		if lab.SetupType == "kind" || strings.HasPrefix(lab.ID, "nginx-") || strings.Contains(lab.ID, "service") || strings.Contains(lab.ID, "cron") || strings.Contains(lab.ID, "journal") {
-			profile = "ubuntu-24.04-systemd"
-		}
-		if lab.Environment == nil {
-			lab.Environment = &environment.EnvironmentSpec{Profile: profile}
-		} else {
-			lab.Environment.Profile = profile
-		}
+	if lab.Environment == nil {
+		lab.Environment = &environment.EnvironmentSpec{}
 	}
 
 	return lab, nil

@@ -23,3 +23,7 @@ sections:
   order: 7
 verified: true
 version: 1
+shared_seed:
+  - "mkdir -p /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled"
+  - "systemctl enable nginx || true"
+  - "systemctl start nginx || true"

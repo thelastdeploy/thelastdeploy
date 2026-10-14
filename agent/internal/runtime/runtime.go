@@ -14,19 +14,21 @@ type ExecResult struct {
 
 // InstanceSpec describes the runtime parameters required to create an environment instance.
 type InstanceSpec struct {
-	InstanceID      string
-	Image           string
-	RequiresSystemd bool
-	Capabilities    []string
-	Ports           []string
-	EnvironmentVars map[string]string
-	WorkspaceDir    string
+	InstanceID         string
+	Image              string
+	RequiresSystemd    bool
+	RequiresPrivileged bool
+	Capabilities       []string
+	Ports              []string
+	EnvironmentVars    map[string]string
+	WorkspaceDir       string
 }
 
 // Engine defines the contract for runtime execution engines (e.g. Docker).
 type Engine interface {
 	Name() string
 	IsAvailable(ctx context.Context) error
+	Pull(ctx context.Context, image string) error
 	Create(ctx context.Context, spec *InstanceSpec) (string, error)
 	Exec(ctx context.Context, instanceID string, cmd []string) (ExecResult, error)
 	Attach(ctx context.Context, instanceID string) error

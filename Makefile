@@ -2,6 +2,8 @@
 # The Last Deploy - Build System
 # ==========================================================
 
+export PATH := $(HOME)/.local/bin:$(HOME)/.local/go/bin:$(PATH)
+
 GO_DIR   := agent
 BIN_DIR  := bin
 DIST_DIR := dist
@@ -12,7 +14,7 @@ CLI_DEV  := $(BIN_DIR)/tld-dev
 	build build-dev dist install install-dev clean \
 	fmt vet test verify \
 	sync start stop check status login logout doctor publish \
-	dev-up dev-down dev-logs dev-seed
+	dev-up dev-down dev-logs dev-seed images
 
 # ==========================================================
 # Verification
@@ -43,7 +45,7 @@ verify: fmt vet test
 # Build
 # ==========================================================
 
-VERSION  ?= v1.2.1
+VERSION  ?= v1.3.0
 LDFLAGS  := -s -w -X github.com/thelastdeploy/agent/cmd.Version=$(VERSION)
 DEV_LDFLAGS := -s -w \
 	-X github.com/thelastdeploy/agent/cmd.Version=$(VERSION)-dev \
@@ -171,6 +173,11 @@ sync-readme:
 	@echo "==> Dynamically calculating track statistics and updating README.md..."
 	python3 scripts/sync_readme_tracks.py
 
+
+images:
+	@echo "==> Building all lab environment images locally..."
+	@bash infra/images/build.sh
+	@echo "✓ All images built."
 
 # ==========================================================
 # Cleanup
