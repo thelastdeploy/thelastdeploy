@@ -44,6 +44,13 @@ class Settings(BaseSettings):
             v = v.strip('"\'').strip()
         return v
 
+    @field_validator("FRONTEND_URL", mode="before")
+    @classmethod
+    def clean_frontend_url(cls, v: str | None) -> str:
+        if isinstance(v, str):
+            v = v.strip().strip('"\'').rstrip("/")
+        return v or "https://app.thelastdeploy.com"
+
     class Config:
         env_file = (
             ".env",
