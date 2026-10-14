@@ -149,10 +149,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install uv (for Python Vercel backend build)
-        if: matrix.component.component == 'backend'
-        uses: astral-sh/setup-uv@v5
-
       - name: Install Vercel CLI
         if: matrix.component.deployment == 'vercel'
         run: npm install -g vercel
@@ -165,17 +161,13 @@ jobs:
           if [ "${{ matrix.component.component }}" = "frontend" ]; then
             echo "project_id=${{ secrets.FRONTEND_PROJECT_ID }}" >> $GITHUB_OUTPUT
 
-          elif [ "${{ matrix.component.component }}" = "backend" ]; then
-            echo "project_id=${{ secrets.BACKEND_PROJECT_ID }}" >> $GITHUB_OUTPUT
-
           elif [ "${{ matrix.component.component }}" = "landing" ]; then
             echo "project_id=${{ secrets.LANDING_PROJECT_ID }}" >> $GITHUB_OUTPUT
 
           else
-            echo "Unknown component"
+            echo "Unknown component: ${{ matrix.component.component }}"
             exit 1
           fi
-
 
       - name: Deploy Vercel Project
         if: matrix.component.deployment == 'vercel'
@@ -209,6 +201,21 @@ jobs:
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ steps.project.outputs.project_id }}
+
+  deploy-backend:
+    name: Deploy Backend (Render)
+    needs: detect-components
+    if: needs.detect-components.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Render Deployment
+        run: |
+          echo "================================"
+          echo "Triggering Render deployment for backend..."
+          echo "================================"
+          curl -X POST -s -f "${{ secrets.RENDER_DEPLOY_HOOK }}"
+          echo "✓ Render deployment hook successfully triggered."
 
   deploy-cli:
     name: Publish CLI (latest)
@@ -274,36 +281,6 @@ jobs:
         run: |
           pip install -r web/backend/requirements.txt
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install Vercel CLI
-        run: npm install -g vercel
-
-      - name: Setup Backend Environment
-        shell: bash
-        run: |
-          # If DATABASE_URL is not directly set in GitHub Secrets, pull from Vercel backend project
-          if [ -z "${{ secrets.DATABASE_URL }}" ] && [ -n "${{ secrets.VERCEL_TOKEN }}" ]; then
-            echo "Pulling production environment from Vercel..."
-            vercel pull \
-              --yes \
-              --environment=production \
-              --token=${{ secrets.VERCEL_TOKEN }}
-
-            if [ -f "web/backend/.vercel/.env.production.local" ]; then
-              cp "web/backend/.vercel/.env.production.local" "web/backend/.env"
-              cp "web/backend/.vercel/.env.production.local" ".env"
-            elif [ -f ".vercel/.env.production.local" ]; then
-              cp ".vercel/.env.production.local" "web/backend/.env"
-              cp ".vercel/.env.production.local" ".env"
-            fi
-          fi
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.BACKEND_PROJECT_ID }}
 
       - name: Run Challenges Seeder
         shell: bash

@@ -21,7 +21,7 @@ components:
     description: "Backend"
     paths:
       - "web/backend/**"
-    deployment: "vercel"
+    deployment: "render"
     working_directory: "web/backend"
 
   landing:
