@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_DAYS: int = 7
     ENVIRONMENT: str = "development"
+    ENABLE_DOCS: bool = True
 
     # Email Settings
     RESEND_API_KEY: str | None = None

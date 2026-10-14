@@ -14,10 +14,10 @@ async def lifespan(app: FastAPI):
     analytics.shutdown()
 
 
-# Only enable docs in development environment
-docs_url = "/docs" if settings.ENVIRONMENT == "development" else None
-redoc_url = "/redoc" if settings.ENVIRONMENT == "development" else None
-openapi_url = "/openapi.json" if settings.ENVIRONMENT == "development" else None
+# Docs enabled in dev or if ENABLE_DOCS is True
+docs_url = "/docs" if (settings.ENVIRONMENT == "development" or settings.ENABLE_DOCS) else None
+redoc_url = "/redoc" if (settings.ENVIRONMENT == "development" or settings.ENABLE_DOCS) else None
+openapi_url = "/openapi.json" if (settings.ENVIRONMENT == "development" or settings.ENABLE_DOCS) else None
 
 app = FastAPI(
     title="The Last Deploy API",
@@ -51,6 +51,23 @@ app.include_router(builder.router, tags=["builder"])
 app.include_router(analytics_router.router, tags=["analytics"])
 
 
-@app.get("/health")
+@app.get("/")
+async def root():
+    return {
+        "name": "The Last Deploy API",
+        "status": "online",
+        "version": "0.3.1",
+        "health": "/health",
+        "docs": docs_url,
+    }
+
+
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health():
     return {"status": "ok"}
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    from fastapi.responses import Response
+    return Response(status_code=204)
