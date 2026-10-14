@@ -217,8 +217,9 @@ func injectInContainerTLD(ctx context.Context, eng *docker.DockerEngine, contain
 		}
 	}
 
-	// 6. Ensure non-root users (like ubuntu) also have access to ~/.tld
-	_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "if [ -d /home/ubuntu ]; then cp -r /root/.tld /home/ubuntu/.tld && chown -R ubuntu:ubuntu /home/ubuntu/.tld; fi"})
+	// 6. Mirror config/session into .tld-dev and ensure non-root users have access
+	_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "rm -rf /root/.tld-dev && cp -r /root/.tld /root/.tld-dev"})
+	_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "if [ -d /home/ubuntu ]; then cp -r /root/.tld /home/ubuntu/.tld && cp -r /root/.tld /home/ubuntu/.tld-dev && chown -R ubuntu:ubuntu /home/ubuntu/.tld /home/ubuntu/.tld-dev; fi"})
 
 	// 7. Inject CA certificates if available on host so outbound HTTPS functions cleanly
 	if _, err := os.Stat("/etc/ssl/certs/ca-certificates.crt"); err == nil {

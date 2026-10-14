@@ -430,37 +430,45 @@ func parseLabYAML(path string) (*Lab, error) {
 			lab.ResourcesCPU, _ = strconv.Atoi(val)
 		case inSetup && indent == 2 && key == "resource_limits_mem":
 			lab.ResourcesMem, _ = strconv.Atoi(val)
-		case inSetup && indent == 2 && key == "seed_commands":
+		case inSetup && indent >= 2 && key == "seed_commands":
 			inSeedCmds = true
-		case inSeedCmds && indent == 4 && strings.HasPrefix(trimmed, "- "):
+		case inSetup && indent >= 2 && !strings.HasPrefix(trimmed, "- ") && key != "seed_commands":
+			inSeedCmds = false
+		case inSeedCmds && indent >= 2 && strings.HasPrefix(trimmed, "- "):
 			lab.SeedCommands = append(lab.SeedCommands, unquote(strings.TrimPrefix(trimmed, "- ")))
 		case indent == 0 && key == "environment":
 			inEnv = true
 			if lab.Environment == nil {
 				lab.Environment = &environment.EnvironmentSpec{}
 			}
-		case inEnv && indent == 2 && key == "profile":
+		case inEnv && indent >= 2 && key == "profile":
 			if lab.Environment == nil {
 				lab.Environment = &environment.EnvironmentSpec{}
 			}
 			lab.Environment.Profile = unquote(val)
-		case inEnv && indent == 2 && key == "packages":
+		case inEnv && indent >= 2 && key == "packages":
 			inEnvPkgs = true
-		case inEnvPkgs && indent == 4 && strings.HasPrefix(trimmed, "- "):
+		case inEnv && indent >= 2 && !strings.HasPrefix(trimmed, "- ") && key != "packages":
+			inEnvPkgs = false
+		case inEnvPkgs && indent >= 2 && strings.HasPrefix(trimmed, "- "):
 			if lab.Environment == nil {
 				lab.Environment = &environment.EnvironmentSpec{}
 			}
 			lab.Environment.Packages = append(lab.Environment.Packages, unquote(strings.TrimPrefix(trimmed, "- ")))
-		case inEnv && indent == 2 && key == "capabilities":
+		case inEnv && indent >= 2 && key == "capabilities":
 			inEnvCaps = true
-		case inEnvCaps && indent == 4 && strings.HasPrefix(trimmed, "- "):
+		case inEnv && indent >= 2 && !strings.HasPrefix(trimmed, "- ") && key != "capabilities":
+			inEnvCaps = false
+		case inEnvCaps && indent >= 2 && strings.HasPrefix(trimmed, "- "):
 			if lab.Environment == nil {
 				lab.Environment = &environment.EnvironmentSpec{}
 			}
 			lab.Environment.Capabilities = append(lab.Environment.Capabilities, unquote(strings.TrimPrefix(trimmed, "- ")))
-		case inEnv && indent == 2 && key == "ports":
+		case inEnv && indent >= 2 && key == "ports":
 			inEnvPorts = true
-		case inEnvPorts && indent == 4 && strings.HasPrefix(trimmed, "- "):
+		case inEnv && indent >= 2 && !strings.HasPrefix(trimmed, "- ") && key != "ports":
+			inEnvPorts = false
+		case inEnvPorts && indent >= 2 && strings.HasPrefix(trimmed, "- "):
 			if lab.Environment == nil {
 				lab.Environment = &environment.EnvironmentSpec{}
 			}

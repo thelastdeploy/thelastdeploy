@@ -68,6 +68,10 @@ func (d *DockerEngine) Create(ctx context.Context, spec *runtime.InstanceSpec) (
 		args = append(args, "--privileged")
 	}
 
+	if strings.Contains(spec.Image, "docker-dind") {
+		args = append(args, "-v", "/var/lib/docker", "-v", "/var/lib/containerd")
+	}
+
 	if spec.RequiresSystemd {
 		args = append(args,
 			"--cgroupns=host",

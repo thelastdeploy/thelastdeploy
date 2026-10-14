@@ -12,5 +12,7 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
     && systemctl enable docker || true
 
+VOLUME ["/var/lib/docker", "/var/lib/containerd"]
+
 STOPSIGNAL SIGRTMIN+3
 CMD ["/sbin/init"]
