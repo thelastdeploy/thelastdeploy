@@ -18,6 +18,6 @@ environment:
   profile: tld-ubuntu
 setup:
   seed_commands:
-  - mkdir -p '$HOME/net-test/sockets'
+  - mkdir -p $HOME/net-test/sockets
   - "printf 'Netid State  Recv-Q Send-Q Local Address:Port  Peer Address:Port Process\\ntcp   LISTEN 0      128    0.0.0.0:22          0.0.0.0:*         users:((\"sshd\",pid=1102,fd=3))\\ntcp   LISTEN 0      511    0.0.0.0:8080        0.0.0.0:*         users:((\"nginx\",pid=4251,fd=6))\\n' > $HOME/net-test/sockets/ss_output.txt"
 version: 2

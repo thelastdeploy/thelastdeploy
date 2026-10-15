@@ -22,8 +22,8 @@ environment:
   profile: tld-ubuntu
 setup:
   seed_commands:
-  - mkdir -p '$HOME/net-challenge/config'
-  - mkdir -p '$HOME/net-challenge/status'
+  - mkdir -p $HOME/net-challenge/config
+  - mkdir -p $HOME/net-challenge/status
   - "printf 'nameserver 1.1.1.1\\n' > $HOME/net-challenge/config/resolv.conf"
   - "printf 'LISTEN_IP=\"127.0.0.1\"\\nLISTEN_PORT=8080\\n' > $HOME/net-challenge/config/server.env"
   - "printf 'CONNECTIVITY: FAILED\\n' > $HOME/net-challenge/status/app.status"

@@ -18,6 +18,6 @@ environment:
   profile: tld-ubuntu
 setup:
   seed_commands:
-  - mkdir -p '$HOME/net-test/dns'
+  - mkdir -p $HOME/net-test/dns
   - "printf '; <<>> DiG 9.18.1 <<>> internal.service.local\\n;; ANSWER SECTION:\\ninternal.service.local. 300 IN A 10.250.0.15\\n' > $HOME/net-test/dns/dig_output.txt"
 version: 2

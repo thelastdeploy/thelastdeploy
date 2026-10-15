@@ -18,6 +18,6 @@ environment:
   profile: tld-ubuntu
 setup:
   seed_commands:
-  - mkdir -p '$HOME/net-test/capture'
+  - mkdir -p $HOME/net-test/capture
   - "printf '20:15:02.102394 IP 192.168.1.50.54321 > 10.0.0.5.80: Flags [S], seq 12345678, win 64240, length 0\\n20:15:02.102812 IP 10.0.0.5.80 > 192.168.1.50.54321: Flags [S.], seq 87654321, ack 12345679, win 65160, length 0\\n20:15:02.103102 IP 192.168.1.50.54321 > 10.0.0.5.80: Flags [.], ack 87654322, win 502, length 0\\n' > $HOME/net-test/capture/tcpdump.log"
 version: 2

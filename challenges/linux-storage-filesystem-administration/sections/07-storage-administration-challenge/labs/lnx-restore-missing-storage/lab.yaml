@@ -23,9 +23,9 @@ environment:
   profile: tld-ubuntu
 setup:
   seed_commands:
-  - mkdir -p '$HOME/storage-challenge/app'
-  - mkdir -p '$HOME/storage-challenge/mounts/app_data'
-  - chmod 700 '$HOME/storage-challenge/mounts/app_data'
+  - mkdir -p $HOME/storage-challenge/app
+  - mkdir -p $HOME/storage-challenge/mounts/app_data
+  - chmod 700 $HOME/storage-challenge/mounts/app_data
   - "printf '# Production storage layout\\nUUID=9999-8888 /mnt/wrong_path ext4 defaults 0 2\\n' > $HOME/storage-challenge/app/fstab_config"
   - "printf 'STATUS: FAILED\\nREASON: Unable to write to storage mount\\n' > $HOME/storage-challenge/app/status.txt"
 version: 2

@@ -19,6 +19,6 @@ environment:
   profile: tld-ubuntu
 setup:
   seed_commands:
-  - mkdir -p '$HOME/net-test/app_trace'
+  - mkdir -p $HOME/net-test/app_trace
   - "printf 'HTTP/1.1 502 Bad Gateway\\nServer: nginx/1.18.0\\nDate: Mon, 21 Sep 2026 20:00:00 GMT\\nContent-Type: text/html\\nContent-Length: 157\\nConnection: keep-alive\\n' > $HOME/net-test/app_trace/curl_headers.txt"
 version: 2

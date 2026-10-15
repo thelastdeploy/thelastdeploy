@@ -18,5 +18,5 @@ environment:
   profile: tld-ubuntu
 setup:
   seed_commands:
-  - mkdir -p '$HOME/net-test'
+  - mkdir -p $HOME/net-test
 version: 2
