@@ -1,6 +1,8 @@
 id: lnx-secure-mounted-storage
 title: Secure Mounted Storage Permissions
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/storage-test/mounted_dir

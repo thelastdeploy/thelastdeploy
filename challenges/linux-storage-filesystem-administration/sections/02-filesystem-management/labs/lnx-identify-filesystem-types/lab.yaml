@@ -1,6 +1,8 @@
 id: lnx-identify-filesystem-types
 title: Identify Filesystem Formats and UUIDs
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/storage-test

@@ -1,6 +1,8 @@
 id: lnx-inspect-disk-partitions
 title: Inspect Disk Partition Tables
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/storage-test

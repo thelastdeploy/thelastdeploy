@@ -14,6 +14,8 @@ instructions: '
   3. Delete the `.bak` file to reclaim storage space.
 
   '
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p '$HOME/storage-test/cleanup_target/logs'

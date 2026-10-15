@@ -1,6 +1,8 @@
 id: lnx-mount-storage-device
 title: Mount and Unmount Storage Devices
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/storage-test

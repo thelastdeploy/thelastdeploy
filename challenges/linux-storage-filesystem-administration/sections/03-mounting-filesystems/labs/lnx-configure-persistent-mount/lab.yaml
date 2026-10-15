@@ -1,6 +1,8 @@
 id: lnx-configure-persistent-mount
 title: Configure Persistent Mounts in Fstab
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/storage-test

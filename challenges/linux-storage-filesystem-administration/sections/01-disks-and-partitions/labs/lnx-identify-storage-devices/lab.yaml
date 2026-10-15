@@ -1,6 +1,8 @@
 id: lnx-identify-storage-devices
 title: Identify Storage Devices and Block Topology
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/storage-test
