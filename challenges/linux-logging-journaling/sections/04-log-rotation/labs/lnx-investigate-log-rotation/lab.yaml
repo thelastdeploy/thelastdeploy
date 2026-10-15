@@ -1,6 +1,8 @@
 id: lnx-investigate-log-rotation
 title: Investigate Log Rotation Archives
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/log-test/archives

@@ -1,6 +1,8 @@
 id: lnx-find-errors-in-logs
 title: Extract Errors and Fatal Exceptions from Logs
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/log-test

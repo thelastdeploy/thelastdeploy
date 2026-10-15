@@ -1,6 +1,8 @@
 id: lnx-query-system-journal
 title: Query Systemd Journal by Unit and Time
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/log-test

@@ -1,6 +1,8 @@
 id: lnx-inspect-application-log
 title: Inspect Application Log Streams
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/log-test/app_logs

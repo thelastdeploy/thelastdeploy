@@ -1,6 +1,8 @@
 id: lnx-identify-system-logs
 title: Identify System Log File Locations
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/log-test/sys_logs

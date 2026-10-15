@@ -1,6 +1,8 @@
 id: lnx-trace-system-event
 title: Trace System Event Timelines across Logs
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/log-test

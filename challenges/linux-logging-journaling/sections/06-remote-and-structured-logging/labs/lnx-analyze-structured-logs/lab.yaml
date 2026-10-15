@@ -1,6 +1,8 @@
 id: lnx-analyze-structured-logs
 title: Analyze Structured JSON Log Entries
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/log-test
