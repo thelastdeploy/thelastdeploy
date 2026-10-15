@@ -1,6 +1,8 @@
 id: lnx-inspect-file-metadata
 title: Inspect file metadata and size
 xp: 15
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/metadata-test

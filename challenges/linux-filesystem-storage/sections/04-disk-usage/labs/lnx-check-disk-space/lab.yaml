@@ -1,6 +1,8 @@
 id: lnx-check-disk-space
 title: Check filesystem utilization using df
 xp: 15
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/disk-test

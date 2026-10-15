@@ -1,6 +1,8 @@
 id: lnx-investigate-file-properties
 title: Investigate unknown file properties and types
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/metadata-test

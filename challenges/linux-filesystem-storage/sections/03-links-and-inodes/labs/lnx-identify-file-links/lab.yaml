@@ -1,6 +1,8 @@
 id: lnx-identify-file-links
 title: Identify hard-linked files using inode numbers
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/link-test

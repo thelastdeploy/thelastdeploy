@@ -1,6 +1,8 @@
 id: lnx-locate-system-data
 title: Locate configuration files using hierarchy principles
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/fhs-test

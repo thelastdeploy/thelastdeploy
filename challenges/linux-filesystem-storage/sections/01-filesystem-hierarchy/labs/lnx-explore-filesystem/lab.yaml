@@ -1,6 +1,8 @@
 id: lnx-explore-filesystem
 title: Explore the filesystem hierarchy
 xp: 15
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -f $HOME/log_path.txt

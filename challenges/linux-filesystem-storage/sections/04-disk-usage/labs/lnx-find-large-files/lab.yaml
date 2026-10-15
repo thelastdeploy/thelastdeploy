@@ -1,6 +1,8 @@
 id: lnx-find-large-files
 title: Locate space-consuming files in log directories
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/disk-test
