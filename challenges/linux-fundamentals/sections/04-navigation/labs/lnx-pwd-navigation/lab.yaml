@@ -2,6 +2,8 @@ id: lnx-pwd-navigation
 title: "Save your working directory path"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

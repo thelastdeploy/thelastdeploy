@@ -2,6 +2,8 @@ id: lnx-find-config
 title: "Locate configuration files using find"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

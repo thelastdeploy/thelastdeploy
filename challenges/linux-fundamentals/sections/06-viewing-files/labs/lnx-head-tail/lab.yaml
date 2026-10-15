@@ -2,6 +2,8 @@ id: lnx-head-tail
 title: "Inspect files with head and tail"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

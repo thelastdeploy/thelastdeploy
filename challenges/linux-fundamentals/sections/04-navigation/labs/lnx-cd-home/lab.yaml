@@ -2,6 +2,8 @@ id: lnx-cd-home
 title: "Navigate to a nested target folder"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

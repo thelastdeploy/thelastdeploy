@@ -2,6 +2,8 @@ id: lnx-move-files
 title: "Move or rename files"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
