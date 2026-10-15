@@ -1,6 +1,8 @@
 id: lnx-recover-broken-environment
 title: Recover broken package management environment
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/pkg-challenge

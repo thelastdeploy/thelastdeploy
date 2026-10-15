@@ -1,6 +1,8 @@
 id: lnx-manage-outdated-packages
 title: Identify upgradable outdated packages
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/pkg-test

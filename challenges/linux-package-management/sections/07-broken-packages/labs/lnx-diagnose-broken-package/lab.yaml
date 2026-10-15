@@ -1,6 +1,8 @@
 id: lnx-diagnose-broken-package
 title: Diagnose half-installed broken package status
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/broken-test

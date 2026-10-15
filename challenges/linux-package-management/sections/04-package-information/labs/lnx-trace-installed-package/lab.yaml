@@ -1,6 +1,8 @@
 id: lnx-trace-installed-package
 title: Trace package owning target binary
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/pkg-test

@@ -1,6 +1,8 @@
 id: lnx-install-package-from-repository
 title: Install package from repository
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/pkg-test

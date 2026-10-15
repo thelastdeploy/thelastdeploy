@@ -1,6 +1,8 @@
 id: lnx-repair-package-state
 title: Resolve stale package manager lock files
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/broken-test

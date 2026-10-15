@@ -1,6 +1,8 @@
 id: lnx-inspect-installed-packages
 title: Query installed packages database
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/pkg-test
