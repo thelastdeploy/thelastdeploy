@@ -2,6 +2,8 @@ id: lnx-resume-suspended-job
 title: "Resume a suspended process"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

@@ -2,6 +2,8 @@ id: lnx-recover-broken-web-service
 title: "Fix a failing user service"
 xp: 30
 estimated_minutes: 10
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

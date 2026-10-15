@@ -2,6 +2,8 @@ id: lnx-run-background-job
 title: "Start a job in the background"
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
