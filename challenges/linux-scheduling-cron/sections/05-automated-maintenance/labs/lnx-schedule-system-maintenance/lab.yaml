@@ -1,6 +1,8 @@
 id: lnx-schedule-system-maintenance
 title: Configure System-Wide Crontab Maintenance
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/cron-test

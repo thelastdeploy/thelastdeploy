@@ -1,6 +1,8 @@
 id: lnx-repair-scheduled-maintenance
 title: Repair Scheduled System Maintenance Setup
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/cron-challenge

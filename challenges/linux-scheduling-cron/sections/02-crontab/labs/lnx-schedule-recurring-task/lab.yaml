@@ -1,6 +1,8 @@
 id: lnx-schedule-recurring-task
 title: Schedule Recurring Tasks with Redirection
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/cron-test

@@ -1,6 +1,8 @@
 id: lnx-schedule-one-time-task
 title: Schedule One-Time Tasks with At
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/cron-test

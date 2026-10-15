@@ -1,6 +1,8 @@
 id: lnx-troubleshoot-cron-job
 title: Troubleshoot Cron Execution Environment and PATH
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/cron-test

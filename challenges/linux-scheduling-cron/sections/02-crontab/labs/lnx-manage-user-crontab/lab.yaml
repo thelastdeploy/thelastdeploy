@@ -1,6 +1,8 @@
 id: lnx-manage-user-crontab
 title: Manage User Crontab Files
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/cron-test
