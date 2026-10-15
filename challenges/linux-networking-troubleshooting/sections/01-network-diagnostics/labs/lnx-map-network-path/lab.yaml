@@ -14,8 +14,10 @@ instructions: '
   3. Write the target IP address (`10.20.30.40`) into `$HOME/net-test/target_hop.txt`.
 
   '
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p '$HOME/net-test/traceroute_sim'
-  - '"printf ''%s'
+  - "printf '1  192.168.1.1  0.42 ms\\n2  10.0.0.1     2.15 ms\\n3  172.16.0.1   12.40 ms\\n4  10.20.30.40  24.81 ms\\n' > $HOME/net-test/traceroute_sim/path.log"
 version: 2

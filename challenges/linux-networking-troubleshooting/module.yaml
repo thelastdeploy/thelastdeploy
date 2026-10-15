@@ -4,3 +4,4 @@ description: "Diagnose and resolve network issues, routing problems, DNS failure
 difficulty: "intermediate"
 estimated_time_minutes: 75
 order: 17
+shared_seed: []
