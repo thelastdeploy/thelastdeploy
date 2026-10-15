@@ -2,6 +2,8 @@ id: lnx-identify-user
 title: "Identify your active username"
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

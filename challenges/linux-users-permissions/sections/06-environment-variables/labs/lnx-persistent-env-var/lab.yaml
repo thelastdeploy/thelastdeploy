@@ -2,6 +2,8 @@ id: lnx-persistent-env-var
 title: "Make an environment variable persistent"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

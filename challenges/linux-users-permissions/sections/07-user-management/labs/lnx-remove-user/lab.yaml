@@ -2,6 +2,8 @@ id: lnx-remove-user
 title: "Remove a system user"
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands: []
