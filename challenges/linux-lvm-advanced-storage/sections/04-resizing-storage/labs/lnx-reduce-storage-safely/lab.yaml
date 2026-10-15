@@ -1,6 +1,8 @@
 id: lnx-reduce-storage-safely
 title: Reduce Storage Capacity Safely
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/resize-test

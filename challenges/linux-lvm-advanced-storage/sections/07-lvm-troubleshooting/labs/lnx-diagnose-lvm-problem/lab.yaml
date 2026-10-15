@@ -1,6 +1,8 @@
 id: lnx-diagnose-lvm-problem
 title: Diagnose LVM Configuration Problems
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/lvm-diag

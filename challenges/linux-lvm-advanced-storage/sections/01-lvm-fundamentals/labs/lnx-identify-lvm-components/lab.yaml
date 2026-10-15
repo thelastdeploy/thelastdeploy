@@ -1,6 +1,8 @@
 id: lnx-identify-lvm-components
 title: Identify LVM Components and Layer Hierarchy
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/lvm-test

@@ -1,6 +1,8 @@
 id: lnx-create-and-restore-lvm-snapshot
 title: Create and Restore LVM Snapshots
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/snap-test

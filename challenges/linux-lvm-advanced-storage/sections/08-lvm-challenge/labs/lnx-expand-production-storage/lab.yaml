@@ -1,6 +1,8 @@
 id: lnx-expand-production-storage
 title: Expand Production Application Storage Capstone
 xp: 75
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/lvm-capstone

@@ -1,6 +1,8 @@
 id: lnx-create-logical-volume
 title: Create Logical Volumes
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/lv-test

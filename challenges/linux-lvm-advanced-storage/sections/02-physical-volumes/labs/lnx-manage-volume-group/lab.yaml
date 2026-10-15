@@ -1,6 +1,8 @@
 id: lnx-manage-volume-group
 title: Manage Volume Groups
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/pv-test

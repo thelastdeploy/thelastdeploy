@@ -1,6 +1,8 @@
 id: lnx-recover-lvm-storage
 title: Recover LVM Storage State
 xp: 60
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/lvm-diag

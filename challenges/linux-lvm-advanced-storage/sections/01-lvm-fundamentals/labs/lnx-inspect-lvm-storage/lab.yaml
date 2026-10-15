@@ -1,6 +1,8 @@
 id: lnx-inspect-lvm-storage
 title: Inspect LVM Storage Allocation
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/lvm-test

@@ -1,6 +1,8 @@
 id: lnx-migrate-lvm-storage
 title: Migrate LVM Storage Online
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/mig-test

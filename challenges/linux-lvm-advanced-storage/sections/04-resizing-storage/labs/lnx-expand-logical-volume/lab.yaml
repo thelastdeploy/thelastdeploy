@@ -1,6 +1,8 @@
 id: lnx-expand-logical-volume
 title: Expand Logical Volume and Filesystem
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/resize-test

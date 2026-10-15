@@ -1,6 +1,8 @@
 id: lnx-configure-lvm-filesystem
 title: Configure Filesystem on Logical Volume
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/lv-test
