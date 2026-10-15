@@ -52,6 +52,10 @@ func (d *DockerEngine) Create(ctx context.Context, spec *runtime.InstanceSpec) (
 		"--rm",
 	}
 
+	if spec.WorkspaceDir != "" {
+		args = append(args, "-w", spec.WorkspaceDir)
+	}
+
 	for _, port := range spec.Ports {
 		args = append(args, "-p", port)
 	}
@@ -68,7 +72,7 @@ func (d *DockerEngine) Create(ctx context.Context, spec *runtime.InstanceSpec) (
 		args = append(args, "--privileged")
 	}
 
-	if strings.Contains(spec.Image, "docker-dind") {
+	if strings.Contains(spec.Image, "dind") {
 		args = append(args, "-v", "/var/lib/docker", "-v", "/var/lib/containerd")
 	}
 
@@ -119,7 +123,7 @@ func (d *DockerEngine) Exec(ctx context.Context, instanceID string, command []st
 }
 
 func (d *DockerEngine) Attach(ctx context.Context, instanceID string) error {
-	cmd := exec.CommandContext(ctx, "docker", "exec", "-it", instanceID, "/bin/bash")
+	cmd := exec.CommandContext(ctx, "docker", "exec", "-it", "-w", "/workspace", instanceID, "/bin/bash")
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

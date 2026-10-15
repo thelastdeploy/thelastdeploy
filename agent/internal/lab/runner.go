@@ -42,7 +42,7 @@ func Start(lab *cache.Lab) error {
 		return err
 	}
 
-	instanceSpec := environment.ResolveInstanceSpec(lab.ModuleID, lab.ID, lab.Environment)
+	instanceSpec := environment.ResolveInstanceSpec(lab.ID, lab.Environment)
 	if instanceSpec.EnvironmentVars == nil {
 		instanceSpec.EnvironmentVars = make(map[string]string)
 	}
@@ -77,11 +77,8 @@ func Start(lab *cache.Lab) error {
 	// Inject in-container tld binary, config, validator, and active session
 	injectInContainerTLD(ctx, eng, containerID, lab)
 
-	// Strip pre-installed package for labs specifically testing installation
-	if lab.InstallTarget != "" {
-		fmt.Printf("  🔧 Lab requires you to install %s — removing pre-installed package...\n", lab.InstallTarget)
-		_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", fmt.Sprintf("DEBIAN_FRONTEND=noninteractive apt-get remove -y %s && apt-get autoremove -y", lab.InstallTarget)})
-	}
+	// Stage starter files into /workspace inside the container
+	stageLabWorkspace(ctx, eng, containerID, lab)
 
 	// Prepare environment packages if needed
 	if lab.Environment != nil && len(lab.Environment.Packages) > 0 {
@@ -94,12 +91,12 @@ func Start(lab *cache.Lab) error {
 		}
 	}
 
-	// 1. Run module shared baseline commands INSIDE container
+	// 1. Run module shared baseline commands INSIDE container (in /workspace)
 	if len(lab.ModuleSharedSeed) > 0 {
 		fmt.Println("⚙  Applying module environment baseline inside container...")
 		for _, cmdStr := range lab.ModuleSharedSeed {
 			fmt.Printf("  $ %s\n", cmdStr)
-			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", cmdStr})
+			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "cd /workspace && " + cmdStr})
 			if err != nil || res.ExitCode != 0 {
 				fmt.Fprintf(os.Stderr, "  warn: shared seed command exited with code %d: %s\n", res.ExitCode, res.Stderr)
 			}
@@ -107,12 +104,12 @@ func Start(lab *cache.Lab) error {
 		fmt.Println()
 	}
 
-	// 2. Run seed commands INSIDE container
+	// 2. Run scenario seed commands INSIDE container (in /workspace)
 	if len(lab.SeedCommands) > 0 {
 		fmt.Println("⚙  Applying lab scenario broken state inside container...")
 		for _, cmdStr := range lab.SeedCommands {
 			fmt.Printf("  $ %s\n", cmdStr)
-			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", cmdStr})
+			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "cd /workspace && " + cmdStr})
 			if err != nil || res.ExitCode != 0 {
 				fmt.Fprintf(os.Stderr, "  warn: seed command exited with code %d: %s\n", res.ExitCode, res.Stderr)
 			}
@@ -226,6 +223,38 @@ func injectInContainerTLD(ctx context.Context, eng *docker.DockerEngine, contain
 		_, _ = eng.Exec(ctx, containerID, []string{"mkdir", "-p", "/etc/ssl/certs"})
 		_ = eng.CopyFileToInstance(ctx, containerID, "/etc/ssl/certs/ca-certificates.crt", "/etc/ssl/certs/ca-certificates.crt")
 	}
+}
+
+// stageLabWorkspace copies all challenge starter files from the host lab directory into /workspace inside the container.
+func stageLabWorkspace(ctx context.Context, eng *docker.DockerEngine, containerID string, l *cache.Lab) {
+	// 1. Ensure /workspace exists inside container
+	_, _ = eng.Exec(ctx, containerID, []string{"mkdir", "-p", "/workspace"})
+
+	// 2. If lab directory is known, copy starter files
+	if l.LabDir == "" {
+		return
+	}
+
+	entries, err := os.ReadDir(l.LabDir)
+	if err != nil {
+		return
+	}
+
+	for _, entry := range entries {
+		name := entry.Name()
+		// Skip CLI metadata and validator files
+		if name == "lab.yaml" || name == "lab.json" ||
+			name == "validator.sh" || name == "validator.py" ||
+			name == ".DS_Store" {
+			continue
+		}
+
+		srcPath := filepath.Join(l.LabDir, name)
+		_ = eng.CopyFileToInstance(ctx, containerID, srcPath, "/workspace/"+name)
+	}
+
+	// 3. Ensure non-root container users can read/write to workspace
+	_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "if [ -d /home/ubuntu ]; then chown -R ubuntu:ubuntu /workspace; fi; chmod -R 777 /workspace"})
 }
 
 // Attach connects the terminal to the active lab container shell.

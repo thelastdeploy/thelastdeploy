@@ -13,8 +13,8 @@ on:
         default: 'true'
 
 jobs:
-  build-linux-base:
-    name: Build linux-base
+  build-tld-ubuntu:
+    name: Build tld-ubuntu
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -36,20 +36,20 @@ jobs:
         id: repo_owner
         run: echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
-      - name: Build & push linux-base
+      - name: Build & push tld-ubuntu
         uses: docker/build-push-action@v5
         with:
-          context: infra/images/linux-base
+          context: infra/images/tld-ubuntu
           push: true
           tags: |
-            ghcr.io/${{ steps.repo_owner.outputs.owner }}/linux-base:latest
-            ghcr.io/${{ steps.repo_owner.outputs.owner }}/linux-base:${{ github.sha }}
-          cache-from: type=gha,scope=linux-base
-          cache-to: type=gha,mode=max,scope=linux-base
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/tld-ubuntu:latest
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/tld-ubuntu:${{ github.sha }}
+          cache-from: type=gha,scope=tld-ubuntu
+          cache-to: type=gha,mode=max,scope=tld-ubuntu
 
   build-dependent-images:
     name: Build ${{ matrix.image }}
-    needs: [build-linux-base]
+    needs: [build-tld-ubuntu]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -58,11 +58,8 @@ jobs:
       fail-fast: false
       matrix:
         image:
-          - nginx-base
-          - docker-dind
-          - git-base
-          - terraform-base
-          - k8s-base
+          - tld-dind
+          - tld-kind
     steps:
       - uses: actions/checkout@v4
 
@@ -85,7 +82,7 @@ jobs:
         with:
           context: infra/images/${{ matrix.image }}
           build-args: |
-            BASE_IMAGE=ghcr.io/${{ steps.repo_owner.outputs.owner }}/linux-base:latest
+            BASE_IMAGE=ghcr.io/${{ steps.repo_owner.outputs.owner }}/tld-ubuntu:latest
           push: true
           tags: |
             ghcr.io/${{ steps.repo_owner.outputs.owner }}/${{ matrix.image }}:latest

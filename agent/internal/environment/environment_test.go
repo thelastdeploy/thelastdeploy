@@ -6,70 +6,52 @@ import (
 )
 
 func TestProfileResolution(t *testing.T) {
-	pStandard := GetProfile("ubuntu-24.04-standard")
-	if pStandard == nil || pStandard.RequiresSystemd {
-		t.Errorf("expected ubuntu-24.04-standard to exist and not require systemd")
+	pUbuntu := GetProfile("tld-ubuntu")
+	if pUbuntu == nil || !pUbuntu.RequiresSystemd {
+		t.Errorf("expected tld-ubuntu to exist and require systemd")
 	}
 
-	pSystemd := GetProfile("ubuntu-24.04-systemd")
-	if pSystemd == nil || !pSystemd.RequiresSystemd {
-		t.Errorf("expected ubuntu-24.04-systemd to exist and require systemd")
+	pDind := GetProfile("tld-dind")
+	if pDind == nil || !pDind.RequiresPrivileged {
+		t.Errorf("expected tld-dind to exist and require privileged")
 	}
 
-	pLinux := GetProfile("tld-linux")
-	if pLinux == nil || !pLinux.RequiresSystemd {
-		t.Errorf("expected tld-linux to exist and require systemd")
-	}
-
-	pNginx := GetProfile("tld-nginx")
-	if pNginx == nil || !pNginx.RequiresSystemd {
-		t.Errorf("expected tld-nginx to exist and require systemd")
+	pKind := GetProfile("tld-kind")
+	if pKind == nil || !pKind.RequiresPrivileged {
+		t.Errorf("expected tld-kind to exist and require privileged")
 	}
 
 	pFallback := GetProfile("non-existent-profile")
-	if pFallback == nil || pFallback.Name != "ubuntu-24.04-standard" {
-		t.Errorf("expected non-existent profile to fallback to ubuntu-24.04-standard")
-	}
-}
-
-func TestAutoDetectProfile(t *testing.T) {
-	tests := []struct {
-		moduleID string
-		expected string
-	}{
-		{"nginx-fundamentals", "tld-nginx"},
-		{"docker-compose", "tld-docker"},
-		{"container-linux-isolation", "tld-docker"},
-		{"k8s-pods", "tld-k8s"},
-		{"terraform-modules", "tld-terraform"},
-		{"git-branching", "tld-git"},
-		{"linux-fundamentals", "tld-linux"},
-		{"bash-shell-scripting", "tld-linux"},
-	}
-
-	for _, tt := range tests {
-		actual := AutoDetectProfile(tt.moduleID)
-		if actual != tt.expected {
-			t.Errorf("AutoDetectProfile(%q) = %q; want %q", tt.moduleID, actual, tt.expected)
-		}
+	if pFallback == nil || pFallback.Name != "tld-ubuntu" {
+		t.Errorf("expected non-existent profile to fallback to tld-ubuntu")
 	}
 }
 
 func TestResolveInstanceSpec(t *testing.T) {
+	// Test 1: Default resolution (no profile specified -> tld-ubuntu)
+	defaultSpec := ResolveInstanceSpec("test-lab-default", nil)
+	if defaultSpec.InstanceID != "tld-lab-test-lab-default" {
+		t.Errorf("unexpected InstanceID: %s", defaultSpec.InstanceID)
+	}
+	if defaultSpec.Image != "ghcr.io/thelastdeploy/tld-ubuntu:latest" {
+		t.Errorf("expected default image to be tld-ubuntu, got %s", defaultSpec.Image)
+	}
+
+	// Test 2: Explicit profile
 	spec := &EnvironmentSpec{
-		Profile:      "ubuntu-24.04-systemd",
-		Packages:     []string{"nginx"},
+		Profile:      "tld-dind",
+		Packages:     []string{"htop"},
 		Capabilities: []string{"NET_ADMIN"},
 		Ports:        []string{"8080:80"},
 	}
 
-	instanceSpec := ResolveInstanceSpec("linux-fundamentals", "lnx-test-lab", spec)
-	if instanceSpec.InstanceID != "tld-lab-lnx-test-lab" {
+	instanceSpec := ResolveInstanceSpec("dind-test-lab", spec)
+	if instanceSpec.InstanceID != "tld-lab-dind-test-lab" {
 		t.Errorf("unexpected InstanceID: %s", instanceSpec.InstanceID)
 	}
 
-	if !instanceSpec.RequiresSystemd {
-		t.Errorf("expected RequiresSystemd to be true for systemd profile")
+	if !instanceSpec.RequiresPrivileged {
+		t.Errorf("expected RequiresPrivileged to be true for dind profile")
 	}
 
 	if len(instanceSpec.Capabilities) != 1 || instanceSpec.Capabilities[0] != "NET_ADMIN" {

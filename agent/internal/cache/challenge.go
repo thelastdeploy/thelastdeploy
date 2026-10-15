@@ -42,6 +42,7 @@ type Lab struct {
 	Title            string
 	SectionID        string
 	ModuleID         string
+	LabDir           string
 	SetupType        string
 	SeedCommands     []string
 	ModuleSharedSeed []string
@@ -226,6 +227,7 @@ func loadLab(baseDir, moduleID, sectionID, labID string) (*Lab, error) {
 	lab.ID = labID
 	lab.SectionID = sectionID
 	lab.ModuleID = moduleID
+	lab.LabDir = labDir
 	if parentMod, err := LoadModule(baseDir, moduleID); err == nil && parentMod != nil {
 		lab.ModuleSharedSeed = parentMod.SharedSeed
 	}

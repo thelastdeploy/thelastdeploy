@@ -12,33 +12,12 @@ type EnvironmentSpec struct {
 	Packages     []string `json:"packages" yaml:"packages"`
 	Capabilities []string `json:"capabilities" yaml:"capabilities"`
 	Ports        []string `json:"ports" yaml:"ports"`
-}
-
-// AutoDetectProfile returns the best-fit profile for a module based on its ID prefix.
-func AutoDetectProfile(moduleID string) string {
-	switch {
-	case strings.HasPrefix(moduleID, "nginx-"):
-		return "tld-nginx"
-	case strings.HasPrefix(moduleID, "docker-"),
-		strings.HasPrefix(moduleID, "container-"):
-		return "tld-docker"
-	case strings.HasPrefix(moduleID, "k8s-"):
-		return "tld-k8s"
-	case strings.HasPrefix(moduleID, "terraform-"):
-		return "tld-terraform"
-	case strings.HasPrefix(moduleID, "git-"):
-		return "tld-git"
-	default:
-		if moduleID != "" {
-			return "tld-linux"
-		}
-		return "ubuntu-24.04-standard"
-	}
+	Privileged   bool     `json:"privileged,omitempty" yaml:"privileged,omitempty"`
 }
 
 // ResolveInstanceSpec computes the runtime instance configuration for a lab container.
-func ResolveInstanceSpec(moduleID, labID string, envSpec *EnvironmentSpec) *runtime.InstanceSpec {
-	profileName := AutoDetectProfile(moduleID)
+func ResolveInstanceSpec(labID string, envSpec *EnvironmentSpec) *runtime.InstanceSpec {
+	profileName := DefaultProfile
 	if envSpec != nil && envSpec.Profile != "" {
 		profileName = envSpec.Profile
 	}
@@ -61,28 +40,23 @@ func ResolveInstanceSpec(moduleID, labID string, envSpec *EnvironmentSpec) *runt
 		ports = envSpec.Ports
 	}
 
+	requiresPrivileged := profile.RequiresPrivileged
+	if envSpec != nil && envSpec.Privileged {
+		requiresPrivileged = true
+	}
+
 	return &runtime.InstanceSpec{
 		InstanceID:         instanceID,
 		Image:              profile.BaseImage,
 		RequiresSystemd:    profile.RequiresSystemd,
-		RequiresPrivileged: profile.RequiresSystemd,
+		RequiresPrivileged: requiresPrivileged,
 		Capabilities:       caps,
 		Ports:              ports,
 		WorkspaceDir:       "/workspace",
 	}
 }
 
-// GetProfilesForModules returns a deduplicated list of base images required by the given modules.
+// GetProfilesForModules returns a deduplicated list of base images required to run labs.
 func GetProfilesForModules(moduleIDs []string) []string {
-	seen := make(map[string]bool)
-	var images []string
-	for _, m := range moduleIDs {
-		pName := AutoDetectProfile(m)
-		prof := GetProfile(pName)
-		if prof != nil && prof.BaseImage != "" && !seen[prof.BaseImage] {
-			seen[prof.BaseImage] = true
-			images = append(images, prof.BaseImage)
-		}
-	}
-	return images
+	return []string{GetProfile(DefaultProfile).BaseImage}
 }

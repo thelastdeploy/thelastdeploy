@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=ghcr.io/thelastdeploy/linux-base:latest
+ARG BASE_IMAGE=ghcr.io/thelastdeploy/tld-ubuntu:latest
 FROM ${BASE_IMAGE}
 
 ENV DEBIAN_FRONTEND=noninteractive
