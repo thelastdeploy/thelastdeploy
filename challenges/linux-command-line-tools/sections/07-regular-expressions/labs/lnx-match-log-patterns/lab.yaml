@@ -1,6 +1,8 @@
 id: lnx-match-log-patterns
 title: Match IPv4 addresses using extended regex
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/regex-test

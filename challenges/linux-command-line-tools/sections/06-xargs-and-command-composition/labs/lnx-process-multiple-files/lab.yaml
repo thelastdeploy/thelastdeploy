@@ -1,6 +1,8 @@
 id: lnx-process-multiple-files
 title: Batch process multiple files using find and xargs
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/xargs-test

@@ -1,6 +1,8 @@
 id: lnx-inspect-command-options
 title: Inspect shell builtins vs binary commands
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/cli-test

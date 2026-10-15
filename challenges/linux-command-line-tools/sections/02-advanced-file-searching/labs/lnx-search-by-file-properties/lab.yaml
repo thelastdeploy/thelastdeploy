@@ -1,6 +1,8 @@
 id: lnx-search-by-file-properties
 title: Search files by size and properties
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/search-test

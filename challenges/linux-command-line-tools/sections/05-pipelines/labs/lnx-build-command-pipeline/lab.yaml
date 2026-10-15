@@ -1,6 +1,8 @@
 id: lnx-build-command-pipeline
 title: Build a multi-stage command pipeline
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/pipe-test

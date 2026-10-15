@@ -1,6 +1,8 @@
 id: lnx-investigate-messy-log
 title: Investigate unstructured messy log dumps
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/cli-investigation

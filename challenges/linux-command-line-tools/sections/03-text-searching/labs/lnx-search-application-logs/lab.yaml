@@ -1,6 +1,8 @@
 id: lnx-search-application-logs
 title: Search application logs for critical errors
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/grep-test

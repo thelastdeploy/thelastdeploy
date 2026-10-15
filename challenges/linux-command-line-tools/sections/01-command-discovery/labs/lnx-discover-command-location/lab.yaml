@@ -1,6 +1,8 @@
 id: lnx-discover-command-location
 title: Discover executable binary locations
 xp: 15
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/cli-test

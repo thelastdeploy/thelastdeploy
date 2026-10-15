@@ -1,6 +1,8 @@
 id: lnx-solve-cli-investigation
 title: Solve complex outage investigation using CLI pipeline
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - rm -rf $HOME/cli-challenge
