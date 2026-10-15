@@ -1,6 +1,8 @@
 id: lnx-fix-misconfigured-application
 title: Fix Misconfigured Application and Environment
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/config-challenge

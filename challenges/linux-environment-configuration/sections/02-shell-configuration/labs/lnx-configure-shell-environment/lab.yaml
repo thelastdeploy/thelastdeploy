@@ -1,6 +1,8 @@
 id: lnx-configure-shell-environment
 title: Configure Shell Environment in Bashrc
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/env-test

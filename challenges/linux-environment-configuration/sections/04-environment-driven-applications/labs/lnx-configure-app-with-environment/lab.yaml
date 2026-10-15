@@ -1,6 +1,8 @@
 id: lnx-configure-app-with-environment
 title: Configure Environment-Driven Applications
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/env-test

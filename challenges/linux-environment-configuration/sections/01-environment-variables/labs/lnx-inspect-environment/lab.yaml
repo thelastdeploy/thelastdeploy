@@ -1,6 +1,8 @@
 id: lnx-inspect-environment
 title: Inspect Environment Variables
 xp: 15
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/env-test
