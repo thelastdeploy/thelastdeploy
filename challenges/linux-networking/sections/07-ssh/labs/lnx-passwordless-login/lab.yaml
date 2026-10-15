@@ -2,6 +2,8 @@ id: lnx-passwordless-login
 title: "Setup passwordless login to localhost"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands: []

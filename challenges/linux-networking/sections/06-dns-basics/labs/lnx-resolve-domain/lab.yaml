@@ -2,6 +2,8 @@ id: lnx-resolve-domain
 title: "Resolve a domain name local mapping"
 xp: 15
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
