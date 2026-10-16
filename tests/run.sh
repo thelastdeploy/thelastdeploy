@@ -37,10 +37,19 @@ fi
 # Filter tests based on user CLI arguments
 MATCHED_TESTS=()
 for tf in "${TEST_FILES[@]}"; do
-    # Extract track, module, lab from path
-    # Path pattern: .../tests/labs/<track>/<module>/<lab_dir>/positive/<file>.sh
+    # Extract track, module, section, lab from path
+    # Path pattern: .../tests/labs/<track>/<module>/[section]/<lab_dir>/positive/<file>.sh
     rel_path="${tf#$LABS_DIR/}"
-    IFS='/' read -r track module lab_dir flow file <<< "$rel_path"
+    IFS='/' read -ra parts <<< "$rel_path"
+    track="${parts[0]}"
+    module="${parts[1]}"
+    if [[ ${#parts[@]} -ge 6 ]]; then
+        section="${parts[2]}"
+        lab_dir="${parts[3]}"
+    else
+        section=""
+        lab_dir="${parts[2]}"
+    fi
 
     # Filter checks
     if [[ -n "$FILTER_TRACK" && "$track" != *"$FILTER_TRACK"* ]]; then
@@ -73,11 +82,20 @@ TEST_INDEX=0
 for test_script in "${MATCHED_TESTS[@]}"; do
     TEST_INDEX=$((TEST_INDEX + 1))
     rel_path="${test_script#$LABS_DIR/}"
-    IFS='/' read -r track module lab_dir flow test_file <<< "$rel_path"
+    IFS='/' read -ra parts <<< "$rel_path"
+    track="${parts[0]}"
+    module="${parts[1]}"
+    if [[ ${#parts[@]} -ge 6 ]]; then
+        section="${parts[2]}"
+        lab_dir="${parts[3]}"
+    else
+        section=""
+        lab_dir="${parts[2]}"
+    fi
 
     # Read LAB_ID from test file
     lab_id=$(grep -E '^LAB_ID=' "$test_script" | head -n 1 | cut -d'"' -f2 | cut -d"'" -f2)
-    [[ -z "$lab_id" ]] && lab_id="$lab_dir"
+    [[ -z "$lab_id" ]] && lab_id="${lab_dir//_/-}"
 
     CURRENT_TEST_LOG="$(mktemp)"
     echo "=== THE LAST DEPLOY TEST EXECUTION LOG ===" > "$CURRENT_TEST_LOG"

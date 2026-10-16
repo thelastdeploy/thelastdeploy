@@ -15,7 +15,7 @@ student_exec "cat <<'EOF' > ~/sec-test/audit_script.sh
 set -euo pipefail
 REPORT=\"\$HOME/sec-test/audit_findings.txt\"
 UID_COUNT=\$(awk -F: '(\$3 == 0) { print \$1 }' /etc/passwd | wc -l | tr -d ' ')
-SUDO_USERS=\$(grep -roh 'NOPASSWD: ALL' /etc/sudoers /etc/sudoers.d/ 2>/dev/null | wc -l | tr -d ' ')
+SUDO_USERS=\$( (grep -roh 'NOPASSWD: ALL' /etc/sudoers /etc/sudoers.d/ 2>/dev/null || true) | wc -l | tr -d ' ')
 WW_COUNT=\$(find /tmp -type f -perm -0002 2>/dev/null | wc -l | tr -d ' ' || echo \"0\")
 
 cat <<FINDINGS > \"\$REPORT\"

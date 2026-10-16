@@ -76,26 +76,38 @@ harness_start_lab() {
 #   --expect-stderr "<string>"
 #   --expect-stdout-regex "<regex>"
 student_exec() {
-    local cmd="$1"
-    shift
-
+    local cmd=""
     local desc=""
     local expect_exit=0
     local expect_stdout=""
     local expect_stderr=""
     local expect_stdout_regex=""
 
+    # Support positional command as first argument if not a flag
+    if [[ $# -gt 0 && "$1" != --* ]]; then
+        cmd="$1"
+        shift
+    fi
+
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            --desc)
+            --cmd)
+                cmd="$2"
+                shift 2
+                ;;
+            --desc|--step-name)
                 desc="$2"
                 shift 2
                 ;;
-            --expect-exit)
+            --expect-exit|--expect-exit-code)
                 expect_exit="$2"
                 shift 2
                 ;;
             --expect-stdout)
+                expect_stdout="$2"
+                shift 2
+                ;;
+            --expect-stdout-contains)
                 expect_stdout="$2"
                 shift 2
                 ;;
@@ -129,9 +141,11 @@ student_exec() {
     stdout_file="$(mktemp)"
     stderr_file="$(mktemp)"
 
-    # Execute command inside container as standard student shell
+    # Execute command inside container as standard student shell without letting caller set -e abort
+    set +e
     docker exec -i -e XDG_RUNTIME_DIR=/run/user/0 -w /workspace "$ACTIVE_CONTAINER_ID" /bin/bash -c "$cmd" >"$stdout_file" 2>"$stderr_file"
     local actual_exit=$?
+    set -e
 
     local actual_stdout
     local actual_stderr
@@ -189,6 +203,7 @@ student_exec() {
 
     if [[ $step_failed -eq 1 ]]; then
         TEST_FAILED_STEPS=$((TEST_FAILED_STEPS + 1))
+        [[ -n "${TEST_STEP_FAIL_FLAG:-}" ]] && touch "$TEST_STEP_FAIL_FLAG"
         rm -f "$stdout_file" "$stderr_file"
         return 0
     fi

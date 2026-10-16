@@ -39,10 +39,10 @@ Auditing cron schedules, systemd unit files, shell profiles (`.bashrc`), and SSH
 
 ## Lab Tasks
 
-### Task 1: Investigate Suspicious Process Activity (`lnx-investigate-suspicious-process`)
+### Task 1: Investigate Suspicious Process Activity (`lnx-investigate-suspicious-activity`)
 1. Start the lab:
    ```bash
-   tld start lnx-investigate-suspicious-process
+   tld start lnx-investigate-suspicious-activity
    ```
 2. Create directory `$HOME/suspicious-test`.
 3. Inspect suspicious process activity (unlinked deleted binaries, hidden network sockets).
