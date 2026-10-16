@@ -11,16 +11,15 @@ RUN_REPORT_DIR=""
 SUMMARY_JSON=""
 
 init_aggregator() {
-    # Keep only the latest report in tests/reports/
     RUN_REPORT_DIR="$REPORTS_DIR"
-    rm -rf "$RUN_REPORT_DIR"/*
     mkdir -p "$RUN_REPORT_DIR/logs"
 
     SUMMARY_JSON="$RUN_REPORT_DIR/summary.json"
     AGG_START_TIME=$(date +%s)
 
-    # Initialize empty summary JSON
-    cat <<EOF > "$SUMMARY_JSON"
+    # Initialize summary JSON if it does not already exist
+    if [[ ! -f "$SUMMARY_JSON" ]]; then
+        cat <<EOF > "$SUMMARY_JSON"
 {
   "title": "The Last Deploy Automated Lab Regression Dashboard",
   "environment": "Docker Engine / Linux Container",
@@ -34,6 +33,7 @@ init_aggregator() {
   "results": []
 }
 EOF
+    fi
 }
 
 record_test_result() {
@@ -58,12 +58,21 @@ record_test_result() {
     local dest_log_path="$RUN_REPORT_DIR/logs/$dest_log_name"
     cp "$log_file" "$dest_log_path"
 
-    # Append test entry to summary.json using python helper
+    # Merge or append test entry in summary.json using python helper
     python3 - <<PYEOF
 import json
+import datetime
 
-with open('$SUMMARY_JSON', 'r') as f:
-    data = json.load(f)
+summary_path = '$SUMMARY_JSON'
+try:
+    with open(summary_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+except Exception:
+    data = {
+        "title": "The Last Deploy Automated Lab Regression Dashboard",
+        "environment": "Docker Engine / Linux Container",
+        "results": []
+    }
 
 entry = {
     "track": "$track",
@@ -76,16 +85,33 @@ entry = {
     "error_message": """$error_msg""".strip()
 }
 
-data["results"].append(entry)
-data["total_test_cases"] = len(data["results"])
-data["total_executed"] = len(data["results"])
-data["total_passed"] = sum(1 for r in data["results"] if r["status"] == "PASSED")
-data["total_failed"] = sum(1 for r in data["results"] if r["status"] == "FAILED")
-data["pass_rate_pct"] = round((data["total_passed"] / data["total_executed"]) * 100, 1) if data["total_executed"] > 0 else 0.0
+results = data.get("results", [])
+found = False
+for idx, r in enumerate(results):
+    if r.get("test_path") == "$test_path":
+        results[idx] = entry
+        found = True
+        break
 
-with open('$SUMMARY_JSON', 'w') as f:
+if not found:
+    results.append(entry)
+
+data["results"] = results
+data["total_test_cases"] = len(results)
+data["total_executed"] = len(results)
+data["total_passed"] = sum(1 for r in results if r.get("status") == "PASSED")
+data["total_failed"] = sum(1 for r in results if r.get("status") == "FAILED")
+data["pass_rate_pct"] = round((data["total_passed"] / data["total_executed"]) * 100, 1) if data["total_executed"] > 0 else 0.0
+data["generated_at"] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+with open(summary_path, 'w', encoding='utf-8') as f:
     json.dump(data, f, indent=2)
 PYEOF
+
+    # Regenerate reports in near real-time after each test execution
+    if [[ "${GENERATE_HTML:-1}" -eq 1 && -n "${REPORT_GENERATOR:-}" && -f "$REPORT_GENERATOR" ]]; then
+        python3 "$REPORT_GENERATOR" "$SUMMARY_JSON" >/dev/null 2>&1 || true
+    fi
 }
 
 finalize_aggregator() {
@@ -94,12 +120,21 @@ finalize_aggregator() {
     python3 - <<PYEOF
 import json
 
-with open('$SUMMARY_JSON', 'r') as f:
-    data = json.load(f)
+summary_path = '$SUMMARY_JSON'
+try:
+    with open(summary_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
 
-data["total_duration_sec"] = int("$total_duration")
+    # Accumulate or set session total duration
+    data["total_duration_sec"] = int("$total_duration")
 
-with open('$SUMMARY_JSON', 'w') as f:
-    json.dump(data, f, indent=2)
+    with open(summary_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, indent=2)
+except Exception:
+    pass
 PYEOF
+
+    if [[ "${GENERATE_HTML:-1}" -eq 1 && -n "${REPORT_GENERATOR:-}" && -f "$REPORT_GENERATOR" ]]; then
+        python3 "$REPORT_GENERATOR" "$SUMMARY_JSON" >/dev/null 2>&1 || true
+    fi
 }
