@@ -15,7 +15,7 @@ student_exec "journalctl --user -u thelastdeploy-logger.service || true" \
     --expect-exit 0
 
 # Step 2: Student extracts SECRET_LOG_KEY value and saves it to secret_key.txt
-student_exec "mkdir -p ~/logs-test && (journalctl --user -u thelastdeploy-logger.service | grep -o 'SECRET_LOG_KEY=.*' | cut -d= -f2 || echo 'SEC_PROC_99') > ~/logs-test/secret_key.txt" \
+student_exec "mkdir -p ~/logs-test && (journalctl --user | grep 'SECRET_LOG_KEY=' | cut -d= -f2 | head -n 1) > ~/logs-test/secret_key.txt" \
     --desc "Student extracts and saves secret key" \
     --expect-exit 0
 

@@ -10,13 +10,13 @@ set -euo pipefail
 LAB_ID="lnx-find-package-information"
 
 # Step 1: Student queries package database for file ownership
-student_exec "dpkg -S /bin/bash" \
-    --desc "Student traces package owning /bin/bash" \
+student_exec "dpkg -S \$(which bash)" \
+    --desc "Student traces package owning bash binary" \
     --expect-exit 0 \
     --expect-stdout "bash"
 
 # Step 2: Student extracts package name and writes to bash_owner.txt
-student_exec "(dpkg -S /bin/bash 2>/dev/null | head -n 1 | cut -d: -f1 || echo 'bash') > ~/pkg-test/bash_owner.txt" \
+student_exec "dpkg -S \$(which bash) | head -n 1 | cut -d: -f1 > ~/pkg-test/bash_owner.txt" \
     --desc "Student saves owner package name" \
     --expect-exit 0
 

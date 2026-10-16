@@ -34,7 +34,7 @@ dpkg -S /bin/ls
    ```bash
    tld start lnx-find-package-information
    ```
-2. Trace which package owns the binary `/bin/bash` using `dpkg -S /bin/bash` (or equivalent query).
+2. Trace which package owns the binary `bash` using `dpkg -S $(which bash)` (or `/usr/bin/bash`).
 3. Save the package name (`base-files` or `bash` or `coreutils`) to `$HOME/pkg-test/bash_owner.txt`.
 4. Validate your solution:
    ```bash

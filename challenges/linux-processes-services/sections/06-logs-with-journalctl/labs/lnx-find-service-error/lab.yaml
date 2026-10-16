@@ -14,7 +14,9 @@ setup:
     - "echo 'Description=The Last Deploy Logger Service' >> $HOME/.config/systemd/user/thelastdeploy-logger.service"
     - "echo '[Service]' >> $HOME/.config/systemd/user/thelastdeploy-logger.service"
     - "echo 'Type=oneshot' >> $HOME/.config/systemd/user/thelastdeploy-logger.service"
-    - "echo 'ExecStart=/bin/bash -c \"echo SECRET_LOG_KEY=SEC_PROC_99\"' >> $HOME/.config/systemd/user/thelastdeploy-logger.service"
+    - "echo 'StandardOutput=journal' >> $HOME/.config/systemd/user/thelastdeploy-logger.service"
+    - "echo 'SyslogIdentifier=thelastdeploy-logger' >> $HOME/.config/systemd/user/thelastdeploy-logger.service"
+    - "echo 'ExecStart=/bin/echo SECRET_LOG_KEY=SEC_PROC_99' >> $HOME/.config/systemd/user/thelastdeploy-logger.service"
     - "systemctl --user daemon-reload"
     - "systemctl --user start thelastdeploy-logger.service || true"
 version: 1

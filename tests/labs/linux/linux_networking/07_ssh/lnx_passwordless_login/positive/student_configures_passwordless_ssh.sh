@@ -20,7 +20,7 @@ student_exec "cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys && chmod 600 ~
     --expect-exit 0
 
 # Step 3: Student ensures SSH service is running
-student_exec "service ssh start >/dev/null 2>&1 || systemctl start ssh >/dev/null 2>&1 || true" \
+student_exec "systemctl start ssh.socket >/dev/null 2>&1 || systemctl start ssh >/dev/null 2>&1 || service ssh start >/dev/null 2>&1 || /usr/sbin/sshd >/dev/null 2>&1 || true" \
     --desc "Student ensures SSH daemon is running" \
     --expect-exit 0
 

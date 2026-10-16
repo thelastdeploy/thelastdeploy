@@ -4,7 +4,6 @@ xp: 35
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test
-  - 'printf ''alice ALL=(ALL:ALL) ALL\ndeploy_user ALL=(ALL) NOPASSWD: ALL\nbob ALL=(ALL)
-    /usr/bin/systemctl restart nginx\n'' > $HOME/sec-test/mock_sudoers'
+  - 'printf "alice ALL=(ALL:ALL) ALL\ndeploy_user ALL=(ALL) NOPASSWD: ALL\nbob ALL=(ALL) /usr/bin/systemctl restart nginx\n" > $HOME/sec-test/mock_sudoers'
   - rm -f $HOME/sec-test/permissive_user.txt
 version: 2

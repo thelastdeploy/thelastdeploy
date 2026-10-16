@@ -7,6 +7,7 @@ environment:
 setup:
   type: shell
   seed_commands:
-    - "service ssh start >/dev/null 2>&1 || systemctl start ssh >/dev/null 2>&1 || true"
+    - "mkdir -p /run/sshd"
+    - "systemctl start ssh.socket >/dev/null 2>&1 || systemctl start ssh >/dev/null 2>&1 || service ssh start >/dev/null 2>&1 || /usr/sbin/sshd >/dev/null 2>&1 || true"
     - "rm -rf $HOME/.ssh"
-version: 1
+version: 2

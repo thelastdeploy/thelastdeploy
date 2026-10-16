@@ -69,6 +69,14 @@ func Start(lab *cache.Lab) error {
 				break
 			}
 		}
+
+		// Initialize user runtime directory and root-user-session systemd service for root user session support
+		initUserSystemd := "printf '[Unit]\\nDescription=User Manager for UID 0\\nAfter=dbus.service\\n\\n[Service]\\nUser=root\\nEnvironment=XDG_RUNTIME_DIR=/run/user/0\\nExecStartPre=/bin/mkdir -p /run/user/0\\nExecStartPre=/bin/chmod 700 /run/user/0\\nExecStart=/usr/lib/systemd/systemd --user\\nRestart=always\\n\\n[Install]\\nWantedBy=multi-user.target\\n' > /etc/systemd/system/root-user-session.service && " +
+			"systemctl daemon-reload && systemctl enable --now root-user-session.service && " +
+			"grep -q XDG_RUNTIME_DIR /etc/environment 2>/dev/null || echo 'XDG_RUNTIME_DIR=/run/user/0' >> /etc/environment; " +
+			"grep -q XDG_RUNTIME_DIR /root/.bashrc 2>/dev/null || echo 'export XDG_RUNTIME_DIR=/run/user/0' >> /root/.bashrc; " +
+			"sleep 0.5"
+		_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", initUserSystemd})
 	}
 
 	// Ensure sudo wrapper exists for root container execution
@@ -96,7 +104,7 @@ func Start(lab *cache.Lab) error {
 		fmt.Println("⚙  Applying module environment baseline inside container...")
 		for _, cmdStr := range lab.ModuleSharedSeed {
 			fmt.Printf("  $ %s\n", cmdStr)
-			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "cd /workspace && " + cmdStr})
+			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "export XDG_RUNTIME_DIR=/run/user/0; cd /workspace && " + cmdStr})
 			if err != nil || res.ExitCode != 0 {
 				fmt.Fprintf(os.Stderr, "  warn: shared seed command exited with code %d: %s\n", res.ExitCode, res.Stderr)
 			}
@@ -109,7 +117,7 @@ func Start(lab *cache.Lab) error {
 		fmt.Println("⚙  Applying lab scenario broken state inside container...")
 		for _, cmdStr := range lab.SeedCommands {
 			fmt.Printf("  $ %s\n", cmdStr)
-			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "cd /workspace && " + cmdStr})
+			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "export XDG_RUNTIME_DIR=/run/user/0; cd /workspace && " + cmdStr})
 			if err != nil || res.ExitCode != 0 {
 				fmt.Fprintf(os.Stderr, "  warn: seed command exited with code %d: %s\n", res.ExitCode, res.Stderr)
 			}

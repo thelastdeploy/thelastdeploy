@@ -7,7 +7,7 @@ RUN apt-get update -qq && apt-get install -y --no-install-recommends \
     net-tools iproute2 iputils-ping dnsutils \
     procps htop lsof sysstat strace \
     man-db vim nano less \
-    openssh-client openssl ca-certificates \
+    openssh-client openssh-server openssl ca-certificates \
     python3 python3-pip \
     jq unzip \
     cron logrotate rsyslog \

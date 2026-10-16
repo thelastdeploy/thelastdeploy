@@ -49,7 +49,9 @@ for tf in "${TEST_FILES[@]}"; do
     if [[ -n "$FILTER_MODULE" && "$module" != *"$FILTER_MODULE"* ]]; then
         continue
     fi
-    if [[ -n "$FILTER_LAB" && "$lab_dir" != *"$FILTER_LAB"* && "$tf" != *"$FILTER_LAB"* ]]; then
+    norm_filter="${FILTER_LAB//_/-}"
+    norm_tf="${tf//_/-}"
+    if [[ -n "$FILTER_LAB" && "$norm_tf" != *"$norm_filter"* ]]; then
         continue
     fi
 

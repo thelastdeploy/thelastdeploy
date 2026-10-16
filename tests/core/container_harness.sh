@@ -129,7 +129,7 @@ student_exec() {
     stderr_file="$(mktemp)"
 
     # Execute command inside container as standard student shell
-    docker exec -i -w /workspace "$ACTIVE_CONTAINER_ID" /bin/bash -c "$cmd" >"$stdout_file" 2>"$stderr_file"
+    docker exec -i -e XDG_RUNTIME_DIR=/run/user/0 -w /workspace "$ACTIVE_CONTAINER_ID" /bin/bash -c "$cmd" >"$stdout_file" 2>"$stderr_file"
     local actual_exit=$?
 
     local actual_stdout

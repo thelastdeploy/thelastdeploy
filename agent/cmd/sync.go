@@ -515,7 +515,9 @@ func syncLocalSections(moduleID, challengesDir, parentSection, targetLab string)
 			// Smart version check: only copy lab files if version changed
 			srcLabYAML := filepath.Join(srcLabsDir, l.Name(), "lab.yaml")
 			dstLabYAML := filepath.Join(challengesDir, moduleID, "sections", sec.Name(), "labs", l.Name(), "lab.yaml")
-			needSync := getLocalYAMLVersion(srcLabYAML) != getLocalYAMLVersion(dstLabYAML)
+			srcLabHash, _ := validator.Sha256Sum(srcLabYAML)
+			dstLabHash, _ := validator.Sha256Sum(dstLabYAML)
+			needSync := (getLocalYAMLVersion(srcLabYAML) != getLocalYAMLVersion(dstLabYAML)) || (srcLabHash != dstLabHash)
 			if !needSync {
 				// If versions match, verify if the validator script was modified locally
 				srcValPath := filepath.Join(srcLabsDir, l.Name(), "validator.sh")

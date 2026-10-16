@@ -58,9 +58,9 @@ func RunContainerized(ctx context.Context, eng runtime.Engine, containerID, labI
 	// 3. Execute validator inside container
 	var cmd []string
 	if strings.HasSuffix(scriptPath, ".py") {
-		cmd = []string{"python3", targetScript}
+		cmd = []string{"/bin/bash", "-c", "export XDG_RUNTIME_DIR=/run/user/0; python3 " + targetScript}
 	} else {
-		cmd = []string{"/bin/bash", targetScript}
+		cmd = []string{"/bin/bash", "-c", "export XDG_RUNTIME_DIR=/run/user/0; /bin/bash " + targetScript}
 	}
 
 	execRes, err := eng.Exec(ctx, containerID, cmd)
@@ -121,6 +121,10 @@ func Run(labID, sectionID, scriptPath, deviceKeyPath string) (*Result, error) {
 	}
 
 	cmd.Dir = labDir
+	cmd.Env = os.Environ()
+	if os.Getenv("XDG_RUNTIME_DIR") == "" {
+		cmd.Env = append(cmd.Env, "XDG_RUNTIME_DIR=/run/user/0")
+	}
 	outBytes, err := cmd.CombinedOutput()
 	output := strings.TrimSpace(string(outBytes))
 	passed := err == nil
