@@ -2,10 +2,12 @@
 """
 tests/report_generator.py
 Generates The Last Deploy Hierarchical Regression Dashboard:
-  - Root (Level 1): tests/reports/index.html (Track Cards Only)
-  - Track (Level 2): tests/reports/<track>/index.html (Module Cards for that Track)
-  - Module (Level 3): Scoped Module Views showing ONLY that module's test flows & logs
-Supports real-time auto-updating, persistent merging, and deep-linked hash navigation.
+  - Tier 1: Master Dashboard (Track Cards only)
+  - Tier 2: Track Execution Dashboard (Module Cards for that track)
+  - Tier 3: Scoped Module Detailed View (ONLY that module's test cases & console logs)
+Built as a unified, client-side Single-Page Application (SPA) in index.html with
+hash-based routing (#/track/<track> and #/module/<track>/<module>), making it 100%
+compatible with browser sandboxes, flatpaks, document portals, and direct file viewing.
 """
 
 import json
@@ -114,6 +116,7 @@ def get_shared_css():
             font-weight: 700;
             font-size: 15px;
             box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+            cursor: pointer;
         }
 
         .brand-title-wrap {
@@ -128,6 +131,7 @@ def get_shared_css():
             color: var(--text-main);
             letter-spacing: -0.01em;
             text-decoration: none;
+            cursor: pointer;
         }
 
         .brand-version {
@@ -198,20 +202,20 @@ def get_shared_css():
             font-size: 13px;
         }
 
-        .breadcrumb-link {
+        .breadcrumb-btn {
             display: inline-flex;
             align-items: center;
             gap: 6px;
             color: #2563eb;
             font-weight: 500;
-            text-decoration: none;
             cursor: pointer;
             border: none;
             background: none;
             font-size: 13px;
+            padding: 0;
         }
 
-        .breadcrumb-link:hover {
+        .breadcrumb-btn:hover {
             text-decoration: underline;
         }
 
@@ -722,6 +726,8 @@ def get_shared_css():
             overflow-y: auto;
             border-top: 1px solid #1e293b;
             border-bottom: 1px solid #1e293b;
+            white-space: pre-wrap;
+            word-break: break-all;
         }
 
         .log-bar {
@@ -769,37 +775,12 @@ def get_shared_css():
     """
 
 
-def get_realtime_script(relative_summary_path="summary.json"):
-    return f"""
-    <script>
-        // Real-time automatic polling: checks if summary.json has updated every 3 seconds
-        let currentTimestamp = "";
-        async function checkLiveUpdates() {{
-            try {{
-                const res = await fetch('{relative_summary_path}?t=' + Date.now());
-                if (res.ok) {{
-                    const data = await res.json();
-                    const newTs = data.generated_at || "";
-                    if (currentTimestamp === "") {{
-                        currentTimestamp = newTs;
-                    }} else if (currentTimestamp !== newTs) {{
-                        // Smoothly refresh page to reflect latest test completion
-                        window.location.reload();
-                    }}
-                }}
-            }} catch (e) {{
-                // Non-intrusive polling failure ignore
-            }}
-        }}
-        setInterval(checkLiveUpdates, 3000);
-    </script>
+def generate_single_page_app(summary_data, tracks_grouped, report_dir):
     """
-
-
-def generate_root_dashboard(summary_data, tracks_grouped, report_dir):
-    """
-    Tier 1: tests/reports/index.html
-    Displays Track-level cards only!
+    Renders the complete 3-Tier Dashboard inside a single index.html SPA file!
+    - Tier 1: view-master (Track Cards)
+    - Tier 2: view-track-<track> (Module Cards for that track)
+    - Tier 3: view-module-<track>-<module> (Scoped module tests & logs)
     """
     total = summary_data.get("total_test_cases", 0)
     executed = summary_data.get("total_executed", 0)
@@ -810,13 +791,15 @@ def generate_root_dashboard(summary_data, tracks_grouped, report_dir):
     generated_at = summary_data.get("generated_at", "")
     environment = summary_data.get("environment", "Docker Engine / Linux Container")
 
-    is_passed = failed == 0 and executed > 0
-    status_label = "PASSED" if is_passed else "FAILED"
-    status_class = "passed" if is_passed else "failed"
+    is_overall_passed = failed == 0 and executed > 0
+    overall_status = "PASSED" if is_overall_passed else "FAILED"
+    overall_class = "passed" if is_overall_passed else "failed"
 
-    # Generate Track Cards HTML
+    # =========================================================================
+    # TIER 1: Master View (Track Cards)
+    # =========================================================================
     track_cards_html = ""
-    for track_key, modules in tracks_grouped.items():
+    for track_key, modules in sorted(tracks_grouped.items()):
         track_meta = TRACK_INFO.get(track_key, {
             "title": f"{track_key.title()} Track",
             "icon": "📦",
@@ -868,407 +851,249 @@ def generate_root_dashboard(summary_data, tracks_grouped, report_dir):
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     Execution: {tr_duration}s
                 </span>
-                <a href="{track_key}/index.html" class="card-btn">
+                <button onclick="navigateToTrack('{track_key}')" class="card-btn">
                     Explore Track Modules
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </a>
-            </div>
-        </div>
-        """
-
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Last Deploy &mdash; Master Regression Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        {get_shared_css()}
-    </style>
-</head>
-<body>
-    <header class="top-navbar">
-        <div class="brand-section">
-            <div class="brand-icon-box">&gt;_</div>
-            <div class="brand-title-wrap">
-                <a href="index.html" class="brand-title">The Last Deploy &mdash; Regression Suite</a>
-                <span class="brand-version">v1.4</span>
-            </div>
-        </div>
-        <div class="nav-meta-section">
-            <span class="tag-pill live"><span class="live-pulse"></span> LIVE AUTO-UPDATE</span>
-            <span class="tag-pill gray">LOCAL DEV ENGINE</span>
-            <span class="tag-pill gray">Runner: tld-dev</span>
-        </div>
-    </header>
-
-    <main class="app-container">
-        <!-- Hero Header -->
-        <div class="hero-card" style="border-left: 5px solid {'#10b981' if is_passed else '#f43f5e'};">
-            <div class="hero-left">
-                <div class="eyebrow">Master Test Suite</div>
-                <h1 class="hero-title">The Last Deploy Master Regression Dashboard</h1>
-                <div class="hero-meta">
-                    <span class="meta-item">Generated: <strong>{generated_at}</strong></span>
-                    <span>&bull;</span>
-                    <span class="meta-item">Environment: <strong>{environment}</strong></span>
-                </div>
-            </div>
-            <div class="status-pill {status_class}" style="padding: 10px 20px; font-size: 14px;">
-                <span class="pill-dot" style="width: 8px; height: 8px;"></span>
-                {status_label}
-            </div>
-        </div>
-
-        <!-- 6 Metrics Grid -->
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-top">
-                    <span class="metric-label">Total System Tests</span>
-                    <svg class="metric-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                </div>
-                <div class="metric-val">{total}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-top">
-                    <span class="metric-label">Total Executed</span>
-                    <svg class="metric-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-                </div>
-                <div class="metric-val">{executed}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-top">
-                    <span class="metric-label">Total Passed</span>
-                    <svg class="metric-icon" style="color: #10b981;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                </div>
-                <div class="metric-val green">{passed}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-top">
-                    <span class="metric-label">Total Failed</span>
-                    <svg class="metric-icon" style="color: #f43f5e;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                </div>
-                <div class="metric-val red">{failed}</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-top">
-                    <span class="metric-label">Pass Rate</span>
-                    <svg class="metric-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
-                </div>
-                <div class="metric-val">{pass_rate}%</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-top">
-                    <span class="metric-label">Total Duration</span>
-                    <svg class="metric-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                </div>
-                <div class="metric-val">{duration}s</div>
-            </div>
-        </div>
-
-        <!-- Section: Track Level Cards -->
-        <div class="section-header">
-            <span class="section-icon">🗂️</span>
-            <h2 class="section-title">Active Certification Tracks</h2>
-        </div>
-        <div class="cards-grid">
-            {track_cards_html}
-        </div>
-    </main>
-
-    {get_realtime_script("summary.json")}
-</body>
-</html>
-"""
-    out_file = os.path.join(report_dir, "index.html")
-    with open(out_file, "w", encoding="utf-8") as f:
-        f.write(html)
-
-
-def generate_track_dashboard(track_key, modules, summary_data, report_dir):
-    """
-    Tier 2 & Tier 3: tests/reports/<track>/index.html
-    - Track Level: Displays Module Cards belonging exclusively to that track
-    - Module Level: Clicking any module shows ONLY that module's test flows & console logs!
-    """
-    track_dir = os.path.join(report_dir, track_key)
-    os.makedirs(track_dir, exist_ok=True)
-
-    track_meta = TRACK_INFO.get(track_key, {
-        "title": f"{track_key.title()} Track",
-        "icon": "📦",
-        "description": "DevOps practices and automated labs."
-    })
-
-    all_tests = [t for mod in modules.values() for t in mod]
-    tr_total = len(all_tests)
-    tr_passed = sum(1 for t in all_tests if t.get("status") == "PASSED")
-    tr_failed = sum(1 for t in all_tests if t.get("status") == "FAILED")
-    tr_duration = sum(t.get("duration_sec", 0) for t in all_tests)
-    tr_rate = round((tr_passed / tr_total) * 100, 1) if tr_total > 0 else 0.0
-    tr_passed_flag = tr_failed == 0 and tr_total > 0
-    tr_status = "PASSED" if tr_passed_flag else "FAILED"
-    tr_status_class = "passed" if tr_passed_flag else "failed"
-    generated_at = summary_data.get("generated_at", "")
-    environment = summary_data.get("environment", "Docker Engine / Linux Container")
-
-    # 1. Build Module Cards
-    module_cards_html = ""
-    for mod_name, tests in sorted(modules.items()):
-        mod_total = len(tests)
-        mod_passed = sum(1 for t in tests if t.get("status") == "PASSED")
-        mod_failed = sum(1 for t in tests if t.get("status") == "FAILED")
-        mod_dur = sum(t.get("duration_sec", 0) for t in tests)
-        mod_rate = round((mod_passed / mod_total) * 100, 1) if mod_total > 0 else 0.0
-        mod_passed_flag = mod_failed == 0 and mod_total > 0
-        mod_status = "PASSED" if mod_passed_flag else "FAILED"
-        mod_status_class = "passed" if mod_passed_flag else "failed"
-        bar_color = "#10b981" if mod_passed_flag else "#f43f5e"
-        display_mod_name = mod_name.replace("_", " ").title()
-
-        module_cards_html += f"""
-        <div class="dashboard-card">
-            <div class="card-top">
-                <div>
-                    <div class="card-eyebrow">Module</div>
-                    <h3 class="card-heading">{display_mod_name}</h3>
-                </div>
-                <span class="status-pill {mod_status_class}">
-                    <span class="pill-dot"></span>
-                    {mod_status}
-                </span>
-            </div>
-
-            <div class="card-progress-bar">
-                <div class="card-progress-fill" style="width: {mod_rate}%; background: {bar_color};"></div>
-            </div>
-
-            <div class="card-stats">
-                <div class="stat-group">
-                    <span class="stat-number">{mod_passed}<span style="font-size: 15px; color: var(--text-dim); font-weight: 500;">/{mod_total}</span></span>
-                    <span class="stat-sub">Tests Passed ({mod_rate}%)</span>
-                </div>
-                <div class="stat-group" style="text-align: right;">
-                    <span class="stat-number">{mod_dur}s</span>
-                    <span class="stat-sub">Execution Time</span>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <span class="card-timestamp">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    {generated_at}
-                </span>
-                <button onclick="showModuleView('{mod_name}')" class="card-btn">
-                    View Detailed Report
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </button>
             </div>
         </div>
         """
 
-    # 2. Build Module Scoped Detailed Views (strictly scoped to each module!)
+    # =========================================================================
+    # TIER 2 & TIER 3: Track Views & Scoped Module Views
+    # =========================================================================
+    track_views_html = ""
     module_views_html = ""
-    for mod_name, tests in sorted(modules.items()):
-        mod_total = len(tests)
-        mod_passed = sum(1 for t in tests if t.get("status") == "PASSED")
-        mod_failed = sum(1 for t in tests if t.get("status") == "FAILED")
-        mod_dur = sum(t.get("duration_sec", 0) for t in tests)
-        mod_rate = round((mod_passed / mod_total) * 100, 1) if mod_total > 0 else 0.0
-        mod_passed_flag = mod_failed == 0 and mod_total > 0
-        mod_status = "PASSED" if mod_passed_flag else "FAILED"
-        mod_status_class = "passed" if mod_passed_flag else "failed"
-        display_mod_name = mod_name.replace("_", " ").title()
 
-        rows_html = ""
-        for idx, t in enumerate(tests, 1):
-            st = t.get("status", "FAILED")
-            st_class = "passed" if st == "PASSED" else "failed"
-            dur = t.get("duration_sec", 0)
-            path = t.get("test_path", "")
-            lab_id = t.get("lab_id", "")
-            display_title = lab_id if lab_id else path.split("/")[-1]
+    for track_key, modules in sorted(tracks_grouped.items()):
+        track_meta = TRACK_INFO.get(track_key, {
+            "title": f"{track_key.title()} Track",
+            "icon": "📦",
+            "description": "DevOps practices and automated labs."
+        })
 
-            log_file = t.get("log_file", "")
-            abs_log_path = os.path.join(report_dir, log_file)
-            log_content = ""
-            if os.path.exists(abs_log_path):
-                with open(abs_log_path, "r", encoding="utf-8", errors="ignore") as lf:
-                    log_content = lf.read()
-            safe_log = pyhtml.escape(log_content)
+        all_tests = [t for mod in modules.values() for t in mod]
+        tr_total = len(all_tests)
+        tr_passed = sum(1 for t in all_tests if t.get("status") == "PASSED")
+        tr_failed = sum(1 for t in all_tests if t.get("status") == "FAILED")
+        tr_duration = sum(t.get("duration_sec", 0) for t in all_tests)
+        tr_rate = round((tr_passed / tr_total) * 100, 1) if tr_total > 0 else 0.0
+        tr_passed_flag = tr_failed == 0 and tr_total > 0
+        tr_status = "PASSED" if tr_passed_flag else "FAILED"
+        tr_status_class = "passed" if tr_passed_flag else "failed"
 
-            rows_html += f"""
-            <tr class="test-row mod-{mod_name}" data-status="{st}" data-search="{display_title.lower()} {path.lower()}">
-                <td class="col-index">#{idx:02d}</td>
-                <td class="col-status">
-                    <span class="status-pill {st_class}">
-                        <span class="pill-dot"></span>
-                        {st}
-                    </span>
-                </td>
-                <td class="col-flow">
-                    <div class="test-title">{display_title}</div>
-                    <div class="test-sub">{path}</div>
-                </td>
-                <td class="col-duration">
-                    <span class="duration-chip">{dur}s</span>
-                </td>
-                <td class="col-action">
-                    <button class="btn-view-log" onclick="toggleLog('{mod_name}-{idx}')">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
-                        View Log
-                    </button>
-                </td>
-            </tr>
-            <tr id="log-row-{mod_name}-{idx}" class="log-row" style="display: none;">
-                <td colspan="5">
-                    <div class="log-bar">
-                        <div class="mac-dots">
-                            <span class="mac-dot mac-red"></span>
-                            <span class="mac-dot mac-yellow"></span>
-                            <span class="mac-dot mac-green"></span>
-                        </div>
-                        <span class="log-title">Console Output: #{idx:02d} &mdash; {lab_id}</span>
-                        <button class="btn-close-log" onclick="toggleLog('{mod_name}-{idx}')">Close &times;</button>
+        # Build Module Cards for this track
+        module_cards_html = ""
+        for mod_name, tests in sorted(modules.items()):
+            mod_total = len(tests)
+            mod_passed = sum(1 for t in tests if t.get("status") == "PASSED")
+            mod_failed = sum(1 for t in tests if t.get("status") == "FAILED")
+            mod_dur = sum(t.get("duration_sec", 0) for t in tests)
+            mod_rate = round((mod_passed / mod_total) * 100, 1) if mod_total > 0 else 0.0
+            mod_passed_flag = mod_failed == 0 and mod_total > 0
+            mod_status = "PASSED" if mod_passed_flag else "FAILED"
+            mod_status_class = "passed" if mod_passed_flag else "failed"
+            bar_color = "#10b981" if mod_passed_flag else "#f43f5e"
+            display_mod_name = mod_name.replace("_", " ").title()
+
+            module_cards_html += f"""
+            <div class="dashboard-card">
+                <div class="card-top">
+                    <div>
+                        <div class="card-eyebrow">Module</div>
+                        <h3 class="card-heading">{display_mod_name}</h3>
                     </div>
-                    <pre class="log-terminal">{safe_log}</pre>
-                </td>
-            </tr>
+                    <span class="status-pill {mod_status_class}">
+                        <span class="pill-dot"></span>
+                        {mod_status}
+                    </span>
+                </div>
+
+                <div class="card-progress-bar">
+                    <div class="card-progress-fill" style="width: {mod_rate}%; background: {bar_color};"></div>
+                </div>
+
+                <div class="card-stats">
+                    <div class="stat-group">
+                        <span class="stat-number">{mod_passed}<span style="font-size: 15px; color: var(--text-dim); font-weight: 500;">/{mod_total}</span></span>
+                        <span class="stat-sub">Tests Passed ({mod_rate}%)</span>
+                    </div>
+                    <div class="stat-group" style="text-align: right;">
+                        <span class="stat-number">{mod_dur}s</span>
+                        <span class="stat-sub">Execution Time</span>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <span class="card-timestamp">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        {generated_at}
+                    </span>
+                    <button onclick="navigateToModule('{track_key}', '{mod_name}')" class="card-btn">
+                        View Detailed Report
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </div>
+            </div>
             """
 
-        module_views_html += f"""
-        <div id="module-view-{mod_name}" class="module-scoped-view" style="display: none;">
-            <!-- Breadcrumbs -->
-            <div class="breadcrumb-bar">
-                <a href="../index.html" class="breadcrumb-link">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                    Master Regression Dashboard
-                </a>
-                <span class="breadcrumb-separator">/</span>
-                <button onclick="showTrackModules()" class="breadcrumb-link">{track_meta['title']}</button>
-                <span class="breadcrumb-separator">/</span>
-                <span class="breadcrumb-current">{display_mod_name}</span>
-            </div>
+            # Build Scoped View for this specific module
+            rows_html = ""
+            for idx, t in enumerate(tests, 1):
+                st = t.get("status", "FAILED")
+                st_class = "passed" if st == "PASSED" else "failed"
+                dur = t.get("duration_sec", 0)
+                path = t.get("test_path", "")
+                lab_id = t.get("lab_id", "")
+                display_title = lab_id if lab_id else path.split("/")[-1]
 
-            <!-- Scoped Module Header -->
-            <div class="hero-card" style="border-left: 5px solid {'#10b981' if mod_passed_flag else '#f43f5e'};">
-                <div class="hero-left">
-                    <div class="eyebrow">Module Execution Report</div>
-                    <h1 class="hero-title">{display_mod_name}</h1>
-                    <div class="hero-meta">
-                        <span class="meta-item">Last Executed: <strong>{generated_at}</strong></span>
-                        <span>&bull;</span>
-                        <span class="meta-item">Environment: <strong>{environment}</strong></span>
+                log_file = t.get("log_file", "")
+                abs_log_path = os.path.join(report_dir, log_file)
+                log_content = ""
+                if os.path.exists(abs_log_path):
+                    with open(abs_log_path, "r", encoding="utf-8", errors="ignore") as lf:
+                        log_content = lf.read()
+                safe_log = pyhtml.escape(log_content)
+
+                rows_html += f"""
+                <tr class="test-row mod-{mod_name}" data-status="{st}" data-search="{display_title.lower()} {path.lower()}">
+                    <td class="col-index">#{idx:02d}</td>
+                    <td class="col-status">
+                        <span class="status-pill {st_class}">
+                            <span class="pill-dot"></span>
+                            {st}
+                        </span>
+                    </td>
+                    <td class="col-flow">
+                        <div class="test-title">{display_title}</div>
+                        <div class="test-sub">{path}</div>
+                    </td>
+                    <td class="col-duration">
+                        <span class="duration-chip">{dur}s</span>
+                    </td>
+                    <td class="col-action">
+                        <button class="btn-view-log" onclick="toggleLog('{track_key}-{mod_name}-{idx}')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+                            View Log
+                        </button>
+                    </td>
+                </tr>
+                <tr id="log-row-{track_key}-{mod_name}-{idx}" class="log-row" style="display: none;">
+                    <td colspan="5">
+                        <div class="log-bar">
+                            <div class="mac-dots">
+                                <span class="mac-dot mac-red"></span>
+                                <span class="mac-dot mac-yellow"></span>
+                                <span class="mac-dot mac-green"></span>
+                            </div>
+                            <span class="log-title">Console Output: #{idx:02d} &mdash; {lab_id}</span>
+                            <button class="btn-close-log" onclick="toggleLog('{track_key}-{mod_name}-{idx}')">Close &times;</button>
+                        </div>
+                        <pre class="log-terminal">{safe_log}</pre>
+                    </td>
+                </tr>
+                """
+
+            module_views_html += f"""
+            <div id="view-module-{track_key}-{mod_name}" class="spa-view" style="display: none;">
+                <!-- Breadcrumbs -->
+                <div class="breadcrumb-bar">
+                    <button onclick="navigateToMaster()" class="breadcrumb-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        Master Regression Dashboard
+                    </button>
+                    <span class="breadcrumb-separator">/</span>
+                    <button onclick="navigateToTrack('{track_key}')" class="breadcrumb-btn">{track_meta['title']}</button>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-current">{display_mod_name}</span>
+                </div>
+
+                <!-- Scoped Module Header -->
+                <div class="hero-card" style="border-left: 5px solid {'#10b981' if mod_passed_flag else '#f43f5e'};">
+                    <div class="hero-left">
+                        <div class="eyebrow">Module Execution Report</div>
+                        <h1 class="hero-title">{display_mod_name}</h1>
+                        <div class="hero-meta">
+                            <span class="meta-item">Last Executed: <strong>{generated_at}</strong></span>
+                            <span>&bull;</span>
+                            <span class="meta-item">Environment: <strong>{environment}</strong></span>
+                        </div>
+                    </div>
+                    <div class="status-pill {mod_status_class}" style="padding: 10px 20px; font-size: 14px;">
+                        <span class="pill-dot" style="width: 8px; height: 8px;"></span>
+                        {mod_status}
                     </div>
                 </div>
-                <div class="status-pill {mod_status_class}" style="padding: 10px 20px; font-size: 14px;">
-                    <span class="pill-dot" style="width: 8px; height: 8px;"></span>
-                    {mod_status}
+
+                <!-- Scoped Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-top"><span class="metric-label">Module Test Cases</span></div>
+                        <div class="metric-val">{mod_total}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-top"><span class="metric-label">Passed</span></div>
+                        <div class="metric-val green">{mod_passed}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-top"><span class="metric-label">Failed</span></div>
+                        <div class="metric-val red">{mod_failed}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-top"><span class="metric-label">Pass Rate</span></div>
+                        <div class="metric-val">{mod_rate}%</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-top"><span class="metric-label">Execution Time</span></div>
+                        <div class="metric-val">{mod_dur}s</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-top"><span class="metric-label">Pending</span></div>
+                        <div class="metric-val" style="color: #94a3b8;">0</div>
+                    </div>
+                </div>
+
+                <!-- Scoped Filter & Search -->
+                <div class="filter-container">
+                    <div class="tab-group">
+                        <button class="filter-tab active" onclick="filterModuleTable('{track_key}-{mod_name}', 'all', this)">All ({mod_total})</button>
+                        <button class="filter-tab" onclick="filterModuleTable('{track_key}-{mod_name}', 'PASSED', this)">Passed ({mod_passed})</button>
+                        <button class="filter-tab" onclick="filterModuleTable('{track_key}-{mod_name}', 'FAILED', this)">Failed ({mod_failed})</button>
+                    </div>
+                    <div class="search-box">
+                        <svg class="search-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" class="search-input" placeholder="Search test cases or lab id..." onkeyup="searchModuleTable('{track_key}-{mod_name}', this.value)">
+                    </div>
+                </div>
+
+                <!-- Scoped Test Table -->
+                <div class="table-card">
+                    <table class="test-table">
+                        <thead>
+                            <tr>
+                                <th class="col-index">#</th>
+                                <th class="col-status">Status</th>
+                                <th class="col-flow">Test Flow / Scenario</th>
+                                <th class="col-duration">Duration</th>
+                                <th class="col-action">Console</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body-{track_key}-{mod_name}">
+                            {rows_html}
+                        </tbody>
+                    </table>
                 </div>
             </div>
+            """
 
-            <!-- Scoped Metrics Grid -->
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-top"><span class="metric-label">Module Test Cases</span></div>
-                    <div class="metric-val">{mod_total}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-top"><span class="metric-label">Passed</span></div>
-                    <div class="metric-val green">{mod_passed}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-top"><span class="metric-label">Failed</span></div>
-                    <div class="metric-val red">{mod_failed}</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-top"><span class="metric-label">Pass Rate</span></div>
-                    <div class="metric-val">{mod_rate}%</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-top"><span class="metric-label">Execution Time</span></div>
-                    <div class="metric-val">{mod_dur}s</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-top"><span class="metric-label">Pending</span></div>
-                    <div class="metric-val" style="color: #94a3b8;">0</div>
-                </div>
-            </div>
-
-            <!-- Scoped Filter & Search -->
-            <div class="filter-container">
-                <div class="tab-group">
-                    <button class="filter-tab active" onclick="filterModuleTable('{mod_name}', 'all', this)">All ({mod_total})</button>
-                    <button class="filter-tab" onclick="filterModuleTable('{mod_name}', 'PASSED', this)">Passed ({mod_passed})</button>
-                    <button class="filter-tab" onclick="filterModuleTable('{mod_name}', 'FAILED', this)">Failed ({mod_failed})</button>
-                </div>
-                <div class="search-box">
-                    <svg class="search-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" class="search-input" placeholder="Search test cases or lab id..." onkeyup="searchModuleTable('{mod_name}', this.value)">
-                </div>
-            </div>
-
-            <!-- Scoped Test Table -->
-            <div class="table-card">
-                <table class="test-table">
-                    <thead>
-                        <tr>
-                            <th class="col-index">#</th>
-                            <th class="col-status">Status</th>
-                            <th class="col-flow">Test Flow / Scenario</th>
-                            <th class="col-duration">Duration</th>
-                            <th class="col-action">Console</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body-{mod_name}">
-                        {rows_html}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        """
-
-    track_html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{track_meta['title']} &mdash; Track Execution Report</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        {get_shared_css()}
-    </style>
-</head>
-<body>
-    <header class="top-navbar">
-        <div class="brand-section">
-            <div class="brand-icon-box">&gt;_</div>
-            <div class="brand-title-wrap">
-                <a href="../index.html" class="brand-title">The Last Deploy &mdash; Regression Suite</a>
-                <span class="brand-version">v1.4</span>
-            </div>
-        </div>
-        <div class="nav-meta-section">
-            <span class="tag-pill live"><span class="live-pulse"></span> LIVE AUTO-UPDATE</span>
-            <span class="tag-pill gray">LOCAL DEV ENGINE</span>
-            <span class="tag-pill gray">Runner: tld-dev</span>
-        </div>
-    </header>
-
-    <main class="app-container">
-        <!-- VIEW 1: Track Modules Cards Grid -->
-        <div id="track-modules-view">
+        track_views_html += f"""
+        <div id="view-track-{track_key}" class="spa-view" style="display: none;">
             <!-- Breadcrumbs -->
             <div class="breadcrumb-bar">
-                <a href="../index.html" class="breadcrumb-link">
+                <button onclick="navigateToMaster()" class="breadcrumb-btn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                     Master Regression Dashboard
-                </a>
+                </button>
                 <span class="breadcrumb-separator">/</span>
                 <span class="breadcrumb-current">{track_meta['title']}</span>
             </div>
@@ -1329,31 +1154,144 @@ def generate_track_dashboard(track_key, modules, summary_data, report_dir):
                 {module_cards_html}
             </div>
         </div>
+        """
 
-        <!-- VIEW 2: Scoped Module Detailed Views -->
+    full_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Last Deploy &mdash; Master Regression Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        {get_shared_css()}
+    </style>
+</head>
+<body>
+    <header class="top-navbar">
+        <div class="brand-section">
+            <div class="brand-icon-box" onclick="navigateToMaster()">&gt;_</div>
+            <div class="brand-title-wrap">
+                <span onclick="navigateToMaster()" class="brand-title">The Last Deploy &mdash; Regression Suite</span>
+                <span class="brand-version">v1.4</span>
+            </div>
+        </div>
+        <div class="nav-meta-section">
+            <span class="tag-pill live"><span class="live-pulse"></span> LIVE AUTO-UPDATE</span>
+            <span class="tag-pill gray">LOCAL DEV ENGINE</span>
+            <span class="tag-pill gray">Runner: tld-dev</span>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- TIER 1: Master Dashboard (Track Cards Only) -->
+        <div id="view-master">
+            <div class="hero-card" style="border-left: 5px solid {'#10b981' if is_overall_passed else '#f43f5e'};">
+                <div class="hero-left">
+                    <div class="eyebrow">Master Test Suite</div>
+                    <h1 class="hero-title">The Last Deploy Master Regression Dashboard</h1>
+                    <div class="hero-meta">
+                        <span class="meta-item">Generated: <strong>{generated_at}</strong></span>
+                        <span>&bull;</span>
+                        <span class="meta-item">Environment: <strong>{environment}</strong></span>
+                    </div>
+                </div>
+                <div class="status-pill {overall_class}" style="padding: 10px 20px; font-size: 14px;">
+                    <span class="pill-dot" style="width: 8px; height: 8px;"></span>
+                    {overall_status}
+                </div>
+            </div>
+
+            <!-- 6 Metrics Grid -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span class="metric-label">Total System Tests</span>
+                        <svg class="metric-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                    </div>
+                    <div class="metric-val">{total}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span class="metric-label">Total Executed</span>
+                        <svg class="metric-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+                    </div>
+                    <div class="metric-val">{executed}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span class="metric-label">Total Passed</span>
+                        <svg class="metric-icon" style="color: #10b981;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div class="metric-val green">{passed}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span class="metric-label">Total Failed</span>
+                        <svg class="metric-icon" style="color: #f43f5e;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                    </div>
+                    <div class="metric-val red">{failed}</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span class="metric-label">Pass Rate</span>
+                        <svg class="metric-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="5" x2="5" y2="19"></line><circle cx="6.5" cy="6.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></svg>
+                    </div>
+                    <div class="metric-val">{pass_rate}%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-top">
+                        <span class="metric-label">Total Duration</span>
+                        <svg class="metric-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </div>
+                    <div class="metric-val">{duration}s</div>
+                </div>
+            </div>
+
+            <!-- Section: Track Cards Only -->
+            <div class="section-header">
+                <span class="section-icon">🗂️</span>
+                <h2 class="section-title">Active Certification Tracks</h2>
+            </div>
+            <div class="cards-grid">
+                {track_cards_html}
+            </div>
+        </div>
+
+        <!-- TIER 2: Track Execution Dashboards (One per track) -->
+        {track_views_html}
+
+        <!-- TIER 3: Scoped Module Detailed Views (One per module) -->
         {module_views_html}
     </main>
 
     <script>
-        function showModuleView(modName) {{
-            document.getElementById('track-modules-view').style.display = 'none';
-            const allModViews = document.querySelectorAll('.module-scoped-view');
-            allModViews.forEach(v => v.style.display = 'none');
-
-            const target = document.getElementById('module-view-' + modName);
+        // SPA View Router Engine
+        function showView(viewId) {{
+            document.getElementById('view-master').style.display = 'none';
+            document.querySelectorAll('.spa-view').forEach(v => v.style.display = 'none');
+            const target = document.getElementById(viewId);
             if (target) {{
                 target.style.display = 'block';
-                window.location.hash = 'module-' + modName;
                 window.scrollTo(0, 0);
             }}
         }}
 
-        function showTrackModules() {{
-            const allModViews = document.querySelectorAll('.module-scoped-view');
-            allModViews.forEach(v => v.style.display = 'none');
-            document.getElementById('track-modules-view').style.display = 'block';
-            history.pushState("", document.title, window.location.pathname);
-            window.scrollTo(0, 0);
+        function navigateToMaster() {{
+            window.location.hash = '#/';
+            showView('view-master');
+        }}
+
+        function navigateToTrack(trackKey) {{
+            window.location.hash = '#/track/' + trackKey;
+            showView('view-track-' + trackKey);
+        }}
+
+        function navigateToModule(trackKey, modName) {{
+            window.location.hash = '#/module/' + trackKey + '/' + modName;
+            showView('view-module-' + trackKey + '-' + modName);
         }}
 
         function toggleLog(uniqueId) {{
@@ -1363,8 +1301,8 @@ def generate_track_dashboard(track_key, modules, summary_data, report_dir):
             }}
         }}
 
-        function filterModuleTable(modName, status, btn) {{
-            const tbody = document.getElementById('table-body-' + modName);
+        function filterModuleTable(scopeId, status, btn) {{
+            const tbody = document.getElementById('table-body-' + scopeId);
             const parentGroup = btn.parentElement;
             parentGroup.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -1384,8 +1322,8 @@ def generate_track_dashboard(track_key, modules, summary_data, report_dir):
             }});
         }}
 
-        function searchModuleTable(modName, query) {{
-            const tbody = document.getElementById('table-body-' + modName);
+        function searchModuleTable(scopeId, query) {{
+            const tbody = document.getElementById('table-body-' + scopeId);
             const q = query.toLowerCase().trim();
             const rows = tbody.querySelectorAll('.test-row');
 
@@ -1403,22 +1341,49 @@ def generate_track_dashboard(track_key, modules, summary_data, report_dir):
             }});
         }}
 
-        // Handle URL Hash on Load
-        window.addEventListener('DOMContentLoaded', () => {{
+        // Hash Routing Listener (Supports Back/Forward Buttons & Deep Links)
+        function handleHashRouting() {{
             const hash = window.location.hash;
-            if (hash && hash.startsWith('#module-')) {{
-                const modName = hash.replace('#module-', '');
-                showModuleView(modName);
+            if (!hash || hash === '#/' || hash === '#' || hash === '') {{
+                showView('view-master');
+            }} else if (hash.startsWith('#/track/')) {{
+                const trackKey = hash.replace('#/track/', '');
+                showView('view-track-' + trackKey);
+            }} else if (hash.startsWith('#/module/')) {{
+                const parts = hash.replace('#/module/', '').split('/');
+                if (parts.length >= 2) {{
+                    showView('view-module-' + parts[0] + '-' + parts[1]);
+                }}
             }}
-        }});
+        }}
+
+        window.addEventListener('hashchange', handleHashRouting);
+        window.addEventListener('DOMContentLoaded', handleHashRouting);
+
+        // Real-time automatic polling
+        let currentTimestamp = "";
+        async function checkLiveUpdates() {{
+            try {{
+                const res = await fetch('summary.json?t=' + Date.now());
+                if (res.ok) {{
+                    const data = await res.json();
+                    const newTs = data.generated_at || "";
+                    if (currentTimestamp === "") {{
+                        currentTimestamp = newTs;
+                    }} else if (currentTimestamp !== newTs) {{
+                        window.location.reload();
+                    }}
+                }}
+            }} catch (e) {{}}
+        }}
+        setInterval(checkLiveUpdates, 3000);
     </script>
-    {get_realtime_script("../summary.json")}
 </body>
 </html>
 """
-    out_file = os.path.join(track_dir, "index.html")
+    out_file = os.path.join(report_dir, "index.html")
     with open(out_file, "w", encoding="utf-8") as f:
-        f.write(track_html)
+        f.write(full_html)
 
 
 def generate_all_dashboards(summary_file):
@@ -1434,16 +1399,10 @@ def generate_all_dashboards(summary_file):
         m = res.get("module", "default").strip().lower()
         tracks_grouped[t][m].append(res)
 
-    # Tier 1: Generate Root Dashboard (Track Cards only)
-    generate_root_dashboard(summary_data, tracks_grouped, report_dir)
+    # Generate unified SPA in index.html
+    generate_single_page_app(summary_data, tracks_grouped, report_dir)
 
-    # Tier 2 & 3: Generate Each Track Dashboard (Module Cards + Scoped Module Views)
-    for track_key, modules in tracks_grouped.items():
-        generate_track_dashboard(track_key, modules, summary_data, report_dir)
-
-    print(f" Master Regression Dashboard: file://{os.path.join(report_dir, 'index.html')}")
-    for track_key in tracks_grouped.keys():
-        print(f" Track [{track_key}] Dashboard: file://{os.path.join(report_dir, track_key, 'index.html')}")
+    print(f" Master Regression Dashboard (SPA): file://{os.path.join(report_dir, 'index.html')}")
 
 
 def main():
