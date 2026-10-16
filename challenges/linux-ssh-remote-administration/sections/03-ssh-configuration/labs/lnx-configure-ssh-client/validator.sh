@@ -8,22 +8,22 @@ if [ ! -f "$CONF_FILE" ]; then
     exit 1
 fi
 
-if ! grep -qi "Host prod-web" "$CONF_FILE"; then
+if ! grep -qiE "Host\s+prod-web" "$CONF_FILE"; then
     echo "FAIL: $CONF_FILE missing 'Host prod-web' alias definition."
     exit 1
 fi
 
-if ! grep -qi "HostName 10.0.1.100" "$CONF_FILE"; then
+if ! grep -qiE "HostName\s+10.0.1.100" "$CONF_FILE"; then
     echo "FAIL: $CONF_FILE missing 'HostName 10.0.1.100'."
     exit 1
 fi
 
-if ! grep -qi "User devops" "$CONF_FILE"; then
+if ! grep -qiE "User\s+devops" "$CONF_FILE"; then
     echo "FAIL: $CONF_FILE missing 'User devops'."
     exit 1
 fi
 
-if ! grep -qi "Port 2222" "$CONF_FILE"; then
+if ! grep -qiE "Port\s+2222" "$CONF_FILE"; then
     echo "FAIL: $CONF_FILE missing 'Port 2222'."
     exit 1
 fi

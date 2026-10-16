@@ -35,9 +35,10 @@ This capability makes SSH ideal for automated scripting and remote system auditi
    ```bash
    tld start lnx-connect-to-remote-host
    ```
-2. Perform the required system administration task for `Connect to a Remote Host via SSH`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
-4. Validate your solution:
+2. Create directory `$HOME/ssh-test`.
+3. Create an executable script `$HOME/ssh-test/connect.sh` containing an SSH connection command to user `admin` at remote host `10.0.0.50`.
+4. Ensure the script has executable permissions (`chmod +x`).
+5. Validate your solution:
    ```bash
    tld check
    ```
@@ -47,9 +48,10 @@ This capability makes SSH ideal for automated scripting and remote system auditi
    ```bash
    tld start lnx-run-remote-command
    ```
-2. Perform the required system administration task for `Run Commands Remotely over SSH`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
-4. Validate your solution:
+2. Create directory `$HOME/ssh-test`.
+3. Create an executable script `$HOME/ssh-test/remote_cmd.sh` that executes a remote system command (such as `uptime` or `df -h`) over SSH on a remote host.
+4. Ensure the script has executable permissions (`chmod +x`).
+5. Validate your solution:
    ```bash
    tld check
    ```

@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/sec-challenge`.
 2. Write server hardening remediation script `$HOME/sec-challenge/harden_server.sh`.
 3. Write output summary line `COMPROMISED_SERVER_HARDENED` into `$HOME/sec-challenge/hardening.log`.'
-version: 1
+version: 2

@@ -32,9 +32,14 @@ The `~/.ssh/config` file must have strict read/write permissions for the current
    ```bash
    tld start lnx-configure-ssh-client
    ```
-2. Configure client SSH host aliases in `$HOME/ssh-test/config`.
-3. Define host `prod-server` with `HostName 127.0.0.1`, `User admin`, and `Port 2222`.
-4. Validate your solution:
+2. Ensure directory `$HOME/ssh-test/config_dir` exists.
+3. Create client SSH configuration file `$HOME/ssh-test/config_dir/config` containing:
+   - `Host prod-web`
+   - `HostName 10.0.1.100`
+   - `User devops`
+   - `Port 2222`
+4. Restrict permissions on `$HOME/ssh-test/config_dir/config` to `600` (`chmod 600`).
+5. Validate your solution:
    ```bash
    tld check
    ```

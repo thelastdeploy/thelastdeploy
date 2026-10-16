@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/sec-test`.
 2. Identify security weaknesses (unsecured permissions, open ports, weak credentials).
 3. Write output line `WEAKNESSES_IDENTIFIED` into `$HOME/sec-test/weaknesses.txt`.'
-version: 1
+version: 2

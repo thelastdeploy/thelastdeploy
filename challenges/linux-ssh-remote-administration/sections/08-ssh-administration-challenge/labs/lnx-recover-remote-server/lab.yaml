@@ -8,9 +8,13 @@ setup:
   - chmod 777 $HOME/ssh-challenge/remote_server/.ssh
   - touch $HOME/ssh-challenge/remote_server/.ssh/authorized_keys
   - chmod 666 $HOME/ssh-challenge/remote_server/.ssh/authorized_keys
-  - echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICapstoneRecoveryPublicKey admin@devlab'
+  - echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICapstoneRecoveryPublicKey admin@thelastdeploy'
     > $HOME/ssh-challenge/client_keys/id_ed25519.pub
   - echo '-----BEGIN OPENSSH PRIVATE KEY-----' > $HOME/ssh-challenge/client_keys/id_ed25519
   - rm -f $HOME/ssh-challenge/client_config
   - rm -f $HOME/ssh-challenge/recovery_status.txt
-version: 2
+instructions: '1. Restore strict permissions on directory `$HOME/ssh-challenge/remote_server/.ssh` to `700`.
+2. Append public key `$HOME/ssh-challenge/client_keys/id_ed25519.pub` to `$HOME/ssh-challenge/remote_server/.ssh/authorized_keys` and set its permissions to `600`.
+3. Create client SSH configuration file `$HOME/ssh-challenge/client_config` with alias `Host recovery-target` and set its permissions to `600`.
+4. Write `SSH_RECOVERY_COMPLETE` into `$HOME/ssh-challenge/recovery_status.txt`.'
+version: 3

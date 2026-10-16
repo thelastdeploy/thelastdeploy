@@ -8,4 +8,7 @@ setup:
   - echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDummyPublicKeyForTesting admin@example'
     > $HOME/ssh-test/key_dir/id_ed25519.pub
   - rm -f $HOME/ssh-test/server_home/.ssh/authorized_keys
-version: 2
+instructions: '1. Ensure directory `$HOME/ssh-test/server_home/.ssh` exists.
+2. Append public key `$HOME/ssh-test/key_dir/id_ed25519.pub` to `$HOME/ssh-test/server_home/.ssh/authorized_keys`.
+3. Restrict permissions on `$HOME/ssh-test/server_home/.ssh/authorized_keys` to `600`.'
+version: 3

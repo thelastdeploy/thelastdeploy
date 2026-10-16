@@ -5,4 +5,6 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test
   - rm -f $HOME/ssh-test/sftp_batch.txt
-version: 2
+instructions: '1. Create directory `$HOME/ssh-test`.
+2. Create batch file `$HOME/ssh-test/sftp_batch.txt` containing the command to upload `local_config.json` to `/etc/app/config.json` (`put local_config.json /etc/app/config.json`) and session termination (`bye`).'
+version: 3

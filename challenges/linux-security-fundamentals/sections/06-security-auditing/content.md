@@ -29,9 +29,13 @@ Audits should produce clear, repeatable findings reports detailing identified vu
    ```bash
    tld start lnx-audit-system-security
    ```
-2. Perform a comprehensive system security baseline audit.
-3. Create an audit execution script at `$HOME/sec-test/audit_script.sh` that checks file permissions and writes findings to `$HOME/sec-test/audit_findings.txt`.
-4. Validate your solution:
+2. Create an executable bash audit script at `$HOME/sec-test/audit_script.sh` that checks key system security metrics and outputs results to `$HOME/sec-test/audit_findings.txt`.
+3. Ensure the script writes the following three finding headers to `$HOME/sec-test/audit_findings.txt`:
+   - `UID_ZERO_COUNT:<count>`
+   - `UNSECURE_SUDO_USERS:<details>`
+   - `WORLD_WRITABLE_COUNT:<count>`
+4. Mark `$HOME/sec-test/audit_script.sh` as executable (`chmod +x`) and execute it once to generate initial findings.
+5. Validate your solution:
    ```bash
    tld check
    ```

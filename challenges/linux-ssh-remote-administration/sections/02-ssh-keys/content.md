@@ -43,26 +43,27 @@ chmod 600 ~/.ssh/authorized_keys
 
 ## Lab Tasks
 
-### Task 1: Configure Authorized Keys and Permissions (`lnx-configure-key-authentication`)
+### Task 1: Generate an SSH Keypair (`lnx-generate-ssh-key`)
 1. Start the lab:
    ```bash
-   tld start lnx-configure-key-authentication
+   tld start lnx-generate-ssh-key
    ```
-2. Perform the required system administration task for `Configure Authorized Keys and Permissions`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
+2. Create directory `$HOME/ssh-test/key_dir`.
+3. Generate an ED25519 SSH keypair into `$HOME/ssh-test/key_dir/id_ed25519` without a passphrase (`ssh-keygen -t ed25519 -N "" -f $HOME/ssh-test/key_dir/id_ed25519`).
 4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Generate an SSH Keypair (`lnx-generate-ssh-key`)
+### Task 2: Configure Authorized Keys and Permissions (`lnx-configure-key-authentication`)
 1. Start the lab:
    ```bash
-   tld start lnx-generate-ssh-key
+   tld start lnx-configure-key-authentication
    ```
-2. Perform the required system administration task for `Generate an SSH Keypair`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
-4. Validate your solution:
+2. Ensure directory `$HOME/ssh-test/server_home/.ssh` exists.
+3. Append public key `$HOME/ssh-test/key_dir/id_ed25519.pub` to `$HOME/ssh-test/server_home/.ssh/authorized_keys`.
+4. Restrict permissions on `$HOME/ssh-test/server_home/.ssh/authorized_keys` to `600` (`chmod 600`).
+5. Validate your solution:
    ```bash
    tld check
    ```

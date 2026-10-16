@@ -4,7 +4,6 @@ xp: 40
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test
-  - printf 'PID USER COMMAND\n1001 root nginx\n2045 guest nc -l -p 4444 -e /bin/bash\n3012
-    db postgres\n' > $HOME/sec-test/proc_snapshot.txt
+  - 'printf "PID USER COMMAND\n1001 root nginx\n2045 guest nc -l -p 4444 -e /bin/bash\n3012 db postgres\n" > $HOME/sec-test/proc_snapshot.txt'
   - rm -f $HOME/sec-test/suspicious_proc.txt
-version: 2
+version: 3

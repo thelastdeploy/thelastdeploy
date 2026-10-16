@@ -5,4 +5,7 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test
   - rm -f $HOME/ssh-test/connect.sh
-version: 2
+instructions: '1. Create directory `$HOME/ssh-test`.
+2. Create an executable script `$HOME/ssh-test/connect.sh` containing an SSH connection command to user `admin` at remote host `10.0.0.50`.
+3. Ensure the script has executable permissions (`chmod +x`).'
+version: 3

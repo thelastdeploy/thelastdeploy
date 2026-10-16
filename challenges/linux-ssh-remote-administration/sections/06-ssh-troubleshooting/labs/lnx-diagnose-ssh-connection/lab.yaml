@@ -5,4 +5,7 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test
   - rm -f $HOME/ssh-test/debug_cmd.sh
-version: 2
+instructions: '1. Create directory `$HOME/ssh-test`.
+2. Create an executable script `$HOME/ssh-test/debug_cmd.sh` that invokes `ssh` with level 3 verbosity (`-vvv`).
+3. Ensure the script has executable permissions (`chmod +x`).'
+version: 3

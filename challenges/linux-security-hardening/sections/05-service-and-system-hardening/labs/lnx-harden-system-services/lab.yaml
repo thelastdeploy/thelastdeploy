@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/svc-sec-test`.
 2. Document systemd security directives (`NoNewPrivileges=true`, `ProtectSystem=strict`, `PrivateTmp=yes`).
 3. Write output summary line `SERVICE_SANDBOXING_HARDENED` to `$HOME/svc-sec-test/sandboxing.txt`.'
-version: 1
+version: 2

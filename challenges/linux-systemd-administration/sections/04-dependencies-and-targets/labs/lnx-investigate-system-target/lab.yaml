@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/target-test`.
 2. Run `systemctl get-default` to determine default system boot target.
 3. Write output `DEFAULT_TARGET: <target_name>` into `$HOME/target-test/target_info.txt`.'
-version: 1
+version: 2

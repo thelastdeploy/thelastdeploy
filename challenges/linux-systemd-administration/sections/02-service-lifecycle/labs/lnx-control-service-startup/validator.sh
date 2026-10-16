@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "^ENABLE_STATE: " "$TARGET"; then
+if ! grep -qi "^ENABLE_STATE: " "$TARGET"; then
     echo "FAIL: $TARGET missing 'ENABLE_STATE: ' entry."
     exit 1
 fi

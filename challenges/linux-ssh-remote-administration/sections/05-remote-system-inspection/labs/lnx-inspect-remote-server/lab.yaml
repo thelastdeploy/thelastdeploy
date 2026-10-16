@@ -6,4 +6,7 @@ setup:
   - mkdir -p $HOME/ssh-test
   - rm -f $HOME/ssh-test/audit_remote.sh
   - rm -f $HOME/ssh-test/audit_report.txt
-version: 2
+instructions: '1. Create directory `$HOME/ssh-test`.
+2. Create an executable script `$HOME/ssh-test/audit_remote.sh` accepting a hostname argument (`$1`) that writes `=== REMOTE AUDIT: $1 ===`, `MEMORY_STATUS: OK`, and `DISK_STATUS: OK` to `$HOME/ssh-test/audit_report.txt`.
+3. Ensure the script has executable permissions (`chmod +x`).'
+version: 3

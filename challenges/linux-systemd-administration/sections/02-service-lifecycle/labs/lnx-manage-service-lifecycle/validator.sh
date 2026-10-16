@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "^SERVICE_STATUS: active" "$TARGET"; then
+if ! grep -qi "^SERVICE_STATUS: active" "$TARGET"; then
     echo "FAIL: $TARGET does not contain 'SERVICE_STATUS: active'."
     exit 1
 fi

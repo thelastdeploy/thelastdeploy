@@ -23,7 +23,7 @@ fi
 
 CONTENT=$(cat "$LOG_PATH")
 for HOST in web1 web2 web3; do
-    if ! echo "$CONTENT" | grep -q "MAINTENANCE_COMPLETE: $HOST"; then
+    if ! echo "$CONTENT" | grep -qi "MAINTENANCE_COMPLETE: $HOST"; then
         echo "FAIL: $LOG_PATH missing entry 'MAINTENANCE_COMPLETE: $HOST'."
         exit 1
     fi

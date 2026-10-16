@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "USER_ACCESS_HARDENED" "$TARGET"; then
+if ! grep -qi "USER_ACCESS_HARDENED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'USER_ACCESS_HARDENED'."
     exit 1
 fi

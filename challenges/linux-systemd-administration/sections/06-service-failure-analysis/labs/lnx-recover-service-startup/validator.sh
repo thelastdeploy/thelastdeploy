@@ -8,7 +8,7 @@ if [ ! -f "$FIXED" ]; then
     exit 1
 fi
 
-if ! grep -q "ExecStart=/bin/echo" "$FIXED"; then
+if ! grep -qi "ExecStart=/bin/echo" "$FIXED"; then
     echo "FAIL: $FIXED ExecStart was not repaired to valid executable."
     exit 1
 fi

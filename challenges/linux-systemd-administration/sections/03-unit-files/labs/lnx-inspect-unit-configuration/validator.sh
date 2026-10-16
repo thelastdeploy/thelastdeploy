@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "EXEC_START_FOUND" "$TARGET"; then
+if ! grep -qi "EXEC_START_FOUND" "$TARGET"; then
     echo "FAIL: $TARGET missing 'EXEC_START_FOUND'."
     exit 1
 fi

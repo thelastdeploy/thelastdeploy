@@ -8,12 +8,12 @@ if [ ! -f "$UNIT" ]; then
     exit 1
 fi
 
-if ! grep -q "^\[Unit\]" "$UNIT" || ! grep -q "^\[Service\]" "$UNIT" || ! grep -q "^\[Install\]" "$UNIT"; then
+if ! grep -qi "^\[Unit\]" "$UNIT" || ! grep -qi "^\[Service\]" "$UNIT" || ! grep -qi "^\[Install\]" "$UNIT"; then
     echo "FAIL: $UNIT missing required section headers ([Unit], [Service], [Install])."
     exit 1
 fi
 
-if ! grep -q "ExecStart=" "$UNIT" || ! grep -q "Restart=on-failure" "$UNIT"; then
+if ! grep -qi "ExecStart=" "$UNIT" || ! grep -qi "Restart=on-failure" "$UNIT"; then
     echo "FAIL: $UNIT missing required ExecStart or Restart directive."
     exit 1
 fi

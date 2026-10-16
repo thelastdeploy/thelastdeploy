@@ -37,9 +37,10 @@ ssh user@remote.example.com 'bash -s' < local_audit_script.sh
    ```bash
    tld start lnx-perform-remote-maintenance
    ```
-2. Perform the required system administration task for `Perform Automated Remote Maintenance`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
-4. Validate your solution:
+2. Create directory `$HOME/ssh-test`.
+3. Create an executable script `$HOME/ssh-test/maint_runner.sh` that iterates through hosts `web1`, `web2`, and `web3`, writing `MAINTENANCE_COMPLETE: <host>` for each into `$HOME/ssh-test/maint_execution.log`.
+4. Ensure the script has executable permissions (`chmod +x`).
+5. Validate your solution:
    ```bash
    tld check
    ```

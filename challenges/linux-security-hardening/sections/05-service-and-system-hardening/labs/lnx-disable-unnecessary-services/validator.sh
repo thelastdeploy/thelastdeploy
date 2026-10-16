@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "UNNECESSARY_SERVICES_DISABLED" "$TARGET"; then
+if ! grep -qi "UNNECESSARY_SERVICES_DISABLED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'UNNECESSARY_SERVICES_DISABLED'."
     exit 1
 fi

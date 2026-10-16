@@ -50,9 +50,10 @@ sftp -b sftp_commands.txt admin@192.168.1.50
    ```bash
    tld start lnx-copy-files-with-scp
    ```
-2. Perform the required system administration task for `Copy Files Remotely using SCP`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
-4. Validate your solution:
+2. Create directory `$HOME/ssh-test`.
+3. Create an executable script `$HOME/ssh-test/transfer_cmd.sh` that transfers `app.tar.gz` to remote destination `admin@10.0.0.50:/var/backups/` using `scp`.
+4. Ensure the script has executable permissions (`chmod +x`).
+5. Validate your solution:
    ```bash
    tld check
    ```
@@ -62,8 +63,10 @@ sftp -b sftp_commands.txt admin@192.168.1.50
    ```bash
    tld start lnx-transfer-files-with-sftp
    ```
-2. Perform the required system administration task for `Transfer Files with SFTP Batch Commands`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
+2. Create directory `$HOME/ssh-test`.
+3. Create batch file `$HOME/ssh-test/sftp_batch.txt` containing:
+   - Command to upload `local_config.json` to remote `/etc/app/config.json` (`put local_config.json /etc/app/config.json`)
+   - Session termination command (`bye`)
 4. Validate your solution:
    ```bash
    tld check

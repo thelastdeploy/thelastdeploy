@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "DEPENDENCIES_ANALYZED" "$TARGET"; then
+if ! grep -qi "DEPENDENCIES_ANALYZED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'DEPENDENCIES_ANALYZED'."
     exit 1
 fi

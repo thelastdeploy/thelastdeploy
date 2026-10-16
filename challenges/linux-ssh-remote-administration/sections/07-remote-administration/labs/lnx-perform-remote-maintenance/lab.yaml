@@ -6,4 +6,7 @@ setup:
   - mkdir -p $HOME/ssh-test
   - rm -f $HOME/ssh-test/maint_runner.sh
   - rm -f $HOME/ssh-test/maint_execution.log
-version: 2
+instructions: '1. Create directory `$HOME/ssh-test`.
+2. Create an executable script `$HOME/ssh-test/maint_runner.sh` that iterates through hosts `web1`, `web2`, and `web3`, writing `MAINTENANCE_COMPLETE: <host>` for each into `$HOME/ssh-test/maint_execution.log`.
+3. Ensure the script has executable permissions (`chmod +x`).'
+version: 3

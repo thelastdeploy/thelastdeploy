@@ -24,9 +24,14 @@ Investigate system configurations in `$HOME/security-breach/`, audit permissions
    ```bash
    tld start lnx-investigate-permission-breach
    ```
-2. Complete the security fundamentals capstone challenge.
-3. Secure secret keys at `$HOME/security-breach/config/db_pass.key`, fix sudoers configuration, and record `SECURITY_BREACH_REMEDIATED: YES` in `$HOME/security-breach/breach_report.txt`.
-4. Validate your solution:
+2. Investigate the security vulnerabilities present across `$HOME/security-breach/`.
+3. Secure the secret key at `$HOME/security-breach/config/db_pass.key` by changing its permissions to `600`.
+4. Remove the SUID bit from `$HOME/security-breach/bin/custom_helper` (change permissions to `0755` or `u-s`).
+5. Remove the insecure `NOPASSWD: ALL` rule from `$HOME/security-breach/sudoers.d/app_user`.
+6. Output a post-mortem incident report at `$HOME/security-breach/breach_report.txt` containing:
+   - `VULNERABILITY_VECTOR: SUDO_NOPASSWD`
+   - `BREACH_REMEDIATION: COMPLETED`
+7. Validate your solution:
    ```bash
    tld check
    ```

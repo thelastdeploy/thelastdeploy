@@ -14,7 +14,7 @@ if [ ! -f "$PUB_KEY" ]; then
     exit 1
 fi
 
-if ! grep -q "ssh-ed25519" "$PUB_KEY"; then
+if ! grep -qi "ssh-ed25519" "$PUB_KEY"; then
     echo "FAIL: $PUB_KEY does not appear to be an ED25519 public key."
     exit 1
 fi

@@ -32,7 +32,7 @@ Applied to shared directories (like `/tmp` with mode `1777` / `drwxrwxrwt`). Pre
    tld start lnx-investigate-special-permissions
    ```
 2. Locate files with SUID or SGID bits set.
-3. Find all SUID binaries (`-perm -4000`) in `$HOME/sec-test/` and record their paths in `$HOME/sec-test/suid_files.txt`.
+3. Find all SUID binaries in `$HOME/sec-test/` and record their paths in `$HOME/sec-test/suid_files.txt`.
 4. Validate your solution:
    ```bash
    tld check

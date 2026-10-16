@@ -59,8 +59,8 @@ systemctl enable --now backup.timer
    tld start lnx-create-systemd-timer
    ```
 2. Create directory `$HOME/timer-test`.
-3. Create service unit `$HOME/timer-test/maint.service` with `[Unit]`, `[Service]` (`Type=oneshot`, `ExecStart=/bin/echo Maint`).
-4. Create matching timer unit `$HOME/timer-test/maint.timer` with `[Unit]`, `[Timer]` (`OnCalendar=daily`, `Persistent=true`), `[Install]` (`WantedBy=timers.target`).
+3. Create service unit `$HOME/timer-test/maint.service` containing `[Unit]`, and `[Service]` with `Type=oneshot` and `ExecStart=/bin/echo Maint`.
+4. Create matching timer unit `$HOME/timer-test/maint.timer` containing `[Unit]`, `[Timer]` with `OnCalendar=daily` and `Persistent=true`, and `[Install]` with `WantedBy=timers.target`.
 5. Validate your solution:
    ```bash
    tld check

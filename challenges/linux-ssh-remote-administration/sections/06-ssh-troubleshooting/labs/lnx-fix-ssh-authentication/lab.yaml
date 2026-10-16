@@ -7,4 +7,7 @@ setup:
   - chmod 777 $HOME/ssh-test/broken_ssh/.ssh
   - touch $HOME/ssh-test/broken_ssh/.ssh/authorized_keys
   - chmod 666 $HOME/ssh-test/broken_ssh/.ssh/authorized_keys
-version: 2
+instructions: '1. Inspect directory `$HOME/ssh-test/broken_ssh/.ssh` and file `$HOME/ssh-test/broken_ssh/.ssh/authorized_keys`.
+2. Restore directory permissions of `$HOME/ssh-test/broken_ssh/.ssh` to `700`.
+3. Restore file permissions of `$HOME/ssh-test/broken_ssh/.ssh/authorized_keys` to `600`.'
+version: 3

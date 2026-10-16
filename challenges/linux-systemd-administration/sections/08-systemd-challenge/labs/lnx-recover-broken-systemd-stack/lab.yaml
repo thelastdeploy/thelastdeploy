@@ -6,8 +6,6 @@ setup:
   - mkdir -p $HOME/systemd-challenge
   - rm -f $HOME/systemd-challenge/*.service
 instructions: '1. Create directory `$HOME/systemd-challenge`.
-2. Inspect two misconfigured unit files:
-   - `db.service`: missing `Type=simple` and `ExecStart=/bin/echo DB Ready`
-   - `app.service`: missing `Requires=db.service` and `After=db.service`
-3. Create repaired versions `$HOME/systemd-challenge/db.service` and `$HOME/systemd-challenge/app.service` ensuring correct dependencies and startup commands.'
-version: 1
+2. Create `$HOME/systemd-challenge/db.service` with `[Unit]`, and `[Service]` containing `Type=simple` and `ExecStart=/bin/echo DB Ready`.
+3. Create `$HOME/systemd-challenge/app.service` with `[Unit]` containing `Requires=db.service` and `After=db.service`, and `[Service]` containing `ExecStart=/bin/echo App Ready`.'
+version: 2

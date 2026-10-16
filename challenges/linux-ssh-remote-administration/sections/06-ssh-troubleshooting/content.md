@@ -46,9 +46,10 @@ chmod 600 ~/.ssh/id_ed25519
    ```bash
    tld start lnx-diagnose-ssh-connection
    ```
-2. Perform the required system administration task for `Diagnose Connection Failures with Verbose Mode`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
-4. Validate your solution:
+2. Create directory `$HOME/ssh-test`.
+3. Create an executable script `$HOME/ssh-test/debug_cmd.sh` containing an SSH connection command with level 3 verbosity (`-vvv`).
+4. Ensure the script has executable permissions (`chmod +x`).
+5. Validate your solution:
    ```bash
    tld check
    ```
@@ -58,9 +59,10 @@ chmod 600 ~/.ssh/id_ed25519
    ```bash
    tld start lnx-fix-ssh-authentication
    ```
-2. Perform the required system administration task for `Fix OpenSSH Permissions and Key Authentication`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
-4. Validate your solution:
+2. Inspect directory `$HOME/ssh-test/broken_ssh/.ssh` and file `$HOME/ssh-test/broken_ssh/.ssh/authorized_keys`.
+3. Restore directory permissions of `$HOME/ssh-test/broken_ssh/.ssh` to `700` (`chmod 700`).
+4. Restore file permissions of `$HOME/ssh-test/broken_ssh/.ssh/authorized_keys` to `600` (`chmod 600`).
+5. Validate your solution:
    ```bash
    tld check
    ```

@@ -56,12 +56,12 @@ Production systemd configurations combine process supervision, restart policies,
    ```
 2. Create directory `$HOME/prod-service-test`.
 3. Create production unit file `$HOME/prod-service-test/prod-api.service` featuring:
-4. - `EnvironmentFile=/etc/default/prod-api`
-5. - `Restart=always`
-6. - `LimitNOFILE=65536`
-7. - `NoNewPrivileges=true`
-8. - `WantedBy=multi-user.target`
-9. Validate your solution:
+   - `EnvironmentFile=/etc/default/prod-api`
+   - `Restart=always`
+   - `LimitNOFILE=65536`
+   - `NoNewPrivileges=true`
+   - `WantedBy=multi-user.target`
+4. Validate your solution:
    ```bash
    tld check
    ```

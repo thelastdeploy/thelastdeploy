@@ -8,7 +8,7 @@ if [ ! -f "$AUTH_KEYS" ]; then
     exit 1
 fi
 
-if ! grep -q "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDummyPublicKeyForTesting" "$AUTH_KEYS"; then
+if ! grep -qi "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDummyPublicKeyForTesting" "$AUTH_KEYS"; then
     echo "FAIL: $AUTH_KEYS does not contain the public key content."
     exit 1
 fi

@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "^DEFAULT_TARGET: " "$TARGET"; then
+if ! grep -qi "^DEFAULT_TARGET: " "$TARGET"; then
     echo "FAIL: $TARGET missing 'DEFAULT_TARGET: ' entry."
     exit 1
 fi

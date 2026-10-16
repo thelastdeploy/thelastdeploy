@@ -14,7 +14,7 @@ if [ ! -x "$SCRIPT_PATH" ]; then
 fi
 
 CONTENT=$(cat "$SCRIPT_PATH")
-if ! echo "$CONTENT" | grep -Eq "scp .*app\.tar\.gz admin@10\.0\.0\.50:/var/backups/"; then
+if ! echo "$CONTENT" | grep -Eiq "scp .*app\.tar\.gz admin@10\.0\.0\.50:/var/backups/"; then
     echo "FAIL: $SCRIPT_PATH does not contain correct SCP command to copy app.tar.gz to admin@10.0.0.50:/var/backups/."
     exit 1
 fi

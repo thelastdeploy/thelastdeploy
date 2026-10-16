@@ -42,8 +42,8 @@ cat /proc/<pid>/cmdline
    ```bash
    tld start lnx-audit-running-processes
    ```
-2. Audit process user ownership across system daemons.
-3. Identify processes running under the `www-data` user account and save output to `$HOME/sec-test/www_processes.txt`.
+2. Inspect the process dump at `$HOME/sec-test/ps_dump.txt`.
+3. Filter all processes running under the `www-data` user account from `ps_dump.txt` and save them to `$HOME/sec-test/www_processes.txt`.
 4. Validate your solution:
    ```bash
    tld check
@@ -54,8 +54,8 @@ cat /proc/<pid>/cmdline
    ```bash
    tld start lnx-investigate-suspicious-process
    ```
-2. Investigate unauthorized background processes.
-3. Identify suspicious process names listening on non-standard ports and record details in `$HOME/sec-test/suspicious_proc.txt`.
+2. Inspect the process snapshot at `$HOME/sec-test/proc_snapshot.txt`.
+3. Identify the suspicious process (unauthorized account listening on a network port with a shell backdoor) and record its line entry into `$HOME/sec-test/suspicious_proc.txt`.
 4. Validate your solution:
    ```bash
    tld check

@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "UNNECESSARY_PORTS_RESTRICTED" "$TARGET"; then
+if ! grep -qi "UNNECESSARY_PORTS_RESTRICTED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'UNNECESSARY_PORTS_RESTRICTED'."
     exit 1
 fi

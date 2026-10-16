@@ -2,4 +2,4 @@ id: 04-secure-file-transfer
 title: "Secure File Transfer (SCP and SFTP)"
 order: 4
 xp: 45
-version: 1
+version: 2

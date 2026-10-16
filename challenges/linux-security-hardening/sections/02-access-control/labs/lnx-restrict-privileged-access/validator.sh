@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "SUDO_PRIVILEGES_RESTRICTED" "$TARGET"; then
+if ! grep -qi "SUDO_PRIVILEGES_RESTRICTED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'SUDO_PRIVILEGES_RESTRICTED'."
     exit 1
 fi

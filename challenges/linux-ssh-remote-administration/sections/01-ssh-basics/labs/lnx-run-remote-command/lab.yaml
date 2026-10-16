@@ -5,4 +5,7 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test
   - rm -f $HOME/ssh-test/remote_cmd.sh
-version: 2
+instructions: '1. Create directory `$HOME/ssh-test`.
+2. Create an executable script `$HOME/ssh-test/remote_cmd.sh` that executes a remote system command (such as `uptime` or `df -h`) over SSH on a remote host.
+3. Ensure the script has executable permissions (`chmod +x`).'
+version: 3

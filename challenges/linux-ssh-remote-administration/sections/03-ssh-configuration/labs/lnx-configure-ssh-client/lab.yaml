@@ -5,4 +5,7 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test/config_dir
   - rm -f $HOME/ssh-test/config_dir/config
-version: 2
+instructions: '1. Ensure directory `$HOME/ssh-test/config_dir` exists.
+2. Create client SSH configuration file `$HOME/ssh-test/config_dir/config` containing `Host prod-web`, `HostName 10.0.1.100`, `User devops`, and `Port 2222`.
+3. Restrict permissions on `$HOME/ssh-test/config_dir/config` to `600`.'
+version: 3

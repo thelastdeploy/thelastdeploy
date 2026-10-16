@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/svc-sec-test`.
 2. Identify non-essential daemons and document `systemctl disable --now` procedures.
 3. Write summary `UNNECESSARY_SERVICES_DISABLED` into `$HOME/svc-sec-test/disabled_svcs.txt`.'
-version: 1
+version: 2

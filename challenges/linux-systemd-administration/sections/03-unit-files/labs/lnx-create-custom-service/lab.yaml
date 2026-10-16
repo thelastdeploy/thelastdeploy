@@ -10,4 +10,4 @@ instructions: '1. Create directory `$HOME/unit-test`.
    - `[Unit]` with `Description=Custom App`
    - `[Service]` with `Type=simple`, `ExecStart=/usr/bin/echo Hello`, `Restart=on-failure`
    - `[Install]` with `WantedBy=multi-user.target`'
-version: 1
+version: 2

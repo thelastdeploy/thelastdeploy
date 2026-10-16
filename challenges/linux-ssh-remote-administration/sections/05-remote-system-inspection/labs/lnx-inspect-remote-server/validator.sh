@@ -22,17 +22,17 @@ if [ ! -f "$REPORT_PATH" ]; then
 fi
 
 CONTENT=$(cat "$REPORT_PATH")
-if [[ "$CONTENT" != *"=== REMOTE AUDIT: prod-server ==="* ]]; then
+if ! echo "$CONTENT" | grep -qi "=== REMOTE AUDIT: prod-server ==="; then
     echo "FAIL: $REPORT_PATH missing header '=== REMOTE AUDIT: prod-server ==='."
     exit 1
 fi
 
-if [[ "$CONTENT" != *"MEMORY_STATUS: OK"* ]]; then
+if ! echo "$CONTENT" | grep -qi "MEMORY_STATUS: OK"; then
     echo "FAIL: $REPORT_PATH missing 'MEMORY_STATUS: OK'."
     exit 1
 fi
 
-if [[ "$CONTENT" != *"DISK_STATUS: OK"* ]]; then
+if ! echo "$CONTENT" | grep -qi "DISK_STATUS: OK"; then
     echo "FAIL: $REPORT_PATH missing 'DISK_STATUS: OK'."
     exit 1
 fi

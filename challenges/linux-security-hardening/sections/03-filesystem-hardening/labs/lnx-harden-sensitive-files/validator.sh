@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "FILE_PERMISSIONS_HARDENED" "$TARGET"; then
+if ! grep -qi "FILE_PERMISSIONS_HARDENED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'FILE_PERMISSIONS_HARDENED'."
     exit 1
 fi

@@ -21,11 +21,9 @@ In production incidents, multi-tier application stacks (e.g., Database -> Backen
    tld start lnx-recover-broken-systemd-stack
    ```
 2. Create directory `$HOME/systemd-challenge`.
-3. Inspect two misconfigured unit files:
-4. - `db.service`: missing `Type=simple` and `ExecStart=/bin/echo DB Ready`
-5. - `app.service`: missing `Requires=db.service` and `After=db.service`
-6. Create repaired versions `$HOME/systemd-challenge/db.service` and `$HOME/systemd-challenge/app.service` ensuring correct dependencies and startup commands.
-7. Validate your solution:
+3. Create `$HOME/systemd-challenge/db.service` with `[Unit]`, and `[Service]` containing `Type=simple` and `ExecStart=/bin/echo DB Ready`.
+4. Create `$HOME/systemd-challenge/app.service` with `[Unit]` containing `Requires=db.service` and `After=db.service`, and `[Service]` containing `ExecStart=/bin/echo App Ready`.
+5. Validate your solution:
    ```bash
    tld check
    ```

@@ -21,9 +21,11 @@ A critical remote server is currently refusing SSH key authentication due to mis
    ```bash
    tld start lnx-recover-remote-server
    ```
-2. Perform the required system administration task for `Recover Remote Server SSH Access and Client Config`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
-4. Validate your solution:
+2. Restore directory permissions of `$HOME/ssh-challenge/remote_server/.ssh` to `700` (`chmod 700`).
+3. Append public key `$HOME/ssh-challenge/client_keys/id_ed25519.pub` to `$HOME/ssh-challenge/remote_server/.ssh/authorized_keys` and set its permissions to `600` (`chmod 600`).
+4. Create client SSH config file `$HOME/ssh-challenge/client_config` defining alias `Host recovery-target` and set its permissions to `600` (`chmod 600`).
+5. Write `SSH_RECOVERY_COMPLETE` to `$HOME/ssh-challenge/recovery_status.txt`.
+6. Validate your solution:
    ```bash
    tld check
    ```

@@ -13,41 +13,98 @@ compatible with browser sandboxes, flatpaks, document portals, and direct file v
 import json
 import os
 import sys
+import re
 import html as pyhtml
 from collections import defaultdict
 
-TRACK_INFO = {
+# Regex to strip all emojis and pictograms
+EMOJI_PATTERN = re.compile(
+    r'[\U00010000-\U0010FFFF]'  # SMP emojis and pictograms
+    r'|[\u200D\u20E3\uFE0F]'     # Zero-width joiner, enclosing keycaps, variation selectors
+    r'|[\u2300-\u23FF]'          # Misc Technical symbols
+    r'|[\u2600-\u27BF]'          # Misc Symbols and Dingbats
+    r'|[\u2B50\u2B55]'           # Stars and circles
+)
+
+
+def strip_emojis(text: str) -> str:
+    """Safely strip all emojis and pictograms from text."""
+    if not text:
+        return ""
+    return EMOJI_PATTERN.sub('', text)
+
+
+TRACK_ICONS = {
+    "linux": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>',
+    "docker": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>',
+    "kubernetes": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
+    "k8s": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>',
+    "nginx": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>',
+    "terraform": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>',
+    "git": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"></line><circle cx="18" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><path d="M18 9a9 9 0 0 1-9 9"></path></svg>',
+    "bash": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>',
+    "security": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
+    "storage": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>',
+    "networking": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>',
+    "default": '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
+}
+
+TRACK_PRESETS = {
     "linux": {
         "title": "Linux Administration",
-        "icon": "🐧",
         "description": "System fundamentals, shell scripting, process management, storage, networking & security."
     },
     "docker": {
         "title": "Docker & Containers",
-        "icon": "🐳",
         "description": "Container isolation, image optimization, networking, storage & Compose."
     },
     "kubernetes": {
         "title": "Kubernetes & Cloud Native",
-        "icon": "☸️",
+        "description": "Pods, deployments, services, storage, and cluster troubleshooting."
+    },
+    "k8s": {
+        "title": "Kubernetes & Cloud Native",
         "description": "Pods, deployments, services, storage, and cluster troubleshooting."
     },
     "nginx": {
         "title": "Nginx & Web Servers",
-        "icon": "🌐",
         "description": "Reverse proxying, load balancing, TLS configuration & security."
     },
     "terraform": {
         "title": "Terraform & IaC",
-        "icon": "🏗️",
         "description": "HCL syntax, state management, module architecture & variable scoping."
     },
     "git": {
         "title": "Git & Version Control",
-        "icon": "🔀",
         "description": "Advanced workflows, rebase conflicts, reflog recovery & history rewrites."
     }
 }
+
+
+def get_track_metadata(track_key: str):
+    """
+    Dynamically returns track title, clean SVG icon, and description.
+    Zero emojis. Fully dynamic auto-discovery for any newly added track.
+    """
+    norm_key = (track_key or "general").strip().lower()
+    icon_svg = TRACK_ICONS.get(norm_key, TRACK_ICONS["default"])
+    icon_html = f'<span class="track-icon-badge">{icon_svg}</span>'
+
+    if norm_key in TRACK_PRESETS:
+        preset = TRACK_PRESETS[norm_key]
+        return {
+            "title": preset["title"],
+            "icon": icon_html,
+            "description": preset["description"]
+        }
+
+    # Dynamically formatted for ANY newly discovered track
+    clean_title = norm_key.replace("-", " ").replace("_", " ").title() + " Track"
+    return {
+        "title": clean_title,
+        "icon": icon_html,
+        "description": f"Hands-on scenarios and automated validation for {clean_title}."
+    }
 
 
 def get_shared_css():
@@ -382,7 +439,31 @@ def get_shared_css():
         }
 
         .section-icon {
-            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            color: #64748b;
+        }
+
+        .track-icon-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            color: #0284c7;
+            vertical-align: middle;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .hero-title .track-icon-badge {
+            width: 34px;
+            height: 34px;
         }
 
         .section-title {
@@ -800,11 +881,7 @@ def generate_single_page_app(summary_data, tracks_grouped, report_dir):
     # =========================================================================
     track_cards_html = ""
     for track_key, modules in sorted(tracks_grouped.items()):
-        track_meta = TRACK_INFO.get(track_key, {
-            "title": f"{track_key.title()} Track",
-            "icon": "📦",
-            "description": "DevOps practices and automated labs."
-        })
+        track_meta = get_track_metadata(track_key)
 
         all_tests = [t for mod in modules.values() for t in mod]
         tr_total = len(all_tests)
@@ -866,11 +943,7 @@ def generate_single_page_app(summary_data, tracks_grouped, report_dir):
     module_views_html = ""
 
     for track_key, modules in sorted(tracks_grouped.items()):
-        track_meta = TRACK_INFO.get(track_key, {
-            "title": f"{track_key.title()} Track",
-            "icon": "📦",
-            "description": "DevOps practices and automated labs."
-        })
+        track_meta = get_track_metadata(track_key)
 
         all_tests = [t for mod in modules.values() for t in mod]
         tr_total = len(all_tests)
@@ -953,7 +1026,7 @@ def generate_single_page_app(summary_data, tracks_grouped, report_dir):
                 if os.path.exists(abs_log_path):
                     with open(abs_log_path, "r", encoding="utf-8", errors="ignore") as lf:
                         log_content = lf.read()
-                safe_log = pyhtml.escape(log_content)
+                safe_log = pyhtml.escape(strip_emojis(log_content))
 
                 rows_html += f"""
                 <tr class="test-row mod-{mod_name}" data-status="{st}" data-search="{display_title.lower()} {path.lower()}">
@@ -1145,7 +1218,7 @@ def generate_single_page_app(summary_data, tracks_grouped, report_dir):
 
             <!-- Modules Section Header -->
             <div class="section-header">
-                <span class="section-icon">📚</span>
+                <span class="section-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg></span>
                 <h2 class="section-title">Modules in this Track</h2>
             </div>
 
@@ -1252,7 +1325,7 @@ def generate_single_page_app(summary_data, tracks_grouped, report_dir):
 
             <!-- Section: Track Cards Only -->
             <div class="section-header">
-                <span class="section-icon">🗂️</span>
+                <span class="section-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></span>
                 <h2 class="section-title">Active Certification Tracks</h2>
             </div>
             <div class="cards-grid">
@@ -1392,9 +1465,35 @@ def generate_all_dashboards(summary_file):
     with open(summary_file, "r", encoding="utf-8") as f:
         summary_data = json.load(f)
 
+    # Automatically scan for and merge any additional track summary files in report_dir
+    results_map = {r.get("test_path"): r for r in summary_data.get("results", []) if r.get("test_path")}
+    for root, dirs, files in os.walk(report_dir):
+        for file in files:
+            if file == "summary.json":
+                sub_path = os.path.join(root, file)
+                if os.path.abspath(sub_path) == os.path.abspath(summary_file):
+                    continue
+                try:
+                    with open(sub_path, "r", encoding="utf-8") as sf:
+                        sub_data = json.load(sf)
+                        for r in sub_data.get("results", []):
+                            tp = r.get("test_path")
+                            if tp and tp not in results_map:
+                                results_map[tp] = r
+                except Exception:
+                    pass
+
+    all_results = list(results_map.values())
+    summary_data["results"] = all_results
+    summary_data["total_test_cases"] = len(all_results)
+    summary_data["total_executed"] = len(all_results)
+    summary_data["total_passed"] = sum(1 for r in all_results if r.get("status") == "PASSED")
+    summary_data["total_failed"] = sum(1 for r in all_results if r.get("status") == "FAILED")
+    summary_data["pass_rate_pct"] = round((summary_data["total_passed"] / len(all_results)) * 100, 1) if all_results else 0.0
+
     # Group by track and module
     tracks_grouped = defaultdict(lambda: defaultdict(list))
-    for res in summary_data.get("results", []):
+    for res in all_results:
         t = res.get("track", "general").strip().lower()
         m = res.get("module", "default").strip().lower()
         tracks_grouped[t][m].append(res)
@@ -1402,15 +1501,20 @@ def generate_all_dashboards(summary_file):
     # Generate unified SPA in index.html
     generate_single_page_app(summary_data, tracks_grouped, report_dir)
 
-    print(f" Master Regression Dashboard (SPA): file://{os.path.join(report_dir, 'index.html')}")
+    print(f"Master Regression Dashboard (SPA): file://{os.path.join(report_dir, 'index.html')}")
 
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python3 report_generator.py <path_to_summary.json>")
-        sys.exit(1)
+        default_summary = os.path.join(os.path.dirname(os.path.abspath(__file__)), "reports", "summary.json")
+        if os.path.isfile(default_summary):
+            summary_file = default_summary
+        else:
+            print("Usage: python3 report_generator.py <path_to_summary.json>")
+            sys.exit(1)
+    else:
+        summary_file = sys.argv[1]
 
-    summary_file = sys.argv[1]
     if not os.path.isfile(summary_file):
         print(f"Error: {summary_file} not found.")
         sys.exit(1)

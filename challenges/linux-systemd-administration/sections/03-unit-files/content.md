@@ -53,10 +53,10 @@ Custom unit files in `/etc/systemd/system/` allow custom application binaries to
    ```
 2. Create directory `$HOME/unit-test`.
 3. Create unit file `$HOME/unit-test/custom-app.service` containing:
-4. - `[Unit]` with `Description=Custom App`
-5. - `[Service]` with `Type=simple`, `ExecStart=/usr/bin/echo Hello`, `Restart=on-failure`
-6. - `[Install]` with `WantedBy=multi-user.target`
-7. Validate your solution:
+   - `[Unit]` with `Description=Custom App`
+   - `[Service]` with `Type=simple`, `ExecStart=/usr/bin/echo Hello`, `Restart=on-failure`
+   - `[Install]` with `WantedBy=multi-user.target`
+4. Validate your solution:
    ```bash
    tld check
    ```

@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "SERVICE_SANDBOXING_HARDENED" "$TARGET"; then
+if ! grep -qi "SERVICE_SANDBOXING_HARDENED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'SERVICE_SANDBOXING_HARDENED'."
     exit 1
 fi

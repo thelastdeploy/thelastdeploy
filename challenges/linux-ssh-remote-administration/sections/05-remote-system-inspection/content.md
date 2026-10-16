@@ -37,9 +37,13 @@ ssh admin@web-server "uname -a; uptime; df -h" > ./audit_results.txt
    ```bash
    tld start lnx-inspect-remote-server
    ```
-2. Perform the required system administration task for `Inspect Remote Server Health and Generate Reports`.
-3. Save the resulting verification output or file to the designated lab workspace directory.
-4. Validate your solution:
+2. Create directory `$HOME/ssh-test`.
+3. Create an executable script `$HOME/ssh-test/audit_remote.sh` that accepts a target hostname as its first argument (`$1`) and writes `$HOME/ssh-test/audit_report.txt` containing:
+   - `=== REMOTE AUDIT: <hostname> ===` (using `$1`)
+   - `MEMORY_STATUS: OK`
+   - `DISK_STATUS: OK`
+4. Ensure the script has executable permissions (`chmod +x`).
+5. Validate your solution:
    ```bash
    tld check
    ```

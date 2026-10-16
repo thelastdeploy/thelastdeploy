@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/service-test`.
 2. Inspect status of active system service `cron` (or `systemd-journald`).
 3. Write active status output line `SERVICE_STATUS: active` into `$HOME/service-test/lifecycle_summary.txt`.'
-version: 1
+version: 2

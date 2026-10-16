@@ -14,7 +14,7 @@ if [ ! -x "$SCRIPT_PATH" ]; then
 fi
 
 CONTENT=$(cat "$SCRIPT_PATH")
-if ! echo "$CONTENT" | grep -Eq 'ssh [^ ]+ "(df -h|uptime|uname -a)"'; then
+if ! echo "$CONTENT" | grep -Eiq 'ssh [^ ]+ ["'\'']*(df -h|uptime|uname -a)["'\'']*'; then
     echo "FAIL: $SCRIPT_PATH should execute a remote command via SSH (e.g., ssh user@host \"df -h\")."
     exit 1
 fi

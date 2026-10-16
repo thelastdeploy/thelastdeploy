@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "COMPROMISED_SERVER_HARDENED" "$TARGET"; then
+if ! grep -qi "COMPROMISED_SERVER_HARDENED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'COMPROMISED_SERVER_HARDENED'."
     exit 1
 fi

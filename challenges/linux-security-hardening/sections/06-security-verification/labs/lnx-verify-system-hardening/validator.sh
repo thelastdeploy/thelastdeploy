@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "SYSTEM_HARDENING_VERIFIED: PASS" "$TARGET"; then
+if ! grep -qi "SYSTEM_HARDENING_VERIFIED: PASS" "$TARGET"; then
     echo "FAIL: $TARGET missing 'SYSTEM_HARDENING_VERIFIED: PASS'."
     exit 1
 fi

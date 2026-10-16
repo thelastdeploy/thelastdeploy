@@ -9,12 +9,12 @@ if [ ! -f "$SVC" ] || [ ! -f "$TIMER" ]; then
     exit 1
 fi
 
-if ! grep -q "Type=oneshot" "$SVC"; then
+if ! grep -qi "Type=oneshot" "$SVC"; then
     echo "FAIL: $SVC missing 'Type=oneshot'."
     exit 1
 fi
 
-if ! grep -q "OnCalendar=" "$TIMER"; then
+if ! grep -qi "OnCalendar=" "$TIMER"; then
     echo "FAIL: $TIMER missing 'OnCalendar=' directive."
     exit 1
 fi

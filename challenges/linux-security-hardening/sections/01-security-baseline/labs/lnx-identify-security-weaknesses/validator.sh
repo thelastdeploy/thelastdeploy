@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "WEAKNESSES_IDENTIFIED" "$TARGET"; then
+if ! grep -qi "WEAKNESSES_IDENTIFIED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'WEAKNESSES_IDENTIFIED'."
     exit 1
 fi

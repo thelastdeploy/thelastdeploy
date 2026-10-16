@@ -8,22 +8,22 @@ if [ ! -f "$UNIT" ]; then
     exit 1
 fi
 
-if ! grep -q "EnvironmentFile=" "$UNIT"; then
+if ! grep -qi "EnvironmentFile=" "$UNIT"; then
     echo "FAIL: $UNIT missing 'EnvironmentFile=' directive."
     exit 1
 fi
 
-if ! grep -q "Restart=always" "$UNIT"; then
+if ! grep -qi "Restart=always" "$UNIT"; then
     echo "FAIL: $UNIT missing 'Restart=always' directive."
     exit 1
 fi
 
-if ! grep -q "LimitNOFILE=65536" "$UNIT"; then
+if ! grep -qi "LimitNOFILE=65536" "$UNIT"; then
     echo "FAIL: $UNIT missing 'LimitNOFILE=65536' resource limit."
     exit 1
 fi
 
-if ! grep -q "NoNewPrivileges=true" "$UNIT"; then
+if ! grep -qi "NoNewPrivileges=true" "$UNIT"; then
     echo "FAIL: $UNIT missing 'NoNewPrivileges=true' security directive."
     exit 1
 fi

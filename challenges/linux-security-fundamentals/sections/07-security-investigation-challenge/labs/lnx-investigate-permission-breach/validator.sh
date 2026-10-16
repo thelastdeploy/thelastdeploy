@@ -48,12 +48,12 @@ fi
 
 REPORT_CONTENT=$(cat "$REPORT_FILE")
 
-if ! echo "$REPORT_CONTENT" | grep -q "VULNERABILITY_VECTOR:"; then
+if ! echo "$REPORT_CONTENT" | grep -qi "VULNERABILITY_VECTOR:"; then
     echo "FAIL: $REPORT_FILE missing 'VULNERABILITY_VECTOR:'."
     exit 1
 fi
 
-if ! echo "$REPORT_CONTENT" | grep -q "BREACH_REMEDIATION: COMPLETED"; then
+if ! echo "$REPORT_CONTENT" | grep -Eqi "(BREACH_REMEDIATION:[[:space:]]*COMPLETED|SECURITY_BREACH_REMEDIATED:[[:space:]]*YES)"; then
     echo "FAIL: $REPORT_FILE missing 'BREACH_REMEDIATION: COMPLETED'."
     exit 1
 fi

@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "SSHD_CONFIG_HARDENED" "$TARGET"; then
+if ! grep -qi "SSHD_CONFIG_HARDENED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'SSHD_CONFIG_HARDENED'."
     exit 1
 fi

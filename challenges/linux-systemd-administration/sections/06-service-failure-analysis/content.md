@@ -42,7 +42,7 @@ Diagnostic tools like `systemctl status`, `journalctl -u`, and `systemd-analyze 
    tld start lnx-diagnose-failed-service
    ```
 2. Create directory `$HOME/fail-test`.
-3. Inspect sample broken service unit `$HOME/fail-test/broken.service` (which references non-existent path `/bin/missing_binary`).
+3. Inspect sample broken service unit `$HOME/fail-test/broken.service` which references non-existent path `/bin/missing_binary`.
 4. Write diagnosis line `REASON: missing_executable` into `$HOME/fail-test/diag_report.txt`.
 5. Validate your solution:
    ```bash

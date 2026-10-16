@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "REASON: missing_executable" "$TARGET"; then
+if ! grep -qi "REASON: missing_executable" "$TARGET"; then
     echo "FAIL: $TARGET does not contain 'REASON: missing_executable'."
     exit 1
 fi

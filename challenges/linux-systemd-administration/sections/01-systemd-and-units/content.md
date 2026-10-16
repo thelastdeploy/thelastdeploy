@@ -71,10 +71,10 @@ systemctl is-enabled nginx.service
    tld start lnx-inspect-systemd-units
    ```
 2. Create directory `$HOME/systemd-test`.
-3. Write commands to inspect systemd unit types and write summary output into `$HOME/systemd-test/units_info.txt`:
-4. - Line 1: `SERVICES_COUNT: <number of loaded service units>`
-5. - Line 2: `TIMERS_COUNT: <number of loaded timer units>`
-6. Validate your solution:
+3. Inspect systemd unit types and write summary output into `$HOME/systemd-test/units_info.txt`:
+   - `SERVICES_COUNT: <number of loaded service units>`
+   - `TIMERS_COUNT: <number of loaded timer units>`
+4. Validate your solution:
    ```bash
    tld check
    ```

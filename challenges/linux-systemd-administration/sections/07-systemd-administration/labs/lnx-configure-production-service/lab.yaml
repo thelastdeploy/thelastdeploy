@@ -12,4 +12,4 @@ instructions: '1. Create directory `$HOME/prod-service-test`.
    - `LimitNOFILE=65536`
    - `NoNewPrivileges=true`
    - `WantedBy=multi-user.target`'
-version: 1
+version: 2

@@ -5,4 +5,7 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test/key_dir
   - rm -f $HOME/ssh-test/key_dir/id_ed25519*
-version: 2
+instructions: '1. Create directory `$HOME/ssh-test/key_dir`.
+2. Generate an ED25519 SSH keypair into `$HOME/ssh-test/key_dir/id_ed25519` without a passphrase.
+3. Verify that both private and public key files exist.'
+version: 3

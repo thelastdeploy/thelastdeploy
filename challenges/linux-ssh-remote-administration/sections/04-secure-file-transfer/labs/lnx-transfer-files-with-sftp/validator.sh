@@ -10,12 +10,12 @@ fi
 
 CONTENT=$(cat "$BATCH_FILE")
 
-if ! echo "$CONTENT" | grep -Eq "put local_config\.json /etc/app/config\.json"; then
+if ! echo "$CONTENT" | grep -Eiq "put\s+local_config\.json\s+/etc/app/config\.json"; then
     echo "FAIL: $BATCH_FILE missing 'put local_config.json /etc/app/config.json' command."
     exit 1
 fi
 
-if ! echo "$CONTENT" | grep -Eq "(bye|exit)"; then
+if ! echo "$CONTENT" | grep -Eiq "(bye|exit)"; then
     echo "FAIL: $BATCH_FILE missing session termination command ('bye' or 'exit')."
     exit 1
 fi

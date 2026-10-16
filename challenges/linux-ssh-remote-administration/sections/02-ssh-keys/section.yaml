@@ -2,4 +2,4 @@ id: 02-ssh-keys
 title: "SSH Keys and Public Key Authentication"
 order: 2
 xp: 50
-version: 1
+version: 2

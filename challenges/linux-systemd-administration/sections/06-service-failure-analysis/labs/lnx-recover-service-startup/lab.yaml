@@ -9,4 +9,4 @@ setup:
 instructions: '1. Inspect `$HOME/fail-test/broken.service`.
 2. Repair `ExecStart` path to point to valid executable `/bin/echo Service Restored`.
 3. Save repaired unit file to `$HOME/fail-test/fixed.service`.'
-version: 1
+version: 2

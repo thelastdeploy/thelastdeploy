@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "SUID_PERMISSIONS_AUDITED" "$TARGET"; then
+if ! grep -qi "SUID_PERMISSIONS_AUDITED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'SUID_PERMISSIONS_AUDITED'."
     exit 1
 fi

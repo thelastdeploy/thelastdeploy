@@ -5,4 +5,7 @@ setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test
   - rm -f $HOME/ssh-test/transfer_cmd.sh
-version: 2
+instructions: '1. Create directory `$HOME/ssh-test`.
+2. Create an executable script `$HOME/ssh-test/transfer_cmd.sh` that transfers `app.tar.gz` to remote destination `admin@10.0.0.50:/var/backups/` using `scp`.
+3. Ensure the script has executable permissions (`chmod +x`).'
+version: 3

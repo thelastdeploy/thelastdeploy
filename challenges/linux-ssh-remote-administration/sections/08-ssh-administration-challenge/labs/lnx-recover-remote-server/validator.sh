@@ -30,7 +30,7 @@ if [ "$FILE_PERMS" != "600" ]; then
     exit 1
 fi
 
-if ! grep -q "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICapstoneRecoveryPublicKey" "$AUTH_KEYS"; then
+if ! grep -qi "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICapstoneRecoveryPublicKey" "$AUTH_KEYS"; then
     echo "FAIL: $AUTH_KEYS missing the client public key."
     exit 1
 fi
@@ -47,7 +47,7 @@ if [ "$CONF_PERMS" != "600" ]; then
     exit 1
 fi
 
-if ! grep -qi "Host recovery-target" "$CLIENT_CONF"; then
+if ! grep -qiE "Host\s+recovery-target" "$CLIENT_CONF"; then
     echo "FAIL: $CLIENT_CONF missing 'Host recovery-target' alias."
     exit 1
 fi
@@ -58,7 +58,7 @@ if [ ! -f "$STATUS_FILE" ]; then
     exit 1
 fi
 
-if ! grep -q "SSH_RECOVERY_COMPLETE" "$STATUS_FILE"; then
+if ! grep -qi "SSH_RECOVERY_COMPLETE" "$STATUS_FILE"; then
     echo "FAIL: $STATUS_FILE does not contain 'SSH_RECOVERY_COMPLETE'."
     exit 1
 fi

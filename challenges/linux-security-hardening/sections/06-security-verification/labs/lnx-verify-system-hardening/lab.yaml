@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/audit-test`.
 2. Write automated security verification script `$HOME/audit-test/check_compliance.sh`.
 3. Write compliance verification summary `SYSTEM_HARDENING_VERIFIED: PASS` into `$HOME/audit-test/compliance.log`.'
-version: 1
+version: 2

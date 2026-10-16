@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/access-test`.
 2. Document secure sudo configuration practices without wildcard NOPASSWD grants.
 3. Write output line `SUDO_PRIVILEGES_RESTRICTED` to `$HOME/access-test/sudo_summary.txt`.'
-version: 1
+version: 2

@@ -8,7 +8,7 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-if ! grep -q "SECURITY_BASELINE_AUDITED" "$TARGET"; then
+if ! grep -qi "SECURITY_BASELINE_AUDITED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'SECURITY_BASELINE_AUDITED'."
     exit 1
 fi

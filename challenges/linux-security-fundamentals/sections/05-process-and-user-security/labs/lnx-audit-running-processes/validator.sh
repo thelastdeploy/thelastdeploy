@@ -8,8 +8,8 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
-EXPECTED=$(grep "www-data" "$HOME/sec-test/ps_dump.txt")
-ACTUAL=$(cat "$TARGET")
+EXPECTED=$(grep "www-data" "$HOME/sec-test/ps_dump.txt" | tr -d '\r' | sed -e 's/[[:space:]]*$//' | sed -e '/^$/d')
+ACTUAL=$(tr -d '\r' < "$TARGET" | sed -e 's/[[:space:]]*$//' | sed -e '/^$/d')
 
 if [ "$ACTUAL" != "$EXPECTED" ]; then
     echo "FAIL: Expected '$EXPECTED', got '$ACTUAL'."
