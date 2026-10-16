@@ -37,7 +37,12 @@ parted /dev/sda print
    tld start lnx-identify-storage-devices
    ```
 2. Identify storage devices, block sizes, and disk topology.
-3. List all block devices using `lsblk` and save output to `$HOME/storage-test/block_devices.txt`.
+3. List all block devices using `lsblk` (or use the simulated device topology in `$HOME/storage-test/device_dump.txt`) and save output to `$HOME/storage-test/block_devices.txt`:
+   ```bash
+   cp $HOME/storage-test/device_dump.txt $HOME/storage-test/block_devices.txt
+   # Or alternatively:
+   # lsblk > $HOME/storage-test/block_devices.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check
@@ -49,7 +54,12 @@ parted /dev/sda print
    tld start lnx-inspect-disk-partitions
    ```
 2. Inspect partition table layouts and partition types.
-3. Inspect disk partition layout using `fdisk -l` or `parted -l` and save details to `$HOME/storage-test/partition_info.txt`.
+3. Inspect disk partition layout using `fdisk -l` or `parted -l` (or use the simulated partition dump in `$HOME/storage-test/fdisk_dump.txt`) and save details to `$HOME/storage-test/partition_info.txt`:
+   ```bash
+   cp $HOME/storage-test/fdisk_dump.txt $HOME/storage-test/partition_info.txt
+   # Or alternatively:
+   # sudo fdisk -l /dev/sdb > $HOME/storage-test/partition_info.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check

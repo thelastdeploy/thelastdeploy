@@ -44,7 +44,12 @@ fsck /dev/sda1
    tld start lnx-identify-filesystem-types
    ```
 2. Identify filesystem formats and partition UUIDs.
-3. Determine filesystem types using `blkid` and save summary output to `$HOME/storage-test/fs_summary.txt`.
+3. Determine filesystem types using `blkid` (or inspect and copy the captured block ID dump in `$HOME/storage-test/blkid_output.txt`) and save summary output to `$HOME/storage-test/fs_summary.txt`:
+   ```bash
+   cp $HOME/storage-test/blkid_output.txt $HOME/storage-test/fs_summary.txt
+   # Or alternatively:
+   # sudo blkid > $HOME/storage-test/fs_summary.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check
@@ -56,7 +61,12 @@ fsck /dev/sda1
    tld start lnx-inspect-filesystem-health
    ```
 2. Inspect superblock metadata and filesystem status.
-3. Inspect filesystem health metadata using `tune2fs -l` or `dumpe2fs` and save status to `$HOME/storage-test/fs_health.txt`.
+3. Inspect filesystem health metadata using `tune2fs -l` (or inspect and copy the captured superblock dump in `$HOME/storage-test/tune2fs_output.txt`) and save status to `$HOME/storage-test/fs_health.txt`:
+   ```bash
+   cp $HOME/storage-test/tune2fs_output.txt $HOME/storage-test/fs_health.txt
+   # Or alternatively:
+   # sudo tune2fs -l /dev/sda1 > $HOME/storage-test/fs_health.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check
