@@ -46,6 +46,9 @@ ui_step_pass() {
 ui_step_fail() {
     local msg="$1"
     echo -e "    ${RED}✗ Failed:${RESET} $msg"
+    if [[ -n "${TEST_STEP_FAIL_FLAG:-}" ]]; then
+        touch "$TEST_STEP_FAIL_FLAG"
+    fi
 }
 
 ui_lab_pass() {

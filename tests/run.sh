@@ -94,15 +94,19 @@ for test_script in "${MATCHED_TESTS[@]}"; do
 
     echo -e "${BOLD}[$TEST_INDEX/${#MATCHED_TESTS[@]}] RUNNING:${RESET} ${CYAN}$rel_path${RESET}"
 
+    TEST_STEP_FAIL_FLAG="/tmp/tld_test_fail_${lab_id}_$$"
+    rm -f "$TEST_STEP_FAIL_FLAG"
+    export TEST_STEP_FAIL_FLAG
+
     # 1. Start Lab Container in Non-Interactive Mode
     if harness_start_lab "$lab_id"; then
-        # 2. Source the test script directly
-        TEST_FAILED_STEPS=0
-        set +e
-        source "$test_script"
+        # 2. Source the test script inside a subshell to preserve set -e isolation
+        (
+            source "$test_script"
+        )
         script_exit=$?
-        set -e
-        if [[ $script_exit -eq 0 && ${TEST_FAILED_STEPS:-0} -eq 0 ]]; then
+
+        if [[ $script_exit -eq 0 && ! -f "$TEST_STEP_FAIL_FLAG" ]]; then
             test_passed=1
         else
             test_passed=0
@@ -112,6 +116,7 @@ for test_script in "${MATCHED_TESTS[@]}"; do
         test_passed=0
         fail_reason="Failed to provision container for lab $lab_id."
     fi
+    rm -f "$TEST_STEP_FAIL_FLAG"
 
     # 3. Stop container & clean up session
     harness_stop_lab
