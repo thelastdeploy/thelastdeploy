@@ -58,7 +58,7 @@ The `grep` command searches files for lines containing a specific pattern (regul
    tld start lnx-combined-search
    ```
 2. Look up which log file under `~/search-test/logs/` contains the critical error keyword `FATAL`.
-3. Save the path of that file (which should end in `error-log-1.txt`) to a file named `fatal_log.txt` inside `~/search-test/`.
+3. Save the path or filename of that file to a file named `fatal_log.txt` inside `~/search-test/`.
 4. Verify the task:
    ```bash
    tld check

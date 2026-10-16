@@ -53,7 +53,7 @@ To interact with endpoints that require user payloads or custom authentication h
    tld start lnx-check-http-status
    ```
 2. Query the headers of `http://127.0.0.1:9090` to find its HTTP response status code.
-3. Save that numeric status code (e.g., `200`) on a single line to a file named `http_status.txt` inside your `~/network-test` directory.
+3. Save that numeric status code on a single line to a file named `http_status.txt` inside your `~/network-test` directory.
 4. Verify the task:
    ```bash
    tld check

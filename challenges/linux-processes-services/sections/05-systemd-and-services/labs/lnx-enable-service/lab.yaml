@@ -9,7 +9,7 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/.config/systemd/user"
     - "echo '[Unit]' > $HOME/.config/systemd/user/thelastdeploy-user.service"
-    - "echo 'Description=DevLab User Service' >> $HOME/.config/systemd/user/thelastdeploy-user.service"
+    - "echo 'Description=The Last Deploy User Service' >> $HOME/.config/systemd/user/thelastdeploy-user.service"
     - "echo '[Service]' >> $HOME/.config/systemd/user/thelastdeploy-user.service"
     - "echo 'ExecStart=/bin/sleep 3600' >> $HOME/.config/systemd/user/thelastdeploy-user.service"
     - "echo '[Install]' >> $HOME/.config/systemd/user/thelastdeploy-user.service"

@@ -48,7 +48,7 @@ fi
    tld start lnx-add-conditional-logic
    ```
 2. Create an executable script at `$HOME/script-test/check_num.sh` that takes an integer argument `$1`.
-3. Use conditional statements (`if/else`) to print `POSITIVE` if the number is greater than zero, and `NEGATIVE_OR_ZERO` otherwise.
+3. Use conditional statements (`if/elif/else`) to print `POSITIVE` if the number is greater than zero, `NEGATIVE` if less than zero, and `ZERO` if equal to zero.
 4. Validate your solution:
    ```bash
    tld check
@@ -60,7 +60,9 @@ fi
    tld start lnx-validate-system-state
    ```
 2. Create an executable script at `$HOME/script-test/check_file.sh` that takes a file path as argument `$1`.
-3. Use `if [ -f "$1" ]` to check if the file exists, printing `FILE_EXISTS` if true or `FILE_MISSING` if false.
+3. Use `if [ -f "$1" ]` and `[ -s "$1" ]` to check file properties:
+   - Print `FILE_MISSING` if the file does not exist.
+   - If the file exists, check whether it has content (`-s`) and print `FILE_EXISTS NON_EMPTY` if non-empty, or `FILE_EXISTS` if empty.
 4. Validate your solution:
    ```bash
    tld check

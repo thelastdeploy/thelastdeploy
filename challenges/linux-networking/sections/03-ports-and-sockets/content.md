@@ -59,7 +59,7 @@ https           443/tcp                         # http protocol over TLS/SSL
    tld start lnx-find-service-port
    ```
 2. Search through the system service database `/etc/services` to find the default TCP port number reserved for SSH connections.
-3. Save that port number (exactly `22`) on a single line to a file named `ssh_port.txt` inside your `~/network-test` directory.
+3. Save that port number on a single line to a file named `ssh_port.txt` inside your `~/network-test` directory.
 4. Verify the task:
    ```bash
    tld check

@@ -41,7 +41,7 @@ source ~/.bashrc
    tld start lnx-configure-shell-environment
    ```
 2. Configure custom shell aliases and environment variables.
-3. Create a mock bashrc file at `$HOME/env-test/mock_bashrc` containing `export LAB_ENV="devlab"` and `alias syscheck="uptime"`.
+3. Edit `$HOME/env-test/mock_bashrc` to set and export `LAB_ENV="tld"` and define an alias named `syscheck` that runs `uptime`.
 4. Validate your solution:
    ```bash
    tld check
@@ -53,7 +53,7 @@ source ~/.bashrc
    tld start lnx-manage-shell-startup
    ```
 2. Manage shell startup file cascading.
-3. Create a profile script at `$HOME/env-test/mock_profile` that sources `mock_bashrc` (`source $HOME/env-test/mock_bashrc`).
+3. Create a profile script at `$HOME/env-test/mock_profile` that sources `$HOME/env-test/mock_bashrc`.
 4. Validate your solution:
    ```bash
    tld check

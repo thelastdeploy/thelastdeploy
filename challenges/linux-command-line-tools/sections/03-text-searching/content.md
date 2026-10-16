@@ -17,9 +17,9 @@
 ## 2. Searching Context (`-A`, `-B`, `-C`)
 
 When investigating application crashes, viewing lines directly surrounding an error pattern reveals root cause details:
-- `-B N`: Print $N$ lines **Before** matching lines.
-- `-A N`: Print $N$ lines **After** matching lines.
-- `-C N`: Print $N$ lines of **Context** (both before and after).
+- `-B N`: Print N lines **Before** matching lines.
+- `-A N`: Print N lines **After** matching lines (in addition to the matched line).
+- `-C N`: Print N lines of **Context** (both before and after).
 
 ```bash
 grep -C 2 -i "fatal" /var/log/app.log
@@ -35,7 +35,7 @@ grep -C 2 -i "fatal" /var/log/app.log
    tld start lnx-search-application-logs
    ```
 2. Search `$HOME/grep-test/app.log` for lines containing `CRITICAL`.
-3. Save the number of matching lines to `$HOME/grep-test/critical_count.txt`.
+3. Save the count of matching lines (using `grep -c`) to `$HOME/grep-test/critical_count.txt`.
 4. Validate your solution:
    ```bash
    tld check
@@ -46,8 +46,8 @@ grep -C 2 -i "fatal" /var/log/app.log
    ```bash
    tld start lnx-investigate-log-patterns
    ```
-2. Search `$HOME/grep-test/service.log` for the line containing `SIGSEGV`.
-3. Extract the line immediately following `SIGSEGV` (using `grep -A 1`) and save it to `$HOME/grep-test/next_line.txt`.
+2. Search `$HOME/grep-test/service.log` for the line containing `SIGSEGV` and inspect the context after it (`grep -A 1`).
+3. Extract the line immediately following `SIGSEGV` (e.g., using `grep -A 1 "SIGSEGV" ... | tail -n 1`) and save it to `$HOME/grep-test/next_line.txt`.
 4. Validate your solution:
    ```bash
    tld check

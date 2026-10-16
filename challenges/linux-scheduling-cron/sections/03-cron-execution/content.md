@@ -38,7 +38,7 @@ If your script relies on local relative files, change directory first:
    tld start lnx-troubleshoot-cron-job
    ```
 2. Troubleshoot missing PATH variables in cron environments.
-3. Fix `$HOME/cron-test/broken_crontab` by explicitly defining `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin`.
+3. Fix `$HOME/cron-test/broken_crontab` by explicitly defining `PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin` and updating `backup.sh` to its absolute path (`/usr/local/bin/backup.sh`).
 4. Validate your solution:
    ```bash
    tld check

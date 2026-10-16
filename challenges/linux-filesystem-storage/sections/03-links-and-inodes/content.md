@@ -58,7 +58,7 @@ Linux supports two distinct link mechanisms:
    ```
 2. Inspect the files in `$HOME/link-test/check_zone`.
 3. Find which file shares the exact same inode number as `$HOME/link-test/check_zone/original.txt`.
-4. Save the name of that hard-linked file (e.g. `file_b.txt`) into `$HOME/link-test/same_inode.txt`.
+4. Save the filename of that hard-linked file (e.g. `filename.txt`) into `$HOME/link-test/same_inode.txt`.
 5. Validate your solution:
    ```bash
    tld check

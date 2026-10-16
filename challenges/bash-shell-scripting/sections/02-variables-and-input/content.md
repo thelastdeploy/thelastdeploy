@@ -6,7 +6,7 @@ Variables store values for reuse throughout your script. Bash supports string, i
 
 Define variables without spaces around the `=` sign:
 ```bash
-APP_NAME="devlab"
+APP_NAME="tld"
 PORT=8080
 echo "Starting $APP_NAME on port $PORT..."
 ```
@@ -44,8 +44,8 @@ The `-p` flag displays a prompt before waiting for input.
    ```bash
    tld start lnx-build-interactive-script
    ```
-2. Create an interactive script at `$HOME/script-test/interactive.sh` that prompts the user using `read -p` to enter a username.
-3. Ensure the script prints `Welcome, <username>!` based on the entered input.
+2. Create an interactive script at `$HOME/script-test/interactive.sh` that prompts the user using `read -p` for a service name, followed by an environment name.
+3. Ensure the script prints `Deploying <service> to <environment>` based on the entered inputs.
 4. Validate your solution:
    ```bash
    tld check
@@ -57,7 +57,7 @@ The `-p` flag displays a prompt before waiting for input.
    tld start lnx-work-with-script-variables
    ```
 2. Create an executable script at `$HOME/script-test/vars.sh` that accepts positional parameters `$1` (Name) and `$2` (Role).
-3. Ensure the script prints `User: $1, Role: $2` when run with positional arguments.
+3. Ensure the script prints `User $1 assigned role $2` when run with positional arguments.
 4. Validate your solution:
    ```bash
    tld check

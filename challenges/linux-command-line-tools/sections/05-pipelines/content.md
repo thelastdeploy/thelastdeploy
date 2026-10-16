@@ -29,8 +29,8 @@ Pipeline Breakdown:
    tld start lnx-build-command-pipeline
    ```
 2. Inspect the web access log `$HOME/pipe-test/access.log`.
-3. Build a pipeline to extract all lines containing `POST`, isolate the IP address (column 1), sort them, and find the IP address with the highest number of POST requests.
-4. Save that top IP address (e.g. `10.0.0.99`) into `$HOME/pipe-test/top_poster.txt`.
+3. Build a pipeline to extract all lines containing `POST`, isolate the IP address (column 1), count the occurrences per IP, and isolate the top IP address.
+4. Save that top IP address into `$HOME/pipe-test/top_poster.txt`.
 5. Validate your solution:
    ```bash
    tld check

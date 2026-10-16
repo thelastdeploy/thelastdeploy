@@ -9,4 +9,5 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/service-test"
     - "rm -f $HOME/service-test/cron_status.txt"
+    - "service cron start >/dev/null 2>&1 || systemctl start cron >/dev/null 2>&1 || true"
 version: 1

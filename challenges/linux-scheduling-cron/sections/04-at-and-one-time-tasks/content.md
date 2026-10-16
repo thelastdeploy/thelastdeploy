@@ -36,7 +36,7 @@ echo "/usr/local/bin/sync.sh" | at now + 2 hours
    tld start lnx-schedule-one-time-task
    ```
 2. Schedule one-time task execution with `at`.
-3. Create a script at `$HOME/cron-test/at_command.sh` containing `at` job submission syntax.
+3. Create an executable script (`chmod +x`) at `$HOME/cron-test/at_command.sh` containing `at` job submission syntax (scheduling a task with `at now + 1 hour` or `at 02:00 AM tomorrow`).
 4. Validate your solution:
    ```bash
    tld check

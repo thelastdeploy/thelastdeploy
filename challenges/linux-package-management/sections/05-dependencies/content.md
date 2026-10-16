@@ -26,8 +26,8 @@ Linux software packages rarely run in total isolation. They rely on shared syste
    tld start lnx-investigate-package-dependencies
    ```
 2. Inspect the mock dependency log `$HOME/pkg-test/deps.log`.
-3. Locate the direct dependency package required by `web-app-v2`.
-4. Save the required dependency package name (`libssl-dev`) into `$HOME/pkg-test/req_dep.txt`.
+3. Locate the SSL development library dependency required by `web-app-v2`.
+4. Save the required dependency package name into `$HOME/pkg-test/req_dep.txt`.
 5. Validate your solution:
    ```bash
    tld check

@@ -45,8 +45,8 @@ unset MY_VAR
    ```bash
    tld start lnx-inspect-environment
    ```
-2. Inspect active environment variables in Bash.
-3. Save the current user (`$USER`) and shell path (`$SHELL`) to `$HOME/env-test/env_summary.txt` formatted as `USER_NAME=` and `SHELL_PATH=`.
+2. Inspect active environment variables in Bash using `printenv` or `env`.
+3. Save the current user and shell path to `$HOME/env-test/env_summary.txt` with lines formatted as `USER_NAME=$USER` and `SHELL_PATH=$SHELL`.
 4. Validate your solution:
    ```bash
    tld check

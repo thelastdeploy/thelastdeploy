@@ -134,6 +134,11 @@ func Start(lab *cache.Lab) error {
 
 	printLab(lab)
 
+	if os.Getenv("TLD_NON_INTERACTIVE") == "1" {
+		fmt.Printf("Non-interactive lab start complete. Container ID: %s\n", containerID)
+		return nil
+	}
+
 	fmt.Println("Entering interactive lab container shell...")
 	fmt.Println("👉 Run 'tld check' right here inside this shell whenever you are ready to validate.")
 	fmt.Println("👉 Run 'tld stop' or type 'exit' when finished.")

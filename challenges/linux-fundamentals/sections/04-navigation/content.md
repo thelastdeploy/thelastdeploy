@@ -20,6 +20,7 @@ pwd
 To move to a different directory, use `cd` followed by the directory path.
 
 - **Move into a directory**: `cd documents`
+- **Move into nested subdirectories**: `cd path/to/folder` (chain directories with slashes)
 - **Move to your user's Home directory**: `cd` or `cd ~`
 - **Move to the parent folder**: `cd ..`
 - **Move to the root of the filesystem**: `cd /`
@@ -30,6 +31,18 @@ To move to a different directory, use `cd` followed by the directory path.
 
 - `.`: Represents the current directory.
 - `..`: Represents the parent directory.
+
+---
+
+## 4. Saving Navigation Paths
+
+You can combine `pwd` with output redirection (`>`) to capture your current directory's absolute path into a file:
+
+```bash
+pwd > ~/current_path.txt
+```
+
+If you navigate to a folder first and then run `pwd > path.txt`, the file will store that specific directory's location.
 
 ---
 

@@ -9,7 +9,7 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/.config/systemd/user"
     - "echo '[Unit]' > $HOME/.config/systemd/user/thelastdeploy-broken.service"
-    - "echo 'Description=DevLab Broken Service' >> $HOME/.config/systemd/user/thelastdeploy-broken.service"
+    - "echo 'Description=The Last Deploy Broken Service' >> $HOME/.config/systemd/user/thelastdeploy-broken.service"
     - "echo '[Service]' >> $HOME/.config/systemd/user/thelastdeploy-broken.service"
     - "echo 'ExecStart=/bin/sleepy 3600' >> $HOME/.config/systemd/user/thelastdeploy-broken.service"
     - "systemctl --user daemon-reload"

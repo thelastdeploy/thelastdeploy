@@ -35,6 +35,17 @@ test:
 	@cd $(GO_DIR) && go test ./...
 	@echo "✓ Tests passed"
 
+test-labs: build-dev
+	@echo "==> Running automated lab scenario test suite..."
+	@./tests/run.sh
+
+test-lab: build-dev
+	@if [ -z "$(ID)" ]; then \
+		echo "Usage: make test-lab ID=<lab-id>"; \
+		exit 1; \
+	fi
+	@./tests/run.sh --lab $(ID)
+
 verify: fmt vet test
 	@echo ""
 	@echo "====================================="

@@ -36,7 +36,7 @@ Maintaining system security requires regularly updating software packages and cl
    ```
 2. Inspect the mock package manager log `$HOME/pkg-test/upgrades.log`.
 3. Count the number of packages marked as `upgradable` in the log.
-4. Save the count integer (e.g. `3`) to `$HOME/pkg-test/upgradable_count.txt`.
+4. Save the count integer to `$HOME/pkg-test/upgradable_count.txt`.
 5. Validate your solution:
    ```bash
    tld check

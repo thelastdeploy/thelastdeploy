@@ -38,8 +38,8 @@ PORT=9000 LOG_LEVEL=warn ./start_server.sh
    ```bash
    tld start lnx-configure-app-with-environment
    ```
-2. Configure environment-driven application execution scripts.
-3. Create an executable launcher at `$HOME/env-test/run_app.sh` setting `PORT=5000` and `LOG_LEVEL=debug`.
+2. Inspect the environment file at `$HOME/env-test/app.env`.
+3. Create an executable launcher script at `$HOME/env-test/run_app.sh` that sources `$HOME/env-test/app.env` and logs the resolved `PORT` and `LOG_LEVEL` variables (`PORT=$PORT` and `LOG_LEVEL=$LOG_LEVEL`) to `$HOME/env-test/app_runtime.log`.
 4. Validate your solution:
    ```bash
    tld check

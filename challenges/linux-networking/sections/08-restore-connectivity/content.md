@@ -37,8 +37,8 @@ IP_address hostname [aliases]
    ```bash
    tld start lnx-debug-network-outage
    ```
-2. A client application is attempting to connect to a service at `broken.devlab.local` but fails due to a resolution error.
-3. Fix the resolution outage by mapping the hostname `broken.devlab.local` to the loopback IP address `127.0.0.1` inside your static hostname resolution file `/etc/hosts`.
+2. A client application is attempting to connect to a service at `broken.tld.local` but fails due to a resolution error.
+3. Fix the resolution outage by mapping the hostname `broken.tld.local` to the loopback IP address `127.0.0.1` inside your static hostname resolution file `/etc/hosts`.
 4. Verify the task:
    ```bash
    tld check

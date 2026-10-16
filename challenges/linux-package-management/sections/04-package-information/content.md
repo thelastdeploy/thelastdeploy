@@ -48,7 +48,7 @@ dpkg -S /bin/ls
    ```
 2. Inspect the mock package database log `$HOME/pkg-test/pkg_query.log`.
 3. Locate the package name that installed the binary `/usr/bin/git`.
-4. Save the package name (`git`) to `$HOME/pkg-test/git_package.txt`.
+4. Save the package name to `$HOME/pkg-test/git_package.txt`.
 5. Validate your solution:
    ```bash
    tld check

@@ -38,8 +38,8 @@ sed -i 's/PORT=8080/PORT=9090/' app.conf
    ```bash
    tld start lnx-find-application-configuration
    ```
-2. Locate system configuration files.
-3. Create a file list at `$HOME/env-test/config_files.list` containing `nginx.conf` and `redis.conf`.
+2. Locate configuration files within the environment directory structure.
+3. Search `$HOME/env-test/sys_etc` for all `.conf` configuration files and save their paths to `$HOME/env-test/config_files.list`.
 4. Validate your solution:
    ```bash
    tld check
@@ -51,7 +51,7 @@ sed -i 's/PORT=8080/PORT=9090/' app.conf
    tld start lnx-inspect-configuration-settings
    ```
 2. Filter out comments and blank lines from configuration files.
-3. Extract active setting lines from `$HOME/env-test/service.conf` and write to `$HOME/env-test/active_settings.txt`.
+3. Extract active setting lines from `$HOME/env-test/web.conf` and write them to `$HOME/env-test/active_settings.txt`.
 4. Validate your solution:
    ```bash
    tld check
@@ -63,8 +63,9 @@ sed -i 's/PORT=8080/PORT=9090/' app.conf
    tld start lnx-modify-application-configuration
    ```
 2. Safely update configuration values while maintaining backups.
-3. Create a backup at `$HOME/env-test/service.conf.bak` and update `MAX_CONNECTIONS=500` in `$HOME/env-test/service.conf`.
-4. Validate your solution:
+3. Create a backup copy of `$HOME/env-test/service.conf` at `$HOME/env-test/service.conf.bak`.
+4. Update `MAX_CONNECTIONS` to `500` in `$HOME/env-test/service.conf`.
+5. Validate your solution:
    ```bash
    tld check
    ```

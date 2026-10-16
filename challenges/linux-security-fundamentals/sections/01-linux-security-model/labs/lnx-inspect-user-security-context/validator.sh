@@ -10,17 +10,17 @@ fi
 
 CONTENT=$(cat "$TARGET")
 
-if ! echo "$CONTENT" | grep -q "USER="; then
+if ! echo "$CONTENT" | grep -qi "USER="; then
     echo "FAIL: $TARGET missing 'USER=' entry."
     exit 1
 fi
 
-if ! echo "$CONTENT" | grep -q "UID="; then
+if ! echo "$CONTENT" | grep -qi "UID="; then
     echo "FAIL: $TARGET missing 'UID=' entry."
     exit 1
 fi
 
-if ! echo "$CONTENT" | grep -q "GROUPS="; then
+if ! echo "$CONTENT" | grep -qi "GROUPS="; then
     echo "FAIL: $TARGET missing 'GROUPS=' entry."
     exit 1
 fi

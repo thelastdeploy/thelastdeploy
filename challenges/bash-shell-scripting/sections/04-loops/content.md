@@ -53,7 +53,7 @@ done < input.txt
    tld start lnx-automate-repetitive-task
    ```
 2. Create an executable script at `$HOME/script-test/backup_logs.sh`.
-3. Use a `for` loop to compress all `.log` files in `$HOME/script-test/logs/` into `.gz` archives using `gzip`.
+3. Use a `for` loop to backup all `.log` files in `$HOME/script-test/logs/` to `$HOME/script-test/backup/`, appending `.bak` to each filename (e.g., `app.log.bak`).
 4. Validate your solution:
    ```bash
    tld check

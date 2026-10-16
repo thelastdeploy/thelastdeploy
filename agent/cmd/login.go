@@ -52,7 +52,7 @@ func runLogin(args []string) error {
 
 	verificationURL := fmt.Sprintf("%s?code=%s", codeResp.VerificationURI, codeResp.UserCode)
 
-	fmt.Printf("\nTo authenticate the CLI with DevLab:\n")
+	fmt.Printf("\nTo authenticate the CLI with tld:\n")
 	fmt.Printf("  1. Navigate to: \x1b[36m%s\x1b[0m\n", verificationURL)
 	fmt.Printf("  2. Confirm permission using the User Code: \x1b[1;33m%s\x1b[0m\n\n", codeResp.UserCode)
 

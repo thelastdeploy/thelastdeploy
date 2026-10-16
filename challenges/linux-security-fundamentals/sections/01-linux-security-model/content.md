@@ -36,8 +36,11 @@ When a process attempts to access a file, Linux checks permissions in a strict o
    ```bash
    tld start lnx-inspect-user-security-context
    ```
-2. Inspect user security context, UID, GID, and group memberships.
-3. Save user security context details to `$HOME/sec-test/user_context.txt` using `id`.
+2. Inspect your user security context using `id`, `whoami`, and `groups`.
+3. Save your security context to `$HOME/sec-test/user_context.txt` with lines formatted as:
+   - `USER=$USER`
+   - `UID=$(id -u)`
+   - `GROUPS=$(id -Gn)`
 4. Validate your solution:
    ```bash
    tld check
@@ -48,8 +51,11 @@ When a process attempts to access a file, Linux checks permissions in a strict o
    ```bash
    tld start lnx-understand-effective-permissions
    ```
-2. Evaluate read/write/execute permission evaluation rules.
-3. Save the evaluation result (`ALLOWED` or `DENIED`) for test scenario permissions to `$HOME/sec-test/eval_result.txt`.
+2. Review the DAC access scenarios provided in `$HOME/sec-test/perm_eval.txt`.
+3. Determine whether each scenario attempt is permitted under Linux DAC rules, and write the results to `$HOME/sec-test/eval_result.txt` formatted as:
+   - `SCENARIO_1: <ALLOWED|DENIED>`
+   - `SCENARIO_2: <ALLOWED|DENIED>`
+   - `SCENARIO_3: <ALLOWED|DENIED>`
 4. Validate your solution:
    ```bash
    tld check

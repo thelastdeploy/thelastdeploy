@@ -27,6 +27,12 @@ Example:
 find $HOME/search-test -type f -name "*.log" -size +1M
 ```
 
+- **Counting matching files**:
+  You can pipe the search results to `wc -l` to count how many matching files exist:
+  ```bash
+  find $HOME/search-test -name "*.audit" | wc -l
+  ```
+
 ---
 
 ## Lab Tasks
@@ -37,7 +43,7 @@ find $HOME/search-test -type f -name "*.log" -size +1M
    tld start lnx-search-by-file-properties
    ```
 2. Locate the single log file inside `$HOME/search-test/logs` that is larger than 5 Megabytes (`+5M`).
-3. Save its filename (e.g. `oversized.log`) to `$HOME/search-test/large_log.txt`.
+3. Save its filename to `$HOME/search-test/large_log.txt`.
 4. Validate your solution:
    ```bash
    tld check

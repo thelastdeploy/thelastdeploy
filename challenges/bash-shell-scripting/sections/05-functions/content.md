@@ -55,8 +55,8 @@ fi
    ```bash
    tld start lnx-build-script-toolkit
    ```
-2. Create a administration script at `$HOME/script-test/toolkit.sh` with helper functions.
-3. Implement file cleanup logic that checks for existing `.tmp` files and safely removes them.
+2. Create an executable script library at `$HOME/script-test/toolkit.sh`.
+3. Implement a reusable helper function named `is_file_present` that accepts a file path as `$1`, returning exit code `0` if the file exists and `1` if it is missing.
 4. Validate your solution:
    ```bash
    tld check

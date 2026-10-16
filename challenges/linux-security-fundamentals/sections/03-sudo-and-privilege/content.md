@@ -47,8 +47,8 @@ deploy  ALL = (ALL) NOPASSWD: ALL
    ```bash
    tld start lnx-investigate-privilege-access
    ```
-2. Audit permissive sudoers configurations.
-3. Identify users with full `ALL=(ALL:ALL) ALL` NOPASSWD privileges and save their username to `$HOME/sec-test/permissive_user.txt`.
+2. Inspect the sudoers rules defined in `$HOME/sec-test/mock_sudoers`.
+3. Identify the account assigned unauthenticated superuser privileges (`NOPASSWD: ALL`) and write that username to `$HOME/sec-test/permissive_user.txt`.
 4. Validate your solution:
    ```bash
    tld check

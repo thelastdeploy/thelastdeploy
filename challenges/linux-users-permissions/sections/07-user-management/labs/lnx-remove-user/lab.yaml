@@ -6,5 +6,6 @@ environment:
   profile: tld-ubuntu
 setup:
   type: shell
-  seed_commands: []
+  seed_commands:
+    - "useradd dev-intern || true"
 version: 1

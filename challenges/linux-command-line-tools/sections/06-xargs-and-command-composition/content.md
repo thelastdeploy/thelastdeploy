@@ -33,7 +33,7 @@ find $HOME/xargs-test -name "*.log" | xargs grep -i "error"
    tld start lnx-process-multiple-files
    ```
 2. Use `find` and `xargs` to search all `.log` files in `$HOME/xargs-test/batch` for lines containing `FAIL`.
-3. Count the total lines output by `grep` across all files and save the total count integer (e.g. `3`) to `$HOME/xargs-test/fail_count.txt`.
+3. Count the total lines output by `grep` across all files (e.g. using `wc -l`) and save the total count integer to `$HOME/xargs-test/fail_count.txt`.
 4. Validate your solution:
    ```bash
    tld check

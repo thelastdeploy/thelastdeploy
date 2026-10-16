@@ -49,8 +49,8 @@ awk '{print $1}' access.log | sort | uniq -c | sort -nr | head -n 5
    tld start lnx-extract-useful-data
    ```
 2. Inspect the IP log file `$HOME/text-test/ips.txt`.
-3. Count the number of times IP `192.168.1.50` appears in the log.
-4. Save the count integer (e.g., `4`) into `$HOME/text-test/ip_count.txt`.
+3. Count the number of times IP `192.168.1.50` appears in the log (e.g., using `grep -c` or `sort | uniq -c`).
+4. Save the count integer into `$HOME/text-test/ip_count.txt`.
 5. Validate your solution:
    ```bash
    tld check

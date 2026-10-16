@@ -17,7 +17,7 @@ Your task is to analyze multi-part log archives in `$HOME/cli-challenge/logs/`, 
 2. Navigate to `$HOME/cli-challenge/logs`.
 3. Process all `.log` files in the directory to find lines matching `/api/v1/auth`.
 4. Extract the IP address (column 1), count request frequencies per IP, and determine the top offender IP address.
-5. Save the top offender IP address (e.g. `203.0.113.199`) into `$HOME/cli-challenge/root_cause_ip.txt`.
+5. Save the top offender IP address into `$HOME/cli-challenge/root_cause_ip.txt`.
 6. Validate your solution:
    ```bash
    tld check

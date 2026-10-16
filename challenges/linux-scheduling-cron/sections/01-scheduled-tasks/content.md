@@ -39,7 +39,7 @@ A standard cron expression consists of 5 time fields followed by the command to 
    tld start lnx-create-cron-job
    ```
 2. Understand cron schedule field syntax.
-3. Create a cron specification file at `$HOME/cron-test/step_schedule.cron` containing a 5-minute interval schedule (`*/5 * * * *`).
+3. Create a cron specification file at `$HOME/cron-test/step_schedule.cron` containing a 15-minute interval schedule.
 4. Validate your solution:
    ```bash
    tld check
@@ -51,7 +51,7 @@ A standard cron expression consists of 5 time fields followed by the command to 
    tld start lnx-understand-scheduled-tasks
    ```
 2. Write standard daily cron expressions.
-3. Create a cron specification file at `$HOME/cron-test/daily_backup.cron` scheduled at 2:30 AM daily (`30 2 * * *`).
+3. Create a cron specification file at `$HOME/cron-test/daily_backup.cron` scheduled to run at 2:30 AM daily.
 4. Validate your solution:
    ```bash
    tld check

@@ -23,7 +23,7 @@ To extract actionable metrics from unstructured log dumps:
    ```
 2. Inspect `$HOME/cli-investigation/raw_dump.log`.
 3. Parse the log file to identify the user ID associated with the highest number of failed authentication attempts (`AUTH_FAILURE`).
-4. Save that user ID string (e.g. `user_88`) into `$HOME/cli-investigation/bad_user.txt`.
+4. Save that user ID string (excluding the `user=` prefix) into `$HOME/cli-investigation/bad_user.txt`.
 5. Validate your solution:
    ```bash
    tld check

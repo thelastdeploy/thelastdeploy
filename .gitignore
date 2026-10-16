@@ -74,6 +74,7 @@ build/
 .coverage
 htmlcov/
 coverage.xml
+/tests/reports/
 
 # Misc
 *.bak

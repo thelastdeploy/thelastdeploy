@@ -55,7 +55,7 @@ The `dig` (domain information groper) utility is the modern, preferred tool for 
    tld start lnx-resolve-domain
    ```
 2. Query the DNS resolution system (or host lookup databases) on this machine to find the IPv4 loopback address associated with the standard hostname `localhost`.
-3. Save that IP address (exactly `127.0.0.1`) on a single line to a file named `resolved_dns.txt` inside your `~/network-test` directory.
+3. Save that IP address on a single line to a file named `resolved_dns.txt` inside your `~/network-test` directory.
 4. Verify the task:
    ```bash
    tld check

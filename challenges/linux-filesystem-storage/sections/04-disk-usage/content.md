@@ -59,7 +59,7 @@ find /var/log -type f -size +10M
    tld start lnx-find-large-files
    ```
 2. Inspect `$HOME/disk-test/logs`.
-3. Locate the largest file inside `$HOME/disk-test/logs` and save its filename (e.g., `heavy_dump.log`) into `$HOME/disk-test/largest_file.txt`.
+3. Locate the largest file inside `$HOME/disk-test/logs` and save its filename into `$HOME/disk-test/largest_file.txt`.
 4. Validate your solution:
    ```bash
    tld check

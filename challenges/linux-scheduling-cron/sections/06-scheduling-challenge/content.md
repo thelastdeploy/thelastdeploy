@@ -5,12 +5,12 @@ In this final capstone challenge, you will troubleshoot and repair a broken sche
 ## Challenge Tasks
 
 1. **Fix Crontab File**: Edit `$HOME/cron-challenge/maint.crontab`:
-   - Set `PATH=/usr/local/bin:/usr/bin:/bin` near the top of the file.
-   - Fix the broken schedule so it runs daily at 02:00 AM (`0 2 * * *`).
-   - Use the full absolute path `$HOME/cron-challenge/maint_script.sh`.
-   - Redirect standard output and standard error to `$HOME/cron-challenge/maint.log` (`>> $HOME/cron-challenge/maint.log 2>&1`).
-2. **Fix Script Permissions**: Ensure `$HOME/cron-challenge/maint_script.sh` is executable (`chmod +x`).
-3. **Status Report**: Output a status verification file at `$HOME/cron-challenge/status.txt` containing `CRON_RECOVERY_SUCCESS`.
+   - Set a reliable `PATH` variable (`PATH=/usr/local/bin:/usr/bin:/bin`) near the top of the file so cron can locate standard system binaries.
+   - Fix the invalid schedule expression so the job runs daily at 02:00 AM.
+   - Specify the absolute path to `$HOME/cron-challenge/maint_script.sh`.
+   - Append standard output and redirect standard error to `$HOME/cron-challenge/maint.log` using `>>` and `2>&1`.
+2. **Fix Script Permissions**: Ensure `$HOME/cron-challenge/maint_script.sh` has execute permissions.
+3. **Status Report**: Write `CRON_RECOVERY_SUCCESS` to `$HOME/cron-challenge/status.txt` to confirm recovery completion.
 
 ---
 
@@ -21,9 +21,11 @@ In this final capstone challenge, you will troubleshoot and repair a broken sche
    ```bash
    tld start lnx-repair-scheduled-maintenance
    ```
-2. Complete the task scheduling capstone challenge.
-3. Repair `$HOME/cron-challenge/maint.crontab`, fix `$HOME/cron-challenge/maint_script.sh`, and record `SCHEDULE_STATUS: ACTIVE` in `$HOME/cron-challenge/status.txt`.
-4. Validate your solution:
+2. Inspect the misconfigured crontab file at `$HOME/cron-challenge/maint.crontab` and review existing errors.
+3. Update the schedule to run daily at 02:00 AM, reference `$HOME/cron-challenge/maint_script.sh`, configure redirection, and ensure appropriate `PATH` settings.
+4. Make `$HOME/cron-challenge/maint_script.sh` executable.
+5. Create `$HOME/cron-challenge/status.txt` containing `CRON_RECOVERY_SUCCESS`.
+6. Validate your solution:
    ```bash
    tld check
    ```

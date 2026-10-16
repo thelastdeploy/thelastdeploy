@@ -33,7 +33,7 @@ To suppress output completely:
    tld start lnx-manage-user-crontab
    ```
 2. Export and back up crontab entries.
-3. Create a crontab backup file at `$HOME/cron-test/current_crontab.bak` containing scheduled cron commands.
+3. Back up the scheduled cron job in `$HOME/cron-test/user_schedule.txt` to `$HOME/cron-test/current_crontab.bak`.
 4. Validate your solution:
    ```bash
    tld check
@@ -45,7 +45,7 @@ To suppress output completely:
    tld start lnx-schedule-recurring-task
    ```
 2. Configure cron output redirection to prevent orphan mail.
-3. Create a crontab snippet at `$HOME/cron-test/my_cron.txt` redirecting stdout and stderr (`>> $HOME/cron-test/job.log 2>&1`).
+3. Create a crontab snippet at `$HOME/cron-test/my_cron.txt` with an hourly schedule executing `audit.sh` and redirecting both stdout and stderr (`2>&1`) to `$HOME/cron-test/job.log`.
 4. Validate your solution:
    ```bash
    tld check

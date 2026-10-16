@@ -6,5 +6,8 @@ environment:
   profile: tld-ubuntu
 setup:
   type: shell
-  seed_commands: []
+  seed_commands:
+    - "groupadd dev-team || true"
+    - "useradd dev-intern || true"
+    - "gpasswd -d dev-intern dev-team || true"
 version: 1

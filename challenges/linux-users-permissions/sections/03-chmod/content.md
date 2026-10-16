@@ -30,8 +30,8 @@ Adding these weights gives a single digit (0–7) for each class:
 - **7** (4+2+1) = `rwx` (Full access)
 - **6** (4+2) = `rw-` (Read & Write)
 - **5** (4+1) = `r-x` (Read & Execute)
-- **4`** (4) = `r--` (Read Only)
-- **0`** (0) = `---` (No Access)
+- **4** (4) = `r--` (Read Only)
+- **0** (0) = `---` (No Access)
 
 Standard octal combinations:
 - **755 (`rwxr-xr-x`)**: Commonly used for scripts, programs, and directories.

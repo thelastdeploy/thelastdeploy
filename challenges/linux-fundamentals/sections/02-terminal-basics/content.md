@@ -23,9 +23,30 @@ command [options] [arguments]
 - **options/flags**: Modify the behavior of the command. They usually start with a single hyphen `-` or double hyphens `--` (e.g., `-l` or `--help`).
 - **arguments**: The target elements the command operates on (e.g., a file path).
 
+
+---
+
+## 3. Creating Files and Output Redirection
+
+In Linux, you frequently create files and save command output:
+
+- **Creating an empty file (`touch`)**:
+  ```bash
+  touch <filename>
+  ```
+  Example: `touch ~/terminal_ready` creates an empty file in your home directory.
+
+- **Writing output to a file (`>` redirection)**:
+  ```bash
+  echo "some text" > <filename>
+  ```
+  The `>` operator redirects the output of a command into a file. If the file does not exist, it is created.
+  Example: `echo "hello devlab" > ~/first_command.txt` writes `hello devlab` into `first_command.txt`.
+
 ---
 
 ## Lab Tasks
+
 
 ### Task 1: Open your first Linux terminal
 1. Start the lab in your terminal:

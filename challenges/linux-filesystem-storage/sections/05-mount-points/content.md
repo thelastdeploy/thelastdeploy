@@ -42,7 +42,7 @@ The `/etc/fstab` configuration file defines filesystems and storage UUIDs that s
    tld start lnx-identify-mounted-filesystems
    ```
 2. Query active mount points to determine the pseudo-filesystem mounted at `/proc`.
-3. Save the filesystem type name (e.g., `proc`) into `$HOME/mount-test/proc_fstype.txt`.
+3. Save the filesystem type name into `$HOME/mount-test/proc_fstype.txt`.
 4. Validate your solution:
    ```bash
    tld check

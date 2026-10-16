@@ -1,6 +1,6 @@
 ## Special Permissions (SUID, SGID, Sticky Bit)
 
-Standard user/group/others permission permissions cover most scenarios, but Linux has three special permission bits for advanced access patterns: **SUID**, **SGID**, and the **Sticky Bit**.
+Standard user/group/others permissions cover most scenarios, but Linux has three special permission bits for advanced access patterns: **SUID**, **SGID**, and the **Sticky Bit**.
 
 ---
 
@@ -23,7 +23,7 @@ When the **SUID** bit is set on an executable file, any user running it will tem
 The **SGID** bit has two behaviors:
 1. **On Executable Files**: The process executes with the privileges of the file's **group** owner.
 2. **On Directories**: Any new files/subdirectories created inside this directory automatically inherit the **group ownership** of the parent directory, rather than the primary group of the user who created them. This is vital for shared project workspaces.
-- **Representation**: Indicated by an `s` in the group's execute field (e.g., `-rwxr-s-xr-x`). In octal, SGID adds a leading **2** (e.g., `2755`).
+- **Representation**: Indicated by an `s` in the group's execute field (e.g., `-rwxr-sr-x`). In octal, SGID adds a leading **2** (e.g., `2755`).
 - **Configuration**:
   ```bash
   chmod g+s directory_name

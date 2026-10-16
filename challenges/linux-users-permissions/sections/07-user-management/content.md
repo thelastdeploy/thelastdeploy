@@ -47,48 +47,46 @@ sudo usermod -aG developers bob
 
 ## Lab Tasks
 
-### Task 1: Add user to a group
-1. Start the lab in your terminal:
-   ```bash
-   tld start lnx-add-user-group
-   ```
-2. Assign the user `dev-intern` as a member of the secondary group `dev-team`.
-3. Verify the task:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Create a system group
+### Task 1: Create a system group
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-create-group
    ```
-2. Create a new user group named `dev-team` on your local system.
+2. Create a new user group named `dev-team` on your local system using `groupadd`.
 3. Verify the task:
    ```bash
    tld check
    ```
 
-### Task 3: Create a new system user
+### Task 2: Create a new system user
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-create-user
    ```
-2. Create a new user account named `dev-intern` on your local system.
+2. Create a new user account named `dev-intern` on your local system using `useradd`.
 3. Verify the task:
    ```bash
    tld check
    ```
-   *(Note: If you ever need to reset this lab, you can delete the user by running `sudo userdel dev-intern`).*
+
+### Task 3: Add user to a group
+1. Start the lab in your terminal:
+   ```bash
+   tld start lnx-add-user-group
+   ```
+2. Assign the user `dev-intern` as a member of the secondary group `dev-team` using `usermod -aG`.
+3. Verify the task:
+   ```bash
+   tld check
+   ```
 
 ### Task 4: Remove a system user
 1. Start the lab in your terminal:
    ```bash
    tld start lnx-remove-user
    ```
-2. Clean up the system by deleting the user account `dev-intern` (you do not need to delete their home directory for this task).
+2. Clean up the system by deleting the user account `dev-intern` using `userdel`.
 3. Verify the task:
    ```bash
    tld check
    ```
-   *(Note: Remember to delete group `dev-team` manually if you wish to clean up completely: `sudo groupdel dev-team`).*

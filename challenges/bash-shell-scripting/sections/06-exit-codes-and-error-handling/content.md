@@ -45,9 +45,10 @@ Regardless of whether the script terminates normally or encounters an error, the
    ```bash
    tld start lnx-handle-script-failures
    ```
-2. Create an error-resilient script at `$HOME/script-test/resilient.sh`.
-3. Use `trap` commands to handle script exit signals and print cleanup confirmation messages upon termination.
-4. Validate your solution:
+2. Create an error-resilient script at `$HOME/script-test/resilient.sh` that accepts a target directory as argument `$1`.
+3. If the directory argument is missing or does not exist (`[ ! -d "$1" ]`), print an error and exit with a non-zero exit code (`exit 1`).
+4. If the directory exists, create a temporary file `$1/temp.txt` and use `trap` to ensure this temporary file is automatically cleaned up (`rm -f`) upon script termination, exiting with code `0`.
+5. Validate your solution:
    ```bash
    tld check
    ```

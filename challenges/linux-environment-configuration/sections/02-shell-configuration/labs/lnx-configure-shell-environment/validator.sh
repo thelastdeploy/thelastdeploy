@@ -10,8 +10,8 @@ fi
 
 CONTENT=$(cat "$TARGET")
 
-if ! echo "$CONTENT" | grep -Eq "export LAB_ENV=[\"']?devlab[\"']?"; then
-    echo "FAIL: $TARGET missing 'export LAB_ENV=\"devlab\"'."
+if ! echo "$CONTENT" | grep -Eq "export LAB_ENV=[\"']?(tld|devlab)[\"']?"; then
+    echo "FAIL: $TARGET missing 'export LAB_ENV=\"tld\"'."
     exit 1
 fi
 

@@ -51,7 +51,7 @@ file /bin/bash
    tld start lnx-investigate-file-properties
    ```
 2. Determine the true file type of `$HOME/metadata-test/unknown_file` using the `file` command.
-3. Save the single word output of the file type (e.g., `gzip` or `ASCII` or `ELF`) to `$HOME/metadata-test/file_type.txt`.
+3. Save the identified file type keyword to `$HOME/metadata-test/file_type.txt`.
 4. Validate your solution:
    ```bash
    tld check

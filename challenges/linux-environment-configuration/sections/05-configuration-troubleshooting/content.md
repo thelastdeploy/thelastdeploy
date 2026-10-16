@@ -35,8 +35,8 @@ systemctl restart myapp
    ```bash
    tld start lnx-diagnose-configuration-problem
    ```
-2. Diagnose invalid application configuration parameters.
-3. Create a diagnostic report at `$HOME/env-test/diagnosis.txt` containing `ROOT_CAUSE: INVALID_PORT`.
+2. Inspect the application error log at `$HOME/env-test/app_error.log` and the corresponding configuration file at `$HOME/env-test/broken_app.conf`.
+3. Identify the invalid parameter and record your findings by writing `ROOT_CAUSE: INVALID_PORT` into `$HOME/env-test/diagnosis.txt`.
 4. Validate your solution:
    ```bash
    tld check
@@ -47,8 +47,8 @@ systemctl restart myapp
    ```bash
    tld start lnx-restore-broken-configuration
    ```
-2. Restore corrupted configuration files from backup.
-3. Restore `$HOME/env-test/corrupted_server.conf` using the backup copy `$HOME/env-test/corrupted_server.conf.bak`.
+2. Inspect the corrupted file `$HOME/env-test/corrupted_server.conf` and its valid backup copy `$HOME/env-test/corrupted_server.conf.bak`.
+3. Restore `$HOME/env-test/corrupted_server.conf` from `$HOME/env-test/corrupted_server.conf.bak`.
 4. Validate your solution:
    ```bash
    tld check

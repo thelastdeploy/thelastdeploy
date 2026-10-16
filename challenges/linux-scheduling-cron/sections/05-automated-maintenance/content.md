@@ -40,7 +40,7 @@ echo "[$(date)] Pruned old log files" >> /var/log/maintenance.log
    tld start lnx-automate-file-cleanup
    ```
 2. Automate maintenance cleanup tasks via scripts.
-3. Create an executable cleanup script at `$HOME/cron-test/cleanup_job.sh` removing temporary log files and logging output to `$HOME/cron-test/cleanup.log`.
+3. Create an executable cleanup script at `$HOME/cron-test/cleanup_job.sh` that deletes stale files (`*.old`) inside `$HOME/cron-test/tmp_logs` while preserving other files, and appends `CLEANUP_COMPLETE` to `$HOME/cron-test/cleanup.log`.
 4. Validate your solution:
    ```bash
    tld check
@@ -52,7 +52,7 @@ echo "[$(date)] Pruned old log files" >> /var/log/maintenance.log
    tld start lnx-schedule-system-maintenance
    ```
 2. Configure system-wide `/etc/crontab` maintenance jobs.
-3. Create a system crontab snippet at `$HOME/cron-test/sys_crontab` including the user field `root` before command execution.
+3. Create a system crontab snippet at `$HOME/cron-test/sys_crontab` scheduling `/usr/local/bin/sys_maint.sh` to run at 3:00 AM daily under user context `root`.
 4. Validate your solution:
    ```bash
    tld check

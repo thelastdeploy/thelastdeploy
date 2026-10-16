@@ -38,8 +38,10 @@ find /var/www -nouser -o -nogroup
    ```bash
    tld start lnx-audit-file-permissions
    ```
-2. Audit numeric octal permission masks on sensitive files.
-3. Save the octal permission mode of `$HOME/sec-test/shadow_copy` (e.g. `600`) to `$HOME/sec-test/permission_audit.txt`.
+2. Audit the numeric octal permission masks of files in `$HOME/sec-test/configs/` using `stat`.
+3. Save the audited octal modes to `$HOME/sec-test/permission_audit.txt` with entries formatted as:
+   - `app.conf: <octal_mode>`
+   - `db.conf: <octal_mode>`
 4. Validate your solution:
    ```bash
    tld check
@@ -50,8 +52,8 @@ find /var/www -nouser -o -nogroup
    ```bash
    tld start lnx-find-insecure-files
    ```
-2. Locate insecure world-writable files.
-3. Find all world-writable files (`-perm -0002`) in `$HOME/sec-test/` and record their paths in `$HOME/sec-test/insecure_files.txt`.
+2. Inspect file permissions across `$HOME/sec-test/audit_dir/`.
+3. Locate all world-writable files using `find -perm -0002` and write their paths to `$HOME/sec-test/insecure_files.txt`.
 4. Validate your solution:
    ```bash
    tld check

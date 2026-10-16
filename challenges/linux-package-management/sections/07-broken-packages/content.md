@@ -32,7 +32,7 @@ If an install process crashes unexpectedly, a stale lock file remains on disk, c
    ```
 2. Inspect the status log `$HOME/broken-test/dpkg_status.log`.
 3. Locate the package name marked with status `half-installed`.
-4. Save the package name (`custom-app`) into `$HOME/broken-test/broken_package.txt`.
+4. Save the package name into `$HOME/broken-test/broken_package.txt`.
 5. Validate your solution:
    ```bash
    tld check

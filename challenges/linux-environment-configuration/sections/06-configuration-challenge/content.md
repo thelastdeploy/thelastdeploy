@@ -19,9 +19,11 @@ In this final capstone challenge, you will fix a broken application configuratio
    ```bash
    tld start lnx-fix-misconfigured-application
    ```
-2. Complete the environment configuration capstone challenge.
-3. Fix configuration parameters in `$HOME/config-challenge/app.conf`, create `$HOME/config-challenge/.env`, and record `APP_CONFIG_STATUS: VERIFIED` in `$HOME/config-challenge/fix_report.txt`.
-4. Validate your solution:
+2. Inspect the misconfigured configuration file at `$HOME/config-challenge/app.conf` and the environment template at `$HOME/config-challenge/.env.template`.
+3. Update `$HOME/config-challenge/app.conf` so `DB_HOST=db.internal` and `PORT=8080`.
+4. Create `$HOME/config-challenge/.env` using the template or with `APP_KEY=secret_key_123`.
+5. Write `APP_CONFIG_STATUS: VERIFIED` to `$HOME/config-challenge/fix_report.txt`.
+6. Validate your solution:
    ```bash
    tld check
    ```

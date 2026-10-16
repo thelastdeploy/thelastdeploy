@@ -38,7 +38,7 @@ grep -E " \"(4|5)[0-9]{2} " access.log
    tld start lnx-match-log-patterns
    ```
 2. Search `$HOME/regex-test/network.log` using `grep -E` for lines matching valid IPv4 addresses starting with `10.`.
-3. Save the number of matching lines (e.g. `3`) to `$HOME/regex-test/ip_matches.txt`.
+3. Count the matching lines (e.g. using `grep -c` or `wc -l`) and save the count to `$HOME/regex-test/ip_matches.txt`.
 4. Validate your solution:
    ```bash
    tld check

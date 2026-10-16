@@ -32,7 +32,7 @@ docker run --help
    tld start lnx-help-flags
    ```
 2. Use the command helper (`--help` or `-h`) for `ls` and find the option that sorts directory listings by file size.
-3. Save that flag (exactly `-S`) to a file named `size_flag.txt` inside `~/help-test/`.
+3. Save that flag to a file named `size_flag.txt` inside `~/help-test/`.
 4. Verify the task:
    ```bash
    tld check
@@ -44,9 +44,8 @@ docker run --help
    tld start lnx-man-pages
    ```
 2. Open system manual using `man mkdir` to find the flag that allows creating parent directories as needed.
-3. Save that flag (exactly `-p` or `--parents`) to a file named `parents_flag.txt` inside `~/help-test/`.
+3. Save that flag to a file named `parents_flag.txt` inside `~/help-test/`.
 4. Verify the task:
    ```bash
    tld check
    ```
-```

@@ -37,7 +37,7 @@ lsof +L1
    tld start lnx-investigate-storage-usage
    ```
 2. Inspect `$HOME/storage-investigation`.
-3. Locate the hidden log dump file consuming space inside a subfolder and identify its file name (e.g. `.hidden_dump.log`).
+3. Locate the hidden log dump file consuming space inside a subfolder and identify its file name.
 4. Save the file name to `$HOME/storage-investigation/culprit.txt`.
 5. Validate your solution:
    ```bash

@@ -35,8 +35,8 @@ deb http://archive.ubuntu.com/ubuntu focal main restricted universe multiverse
    tld start lnx-investigate-package-repositories
    ```
 2. Inspect the mock sources file `$HOME/repo-test/sources.list`.
-3. Locate the primary distribution codename used in the active `deb` repository URL (e.g. `focal`).
-4. Save the codename (`focal`) into `$HOME/repo-test/repo_codename.txt`.
+3. Locate the primary distribution codename used in the active `deb` repository URL.
+4. Save the codename into `$HOME/repo-test/repo_codename.txt`.
 5. Validate your solution:
    ```bash
    tld check

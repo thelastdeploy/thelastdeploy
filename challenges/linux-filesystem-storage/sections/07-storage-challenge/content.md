@@ -21,7 +21,7 @@ Your goal is to inspect the directory, identify the unneeded archive files, and 
    tld start lnx-recover-disk-space
    ```
 2. Navigate to `$HOME/storage-challenge`.
-3. Remove the stale archive files in `$HOME/storage-challenge/archives/` (`crash_2025.dump`, `old_logs.tar.gz`).
+3. Inspect `$HOME/storage-challenge/archives/` and remove all stale archive files (`*.dump`, `*.tar.gz`).
 4. Keep the active log files intact (`active_app.log`, `active_service.log`).
 5. Validate your solution:
    ```bash

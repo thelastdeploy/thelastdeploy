@@ -33,9 +33,10 @@ find /var/log/app -name "*.log" -mtime +7 -delete
    ```bash
    tld start lnx-automate-system-maintenance
    ```
-2. Create a system maintenance script at `$HOME/script-test/clean_old_logs.sh`.
-3. Find and delete `.tmp` files older than 7 days, logging maintenance activity to `$HOME/script-test/maintenance.log`.
-4. Validate your solution:
+2. Create an executable system maintenance script at `$HOME/script-test/clean_old_logs.sh`.
+3. The script should delete all obsolete `.old` files inside `$HOME/script-test/active_logs/` (while leaving active `.log` files untouched).
+4. Append a timestamped log entry containing `CLEANUP_COMPLETE` to `$HOME/script-test/maintenance.log`.
+5. Validate your solution:
    ```bash
    tld check
    ```
