@@ -97,7 +97,12 @@ for test_script in "${MATCHED_TESTS[@]}"; do
     # 1. Start Lab Container in Non-Interactive Mode
     if harness_start_lab "$lab_id"; then
         # 2. Source the test script directly
-        if ( source "$test_script" ); then
+        TEST_FAILED_STEPS=0
+        set +e
+        source "$test_script"
+        script_exit=$?
+        set -e
+        if [[ $script_exit -eq 0 && ${TEST_FAILED_STEPS:-0} -eq 0 ]]; then
             test_passed=1
         else
             test_passed=0

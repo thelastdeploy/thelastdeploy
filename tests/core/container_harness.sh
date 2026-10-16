@@ -30,6 +30,7 @@ harness_start_lab() {
     local lab_id="$1"
     ACTIVE_LAB_ID="$lab_id"
     STEP_INDEX=0
+    TEST_FAILED_STEPS=0
     LAB_START_TIME=$(date +%s)
 
     ui_section "Starting Lab Environment: $lab_id"
@@ -155,6 +156,7 @@ student_exec() {
         ui_step_fail "Expected exit code $expect_exit, but got $actual_exit"
         echo "ASSERTION FAILED: Expected exit code $expect_exit, got $actual_exit" >> "$CURRENT_TEST_LOG"
         rm -f "$stdout_file" "$stderr_file"
+        TEST_FAILED_STEPS=$((TEST_FAILED_STEPS + 1))
         return 1
     fi
 
@@ -164,6 +166,7 @@ student_exec() {
             ui_step_fail "Expected stdout to contain '$expect_stdout'"
             echo "ASSERTION FAILED: Missing stdout snippet: '$expect_stdout'" >> "$CURRENT_TEST_LOG"
             rm -f "$stdout_file" "$stderr_file"
+            TEST_FAILED_STEPS=$((TEST_FAILED_STEPS + 1))
             return 1
         fi
     fi
@@ -174,6 +177,7 @@ student_exec() {
             ui_step_fail "Stdout did not match regex: '$expect_stdout_regex'"
             echo "ASSERTION FAILED: Regex match failed: '$expect_stdout_regex'" >> "$CURRENT_TEST_LOG"
             rm -f "$stdout_file" "$stderr_file"
+            TEST_FAILED_STEPS=$((TEST_FAILED_STEPS + 1))
             return 1
         fi
     fi
@@ -184,6 +188,7 @@ student_exec() {
             ui_step_fail "Expected stderr to contain '$expect_stderr'"
             echo "ASSERTION FAILED: Missing stderr snippet: '$expect_stderr'" >> "$CURRENT_TEST_LOG"
             rm -f "$stdout_file" "$stderr_file"
+            TEST_FAILED_STEPS=$((TEST_FAILED_STEPS + 1))
             return 1
         fi
     fi

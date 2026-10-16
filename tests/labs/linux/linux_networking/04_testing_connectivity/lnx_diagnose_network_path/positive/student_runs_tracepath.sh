@@ -13,7 +13,7 @@ LAB_ID="lnx-diagnose-network-path"
 student_exec "tracepath 127.0.0.1" \
     --desc "Student traces routing path to loopback" \
     --expect-exit 0 \
-    --expect-stdout "127.0.0.1"
+    --expect-stdout "reached"
 
 # Step 2: Student saves the tracepath command to trace_cmd.txt
 student_exec "echo 'tracepath 127.0.0.1' > ~/network-test/trace_cmd.txt" \

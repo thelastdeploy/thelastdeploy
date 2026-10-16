@@ -3,8 +3,8 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive container=docker
 
 RUN apt-get update -qq && apt-get install -y --no-install-recommends \
-    bash coreutils sudo curl wget tar gzip rsync \
-    net-tools iproute2 iputils-ping dnsutils \
+    bash coreutils sudo curl wget tar gzip rsync file \
+    net-tools iproute2 iputils-ping iputils-tracepath dnsutils \
     procps htop lsof sysstat strace \
     man-db vim nano less \
     openssh-client openssh-server openssl ca-certificates \

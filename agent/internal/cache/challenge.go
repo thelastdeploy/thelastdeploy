@@ -434,10 +434,15 @@ func parseLabYAML(path string) (*Lab, error) {
 			lab.ResourcesMem, _ = strconv.Atoi(val)
 		case inSetup && indent >= 2 && key == "seed_commands":
 			inSeedCmds = true
-		case inSetup && indent >= 2 && !strings.HasPrefix(trimmed, "- ") && key != "seed_commands":
-			inSeedCmds = false
 		case inSeedCmds && indent >= 2 && strings.HasPrefix(trimmed, "- "):
 			lab.SeedCommands = append(lab.SeedCommands, unquote(strings.TrimPrefix(trimmed, "- ")))
+		case inSeedCmds && indent > 2 && !strings.HasPrefix(trimmed, "- ") && (key == "" || !strings.Contains(trimmed, ":") || strings.HasPrefix(trimmed, ">")):
+			if len(lab.SeedCommands) > 0 {
+				lastIdx := len(lab.SeedCommands) - 1
+				lab.SeedCommands[lastIdx] = unquote(lab.SeedCommands[lastIdx] + " " + trimmed)
+			}
+		case inSetup && indent >= 2 && !strings.HasPrefix(trimmed, "- ") && key != "seed_commands":
+			inSeedCmds = false
 		case indent == 0 && key == "environment":
 			inEnv = true
 			if lab.Environment == nil {

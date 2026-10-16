@@ -7,7 +7,6 @@ setup:
   seed_commands:
   - mkdir -p $HOME/env-test
   - printf 'PORT=INVALID_PORT_STRING\nHOST=127.0.0.1\n' > $HOME/env-test/broken_app.conf
-  - 'printf ''[ERROR] Failed to bind to port INVALID_PORT_STRING: integer expected\n''
-    > $HOME/env-test/app_error.log'
+  - 'printf "[ERROR] Failed to bind to port INVALID_PORT_STRING: integer expected\n" > $HOME/env-test/app_error.log'
   - rm -f $HOME/env-test/diagnosis.txt
 version: 2

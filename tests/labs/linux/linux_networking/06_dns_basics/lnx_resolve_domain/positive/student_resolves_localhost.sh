@@ -9,9 +9,9 @@ set -euo pipefail
 
 LAB_ID="lnx-resolve-domain"
 
-# Step 1: Student resolves localhost using getent hosts or /etc/hosts
-student_exec "getent hosts localhost" \
-    --desc "Student queries host lookup database for localhost" \
+# Step 1: Student resolves localhost using getent ahostsv4
+student_exec "getent ahostsv4 localhost" \
+    --desc "Student queries host lookup database for localhost IPv4" \
     --expect-exit 0 \
     --expect-stdout "127.0.0.1"
 

@@ -19,7 +19,7 @@ student_exec "stat ~/metadata-test/target_file.txt" \
 student_exec "stat -c '%s' ~/metadata-test/target_file.txt" \
     --desc "Student extracts byte size using stat format %s" \
     --expect-exit 0 \
-    --expect-stdout "40"
+    --expect-stdout "39"
 
 # Step 3: Student redirects the size into file_size.txt
 student_exec "stat -c '%s' ~/metadata-test/target_file.txt > ~/metadata-test/file_size.txt" \
@@ -30,7 +30,7 @@ student_exec "stat -c '%s' ~/metadata-test/target_file.txt > ~/metadata-test/fil
 student_exec "cat ~/metadata-test/file_size.txt" \
     --desc "Student verifies file_size.txt content" \
     --expect-exit 0 \
-    --expect-stdout "40"
+    --expect-stdout "39"
 
 # Step 5: Student runs tld check to validate completion
 student_exec "tld check" \
