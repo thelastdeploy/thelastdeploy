@@ -24,7 +24,7 @@ run_preflight() {
     echo -e "  ${GREEN}✓${RESET} Isolated Dev CLI ready: $CLI"
     echo -e "  ${GREEN}✓${RESET} Target environment: local (config dir: $TLD_DIR)"
     echo -e "  ${CYAN}⚙${RESET} Syncing challenge definitions into dev environment..."
-    "$CLI" sync -a >/dev/null 2>&1 || true
+    (cd "$PROJECT_ROOT" && "$CLI" sync --all >/dev/null 2>&1 || true)
     echo -e "  ${GREEN}✓${RESET} Challenge definitions synced."
 
     # 3. Check for Python 3 (for report generator)

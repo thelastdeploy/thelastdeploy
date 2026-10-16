@@ -138,7 +138,7 @@ student_exec "tld check" \
 ---
 
 ## 6. Phase 5: Version Control & Git Hygiene
-
+- **Explicit Instruction Only**: Never commit, push to remote, or run automated test runs/suites unless the user explicitly asks or instructs you to do so. Always audit, diagnose, and present findings first.
 - **Conventional Commits**: Format commit messages using standard conventions:
   ```bash
   git commit -m "test(labs): add automated positive test suite and curriculum fixes across modules X-Y"

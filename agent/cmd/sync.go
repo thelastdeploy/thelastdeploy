@@ -62,7 +62,7 @@ func runSync(args []string) error {
 
 	for i := 0; i < len(args); i++ {
 		switch args[i] {
-		case "--all":
+		case "-a", "--all", "-all":
 			syncAll = true
 		case "-m":
 			if i+1 < len(args) {
@@ -86,6 +86,17 @@ func runSync(args []string) error {
 	drainQueue(cfg.APIBaseURL, cfg.AuthToken, tldDir)
 
 	// Priority 1: Sync from local challenges folder if present (dev setup)
+	if _, err := os.Stat("challenges"); os.IsNotExist(err) {
+		if exe, err := os.Executable(); err == nil {
+			if resolved, err := filepath.EvalSymlinks(exe); err == nil {
+				candidate := filepath.Join(filepath.Dir(resolved), "..")
+				if _, err := os.Stat(filepath.Join(candidate, "challenges")); err == nil {
+					_ = os.Chdir(candidate)
+				}
+			}
+		}
+	}
+
 	if _, err := os.Stat("challenges"); err == nil {
 		fmt.Println("Syncing from local challenges directory...")
 		err := syncFromLocal(cfg.ChallengesDir, targetModule, targetLab)

@@ -13,4 +13,4 @@ Whenever auditing curriculum sections or authoring lab test flows for The Last D
 2. **Environment & Testing Targets**:
    - The CLI binary under test is `./bin/tld-dev`.
    - The configuration directory is `~/.tld-dev`.
-   - Never run unprompted full test suites.
+   - **Explicit User Trigger Only**: NEVER commit, push, or execute test runs/suites unless the user explicitly asks or instructs you to do so. Diagnose and propose fixes first, waiting for explicit confirmation.
