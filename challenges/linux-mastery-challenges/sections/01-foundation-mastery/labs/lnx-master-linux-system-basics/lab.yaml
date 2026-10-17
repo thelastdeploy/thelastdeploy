@@ -2,3 +2,11 @@ id: lnx-master-linux-system-basics
 title: "Master Linux System Basics"
 xp: 50
 description: "Demonstrate mastery over Linux CLI navigation, environment variables, process signaling, and text processing."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mastery-foundation
+  - rm -f $HOME/mastery-foundation/basics_mastery.log
+instructions: '1. Create directory `$HOME/mastery-foundation`.
+2. Execute file, environment, and process manipulations as required.
+3. Write `FOUNDATION_SYSTEM_BASICS_MASTERED` into `$HOME/mastery-foundation/basics_mastery.log`.'
+version: 2

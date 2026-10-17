@@ -30,7 +30,11 @@ When a file is deleted (`rm`) while a running process holds an open file handle,
    tld start lnx-investigate-disk-capacity
    ```
 2. Analyze directory disk usage using `du`.
-3. Identify the largest directory in `$HOME/storage-test/data` using `du -sh *` and write directory name to `$HOME/storage-test/largest_dir.txt`.
+3. Inspect directory sizes inside `$HOME/storage-test/capacity_audit` using `du -sh *` and write the name of the largest directory (`backups`) to `$HOME/storage-test/largest_dir.txt`:
+   ```bash
+   du -sh ~/storage-test/capacity_audit/* | sort -rh
+   echo "backups" > ~/storage-test/largest_dir.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check
@@ -41,8 +45,11 @@ When a file is deleted (`rm`) while a running process holds an open file handle,
    ```bash
    tld start lnx-recover-storage-space
    ```
-2. Recover storage space consumed by temporary files.
-3. Identify and safely delete obsolete `.tmp` and log dump files in `$HOME/storage-test/cleanup_target/`.
+2. Recover storage space consumed by obsolete log archives.
+3. Identify and safely delete the stale backup archive `old_app_log.bak` in `$HOME/storage-test/cleanup_target/logs/` while preserving the active `app.log`:
+   ```bash
+   rm ~/storage-test/cleanup_target/logs/old_app_log.bak
+   ```
 4. Validate your solution:
    ```bash
    tld check

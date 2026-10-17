@@ -8,6 +8,11 @@ if [ ! -f "$SCRIPT_PATH" ]; then
     exit 1
 fi
 
+if [ ! -s "$SCRIPT_PATH" ]; then
+    echo "FAIL: $SCRIPT_PATH is empty."
+    exit 1
+fi
+
 if [ ! -x "$SCRIPT_PATH" ]; then
     echo "FAIL: $SCRIPT_PATH is not executable."
     exit 1

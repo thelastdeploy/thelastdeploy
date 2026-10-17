@@ -20,7 +20,11 @@ Operational reliability ensures that services self-heal when transient failures 
    ```
 2. Create directory `$HOME/reliability`.
 3. Configure systemd watchdog timer supervision and synthetic health checking script.
-4. Write `OPERATIONAL_RELIABILITY_HEALTHCHECK_ACTIVE` into `$HOME/reliability/reliability_design.log`.
+4. Write `OPERATIONAL_RELIABILITY_HEALTHCHECK_ACTIVE` into `$HOME/reliability/reliability_design.log`:
+   ```bash
+   mkdir -p "$HOME/reliability"
+   echo "OPERATIONAL_RELIABILITY_HEALTHCHECK_ACTIVE" > "$HOME/reliability/reliability_design.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

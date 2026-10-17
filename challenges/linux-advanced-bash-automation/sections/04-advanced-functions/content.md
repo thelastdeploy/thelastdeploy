@@ -50,13 +50,47 @@ Local variable scoping and explicit return status checks prevent unintended vari
    ```bash
    tld start lnx-build-reusable-shell-library
    ```
-2. Create directory `$HOME/lib-test`.
-3. Create reusable shell library `$HOME/lib-test/utils.sh` with:
-4. - `log_info`: prints `[INFO] <message>`
-5. - `log_error`: prints `[ERROR] <message>` to stderr
-6. - `is_file_empty`: accepts filename `$1`, returns 0 if file is empty or does not exist, returns 1 if file has size > 0.
-7. Create `$HOME/lib-test/test_runner.sh` sourcing `utils.sh` and exercising these functions.
-8. Validate your solution:
+2. Create directory `$HOME/lib-test`:
+   ```bash
+   mkdir -p ~/lib-test
+   ```
+3. Create the reusable shell library `$HOME/lib-test/utils.sh`:
+   ```bash
+   cat << 'EOF' > ~/lib-test/utils.sh
+   #!/bin/bash
+
+   log_info() {
+       echo "[INFO] $1"
+   }
+
+   log_error() {
+       echo "[ERROR] $1" >&2
+   }
+
+   is_file_empty() {
+       local file="${1:-}"
+       if [ ! -f "$file" ] || [ ! -s "$file" ]; then
+           return 0
+       else
+           return 1
+       fi
+   }
+   EOF
+   chmod +x ~/lib-test/utils.sh
+   ```
+4. Create `$HOME/lib-test/test_runner.sh` to test the library:
+   ```bash
+   cat << 'EOF' > ~/lib-test/test_runner.sh
+   #!/bin/bash
+   source "$HOME/lib-test/utils.sh"
+
+   log_info "Running test suite"
+   EOF
+   chmod +x ~/lib-test/test_runner.sh
+   ~/lib-test/test_runner.sh
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
+

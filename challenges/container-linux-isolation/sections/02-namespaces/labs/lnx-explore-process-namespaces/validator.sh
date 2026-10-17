@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "NAMESPACE_TYPES_EXPLORED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'NAMESPACE_TYPES_EXPLORED'."
     exit 1

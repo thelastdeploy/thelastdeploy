@@ -44,27 +44,47 @@ Packet filtering controls network flow by matching packet attributes (IP, port, 
 
 ## Lab Tasks
 
-### Task 1: Configure Network Traffic Filtering (`lnx-configure-network-filtering`)
-1. Start the lab:
-   ```bash
-   tld start lnx-configure-network-filtering
-   ```
-2. Create directory `$HOME/fw-test`.
-3. Write firewall rule configuration script `$HOME/fw-test/filter_rules.sh` demonstrating TCP port 80/443 ALLOW rule definitions.
-4. Write summary `FILTERING_RULES_CONFIGURED` to `$HOME/fw-test/filter_summary.txt`.
-5. Validate your solution:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Inspect Firewall Rules and Packet Chains (`lnx-inspect-firewall-rules`)
+### Task 1: Inspect Firewall Rules and Packet Chains (`lnx-inspect-firewall-rules`)
 1. Start the lab:
    ```bash
    tld start lnx-inspect-firewall-rules
    ```
-2. Create directory `$HOME/fw-test`.
-3. Inspect firewall rule chains (`iptables -L -n` or `nft list ruleset`).
-4. Write output summary `FIREWALL_CHAINS_INSPECTED` to `$HOME/fw-test/fw_summary.txt`.
+2. Create directory `$HOME/fw-test` and inspect firewall rule chains:
+   ```bash
+   mkdir -p "$HOME/fw-test"
+   iptables -L -n
+   ```
+3. Record the inspection marker into `$HOME/fw-test/fw_summary.txt`:
+   ```bash
+   echo "FIREWALL_CHAINS_INSPECTED" > "$HOME/fw-test/fw_summary.txt"
+   ```
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Configure Network Traffic Filtering (`lnx-configure-network-filtering`)
+1. Start the lab:
+   ```bash
+   tld start lnx-configure-network-filtering
+   ```
+2. Create directory `$HOME/fw-test`:
+   ```bash
+   mkdir -p "$HOME/fw-test"
+   ```
+3. Create firewall filtering configuration script `$HOME/fw-test/filter_rules.sh`:
+   ```bash
+   cat << 'EOF' > "$HOME/fw-test/filter_rules.sh"
+   #!/usr/bin/env bash
+   iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+   iptables -A INPUT -p tcp --dport 443 -j ACCEPT
+   EOF
+   chmod +x "$HOME/fw-test/filter_rules.sh"
+   ```
+4. Write summary line `FILTERING_RULES_CONFIGURED` to `$HOME/fw-test/filter_summary.txt`:
+   ```bash
+   echo "FILTERING_RULES_CONFIGURED" > "$HOME/fw-test/filter_summary.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

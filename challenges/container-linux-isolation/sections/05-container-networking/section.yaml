@@ -2,4 +2,4 @@ id: 05-container-networking
 title: "Container Network Isolation & Bridge Architectures"
 order: 5
 xp: 50
-version: 1
+version: 2

@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/ns-test`.
 2. Troubleshoot namespace isolation problems (unshared mount points, hostname leakage).
 3. Write diagnosis output line `NAMESPACE_ISOLATION_DEBUGGED` to `$HOME/ns-test/ns_debug.txt`.'
-version: 1
+version: 2

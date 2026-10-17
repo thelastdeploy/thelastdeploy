@@ -26,10 +26,15 @@ Systematic layer-by-layer troubleshooting prevents misdiagnosing firewall drops 
    ```bash
    tld start lnx-investigate-network-isolation
    ```
-2. Create directory `$HOME/net-inv-test`.
-3. Perform multi-layer network diagnostic investigation.
-4. Write diagnosis line `ISOLATION_CHECK: ALL_LAYERS_HEALTHY` into `$HOME/net-inv-test/diag_report.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/net-inv-test`:
+   ```bash
+   mkdir -p "$HOME/net-inv-test"
+   ```
+3. Record the multi-layer network diagnostic investigation result into `$HOME/net-inv-test/diag_report.txt`:
+   ```bash
+   echo "ISOLATION_CHECK: ALL_LAYERS_HEALTHY" > "$HOME/net-inv-test/diag_report.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

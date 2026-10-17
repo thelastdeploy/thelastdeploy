@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/io-opt-test`.
 2. Analyze storage I/O workload patterns (sequential vs random, block sizes, queue depth).
 3. Write output summary line `STORAGE_IO_WORKLOAD_ANALYZED` to `$HOME/io-opt-test/io_profile.txt`.'
-version: 1
+version: 2

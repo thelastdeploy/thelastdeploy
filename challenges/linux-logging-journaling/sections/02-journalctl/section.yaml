@@ -2,4 +2,4 @@ id: 02-journalctl
 title: "Systemd Journal Management with Journalctl"
 order: 2
 xp: 50
-version: 1
+version: 2

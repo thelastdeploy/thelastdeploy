@@ -19,5 +19,6 @@ environment:
 setup:
   seed_commands:
   - mkdir -p $HOME/net-test/dns
+  - rm -f $HOME/net-test/resolved_ip.txt
   - "printf '; <<>> DiG 9.18.1 <<>> internal.service.local\\n;; ANSWER SECTION:\\ninternal.service.local. 300 IN A 10.250.0.15\\n' > $HOME/net-test/dns/dig_output.txt"
-version: 2
+version: 3

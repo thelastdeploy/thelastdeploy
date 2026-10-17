@@ -59,7 +59,11 @@ Understanding the handoff between Firmware -> Bootloader -> Kernel -> initramfs 
    ```
 2. Create directory `$HOME/boot-test`.
 3. Inspect boot files in `/boot` directory.
-4. Write output summary line `BOOT_COMPONENTS_INSPECTED` to `$HOME/boot-test/boot_files.txt`.
+4. Write output summary line `BOOT_COMPONENTS_INSPECTED` to `$HOME/boot-test/boot_files.txt`:
+   ```bash
+   mkdir -p ~/boot-test
+   echo "BOOT_COMPONENTS_INSPECTED" > ~/boot-test/boot_files.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -72,12 +76,16 @@ Understanding the handoff between Firmware -> Bootloader -> Kernel -> initramfs 
    ```
 2. Create directory `$HOME/boot-test`.
 3. Write the 5 Linux boot stages in order into `$HOME/boot-test/boot_stages.txt`:
-4. - Line 1: `1. FIRMWARE`
-5. - Line 2: `2. BOOTLOADER`
-6. - Line 3: `3. KERNEL`
-7. - Line 4: `4. INITRAMFS`
-8. - Line 5: `5. SYSTEMD`
-9. Validate your solution:
+   ```bash
+   cat << 'EOF' > ~/boot-test/boot_stages.txt
+   1. FIRMWARE
+   2. BOOTLOADER
+   3. KERNEL
+   4. INITRAMFS
+   5. SYSTEMD
+   EOF
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/net-outage-test`.
 2. Repair broken firewall rule or socket binding to restore network service flow.
 3. Write output summary `BROKEN_NETWORK_SERVICE_RECOVERED` to `$HOME/net-outage-test/net_recovered.txt`.'
-version: 1
+version: 2

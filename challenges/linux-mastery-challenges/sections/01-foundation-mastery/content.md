@@ -20,7 +20,11 @@ Foundation mastery tests your core command-line dexterity: file manipulation, ow
    ```
 2. Create directory `$HOME/mastery-foundation`.
 3. Execute file, environment, and process manipulations as required.
-4. Write `FOUNDATION_SYSTEM_BASICS_MASTERED` into `$HOME/mastery-foundation/basics_mastery.log`.
+4. Write `FOUNDATION_SYSTEM_BASICS_MASTERED` into `$HOME/mastery-foundation/basics_mastery.log`:
+   ```bash
+   mkdir -p "$HOME/mastery-foundation"
+   echo "FOUNDATION_SYSTEM_BASICS_MASTERED" > "$HOME/mastery-foundation/basics_mastery.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -32,7 +36,11 @@ Foundation mastery tests your core command-line dexterity: file manipulation, ow
    tld start lnx-master-users-files-and-processes
    ```
 2. Configure user/group memberships, ACL permissions, and nice/renice process priorities.
-3. Write `USERS_FILES_AND_PROCESSES_MASTERED` into `$HOME/mastery-foundation/access_process_mastery.log`.
+3. Write `USERS_FILES_AND_PROCESSES_MASTERED` into `$HOME/mastery-foundation/access_process_mastery.log`:
+   ```bash
+   mkdir -p "$HOME/mastery-foundation"
+   echo "USERS_FILES_AND_PROCESSES_MASTERED" > "$HOME/mastery-foundation/access_process_mastery.log"
+   ```
 4. Validate your solution:
    ```bash
    tld check

@@ -10,12 +10,27 @@ if [ ! -f "$SCRIPT" ] || [ ! -x "$SCRIPT" ]; then
     exit 1
 fi
 
+if [ ! -s "$SCRIPT" ]; then
+    echo "FAIL: $SCRIPT is empty."
+    exit 1
+fi
+
 if [ -f "$LOCK" ]; then
     echo "FAIL: Lock file $LOCK was not cleaned up on script termination."
     exit 1
 fi
 
-if [ ! -f "$LOG" ] || ! grep -q "Cleaned up lock file" "$LOG"; then
+if [ ! -f "$LOG" ]; then
+    echo "FAIL: $LOG does not exist."
+    exit 1
+fi
+
+if [ ! -s "$LOG" ]; then
+    echo "FAIL: $LOG is empty."
+    exit 1
+fi
+
+if ! grep -q "Cleaned up lock file" "$LOG"; then
     echo "FAIL: $LOG does not contain expected trap execution message."
     exit 1
 fi

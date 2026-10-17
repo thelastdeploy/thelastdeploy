@@ -45,10 +45,16 @@ tc qdisc del dev eth0 root
    ```bash
    tld start lnx-control-network-traffic
    ```
-2. Create directory `$HOME/tc-test`.
-3. Inspect traffic control queuing disciplines using `tc qdisc show`.
-4. Write output summary `TC_QDISC_INSPECTED` to `$HOME/tc-test/tc_summary.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/tc-test` and inspect traffic control queuing disciplines:
+   ```bash
+   mkdir -p "$HOME/tc-test"
+   tc qdisc show
+   ```
+3. Record the inspection marker into `$HOME/tc-test/tc_summary.txt`:
+   ```bash
+   echo "TC_QDISC_INSPECTED" > "$HOME/tc-test/tc_summary.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

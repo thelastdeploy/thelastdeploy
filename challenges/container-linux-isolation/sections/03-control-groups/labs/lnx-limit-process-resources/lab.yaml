@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/cgroup-test`.
 2. Document cgroup resource limit assignment syntax (`memory.max`, `cpu.max`, `cgroup.procs`).
 3. Write output summary line `PROCESS_RESOURCES_LIMITED_VIA_CGROUP` to `$HOME/cgroup-test/limits_summary.txt`.'
-version: 1
+version: 2

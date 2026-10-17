@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/route-test`.
 2. Inspect existing routing rules using `ip rule show`.
 3. Output rule summary line `POLICY_ROUTING_INSPECTED` into `$HOME/route-test/rules_summary.txt`.'
-version: 1
+version: 2

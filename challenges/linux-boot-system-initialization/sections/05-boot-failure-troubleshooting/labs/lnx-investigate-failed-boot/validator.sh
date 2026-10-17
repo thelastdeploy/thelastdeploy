@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "BOOT_FAIL_REASON: invalid_fstab_uuid" "$TARGET"; then
     echo "FAIL: $TARGET missing 'BOOT_FAIL_REASON: invalid_fstab_uuid'."
     exit 1

@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "nofail" "$TARGET" && ! grep -q "#" "$TARGET"; then
     echo "FAIL: $TARGET fstab entry was not fixed with nofail or commented out."
     exit 1

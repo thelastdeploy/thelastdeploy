@@ -2,3 +2,11 @@ id: lnx-optimize-linux-workload
 title: "Optimize Linux Workload"
 xp: 85
 description: "Optimize a high-concurrency production workload through CPU affinity, dirty writeback tuning, and blk-mq queue scheduler selection."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mastery-perf
+  - rm -f $HOME/mastery-perf/perf_mastery.log
+instructions: '1. Create directory `$HOME/mastery-perf`.
+2. Apply cross-layer performance tuning (CPU affinity, sysctl vm/net parameters, block scheduler).
+3. Write `LINUX_WORKLOAD_PERFORMANCE_MASTERED` into `$HOME/mastery-perf/perf_mastery.log`.'
+version: 2

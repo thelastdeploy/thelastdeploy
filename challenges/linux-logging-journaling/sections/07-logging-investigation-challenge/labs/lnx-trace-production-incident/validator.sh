@@ -8,6 +8,11 @@ if [ ! -f "$REPORT_FILE" ]; then
     exit 1
 fi
 
+if [ ! -s "$REPORT_FILE" ]; then
+    echo "FAIL: $REPORT_FILE is empty."
+    exit 1
+fi
+
 CONTENT=$(cat "$REPORT_FILE")
 
 if ! echo "$CONTENT" | grep -q "INCIDENT_TIMESTAMP:"; then

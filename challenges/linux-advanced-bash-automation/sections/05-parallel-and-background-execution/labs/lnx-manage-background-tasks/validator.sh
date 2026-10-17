@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "ALL_JOBS_DONE" "$TARGET"; then
     echo "FAIL: $TARGET does not contain 'ALL_JOBS_DONE'."
     exit 1
@@ -16,6 +21,10 @@ fi
 for f in t1.txt t2.txt t3.txt; do
     if [ ! -f "$HOME/bg-test/$f" ]; then
         echo "FAIL: $HOME/bg-test/$f was not created by background jobs."
+        exit 1
+    fi
+    if [ ! -s "$HOME/bg-test/$f" ]; then
+        echo "FAIL: $HOME/bg-test/$f is empty."
         exit 1
     fi
 done

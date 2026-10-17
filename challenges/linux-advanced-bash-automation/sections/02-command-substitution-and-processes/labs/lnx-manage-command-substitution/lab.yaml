@@ -12,4 +12,5 @@ instructions: '1. Create directory `$HOME/proc-sub-test`.
    - `old_list.txt` containing `nginx`, `redis`, `mysql`
    - `new_list.txt` containing `nginx`, `redis`, `postgresql`
 3. Use process substitution with `comm` or `grep` to compare sorted inputs without intermediate temporary files, and write the newly added service (`postgresql`) into `$HOME/proc-sub-test/diff_report.txt`.'
-version: 1
+version: 2
+

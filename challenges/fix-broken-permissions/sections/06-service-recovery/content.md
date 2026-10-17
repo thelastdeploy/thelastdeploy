@@ -21,14 +21,15 @@ To complete the final lab task:
    tld start lnx-verify-application-recovery
    ```
 2. **Confirm Application Recovery**:
-   Create the required marker file `/tmp/recovery_verified` confirming full service restoration
-   
+   Create the required marker file `/tmp/recovery_verified` confirming full service restoration:
+   ```bash
+   touch /tmp/recovery_verified
+   ```
 
 3. **Validate and Complete**:
    ```bash
    tld check
    ```
-   
 
 4. **Stop the Session**:
    ```bash

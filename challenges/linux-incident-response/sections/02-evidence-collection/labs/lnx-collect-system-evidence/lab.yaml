@@ -8,4 +8,5 @@ setup:
 instructions: '1. Create directory `$HOME/evidence-test`.
 2. Collect system file and environment variable evidence (`/proc/<pid>/environ`, authorized_keys).
 3. Write output summary line `SYSTEM_EVIDENCE_COLLECTED` to `$HOME/evidence-test/system_evidence.txt`.'
-version: 1
+version: 2
+

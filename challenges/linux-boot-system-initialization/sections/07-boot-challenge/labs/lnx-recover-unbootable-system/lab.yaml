@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/boot-capstone`.
 2. Create recovery script `$HOME/boot-capstone/repair_boot.sh` that fixes corrupted boot settings.
 3. Write summary line `UNBOOTABLE_SYSTEM_RECOVERED` into `$HOME/boot-capstone/recovery.log`.'
-version: 1
+version: 2

@@ -39,7 +39,11 @@ Harden mounted filesystems using mount options:
    tld start lnx-secure-mounted-storage
    ```
 2. Secure mounted directory permissions and ownership.
-3. Set strict directory owner permissions (`755` or `700`) on mounted storage directories and record audit status in `$HOME/storage-test/sec_audit.txt`.
+3. Set directory permissions to `755` on `$HOME/storage-test/mounted_dir` and save its `owner:group` identity to `$HOME/storage-test/sec_audit.txt`:
+   ```bash
+   chmod 755 ~/storage-test/mounted_dir
+   stat -c "%U:%G" ~/storage-test/mounted_dir > ~/storage-test/sec_audit.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check

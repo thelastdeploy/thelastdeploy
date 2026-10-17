@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "MEMORY_BEHAVIOR_ANALYZED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'MEMORY_BEHAVIOR_ANALYZED'."
     exit 1

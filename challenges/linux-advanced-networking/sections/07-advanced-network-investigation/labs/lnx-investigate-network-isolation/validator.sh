@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "ISOLATION_CHECK: ALL_LAYERS_HEALTHY" "$TARGET"; then
     echo "FAIL: $TARGET missing 'ISOLATION_CHECK: ALL_LAYERS_HEALTHY'."
     exit 1

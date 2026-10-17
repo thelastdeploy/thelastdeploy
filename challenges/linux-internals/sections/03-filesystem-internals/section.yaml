@@ -2,4 +2,4 @@ id: 03-filesystem-internals
 title: "VFS Architecture, Inodes & File Handles"
 order: 3
 xp: 70
-version: 1
+version: 2

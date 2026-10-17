@@ -34,7 +34,10 @@ tail -f /var/log/syslog
    tld start lnx-identify-system-logs
    ```
 2. Locate standard system log file locations.
-3. Save the filename responsible for authentication logs (`auth.log`) to `$HOME/log-test/auth_file.txt`.
+3. Save the filename responsible for authentication logs (`auth.log`) to `$HOME/log-test/auth_file.txt`:
+   ```bash
+   echo "auth.log" > ~/log-test/auth_file.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check
@@ -46,7 +49,10 @@ tail -f /var/log/syslog
    tld start lnx-inspect-application-log
    ```
 2. Inspect application log streams using `tail`.
-3. Extract the last 10 lines of `$HOME/log-test/app_logs/web_access.log` and save to `$HOME/log-test/recent_access.log`.
+3. Extract the last 10 lines of `$HOME/log-test/app_logs/web_access.log` and save to `$HOME/log-test/recent_access.log`:
+   ```bash
+   tail -n 10 ~/log-test/app_logs/web_access.log > ~/log-test/recent_access.log
+   ```
 4. Validate your solution:
    ```bash
    tld check

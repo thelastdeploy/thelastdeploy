@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/kernel-test`.
 2. Inspect initramfs image structure in `/boot/` using `lsinitramfs` or `ls -l /boot/initrd*`.
 3. Write output summary `INITRAMFS_INSPECTED` to `$HOME/kernel-test/initramfs_summary.txt`.'
-version: 1
+version: 2

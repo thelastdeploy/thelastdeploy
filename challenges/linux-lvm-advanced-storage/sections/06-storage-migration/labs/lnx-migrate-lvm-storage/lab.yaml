@@ -10,4 +10,4 @@ setup:
 instructions: '1. Create directory `$HOME/mig-test`.
 2. Document `pvmove` data migration procedure syntax.
 3. Write output summary `PVMOVE_MIGRATION_VERIFIED` to `$HOME/mig-test/pvmove_info.txt`.'
-version: 1
+version: 2

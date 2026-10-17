@@ -26,9 +26,20 @@ Kernel internals diagnostics provide absolute clarity into process behavior, res
    ```bash
    tld start lnx-investigate-system-from-internals
    ```
-2. Create directory `$HOME/internals-challenge`.
-3. Investigate system behavior using `/proc`, `strace`, `lsof`, and syscall tracing.
-4. Write output summary line `SYSTEM_BEHAVIOR_INVESTIGATED_FROM_INTERNALS: ROOT_CAUSE_PROVED` into `$HOME/internals-challenge/investigation.log`.
+2. Create directory `$HOME/internals-challenge`:
+   ```bash
+   mkdir -p ~/internals-challenge
+   ```
+3. Investigate system behavior using `/proc`, `strace`, `lsof`, and syscall tracing:
+   ```bash
+   cat /proc/version
+   cat /proc/locks | head -n 10
+   ```
+4. Write output summary line `SYSTEM_BEHAVIOR_INVESTIGATED_FROM_INTERNALS: ROOT_CAUSE_PROVED` into `$HOME/internals-challenge/investigation.log`:
+   ```bash
+   echo 'SYSTEM_BEHAVIOR_INVESTIGATED_FROM_INTERNALS: ROOT_CAUSE_PROVED' > ~/internals-challenge/investigation.log
+   cat ~/internals-challenge/investigation.log
+   ```
 5. Validate your solution:
    ```bash
    tld check

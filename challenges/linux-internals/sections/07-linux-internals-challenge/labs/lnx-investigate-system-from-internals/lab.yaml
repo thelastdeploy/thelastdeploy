@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/internals-challenge`.
 2. Investigate system behavior using `/proc`, `strace`, `lsof`, and syscall tracing.
 3. Write output summary line `SYSTEM_BEHAVIOR_INVESTIGATED_FROM_INTERNALS: ROOT_CAUSE_PROVED` into `$HOME/internals-challenge/investigation.log`.'
-version: 1
+version: 2

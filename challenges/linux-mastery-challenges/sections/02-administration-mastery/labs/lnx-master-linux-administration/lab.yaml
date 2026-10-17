@@ -2,3 +2,11 @@ id: lnx-master-linux-administration
 title: "Master Linux Administration"
 xp: 65
 description: "Demonstrate mastery over systemd unit file architectures, custom targets, and logging journal controls."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mastery-admin
+  - rm -f $HOME/mastery-admin/admin_mastery.log
+instructions: '1. Create directory `$HOME/mastery-admin`.
+2. Configure multi-service systemd target dependencies and persistent journalctl limits.
+3. Write `SYSTEM_ADMINISTRATION_MASTERED` into `$HOME/mastery-admin/admin_mastery.log`.'
+version: 2

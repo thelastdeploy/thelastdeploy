@@ -21,7 +21,11 @@ In enterprise Linux administration, applications run as managed systemd service 
    ```
 2. Create directory `$HOME/service-stack`.
 3. Configure systemd unit file dependency directives (`Requires=`, `Wants=`, `After=`).
-4. Write `SYSTEMD_SERVICE_DEPENDENCIES_CONFIGURED` into `$HOME/service-stack/service_dependencies.log`.
+4. Write `SYSTEMD_SERVICE_DEPENDENCIES_CONFIGURED` into `$HOME/service-stack/service_dependencies.log`:
+   ```bash
+   mkdir -p "$HOME/service-stack"
+   echo "SYSTEMD_SERVICE_DEPENDENCIES_CONFIGURED" > "$HOME/service-stack/service_dependencies.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -34,7 +38,11 @@ In enterprise Linux administration, applications run as managed systemd service 
    ```
 2. Create a custom systemd target unit file to manage a web and database service stack.
 3. Enforce automatic restart policies and security sandboxing.
-4. Write `PRODUCTION_SERVICE_STACK_OPERATIONAL` into `$HOME/service-stack/production_stack.status`.
+4. Write `PRODUCTION_SERVICE_STACK_OPERATIONAL` into `$HOME/service-stack/production_stack.status`:
+   ```bash
+   mkdir -p "$HOME/service-stack"
+   echo "PRODUCTION_SERVICE_STACK_OPERATIONAL" > "$HOME/service-stack/production_stack.status"
+   ```
 5. Validate your solution:
    ```bash
    tld check

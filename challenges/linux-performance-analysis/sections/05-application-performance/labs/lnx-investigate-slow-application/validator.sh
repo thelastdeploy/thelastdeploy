@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "APPLICATION_LATENCY_INVESTIGATED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'APPLICATION_LATENCY_INVESTIGATED'."
     exit 1

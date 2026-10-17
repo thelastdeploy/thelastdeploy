@@ -9,4 +9,4 @@ setup:
 instructions: '1. Create directory `$HOME/boot-fail-test`.
 2. Inspect sample broken `/etc/fstab` entries in `$HOME/boot-fail-test/fstab.broken` (referencing non-existent UUID `UUID=ffff-ffff`).
 3. Write diagnosis line `BOOT_FAIL_REASON: invalid_fstab_uuid` to `$HOME/boot-fail-test/diag_report.txt`.'
-version: 1
+version: 2

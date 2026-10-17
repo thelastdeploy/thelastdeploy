@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/res-outage-test`.
 2. Investigate severe resource exhaustion and OOM killer log entries.
 3. Write output summary line `RESOURCE_EXHAUSTION_DIAGNOSED` to `$HOME/res-outage-test/exhaustion_report.txt`.'
-version: 1
+version: 2

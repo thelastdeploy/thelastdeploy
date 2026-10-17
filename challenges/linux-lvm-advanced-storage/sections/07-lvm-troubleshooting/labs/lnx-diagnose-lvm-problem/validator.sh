@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "LVM_DIAGNOSTICS_COMPLETED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'LVM_DIAGNOSTICS_COMPLETED'."
     exit 1

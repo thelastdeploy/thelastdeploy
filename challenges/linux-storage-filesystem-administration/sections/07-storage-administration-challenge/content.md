@@ -25,9 +25,20 @@ An application service reported read/write failures when attempting to persist d
    ```bash
    tld start lnx-restore-missing-storage
    ```
-2. Complete the storage administration capstone challenge.
-3. Repair unmounted storage volumes, fix fstab entries, and record `STORAGE_STATUS: ONLINE` in `$HOME/storage-challenge/app/status.txt`.
-4. Validate your solution:
+2. Diagnose why the application cannot access its dedicated storage volume.
+3. Update the mount point in `$HOME/storage-challenge/app/fstab_config` so `/mnt/wrong_path` is replaced with the correct path `$HOME/storage-challenge/mounts/app_data`:
+   ```bash
+   sed -i "s|/mnt/wrong_path|$HOME/storage-challenge/mounts/app_data|" ~/storage-challenge/app/fstab_config
+   ```
+4. Adjust permissions on `$HOME/storage-challenge/mounts/app_data` to `775`:
+   ```bash
+   chmod 775 ~/storage-challenge/mounts/app_data
+   ```
+5. Mark the application storage status as resolved by writing `STATUS: OK` to `$HOME/storage-challenge/app/status.txt`:
+   ```bash
+   echo "STATUS: OK" > ~/storage-challenge/app/status.txt
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```

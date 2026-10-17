@@ -10,6 +10,11 @@ if [ ! -f "$ENV_FILE" ]; then
     exit 1
 fi
 
+if [ ! -s "$ENV_FILE" ]; then
+    echo "ERROR: Environment config $ENV_FILE is empty!"
+    exit 1
+fi
+
 if grep -q 'LISTEN_IP="127.0.0.1"' "$ENV_FILE"; then
     echo "ERROR: LISTEN_IP is still restricted to 127.0.0.1 in $ENV_FILE."
     exit 1
@@ -25,6 +30,11 @@ if [ ! -f "$RESOLV_FILE" ]; then
     exit 1
 fi
 
+if [ ! -s "$RESOLV_FILE" ]; then
+    echo "ERROR: Resolv config $RESOLV_FILE is empty!"
+    exit 1
+fi
+
 if ! grep -q "nameserver 8.8.8.8" "$RESOLV_FILE"; then
     echo "ERROR: nameserver 8.8.8.8 not found in $RESOLV_FILE."
     exit 1
@@ -32,6 +42,11 @@ fi
 
 if [ ! -f "$STATUS_FILE" ]; then
     echo "ERROR: Status file $STATUS_FILE not found!"
+    exit 1
+fi
+
+if [ ! -s "$STATUS_FILE" ]; then
+    echo "ERROR: Status file $STATUS_FILE is empty!"
     exit 1
 fi
 

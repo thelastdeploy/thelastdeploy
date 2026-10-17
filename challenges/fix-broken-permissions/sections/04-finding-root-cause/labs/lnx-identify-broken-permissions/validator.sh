@@ -6,7 +6,13 @@ if [ ! -f /tmp/found_root_cause ]; then
   exit 1
 fi
 
-if [ -r /var/log/app-server.log ]; then
+if [ ! -e /var/log/app-server.log ]; then
+  echo "FAIL: /var/log/app-server.log does not exist."
+  exit 1
+fi
+
+PERMS=$(stat -c "%a" /var/log/app-server.log 2>/dev/null || echo "000")
+if [ "$PERMS" != "000" ] && [ "$PERMS" != "0" ]; then
   echo "FAIL: Log file permissions should still be broken (000) during root cause identification."
   exit 1
 fi

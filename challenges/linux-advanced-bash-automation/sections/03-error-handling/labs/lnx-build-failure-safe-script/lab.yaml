@@ -11,4 +11,5 @@ instructions: '1. Create directory `$HOME/err-test`.
    - Must include `set -euo pipefail`.
    - Must check if `$1` is provided. If missing, print `Usage: safe_run.sh <file>` and exit code 2.
    - If `$1` is provided, print `Processing $1` and exit code 0.'
-version: 1
+version: 2
+

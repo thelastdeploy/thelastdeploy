@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/kernel-test`.
 2. Inspect `/proc/cmdline` and kernel version (`uname -r`).
 3. Write output summary line `KERNEL_CMDLINE_INSPECTED` to `$HOME/kernel-test/cmdline_info.txt`.'
-version: 1
+version: 2

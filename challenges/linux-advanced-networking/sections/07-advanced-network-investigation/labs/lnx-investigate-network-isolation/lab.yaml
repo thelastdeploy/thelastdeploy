@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/net-inv-test`.
 2. Perform multi-layer network diagnostic investigation.
 3. Write diagnosis line `ISOLATION_CHECK: ALL_LAYERS_HEALTHY` into `$HOME/net-inv-test/diag_report.txt`.'
-version: 1
+version: 2

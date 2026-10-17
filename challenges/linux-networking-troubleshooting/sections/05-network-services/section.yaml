@@ -2,3 +2,4 @@ id: "05-network-services"
 title: "Network Services"
 description: "Combine networking knowledge with services and applications. A service is running, but clients can't connect — investigate why."
 order: 5
+version: 2

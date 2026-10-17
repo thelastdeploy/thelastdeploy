@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "RESCUE_MODE_RECOVERY_VERIFIED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'RESCUE_MODE_RECOVERY_VERIFIED'."
     exit 1

@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/recovery-test`.
 2. Execute safe system restoration (remove persistence, rotate credentials, verify integrity).
 3. Write report summary line `SYSTEM_RESTORED_SAFELY` to `$HOME/recovery-test/restoration_report.txt`.'
-version: 1
+version: 2

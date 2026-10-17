@@ -87,13 +87,21 @@ Native Bash arrays and parameter expansion eliminate unnecessary child process s
    ```bash
    tld start lnx-use-advanced-parameter-expansion
    ```
-2. Create directory `$HOME/param-test`.
-3. Given the path variable `FILEPATH="/var/log/app/service.log"` and string `MODE="dev_environment"`:
-4. - Line 1: Change file extension `.log` to `.bak` using parameter expansion `${FILEPATH%.log}.bak`.
-5. - Line 2: Extract filename `service.log` using `${FILEPATH##*/}`.
-6. - Line 3: Convert `MODE` to uppercase `DEV_ENVIRONMENT` using `${MODE^^}`.
-7. Write these 3 lines into `$HOME/param-test/processed.txt`.
-8. Validate your solution:
+2. Create directory `$HOME/param-test`:
+   ```bash
+   mkdir -p ~/param-test
+   ```
+3. Set variables and perform parameter expansions into `$HOME/param-test/processed.txt`:
+   ```bash
+   FILEPATH="/var/log/app/service.log"
+   MODE="dev_environment"
+
+   echo "${FILEPATH%.log}.bak" > ~/param-test/processed.txt
+   echo "${FILEPATH##*/}" >> ~/param-test/processed.txt
+   echo "${MODE^^}" >> ~/param-test/processed.txt
+   cat ~/param-test/processed.txt
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
@@ -103,10 +111,26 @@ Native Bash arrays and parameter expansion eliminate unnecessary child process s
    ```bash
    tld start lnx-work-with-arrays
    ```
-2. Create `$HOME/array-test/` directory.
-3. Write a script or bash commands that build an indexed array of servers `('web-01' 'db-01' 'app-01')`, sort them alphabetically, and output each server on a new line to `$HOME/array-test/servers.txt`.
-4. Build an associative array with keys `port=8080` and `env=production`, and write each key=value pair to `$HOME/array-test/config.txt`.
+2. Create directory `$HOME/array-test`:
+   ```bash
+   mkdir -p ~/array-test
+   ```
+3. Build an indexed array of servers, sort, and save to `$HOME/array-test/servers.txt`:
+   ```bash
+   declare -a SERVERS=("web-01" "db-01" "app-01")
+   printf '%s\n' "${SERVERS[@]}" | sort > ~/array-test/servers.txt
+   cat ~/array-test/servers.txt
+   ```
+4. Build an associative array and write key-value pairs to `$HOME/array-test/config.txt`:
+   ```bash
+   declare -A CONFIG=([port]="8080" [env]="production")
+   for key in "${!CONFIG[@]}"; do
+       echo "$key=${CONFIG[$key]}"
+   done > ~/array-test/config.txt
+   cat ~/array-test/config.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
    ```
+

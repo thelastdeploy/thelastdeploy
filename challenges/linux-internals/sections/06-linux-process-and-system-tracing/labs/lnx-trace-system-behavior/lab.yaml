@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/trace-test`.
 2. Trace system execution behavior using `strace` or `ltrace`.
 3. Write output summary line `SYSTEM_BEHAVIOR_TRACED` to `$HOME/trace-test/system_trace.log`.'
-version: 1
+version: 2

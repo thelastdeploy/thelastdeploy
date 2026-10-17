@@ -24,7 +24,14 @@ Create an incident post-mortem report file at `$HOME/incident-investigation/inci
    tld start lnx-trace-production-incident
    ```
 2. Complete the logging and investigation capstone challenge.
-3. Correlate system events and write an incident report to `$HOME/incident-investigation/incident_report.txt` containing `FAILED_SERVICE: order-api.service` and `ROOT_CAUSE: OUT_OF_MEMORY`.
+3. Correlate system events and write an incident report to `$HOME/incident-investigation/incident_report.txt`:
+   ```bash
+   cat << 'EOF' > ~/incident-investigation/incident_report.txt
+   INCIDENT_TIMESTAMP: 2026-09-20 03:14:22
+   FAILED_SERVICE: order-api.service
+   ROOT_CAUSE: OUT_OF_MEMORY
+   EOF
+   ```
 4. Validate your solution:
    ```bash
    tld check

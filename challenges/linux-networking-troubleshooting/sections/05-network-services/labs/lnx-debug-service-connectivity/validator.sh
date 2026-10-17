@@ -8,6 +8,11 @@ if [ ! -f "$CONF_FILE" ]; then
     exit 1
 fi
 
+if [ ! -s "$CONF_FILE" ]; then
+    echo "ERROR: Configuration file $CONF_FILE is empty."
+    exit 1
+fi
+
 if grep -q 'BIND_ADDRESS="127.0.0.1"' "$CONF_FILE"; then
     echo "ERROR: BIND_ADDRESS is still set to 127.0.0.1 in $CONF_FILE."
     exit 1

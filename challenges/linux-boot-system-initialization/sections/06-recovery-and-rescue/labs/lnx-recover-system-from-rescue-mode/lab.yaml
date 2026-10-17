@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/rescue-test`.
 2. Document root filesystem remount command syntax (`mount -o remount,rw /`).
 3. Write summary `RESCUE_MODE_RECOVERY_VERIFIED` to `$HOME/rescue-test/rescue_summary.txt`.'
-version: 1
+version: 2

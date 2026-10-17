@@ -26,21 +26,26 @@ To complete the first lab task:
 1. **Start the Lab Session**:
    ```bash
    tld start lnx-investigate-permission-issue
-   ```   
+   ```
 
 2. **Inspect the Log File**:
-   Verify that `/var/log/app-server.log` exists and note its permission status (`ls -l`).
+   Verify that `/var/log/app-server.log` exists and note its permission status:
+   ```bash
+   ls -l /var/log/app-server.log
+   ```
 
 3. **Record Log Inspection**:
-   Create the required marker file `/tmp/checked_logs` to confirm you investigated the log permissions
-   
+   Create the required marker file `/tmp/checked_logs` to confirm you investigated the log permissions:
+   ```bash
+   touch /tmp/checked_logs
+   ```
 
 4. **Validate and Complete**:
    Run the check tool to verify your task:
    ```bash
    tld check
    ```
-   
+
 5. **Stop the Session**:
    ```bash
    tld stop

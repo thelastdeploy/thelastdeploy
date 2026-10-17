@@ -21,4 +21,4 @@ setup:
   - mkdir -p $HOME/net-test/service_debug
   - "printf '# Web application server configuration\\nBIND_ADDRESS=\"127.0.0.1\"\\nPORT=8000\\n' > $HOME/net-test/service_debug/app.conf"
   - "printf 'PROBLEM: External clients on local LAN cannot access port 8000. Bind to all interfaces (0.0.0.0).\\n' > $HOME/net-test/service_debug/issue.txt"
-version: 2
+version: 3

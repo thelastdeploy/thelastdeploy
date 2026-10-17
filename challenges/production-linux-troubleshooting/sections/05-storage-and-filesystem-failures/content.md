@@ -47,7 +47,11 @@ mount -o remount,rw /data
    ```
 2. Create directory `$HOME/storage-outage-test`.
 3. Diagnose and recover failing storage system (release unlinked open files or repair mount state).
-4. Write output summary line `STORAGE_SYSTEM_RECOVERED` to `$HOME/storage-outage-test/storage_recovered.txt`.
+4. Write output summary line `STORAGE_SYSTEM_RECOVERED` to `$HOME/storage-outage-test/storage_recovered.txt`:
+   ```bash
+   mkdir -p "$HOME/storage-outage-test"
+   echo "STORAGE_SYSTEM_RECOVERED" > "$HOME/storage-outage-test/storage_recovered.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

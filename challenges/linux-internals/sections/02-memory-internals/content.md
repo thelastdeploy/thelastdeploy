@@ -56,9 +56,19 @@ Mapping types:
    ```bash
    tld start lnx-inspect-process-memory
    ```
-2. Create directory `$HOME/mem-internals-test`.
-3. Inspect process memory layout using `/proc/self/maps` or `pmap -x $$`.
-4. Write output line `PROCESS_MEMORY_LAYOUT_INSPECTED` to `$HOME/mem-internals-test/memory_layout.txt`.
+2. Create directory `$HOME/mem-internals-test`:
+   ```bash
+   mkdir -p ~/mem-internals-test
+   ```
+3. Inspect process memory layout using `/proc/self/maps` or `pmap -x $$`:
+   ```bash
+   cat /proc/self/maps | head -n 10
+   ```
+4. Write output line `PROCESS_MEMORY_LAYOUT_INSPECTED` to `$HOME/mem-internals-test/memory_layout.txt`:
+   ```bash
+   echo 'PROCESS_MEMORY_LAYOUT_INSPECTED' > ~/mem-internals-test/memory_layout.txt
+   cat ~/mem-internals-test/memory_layout.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -69,9 +79,19 @@ Mapping types:
    ```bash
    tld start lnx-investigate-memory-mapping
    ```
-2. Create directory `$HOME/mem-internals-test`.
-3. Inspect detailed memory mappings in `/proc/self/smaps`.
-4. Write summary output `SMAPS_MAPPINGS_INVESTIGATED` to `$HOME/mem-internals-test/smaps_summary.txt`.
+2. Create directory `$HOME/mem-internals-test`:
+   ```bash
+   mkdir -p ~/mem-internals-test
+   ```
+3. Inspect detailed memory mappings in `/proc/self/smaps`:
+   ```bash
+   cat /proc/self/smaps | head -n 15
+   ```
+4. Write summary output `SMAPS_MAPPINGS_INVESTIGATED` to `$HOME/mem-internals-test/smaps_summary.txt`:
+   ```bash
+   echo 'SMAPS_MAPPINGS_INVESTIGATED' > ~/mem-internals-test/smaps_summary.txt
+   cat ~/mem-internals-test/smaps_summary.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

@@ -6,21 +6,30 @@ In complex enterprise environments, single root causes trigger cascading multi-s
 
 Resolving cascading failures requires systematic reverse dependency analysis.
 
-
 ---
 
 ## Lab Tasks
 
 ### Task 1: Correlate Multi-Layer System Failure (`lnx-correlate-multi-layer-system-failure`)
-1. Start the lab:
+1. Start the lab session:
    ```bash
    tld start lnx-correlate-multi-layer-system-failure
    ```
-2. Create directory `$HOME/complex-failure`.
-3. Trace cascading failure chain across storage, database, and web proxy layers.
+2. Create the destination directory for cascading failure logs:
+   ```bash
+   mkdir -p "$HOME/complex-failure"
+   ```
+3. Trace the cascading failure chain across storage, database, and web proxy layers.
 4. Fix underlying storage exhaustion, repair database state, and restart dependent proxy services.
-5. Write `CASCADING_MULTI_LAYER_FAILURE_RESOLVED` into `$HOME/complex-failure/cascading_recovery.log`.
-6. Validate your solution:
+5. Record the cascading recovery verification marker into `$HOME/complex-failure/cascading_recovery.log`:
+   ```bash
+   echo "CASCADING_MULTI_LAYER_FAILURE_RESOLVED" > "$HOME/complex-failure/cascading_recovery.log"
+   ```
+6. Verify file contents:
+   ```bash
+   cat "$HOME/complex-failure/cascading_recovery.log"
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```

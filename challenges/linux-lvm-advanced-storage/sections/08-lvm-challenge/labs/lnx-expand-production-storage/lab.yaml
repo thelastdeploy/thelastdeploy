@@ -10,4 +10,4 @@ setup:
 instructions: '1. Create directory `$HOME/lvm-capstone`.
 2. Write storage expansion automation script `$HOME/lvm-capstone/expand_app.sh` that demonstrates online expansion (`lvextend -r`).
 3. Write summary line `PRODUCTION_EXPANSION_COMPLETE` to `$HOME/lvm-capstone/expansion.log`.'
-version: 1
+version: 2

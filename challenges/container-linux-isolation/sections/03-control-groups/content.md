@@ -51,7 +51,11 @@ cgroups enforce CPU quotas, memory limits, and process count ceilings for contai
    ```
 2. Create directory `$HOME/cgroup-test`.
 3. Inspect cgroup v2 hierarchy at `/sys/fs/cgroup/` (`memory.max`, `cpu.max`, `pids.max`).
-4. Write output summary line `CGROUP_HIERARCHY_EXPLORED` to `$HOME/cgroup-test/cgroup_info.txt`.
+4. Write output summary line `CGROUP_HIERARCHY_EXPLORED` to `$HOME/cgroup-test/cgroup_info.txt`:
+   ```bash
+   mkdir -p "$HOME/cgroup-test"
+   echo "CGROUP_HIERARCHY_EXPLORED" > "$HOME/cgroup-test/cgroup_info.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -64,7 +68,11 @@ cgroups enforce CPU quotas, memory limits, and process count ceilings for contai
    ```
 2. Create directory `$HOME/cgroup-test`.
 3. Document cgroup resource limit assignment syntax (`memory.max`, `cpu.max`, `cgroup.procs`).
-4. Write output summary line `PROCESS_RESOURCES_LIMITED_VIA_CGROUP` to `$HOME/cgroup-test/limits_summary.txt`.
+4. Write output summary line `PROCESS_RESOURCES_LIMITED_VIA_CGROUP` to `$HOME/cgroup-test/limits_summary.txt`:
+   ```bash
+   mkdir -p "$HOME/cgroup-test"
+   echo "PROCESS_RESOURCES_LIMITED_VIA_CGROUP" > "$HOME/cgroup-test/limits_summary.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

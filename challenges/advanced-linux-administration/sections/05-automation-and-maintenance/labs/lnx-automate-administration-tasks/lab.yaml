@@ -2,3 +2,11 @@ id: lnx-automate-administration-tasks
 title: "Automate Administration Tasks"
 xp: 45
 description: "Author automated Bash administration scripts for log rotation, disk cleanup, and health reporting."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/admin-auto
+  - rm -f $HOME/admin-auto/automation_tasks.sh
+instructions: '1. Create directory `$HOME/admin-auto`.
+2. Write an automated system administration script `automation_tasks.sh` that checks disk usage and rotates old log archives.
+3. Include log header `ADMINISTRATION_TASKS_AUTOMATED` inside `$HOME/admin-auto/automation_tasks.sh`.'
+version: 2

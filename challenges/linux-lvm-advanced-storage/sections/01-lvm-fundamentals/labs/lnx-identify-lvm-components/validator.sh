@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "1. Physical Volume" "$TARGET" || ! grep -q "5. Mount Point" "$TARGET"; then
     echo "FAIL: $TARGET missing expected LVM hierarchy layers."
     exit 1

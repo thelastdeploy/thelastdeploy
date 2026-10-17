@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "COMPROMISED_SYSTEM_CONTAINED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'COMPROMISED_SYSTEM_CONTAINED'."
     exit 1

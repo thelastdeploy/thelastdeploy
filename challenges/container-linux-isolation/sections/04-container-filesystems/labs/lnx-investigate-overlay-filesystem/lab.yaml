@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/container-fs-test`.
 2. Inspect OverlayFS storage layers (`lowerdir`, `upperdir`, `workdir`, `merged`).
 3. Write output line `OVERLAYFS_LAYERS_INVESTIGATED` into `$HOME/container-fs-test/overlay_info.txt`.'
-version: 1
+version: 2

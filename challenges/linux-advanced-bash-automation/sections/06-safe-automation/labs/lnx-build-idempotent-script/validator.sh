@@ -9,8 +9,23 @@ if [ ! -f "$SCRIPT" ] || [ ! -x "$SCRIPT" ]; then
     exit 1
 fi
 
+if [ ! -s "$SCRIPT" ]; then
+    echo "FAIL: $SCRIPT is empty."
+    exit 1
+fi
+
+if [ ! -f "$CONF" ]; then
+    echo "FAIL: $CONF does not exist."
+    exit 1
+fi
+
 # Run script again to test idempotency
 "$SCRIPT"
+
+if [ ! -s "$CONF" ]; then
+    echo "FAIL: $CONF is empty."
+    exit 1
+fi
 
 TIMEOUT_COUNT=$(grep -c "^TIMEOUT=30" "$CONF" || true)
 CONN_COUNT=$(grep -c "^MAX_CONNECTIONS=200" "$CONF" || true)

@@ -45,7 +45,10 @@ zcat /var/log/nginx/access.log.3.gz | head -n 20
    tld start lnx-investigate-log-rotation
    ```
 2. Inspect compressed log archives (`.gz`).
-3. Search `$HOME/log-test/app.log.1.gz` for critical errors and save the error line to `$HOME/log-test/archived_fault.txt`.
+3. Search `$HOME/log-test/archives/app.log.1.gz` for critical errors and save the error line to `$HOME/log-test/archived_fault.txt`:
+   ```bash
+   zgrep "CRITICAL" ~/log-test/archives/app.log.1.gz > ~/log-test/archived_fault.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check

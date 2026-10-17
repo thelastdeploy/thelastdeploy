@@ -20,7 +20,11 @@ Automation mastery tests your ability to write resilient, idempotent Linux admin
    ```
 2. Create directory `$HOME/mastery-auto`.
 3. Author `automation_mastery.sh` with robust error trapping and systemd timer activation.
-4. Write header `PRODUCTION_LINUX_AUTOMATION_MASTERED` into `$HOME/mastery-auto/automation_mastery.sh`.
+4. Write header `PRODUCTION_LINUX_AUTOMATION_MASTERED` into `$HOME/mastery-auto/automation_mastery.sh`:
+   ```bash
+   mkdir -p "$HOME/mastery-auto"
+   echo "PRODUCTION_LINUX_AUTOMATION_MASTERED" > "$HOME/mastery-auto/automation_mastery.sh"
+   ```
 5. Validate your solution:
    ```bash
    tld check

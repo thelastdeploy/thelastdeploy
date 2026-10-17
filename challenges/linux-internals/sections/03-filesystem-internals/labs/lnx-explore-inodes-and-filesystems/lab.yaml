@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/vfs-test`.
 2. Inspect inode metadata (`stat`) and system inode usage (`df -i`).
 3. Write output summary line `INODE_METADATA_EXPLORED` to `$HOME/vfs-test/inode_report.txt`.'
-version: 1
+version: 2

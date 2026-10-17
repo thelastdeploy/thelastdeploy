@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "TC_QDISC_INSPECTED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'TC_QDISC_INSPECTED'."
     exit 1

@@ -53,7 +53,11 @@ mount /dev/vg_data/lv_app /mnt/app
    ```
 2. Create directory `$HOME/lv-test`.
 3. Document formatting and fstab mount entry syntax for Logical Volumes.
-4. Write summary `LV_FILESYSTEM_CONFIGURED` into `$HOME/lv-test/mount_info.txt`.
+4. Write summary `LV_FILESYSTEM_CONFIGURED` into `$HOME/lv-test/mount_info.txt`:
+   ```bash
+   mkdir -p ~/lv-test
+   echo "LV_FILESYSTEM_CONFIGURED" > ~/lv-test/mount_info.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -66,7 +70,11 @@ mount /dev/vg_data/lv_app /mnt/app
    ```
 2. Create directory `$HOME/lv-test`.
 3. Document `lvcreate` syntax (`lvcreate -L 2G -n lv_app vg_data`).
-4. Write output summary `LV_CREATE_SYNTAX_VERIFIED` to `$HOME/lv-test/lv_info.txt`.
+4. Write output summary `LV_CREATE_SYNTAX_VERIFIED` to `$HOME/lv-test/lv_info.txt`:
+   ```bash
+   mkdir -p ~/lv-test
+   echo "LV_CREATE_SYNTAX_VERIFIED" > ~/lv-test/lv_info.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

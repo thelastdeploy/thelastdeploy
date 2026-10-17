@@ -26,17 +26,22 @@ To complete the second lab task:
    ```
 
 2. **Verify Root Cause**:
-   Confirm that `/var/log/app-server.log` permissions are `000`, blocking access for `webapp`.
+   Confirm that `/var/log/app-server.log` permissions are `000`, blocking access for `webapp`:
+   ```bash
+   ls -l /var/log/app-server.log
+   ```
 
 3. **Mark Root Cause Confirmation**:
-   Create the required marker file `/tmp/found_root_cause` indicating root cause identification
+   Create the required marker file `/tmp/found_root_cause` indicating root cause identification:
+   ```bash
+   touch /tmp/found_root_cause
+   ```
 
 4. **Validate and Complete**:
    Run the validator check:
    ```bash
    tld check
    ```
-   
 
 5. **Stop the Session**:
    ```bash

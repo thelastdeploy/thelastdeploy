@@ -49,7 +49,11 @@ LVM copy-on-write snapshots enable point-in-time backups and fast rollback capab
    ```
 2. Create directory `$HOME/snap-test`.
 3. Document snapshot creation (`lvcreate -s`) and merge rollback syntax (`lvconvert --merge`).
-4. Write output summary line `LVM_SNAPSHOT_PROCEDURE_VERIFIED` to `$HOME/snap-test/snap_summary.txt`.
+4. Write output summary line `LVM_SNAPSHOT_PROCEDURE_VERIFIED` to `$HOME/snap-test/snap_summary.txt`:
+   ```bash
+   mkdir -p ~/snap-test
+   echo "LVM_SNAPSHOT_PROCEDURE_VERIFIED" > ~/snap-test/snap_summary.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

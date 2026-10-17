@@ -39,7 +39,11 @@ Chronological event ordering and resource dependency mapping isolate true root c
    ```
 2. Create directory `$HOME/multi-inc-test`.
 3. Correlate multiple concurrent log errors across network, storage, and service layers.
-4. Write output correlation matrix line `FAILURES_CORRELATED: PRIMARY_CAUSE_ISOLATED` to `$HOME/multi-inc-test/correlation_matrix.txt`.
+4. Write output correlation matrix line `FAILURES_CORRELATED: PRIMARY_CAUSE_ISOLATED` to `$HOME/multi-inc-test/correlation_matrix.txt`:
+   ```bash
+   mkdir -p "$HOME/multi-inc-test"
+   echo "FAILURES_CORRELATED: PRIMARY_CAUSE_ISOLATED" > "$HOME/multi-inc-test/correlation_matrix.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -52,7 +56,11 @@ Chronological event ordering and resource dependency mapping isolate true root c
    ```
 2. Create directory `$HOME/multi-inc-test`.
 3. Isolate true root cause behind multi-symptom production outage and document evidence.
-4. Write output proof line `ROOT_CAUSE_PROVED: DISK_FULL_TRIGGERED_DB_FAIL` into `$HOME/multi-inc-test/root_cause_proof.txt`.
+4. Write output proof line `ROOT_CAUSE_PROVED: DISK_FULL_TRIGGERED_DB_FAIL` into `$HOME/multi-inc-test/root_cause_proof.txt`:
+   ```bash
+   mkdir -p "$HOME/multi-inc-test"
+   echo "ROOT_CAUSE_PROVED: DISK_FULL_TRIGGERED_DB_FAIL" > "$HOME/multi-inc-test/root_cause_proof.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

@@ -57,9 +57,19 @@ System calls provide the secure gateway for user space processes to request kern
    ```bash
    tld start lnx-observe-system-calls
    ```
-2. Create directory `$HOME/syscall-test`.
-3. Observe user/kernel space system call boundary.
-4. Write summary output `SYSTEM_CALL_BOUNDARY_OBSERVED` into `$HOME/syscall-test/syscall_basics.txt`.
+2. Create directory `$HOME/syscall-test`:
+   ```bash
+   mkdir -p ~/syscall-test
+   ```
+3. Observe user/kernel space system call boundary:
+   ```bash
+   uname -a
+   ```
+4. Write summary output `SYSTEM_CALL_BOUNDARY_OBSERVED` into `$HOME/syscall-test/syscall_basics.txt`:
+   ```bash
+   echo 'SYSTEM_CALL_BOUNDARY_OBSERVED' > ~/syscall-test/syscall_basics.txt
+   cat ~/syscall-test/syscall_basics.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -70,9 +80,19 @@ System calls provide the secure gateway for user space processes to request kern
    ```bash
    tld start lnx-trace-application-system-calls
    ```
-2. Create directory `$HOME/syscall-test`.
-3. Trace process system calls using `strace -c`.
-4. Write output summary line `STRACE_SUMMARY_VERIFIED` to `$HOME/syscall-test/strace_summary.txt`.
+2. Create directory `$HOME/syscall-test`:
+   ```bash
+   mkdir -p ~/syscall-test
+   ```
+3. Trace process system calls using `strace -c`:
+   ```bash
+   strace -c ls / >/dev/null 2>&1 || true
+   ```
+4. Write output summary line `STRACE_SUMMARY_VERIFIED` to `$HOME/syscall-test/strace_summary.txt`:
+   ```bash
+   echo 'STRACE_SUMMARY_VERIFIED' > ~/syscall-test/strace_summary.txt
+   cat ~/syscall-test/strace_summary.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

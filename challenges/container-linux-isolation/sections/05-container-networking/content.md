@@ -45,7 +45,11 @@ Container networking combines Network Namespaces, `veth` interface pairs, Linux 
    ```
 2. Create directory `$HOME/container-net-test`.
 3. Trace network packet flow from container namespace across `veth` pair and bridge.
-4. Write output summary line `CONTAINER_NET_TRACE_VERIFIED` to `$HOME/container-net-test/net_trace.txt`.
+4. Write output summary line `CONTAINER_NET_TRACE_VERIFIED` to `$HOME/container-net-test/net_trace.txt`:
+   ```bash
+   mkdir -p "$HOME/container-net-test"
+   echo "CONTAINER_NET_TRACE_VERIFIED" > "$HOME/container-net-test/net_trace.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

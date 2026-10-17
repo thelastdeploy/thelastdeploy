@@ -48,9 +48,20 @@ Workload modeling establishes explicit SLA latency percentiles (p95/p99) and thr
    ```bash
    tld start lnx-model-system-workload
    ```
-2. Create directory `$HOME/perf-eng-test`.
-3. Model system workload classification (CPU-bound vs I/O-bound vs memory-bound).
-4. Write output summary line `WORKLOAD_MODEL_ESTABLISHED` to `$HOME/perf-eng-test/workload_model.txt`.
+2. Create directory `$HOME/perf-eng-test`:
+   ```bash
+   mkdir -p ~/perf-eng-test
+   ```
+3. Model system workload classification (CPU-bound vs I/O-bound vs memory-bound):
+   ```bash
+   uptime
+   vmstat 1 3
+   ```
+4. Write output summary line `WORKLOAD_MODEL_ESTABLISHED` to `$HOME/perf-eng-test/workload_model.txt`:
+   ```bash
+   echo 'WORKLOAD_MODEL_ESTABLISHED' > ~/perf-eng-test/workload_model.txt
+   cat ~/perf-eng-test/workload_model.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -61,9 +72,19 @@ Workload modeling establishes explicit SLA latency percentiles (p95/p99) and thr
    ```bash
    tld start lnx-establish-performance-targets
    ```
-2. Create directory `$HOME/perf-eng-test`.
-3. Define SLA target latency (p95 / p99) and throughput benchmark targets.
-4. Write target document output line `PERFORMANCE_SLA_TARGETS_DEFINED` to `$HOME/perf-eng-test/sla_targets.txt`.
+2. Create directory `$HOME/perf-eng-test`:
+   ```bash
+   mkdir -p ~/perf-eng-test
+   ```
+3. Define SLA target latency (p95 / p99) and throughput benchmark targets:
+   ```bash
+   echo "Target: p95 < 50ms, p99 < 150ms, Throughput > 1000 RPS"
+   ```
+4. Write target document output line `PERFORMANCE_SLA_TARGETS_DEFINED` to `$HOME/perf-eng-test/sla_targets.txt`:
+   ```bash
+   echo 'PERFORMANCE_SLA_TARGETS_DEFINED' > ~/perf-eng-test/sla_targets.txt
+   cat ~/perf-eng-test/sla_targets.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

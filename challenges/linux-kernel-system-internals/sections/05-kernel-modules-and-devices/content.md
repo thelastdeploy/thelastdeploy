@@ -18,9 +18,20 @@ Linux kernel modules (`.ko` binaries) allow dynamic extension of kernel capabili
    ```bash
    tld start lnx-investigate-kernel-modules
    ```
-2. Create directory `$HOME/kernel-modules`.
-3. Inspect `/proc/modules` and module parameters in `/sys/module/`.
-4. Write `KERNEL_MODULES_AND_PARAMETERS_ANALYZED` into `$HOME/kernel-modules/module_analysis.txt`.
+2. Create directory `$HOME/kernel-modules`:
+   ```bash
+   mkdir -p ~/kernel-modules
+   ```
+3. Inspect `/proc/modules` and module parameters in `/sys/module/`:
+   ```bash
+   head -n 10 /proc/modules
+   ls -la /sys/module/ | head -n 10
+   ```
+4. Write `KERNEL_MODULES_AND_PARAMETERS_ANALYZED` into `$HOME/kernel-modules/module_analysis.txt`:
+   ```bash
+   echo 'KERNEL_MODULES_AND_PARAMETERS_ANALYZED' > ~/kernel-modules/module_analysis.txt
+   cat ~/kernel-modules/module_analysis.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -31,10 +42,23 @@ Linux kernel modules (`.ko` binaries) allow dynamic extension of kernel capabili
    ```bash
    tld start lnx-trace-device-kernel-interface
    ```
-2. Inspect `/proc/devices` and `/proc/misc`.
-3. Correlate `/dev` nodes with major/minor numbers in `/sys/dev/`.
-4. Write `DEVICE_MAJOR_MINOR_INTERFACE_TRACED` into `$HOME/kernel-modules/device_interface.log`.
+2. Create directory `$HOME/kernel-modules`:
+   ```bash
+   mkdir -p ~/kernel-modules
+   ```
+3. Inspect `/proc/devices`, `/proc/misc`, and device mappings in `/sys/dev/`:
+   ```bash
+   cat /proc/devices
+   cat /proc/misc
+   ls -la /sys/dev/char/ | head -n 10
+   ```
+4. Write `DEVICE_MAJOR_MINOR_INTERFACE_TRACED` into `$HOME/kernel-modules/device_interface.log`:
+   ```bash
+   echo 'DEVICE_MAJOR_MINOR_INTERFACE_TRACED' > ~/kernel-modules/device_interface.log
+   cat ~/kernel-modules/device_interface.log
+   ```
 5. Validate your solution:
    ```bash
    tld check
    ```
+

@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "CONTAINER_ISOLATION_REPAIRED: SUCCESS" "$TARGET"; then
     echo "FAIL: $TARGET missing 'CONTAINER_ISOLATION_REPAIRED: SUCCESS'."
     exit 1

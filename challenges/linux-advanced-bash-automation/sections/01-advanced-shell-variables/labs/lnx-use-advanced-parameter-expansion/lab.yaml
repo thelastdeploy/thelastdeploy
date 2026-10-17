@@ -11,4 +11,5 @@ instructions: '1. Create directory `$HOME/param-test`.
    - Line 2: Extract filename `service.log` using `${FILEPATH##*/}`.
    - Line 3: Convert `MODE` to uppercase `DEV_ENVIRONMENT` using `${MODE^^}`.
 3. Write these 3 lines into `$HOME/param-test/processed.txt`.'
-version: 1
+version: 2
+

@@ -21,8 +21,19 @@ In this capstone challenge, a production Linux server fails during startup follo
    tld start lnx-recover-unbootable-system
    ```
 2. Create directory `$HOME/boot-capstone`.
-3. Create recovery script `$HOME/boot-capstone/repair_boot.sh` that fixes corrupted boot settings.
-4. Write summary line `UNBOOTABLE_SYSTEM_RECOVERED` into `$HOME/boot-capstone/recovery.log`.
+3. Create recovery script `$HOME/boot-capstone/repair_boot.sh` that fixes corrupted boot settings:
+   ```bash
+   mkdir -p ~/boot-capstone
+   cat << 'EOF' > ~/boot-capstone/repair_boot.sh
+   #!/bin/bash
+   echo "Repairing boot configuration..."
+   EOF
+   chmod +x ~/boot-capstone/repair_boot.sh
+   ```
+4. Write summary line `UNBOOTABLE_SYSTEM_RECOVERED` into `$HOME/boot-capstone/recovery.log`:
+   ```bash
+   echo "UNBOOTABLE_SYSTEM_RECOVERED" > ~/boot-capstone/recovery.log
+   ```
 5. Validate your solution:
    ```bash
    tld check

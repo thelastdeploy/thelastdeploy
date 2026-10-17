@@ -2,3 +2,11 @@ id: lnx-master-users-files-and-processes
 title: "Master Users, Files, and Processes"
 xp: 60
 description: "Configure advanced Linux user access controls, file ACLs, and process priority adjustments."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mastery-foundation
+  - rm -f $HOME/mastery-foundation/access_process_mastery.log
+instructions: '1. Create directory `$HOME/mastery-foundation`.
+2. Configure user/group memberships, ACL permissions, and nice/renice process priorities.
+3. Write `USERS_FILES_AND_PROCESSES_MASTERED` into `$HOME/mastery-foundation/access_process_mastery.log`.'
+version: 2

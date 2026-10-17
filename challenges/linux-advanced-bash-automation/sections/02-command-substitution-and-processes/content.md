@@ -48,12 +48,18 @@ Process substitution `<(...)` avoids subshell scope isolation issues caused by p
    ```bash
    tld start lnx-compose-command-output
    ```
-2. Create directory `$HOME/sub-test`.
-3. Write a script or bash commands that capture system details into `$HOME/sub-test/system_info.txt`:
-4. - `ARCH: <uname -m>`
-5. - `USER: <whoami>`
-6. - `DATE: <date +%Y-%m-%d>`
-7. Validate your solution:
+2. Create directory `$HOME/sub-test`:
+   ```bash
+   mkdir -p ~/sub-test
+   ```
+3. Capture system details into `$HOME/sub-test/system_info.txt`:
+   ```bash
+   echo "ARCH: $(uname -m)" > ~/sub-test/system_info.txt
+   echo "USER: $(whoami)" >> ~/sub-test/system_info.txt
+   echo "DATE: $(date +%Y-%m-%d)" >> ~/sub-test/system_info.txt
+   cat ~/sub-test/system_info.txt
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
@@ -63,12 +69,22 @@ Process substitution `<(...)` avoids subshell scope isolation issues caused by p
    ```bash
    tld start lnx-manage-command-substitution
    ```
-2. Create directory `$HOME/proc-sub-test`.
-3. Seed two files:
-4. - `old_list.txt` containing `nginx`, `redis`, `mysql`
-5. - `new_list.txt` containing `nginx`, `redis`, `postgresql`
-6. Use process substitution with `comm` or `grep` to compare sorted inputs without intermediate temporary files, and write the newly added service (`postgresql`) into `$HOME/proc-sub-test/diff_report.txt`.
-7. Validate your solution:
+2. Create directory `$HOME/proc-sub-test`:
+   ```bash
+   mkdir -p ~/proc-sub-test
+   ```
+3. Seed comparison files:
+   ```bash
+   printf "nginx\nredis\nmysql\n" > ~/proc-sub-test/old_list.txt
+   printf "nginx\nredis\npostgresql\n" > ~/proc-sub-test/new_list.txt
+   ```
+4. Use process substitution with `comm` to compare sorted inputs and write the newly added service into `$HOME/proc-sub-test/diff_report.txt`:
+   ```bash
+   comm -13 <(sort ~/proc-sub-test/old_list.txt) <(sort ~/proc-sub-test/new_list.txt) > ~/proc-sub-test/diff_report.txt
+   cat ~/proc-sub-test/diff_report.txt
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
+

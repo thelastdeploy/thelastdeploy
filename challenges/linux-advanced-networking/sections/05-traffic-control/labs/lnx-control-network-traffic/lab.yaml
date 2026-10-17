@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/tc-test`.
 2. Inspect traffic control queuing disciplines using `tc qdisc show`.
 3. Write output summary `TC_QDISC_INSPECTED` to `$HOME/tc-test/tc_summary.txt`.'
-version: 1
+version: 2

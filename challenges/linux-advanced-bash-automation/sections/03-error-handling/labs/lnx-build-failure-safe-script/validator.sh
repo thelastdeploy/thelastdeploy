@@ -8,6 +8,11 @@ if [ ! -f "$SCRIPT" ] || [ ! -x "$SCRIPT" ]; then
     exit 1
 fi
 
+if [ ! -s "$SCRIPT" ]; then
+    echo "FAIL: $SCRIPT is empty."
+    exit 1
+fi
+
 if ! grep -q "set -euo pipefail" "$SCRIPT"; then
     echo "FAIL: $SCRIPT does not contain 'set -euo pipefail'."
     exit 1

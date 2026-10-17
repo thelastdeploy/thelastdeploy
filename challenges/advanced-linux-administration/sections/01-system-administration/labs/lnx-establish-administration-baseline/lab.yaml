@@ -2,3 +2,12 @@ id: lnx-establish-administration-baseline
 title: "Establish Administration Baseline"
 xp: 45
 description: "Define operational baseline metrics, resource usage targets, and system configuration benchmarks."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/sysadmin-audit
+  - rm -f $HOME/sysadmin-audit/admin_baseline.conf
+instructions: '1. Create directory `$HOME/sysadmin-audit`.
+2. Establish CPU, memory, network, and storage performance baseline thresholds.
+3. Define standard sysctl tuning parameters and security defaults.
+4. Write `OPERATIONAL_ADMINISTRATION_BASELINE_ESTABLISHED` into `$HOME/sysadmin-audit/admin_baseline.conf`.'
+version: 2

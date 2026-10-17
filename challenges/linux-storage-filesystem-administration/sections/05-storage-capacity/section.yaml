@@ -2,3 +2,5 @@ id: "05-storage-capacity"
 title: "Storage Capacity"
 description: "Go beyond df/du: investigate why a filesystem is filling up and recover space safely."
 order: 5
+xp: 70
+version: 2

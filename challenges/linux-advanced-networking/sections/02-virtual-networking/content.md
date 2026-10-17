@@ -50,9 +50,23 @@ Linux bridges multiplex network connectivity between host environments, containe
    ```bash
    tld start lnx-build-linux-network-bridge
    ```
-2. Create directory `$HOME/vnet-test`.
-3. Write bridge creation and attachment commands into `$HOME/vnet-test/bridge_setup.sh` (`ip link add br-test type bridge`, `ip link set br-test up`).
-4. Write summary `BRIDGE_CREATED: br-test` into `$HOME/vnet-test/bridge_summary.txt`.
+2. Create directory `$HOME/vnet-test`:
+   ```bash
+   mkdir -p "$HOME/vnet-test"
+   ```
+3. Create the bridge setup script `$HOME/vnet-test/bridge_setup.sh`:
+   ```bash
+   cat << 'EOF' > "$HOME/vnet-test/bridge_setup.sh"
+   #!/usr/bin/env bash
+   ip link add br-test type bridge
+   ip link set br-test up
+   EOF
+   chmod +x "$HOME/vnet-test/bridge_setup.sh"
+   ```
+4. Write summary line `BRIDGE_CREATED: br-test` to `$HOME/vnet-test/bridge_summary.txt`:
+   ```bash
+   echo "BRIDGE_CREATED: br-test" > "$HOME/vnet-test/bridge_summary.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -63,10 +77,12 @@ Linux bridges multiplex network connectivity between host environments, containe
    ```bash
    tld start lnx-create-virtual-network-interface
    ```
-2. Create directory `$HOME/vnet-test`.
-3. Document virtual interface creation syntax (`ip link add dummy0 type dummy`).
-4. Write output `DUMMY_INTERFACE_VERIFIED` to `$HOME/vnet-test/vif_summary.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/vnet-test` and record virtual interface verification:
+   ```bash
+   mkdir -p "$HOME/vnet-test"
+   echo "DUMMY_INTERFACE_VERIFIED" > "$HOME/vnet-test/vif_summary.txt"
+   ```
+3. Validate your solution:
    ```bash
    tld check
    ```

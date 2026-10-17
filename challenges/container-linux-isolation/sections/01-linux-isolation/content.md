@@ -50,7 +50,11 @@ Linux container isolation relies on shared kernel primitives to enforce process 
    ```
 2. Create directory `$HOME/iso-test`.
 3. Inspect process isolation mechanisms and host process visibility.
-4. Write output summary line `PROCESS_ISOLATION_EXPLORED` to `$HOME/iso-test/isolation_basics.txt`.
+4. Write output summary line `PROCESS_ISOLATION_EXPLORED` to `$HOME/iso-test/isolation_basics.txt`:
+   ```bash
+   mkdir -p "$HOME/iso-test"
+   echo "PROCESS_ISOLATION_EXPLORED" > "$HOME/iso-test/isolation_basics.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -63,7 +67,11 @@ Linux container isolation relies on shared kernel primitives to enforce process 
    ```
 2. Create directory `$HOME/iso-test`.
 3. Investigate process attributes in isolated environments vs host namespace (`/proc/<pid>/ns/`).
-4. Write summary output `ISOLATED_PROCESSES_INVESTIGATED` to `$HOME/iso-test/proc_isolation.txt`.
+4. Write summary output `ISOLATED_PROCESSES_INVESTIGATED` to `$HOME/iso-test/proc_isolation.txt`:
+   ```bash
+   mkdir -p "$HOME/iso-test"
+   echo "ISOLATED_PROCESSES_INVESTIGATED" > "$HOME/iso-test/proc_isolation.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

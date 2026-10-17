@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "SYSTEM_EVIDENCE_COLLECTED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'SYSTEM_EVIDENCE_COLLECTED'."
     exit 1

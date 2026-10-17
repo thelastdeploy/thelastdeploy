@@ -39,7 +39,11 @@ Executing complete digital forensics and incident response proves your ability t
    ```
 2. Create directory `$HOME/ir-capstone`.
 3. Perform end-to-end digital forensics and incident response (observe, preserve, collect evidence, build timeline, discover persistence, contain, restore).
-4. Write master forensic report line `FORENSIC_INVESTIGATION_COMPLETE_SYSTEM_SECURED` into `$HOME/ir-capstone/forensic_investigation.log`.
+4. Write master forensic report line `FORENSIC_INVESTIGATION_COMPLETE_SYSTEM_SECURED` into `$HOME/ir-capstone/forensic_investigation.log`:
+   ```bash
+   mkdir -p "$HOME/ir-capstone"
+   echo "FORENSIC_INVESTIGATION_COMPLETE_SYSTEM_SECURED" > "$HOME/ir-capstone/forensic_investigation.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

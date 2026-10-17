@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "PRODUCTION_WORKLOAD_OPTIMIZED_AND_VALIDATED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'PRODUCTION_WORKLOAD_OPTIMIZED_AND_VALIDATED'."
     exit 1

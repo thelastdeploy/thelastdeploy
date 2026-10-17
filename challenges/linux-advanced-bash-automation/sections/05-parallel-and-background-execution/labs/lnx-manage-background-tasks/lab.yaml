@@ -12,4 +12,5 @@ instructions: '1. Create directory `$HOME/bg-test`.
    - Call `wait` to block until all tasks complete.
    - Write `ALL_JOBS_DONE` into `$HOME/bg-test/jobs_complete.txt` after `wait` returns.
 4. Execute `$HOME/bg-test/bg_runner.sh`.'
-version: 1
+version: 2
+

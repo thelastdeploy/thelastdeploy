@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 LINE1=$(sed -n '1p' "$TARGET")
 LINE2=$(sed -n '2p' "$TARGET")
 LINE3=$(sed -n '3p' "$TARGET")

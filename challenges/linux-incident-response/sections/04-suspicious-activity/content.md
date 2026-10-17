@@ -46,7 +46,11 @@ Auditing cron schedules, systemd unit files, shell profiles (`.bashrc`), and SSH
    ```
 2. Create directory `$HOME/suspicious-test`.
 3. Inspect suspicious process activity (unlinked deleted binaries, hidden network sockets).
-4. Write output summary line `SUSPICIOUS_PROCESS_INVESTIGATED` to `$HOME/suspicious-test/process_analysis.txt`.
+4. Write output summary line `SUSPICIOUS_PROCESS_INVESTIGATED` to `$HOME/suspicious-test/process_analysis.txt`:
+   ```bash
+   mkdir -p "$HOME/suspicious-test"
+   echo "SUSPICIOUS_PROCESS_INVESTIGATED" > "$HOME/suspicious-test/process_analysis.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -59,7 +63,11 @@ Auditing cron schedules, systemd unit files, shell profiles (`.bashrc`), and SSH
    ```
 2. Create directory `$HOME/suspicious-test`.
 3. Audit persistence locations (`/etc/cron*`, `/etc/systemd/system/`, `~/.bashrc`, `~/.ssh/authorized_keys`).
-4. Write output summary `PERSISTENCE_MECHANISM_DISCOVERED` to `$HOME/suspicious-test/persistence_report.txt`.
+4. Write output summary `PERSISTENCE_MECHANISM_DISCOVERED` to `$HOME/suspicious-test/persistence_report.txt`:
+   ```bash
+   mkdir -p "$HOME/suspicious-test"
+   echo "PERSISTENCE_MECHANISM_DISCOVERED" > "$HOME/suspicious-test/persistence_report.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

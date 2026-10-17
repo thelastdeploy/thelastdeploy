@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "RESOURCE_STARVED_SERVER_RECOVERED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'RESOURCE_STARVED_SERVER_RECOVERED'."
     exit 1

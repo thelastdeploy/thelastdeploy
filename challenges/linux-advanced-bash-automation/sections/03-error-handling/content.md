@@ -53,13 +53,31 @@ Combining strict mode with signal traps prevents orphaned background jobs, stale
    ```bash
    tld start lnx-build-failure-safe-script
    ```
-2. Create directory `$HOME/err-test`.
-3. Create executable script `$HOME/err-test/safe_run.sh`.
-4. Script requirements:
-5. - Must include `set -euo pipefail`.
-6. - Must check if `$1` is provided. If missing, print `Usage: safe_run.sh <file>` and exit code 2.
-7. - If `$1` is provided, print `Processing $1` and exit code 0.
-8. Validate your solution:
+2. Create directory `$HOME/err-test`:
+   ```bash
+   mkdir -p ~/err-test
+   ```
+3. Create the script `$HOME/err-test/safe_run.sh`:
+   ```bash
+   cat << 'EOF' > ~/err-test/safe_run.sh
+   #!/bin/bash
+   set -euo pipefail
+
+   if [ $# -lt 1 ] || [ -z "${1:-}" ]; then
+       echo "Usage: safe_run.sh <file>"
+       exit 2
+   fi
+
+   echo "Processing $1"
+   exit 0
+   EOF
+   chmod +x ~/err-test/safe_run.sh
+   ```
+4. Test running the script with an argument:
+   ```bash
+   ~/err-test/safe_run.sh myfile.txt
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
@@ -69,13 +87,38 @@ Combining strict mode with signal traps prevents orphaned background jobs, stale
    ```bash
    tld start lnx-handle-script-signals
    ```
-2. Create directory `$HOME/trap-test`.
-3. Create executable script `$HOME/trap-test/trap_demo.sh`.
-4. Script requirements:
-5. - Touch lock file `$HOME/trap-test/work.lock`.
-6. - Register `trap` for `EXIT SIGINT SIGTERM` that removes `$HOME/trap-test/work.lock` and appends `Cleaned up lock file` to `$HOME/trap-test/cleanup_log.txt`.
-7. Execute `$HOME/trap-test/trap_demo.sh` to trigger trap completion.
-8. Validate your solution:
+2. Create directory `$HOME/trap-test`:
+   ```bash
+   mkdir -p ~/trap-test
+   ```
+3. Create the script `$HOME/trap-test/trap_demo.sh`:
+   ```bash
+   cat << 'EOF' > ~/trap-test/trap_demo.sh
+   #!/bin/bash
+   set -euo pipefail
+
+   LOCK="$HOME/trap-test/work.lock"
+   LOG="$HOME/trap-test/cleanup_log.txt"
+
+   cleanup() {
+       rm -f "$LOCK"
+       echo "Cleaned up lock file" >> "$LOG"
+   }
+
+   trap cleanup EXIT SIGINT SIGTERM
+
+   touch "$LOCK"
+   echo "Working..."
+   EOF
+   chmod +x ~/trap-test/trap_demo.sh
+   ```
+4. Execute `$HOME/trap-test/trap_demo.sh` to trigger trap completion:
+   ```bash
+   ~/trap-test/trap_demo.sh
+   cat ~/trap-test/cleanup_log.txt
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
+

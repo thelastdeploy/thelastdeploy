@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ -f "$HOME/security-incident/incident_containment.log" ] && grep -q "COMPROMISED_SERVICE_CONTAINED_AND_RECOVERED" "$HOME/security-incident/incident_containment.log"; then
+TARGET="$HOME/security-incident/incident_containment.log"
+
+if [ ! -f "$TARGET" ] || [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is missing or empty."
+    exit 1
+fi
+
+if grep -q "COMPROMISED_SERVICE_CONTAINED_AND_RECOVERED" "$TARGET"; then
     echo "PASS: Recover Compromised Service verified successfully."
     exit 0
 else

@@ -2,3 +2,12 @@ id: lnx-manage-production-service-stack
 title: "Manage Production Service Stack"
 xp: 55
 description: "Deploy, supervise, and secure a multi-container/multi-service application stack using systemd target units."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/service-stack
+  - rm -f $HOME/service-stack/production_stack.status
+instructions: '1. Create directory `$HOME/service-stack`.
+2. Create a custom systemd target unit file to manage a web and database service stack.
+3. Enforce automatic restart policies and security sandboxing.
+4. Write `PRODUCTION_SERVICE_STACK_OPERATIONAL` into `$HOME/service-stack/production_stack.status`.'
+version: 2

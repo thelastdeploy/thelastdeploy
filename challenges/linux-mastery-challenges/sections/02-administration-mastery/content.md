@@ -20,7 +20,11 @@ Administration mastery evaluates your ability to manage enterprise Linux servers
    ```
 2. Create directory `$HOME/mastery-admin`.
 3. Configure multi-service systemd target dependencies and persistent journalctl limits.
-4. Write `SYSTEM_ADMINISTRATION_MASTERED` into `$HOME/mastery-admin/admin_mastery.log`.
+4. Write `SYSTEM_ADMINISTRATION_MASTERED` into `$HOME/mastery-admin/admin_mastery.log`:
+   ```bash
+   mkdir -p "$HOME/mastery-admin"
+   echo "SYSTEM_ADMINISTRATION_MASTERED" > "$HOME/mastery-admin/admin_mastery.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -32,7 +36,11 @@ Administration mastery evaluates your ability to manage enterprise Linux servers
    tld start lnx-master-network-and-storage
    ```
 2. Perform live LVM logical volume expansion, online filesystem resize, and interface route adjustments.
-3. Write `NETWORK_AND_STORAGE_ORCHESTRATION_MASTERED` into `$HOME/mastery-admin/net_storage_mastery.log`.
+3. Write `NETWORK_AND_STORAGE_ORCHESTRATION_MASTERED` into `$HOME/mastery-admin/net_storage_mastery.log`:
+   ```bash
+   mkdir -p "$HOME/mastery-admin"
+   echo "NETWORK_AND_STORAGE_ORCHESTRATION_MASTERED" > "$HOME/mastery-admin/net_storage_mastery.log"
+   ```
 4. Validate your solution:
    ```bash
    tld check

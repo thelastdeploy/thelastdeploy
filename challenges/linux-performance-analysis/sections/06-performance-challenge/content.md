@@ -26,9 +26,21 @@ Methodical performance analysis transforms vague user complaints into clear, evi
    ```bash
    tld start lnx-diagnose-production-performance
    ```
-2. Create directory `$HOME/perf-challenge`.
-3. Follow the 4-step performance investigation methodology to diagnose system performance degradation.
-4. Write proof line `PRODUCTION_PERFORMANCE_DIAGNOSED: ROOT_CAUSE_PROVED` into `$HOME/perf-challenge/root_cause.log`.
+2. Create directory `$HOME/perf-challenge`:
+   ```bash
+   mkdir -p ~/perf-challenge
+   ```
+3. Follow the 4-step performance investigation methodology to diagnose system performance degradation:
+   ```bash
+   uptime
+   vmstat 1 3
+   iostat -xz 1 3
+   ```
+4. Write proof line `PRODUCTION_PERFORMANCE_DIAGNOSED: ROOT_CAUSE_PROVED` into `$HOME/perf-challenge/root_cause.log`:
+   ```bash
+   echo 'PRODUCTION_PERFORMANCE_DIAGNOSED: ROOT_CAUSE_PROVED' > ~/perf-challenge/root_cause.log
+   cat ~/perf-challenge/root_cause.log
+   ```
 5. Validate your solution:
    ```bash
    tld check

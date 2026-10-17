@@ -34,7 +34,11 @@ Executing complete incident response proves your ability to resolve complex prod
    ```
 2. Create directory `$HOME/incident-capstone`.
 3. Diagnose and recover failed production server (isolate root cause, fix broken dependencies/ports/storage, verify service health).
-4. Write post-mortem report line `PRODUCTION_INCIDENT_RESOLVED: SYSTEM_HEALTHY` into `$HOME/incident-capstone/post_mortem.log`.
+4. Write post-mortem report line `PRODUCTION_INCIDENT_RESOLVED: SYSTEM_HEALTHY` into `$HOME/incident-capstone/post_mortem.log`:
+   ```bash
+   mkdir -p "$HOME/incident-capstone"
+   echo "PRODUCTION_INCIDENT_RESOLVED: SYSTEM_HEALTHY" > "$HOME/incident-capstone/post_mortem.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

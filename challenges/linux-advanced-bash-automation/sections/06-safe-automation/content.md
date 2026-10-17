@@ -59,12 +59,38 @@ Combining pre-mutation state checks with atomic file operations ensures scripts 
    ```bash
    tld start lnx-build-idempotent-script
    ```
-2. Create directory `$HOME/idempotent-test` and seed `$HOME/idempotent-test/app.conf` with `MAX_CONNECTIONS=100`.
-3. Write executable script `$HOME/idempotent-test/deploy.sh` that:
-4. - Sets `TIMEOUT=30` and updates `MAX_CONNECTIONS=200` in `app.conf`.
-5. - Ensures running `deploy.sh` multiple times produces exact same `app.conf` without duplicate lines.
-6. Execute `deploy.sh` twice.
-7. Validate your solution:
+2. Create directory `$HOME/idempotent-test` and seed initial configuration:
+   ```bash
+   mkdir -p ~/idempotent-test
+   echo "MAX_CONNECTIONS=100" > ~/idempotent-test/app.conf
+   ```
+3. Create the idempotent script `$HOME/idempotent-test/deploy.sh`:
+   ```bash
+   cat << 'EOF' > ~/idempotent-test/deploy.sh
+   #!/bin/bash
+   set -euo pipefail
+
+   CONF="$HOME/idempotent-test/app.conf"
+
+   if grep -q "^MAX_CONNECTIONS=" "$CONF"; then
+       sed -i 's/^MAX_CONNECTIONS=.*/MAX_CONNECTIONS=200/' "$CONF"
+   else
+       echo "MAX_CONNECTIONS=200" >> "$CONF"
+   fi
+
+   if ! grep -q "^TIMEOUT=" "$CONF"; then
+       echo "TIMEOUT=30" >> "$CONF"
+   fi
+   EOF
+   chmod +x ~/idempotent-test/deploy.sh
+   ```
+4. Execute `deploy.sh` twice to verify idempotency:
+   ```bash
+   ~/idempotent-test/deploy.sh
+   ~/idempotent-test/deploy.sh
+   cat ~/idempotent-test/app.conf
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
@@ -74,12 +100,36 @@ Combining pre-mutation state checks with atomic file operations ensures scripts 
    ```bash
    tld start lnx-protect-automation-from-failure
    ```
-2. Create directory `$HOME/atomic-test`.
-3. Write executable script `$HOME/atomic-test/safe_update.sh` that:
-4. - Uses a lock file `$HOME/atomic-test/script.lock` to prevent concurrent runs.
-5. - Writes updated data to temporary file first before atomically replacing `$HOME/atomic-test/target.txt` (`mv temp file target.txt`).
-6. Execute `$HOME/atomic-test/safe_update.sh`.
-7. Validate your solution:
+2. Create directory `$HOME/atomic-test` and seed the initial target file:
+   ```bash
+   mkdir -p ~/atomic-test
+   echo "initial_data" > ~/atomic-test/target.txt
+   ```
+3. Create the script `$HOME/atomic-test/safe_update.sh`:
+   ```bash
+   cat << 'EOF' > ~/atomic-test/safe_update.sh
+   #!/bin/bash
+   set -euo pipefail
+
+   LOCKFILE="$HOME/atomic-test/script.lock"
+   TARGET="$HOME/atomic-test/target.txt"
+
+   exec 200>"$LOCKFILE"
+   flock -n 200 || { echo "Script is already running"; exit 1; }
+
+   TMPFILE=$(mktemp "$HOME/atomic-test/tmp.XXXXXX")
+   echo "updated_data_$(date +%s)" > "$TMPFILE"
+   mv "$TMPFILE" "$TARGET"
+   EOF
+   chmod +x ~/atomic-test/safe_update.sh
+   ```
+4. Execute `safe_update.sh`:
+   ```bash
+   ~/atomic-test/safe_update.sh
+   cat ~/atomic-test/target.txt
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
+

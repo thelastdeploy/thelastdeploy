@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "OVERLAYFS_LAYERS_INVESTIGATED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'OVERLAYFS_LAYERS_INVESTIGATED'."
     exit 1

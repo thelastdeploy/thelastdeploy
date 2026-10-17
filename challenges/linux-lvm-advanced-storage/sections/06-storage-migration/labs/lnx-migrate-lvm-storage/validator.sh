@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "PVMOVE_MIGRATION_VERIFIED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'PVMOVE_MIGRATION_VERIFIED'."
     exit 1

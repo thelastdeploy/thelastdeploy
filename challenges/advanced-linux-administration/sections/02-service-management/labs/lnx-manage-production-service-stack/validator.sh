@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ -f "$HOME/service-stack/production_stack.status" ] && grep -q "PRODUCTION_SERVICE_STACK_OPERATIONAL" "$HOME/service-stack/production_stack.status"; then
-    echo "PASS: Manage Production Service Stack verified successfully."
-    exit 0
-else
-    echo "FAIL: Requirement not met for Manage Production Service Stack."
+TARGET="$HOME/service-stack/production_stack.status"
+
+if [ ! -f "$TARGET" ]; then
+    echo "FAIL: $TARGET does not exist."
     exit 1
 fi
+
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
+if ! grep -q "PRODUCTION_SERVICE_STACK_OPERATIONAL" "$TARGET"; then
+    echo "FAIL: $TARGET missing 'PRODUCTION_SERVICE_STACK_OPERATIONAL'."
+    exit 1
+fi
+
+echo "PASS: Manage Production Service Stack verified successfully."
+exit 0

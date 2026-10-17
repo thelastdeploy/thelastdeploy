@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ -f "$HOME/sysadmin-audit/system_inventory.log" ] && grep -q "PRODUCTION_SERVER_AUDIT_COMPLETED" "$HOME/sysadmin-audit/system_inventory.log"; then
-    echo "PASS: Audit Production System verified successfully."
-    exit 0
-else
-    echo "FAIL: Requirement not met for Audit Production System."
+TARGET="$HOME/sysadmin-audit/system_inventory.log"
+
+if [ ! -f "$TARGET" ]; then
+    echo "FAIL: $TARGET does not exist."
     exit 1
 fi
+
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
+if ! grep -q "PRODUCTION_SERVER_AUDIT_COMPLETED" "$TARGET"; then
+    echo "FAIL: $TARGET missing 'PRODUCTION_SERVER_AUDIT_COMPLETED'."
+    exit 1
+fi
+
+echo "PASS: Audit Production System verified successfully."
+exit 0

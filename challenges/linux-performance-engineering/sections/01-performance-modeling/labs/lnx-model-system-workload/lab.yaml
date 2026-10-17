@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/perf-eng-test`.
 2. Model system workload classification (CPU-bound vs I/O-bound vs memory-bound).
 3. Write output summary line `WORKLOAD_MODEL_ESTABLISHED` to `$HOME/perf-eng-test/workload_model.txt`.'
-version: 1
+version: 2

@@ -54,10 +54,16 @@ Policy routing enables multi-homed servers and VPN gateways to route traffic con
    ```bash
    tld start lnx-configure-policy-routing
    ```
-2. Create directory `$HOME/route-test`.
-3. Inspect existing routing rules using `ip rule show`.
-4. Output rule summary line `POLICY_ROUTING_INSPECTED` into `$HOME/route-test/rules_summary.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/route-test` and inspect routing rules:
+   ```bash
+   mkdir -p "$HOME/route-test"
+   ip rule show
+   ```
+3. Record the inspection marker into `$HOME/route-test/rules_summary.txt`:
+   ```bash
+   echo "POLICY_ROUTING_INSPECTED" > "$HOME/route-test/rules_summary.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
@@ -67,10 +73,16 @@ Policy routing enables multi-homed servers and VPN gateways to route traffic con
    ```bash
    tld start lnx-debug-multi-route-network
    ```
-2. Create directory `$HOME/route-test`.
-3. Perform route lookup test using `ip route get 127.0.0.1`.
-4. Write output line `ROUTE_LOOKUP_SUCCESS: 127.0.0.1` into `$HOME/route-test/route_debug.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/route-test` and run the route lookup test:
+   ```bash
+   mkdir -p "$HOME/route-test"
+   ip route get 127.0.0.1
+   ```
+3. Record the lookup result into `$HOME/route-test/route_debug.txt`:
+   ```bash
+   echo "ROUTE_LOOKUP_SUCCESS: 127.0.0.1" > "$HOME/route-test/route_debug.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

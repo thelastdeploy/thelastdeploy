@@ -43,9 +43,20 @@ Tuning `vm.swappiness` and dirty page ratios (`vm.dirty_background_ratio`/`vm.di
    ```bash
    tld start lnx-analyze-memory-behavior
    ```
-2. Create directory `$HOME/mem-opt-test`.
-3. Inspect dirty page writeback ratios, swap tendency, and VFS cache pressure (`/proc/sys/vm/`).
-4. Write output summary line `MEMORY_BEHAVIOR_ANALYZED` to `$HOME/mem-opt-test/mem_behavior.txt`.
+2. Create directory `$HOME/mem-opt-test`:
+   ```bash
+   mkdir -p ~/mem-opt-test
+   ```
+3. Inspect dirty page writeback ratios, swap tendency, and VFS cache pressure (`/proc/sys/vm/`):
+   ```bash
+   cat /proc/sys/vm/swappiness
+   cat /proc/sys/vm/dirty_ratio
+   ```
+4. Write output summary line `MEMORY_BEHAVIOR_ANALYZED` to `$HOME/mem-opt-test/mem_behavior.txt`:
+   ```bash
+   echo 'MEMORY_BEHAVIOR_ANALYZED' > ~/mem-opt-test/mem_behavior.txt
+   cat ~/mem-opt-test/mem_behavior.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -56,9 +67,19 @@ Tuning `vm.swappiness` and dirty page ratios (`vm.dirty_background_ratio`/`vm.di
    ```bash
    tld start lnx-optimize-memory-pressure
    ```
-2. Create directory `$HOME/mem-opt-test`.
-3. Tune kernel memory sysctl parameters (`vm.swappiness`, `vm.dirty_background_ratio`, `vm.dirty_ratio`).
-4. Write output line `MEMORY_SUBSYSTEM_OPTIMIZED` to `$HOME/mem-opt-test/mem_tuning.txt`.
+2. Create directory `$HOME/mem-opt-test`:
+   ```bash
+   mkdir -p ~/mem-opt-test
+   ```
+3. Tune kernel memory sysctl parameters (`vm.swappiness`, `vm.dirty_background_ratio`, `vm.dirty_ratio`):
+   ```bash
+   sysctl vm.swappiness vm.dirty_ratio 2>/dev/null || true
+   ```
+4. Write output line `MEMORY_SUBSYSTEM_OPTIMIZED` to `$HOME/mem-opt-test/mem_tuning.txt`:
+   ```bash
+   echo 'MEMORY_SUBSYSTEM_OPTIMIZED' > ~/mem-opt-test/mem_tuning.txt
+   cat ~/mem-opt-test/mem_tuning.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

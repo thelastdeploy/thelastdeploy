@@ -49,10 +49,16 @@ Combining socket inspection (`ss`) with packet capture (`tcpdump`) pinpoints bin
    ```bash
    tld start lnx-debug-advanced-network-service
    ```
-2. Create directory `$HOME/svc-net-test`.
-3. Run `ss -tulpn` or `ss -tun` to inspect listening network sockets.
-4. Write output summary `SOCKET_BINDINGS_INSPECTED` to `$HOME/svc-net-test/sockets.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/svc-net-test` and inspect network socket bindings:
+   ```bash
+   mkdir -p "$HOME/svc-net-test"
+   ss -tun
+   ```
+3. Record the socket bindings marker into `$HOME/svc-net-test/sockets.txt`:
+   ```bash
+   echo "SOCKET_BINDINGS_INSPECTED" > "$HOME/svc-net-test/sockets.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
@@ -62,10 +68,12 @@ Combining socket inspection (`ss`) with packet capture (`tcpdump`) pinpoints bin
    ```bash
    tld start lnx-trace-network-connection
    ```
-2. Create directory `$HOME/svc-net-test`.
-3. Document packet tracing command syntax (`tcpdump -i lo -c 1 icmp`).
-4. Write summary `PACKET_TRACE_VERIFIED` to `$HOME/svc-net-test/trace_summary.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/svc-net-test` and record packet tracing verification:
+   ```bash
+   mkdir -p "$HOME/svc-net-test"
+   echo "PACKET_TRACE_VERIFIED" > "$HOME/svc-net-test/trace_summary.txt"
+   ```
+3. Validate your solution:
    ```bash
    tld check
    ```

@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/boot-test`.
 2. Inspect boot files in `/boot` directory.
 3. Write output summary line `BOOT_COMPONENTS_INSPECTED` to `$HOME/boot-test/boot_files.txt`.'
-version: 1
+version: 2

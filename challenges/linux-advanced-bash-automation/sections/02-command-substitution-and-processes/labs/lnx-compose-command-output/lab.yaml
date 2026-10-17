@@ -10,4 +10,5 @@ instructions: '1. Create directory `$HOME/sub-test`.
    - `ARCH: <uname -m>`
    - `USER: <whoami>`
    - `DATE: <date +%Y-%m-%d>`'
-version: 1
+version: 2
+

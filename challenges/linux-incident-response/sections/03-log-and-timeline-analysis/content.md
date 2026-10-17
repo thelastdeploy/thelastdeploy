@@ -49,9 +49,20 @@ Combining authentication logs (`auth.log`), journal entries, and file modificati
    ```bash
    tld start lnx-build-incident-timeline
    ```
-2. Create directory `$HOME/timeline-test`.
-3. Construct chronological incident timeline combining system auth logs and journal timestamps.
-4. Write output line `INCIDENT_TIMELINE_BUILT` to `$HOME/timeline-test/incident_timeline.txt`.
+2. Create directory `$HOME/timeline-test`:
+   ```bash
+   mkdir -p ~/timeline-test
+   ```
+3. Inspect authentication events and recent system entries:
+   ```bash
+   grep -E "Accepted|Failed|Invalid" /var/log/auth.log 2>/dev/null || true
+   journalctl -n 20 --no-pager 2>/dev/null || true
+   ```
+4. Record timeline marker into `$HOME/timeline-test/incident_timeline.txt`:
+   ```bash
+   echo "INCIDENT_TIMELINE_BUILT" > ~/timeline-test/incident_timeline.txt
+   cat ~/timeline-test/incident_timeline.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -62,10 +73,22 @@ Combining authentication logs (`auth.log`), journal entries, and file modificati
    ```bash
    tld start lnx-correlate-security-events
    ```
-2. Create directory `$HOME/timeline-test`.
-3. Correlate SSH authentication logs, sudo execution entries, and file creation events.
-4. Write summary line `SECURITY_EVENTS_CORRELATED` to `$HOME/timeline-test/event_correlation.txt`.
+2. Create directory `$HOME/timeline-test`:
+   ```bash
+   mkdir -p ~/timeline-test
+   ```
+3. Correlate sudo execution and SSH authentication signatures:
+   ```bash
+   grep -E "sudo:|sshd\[" /var/log/auth.log 2>/dev/null || true
+   find /tmp /var/tmp -maxdepth 2 -type f 2>/dev/null || true
+   ```
+4. Record event correlation marker into `$HOME/timeline-test/event_correlation.txt`:
+   ```bash
+   echo "SECURITY_EVENTS_CORRELATED" > ~/timeline-test/event_correlation.txt
+   cat ~/timeline-test/event_correlation.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
    ```
+

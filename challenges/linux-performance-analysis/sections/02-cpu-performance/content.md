@@ -46,10 +46,16 @@ High `vmstat r` run-queue numbers indicate CPU saturation, while `pidstat -u` pi
    ```bash
    tld start lnx-analyze-cpu-saturation
    ```
-2. Create directory `$HOME/cpu-perf-test`.
-3. Analyze CPU run-queue length (`vmstat 1`) and per-core CPU breakdown (`mpstat -P ALL`).
-4. Write output line `CPU_SATURATION_ANALYZED` to `$HOME/cpu-perf-test/cpu_analysis.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/cpu-perf-test` and analyze CPU run-queue length:
+   ```bash
+   mkdir -p "$HOME/cpu-perf-test"
+   vmstat 1 3
+   ```
+3. Record the CPU saturation analysis marker into `$HOME/cpu-perf-test/cpu_analysis.txt`:
+   ```bash
+   echo "CPU_SATURATION_ANALYZED" > "$HOME/cpu-perf-test/cpu_analysis.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
@@ -59,10 +65,16 @@ High `vmstat r` run-queue numbers indicate CPU saturation, while `pidstat -u` pi
    ```bash
    tld start lnx-trace-cpu-intensive-workload
    ```
-2. Create directory `$HOME/cpu-perf-test`.
-3. Identify process consuming CPU time using `ps aux --sort=-%cpu` or `pidstat -u`.
-4. Write output line `OFFENDING_CPU_PROCESS_IDENTIFIED` into `$HOME/cpu-perf-test/offending_pid.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/cpu-perf-test` and identify top CPU processes:
+   ```bash
+   mkdir -p "$HOME/cpu-perf-test"
+   ps aux --sort=-%cpu | head -n 5
+   ```
+3. Record the offending process identification marker into `$HOME/cpu-perf-test/offending_pid.txt`:
+   ```bash
+   echo "OFFENDING_CPU_PROCESS_IDENTIFIED" > "$HOME/cpu-perf-test/offending_pid.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

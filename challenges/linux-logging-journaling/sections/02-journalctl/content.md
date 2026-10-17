@@ -49,7 +49,14 @@ journalctl -u nginx -o json-pretty
    tld start lnx-filter-journal-events
    ```
 2. Filter systemd journal events by priority and output format.
-3. Create an executable script at `$HOME/log-test/priority_cmd.sh` executing `journalctl -p err -o json-pretty`.
+3. Create an executable script at `$HOME/log-test/priority_cmd.sh` executing `journalctl -p err -o json-pretty`:
+   ```bash
+   cat << 'EOF' > ~/log-test/priority_cmd.sh
+   #!/bin/bash
+   journalctl -p err -o json-pretty
+   EOF
+   chmod +x ~/log-test/priority_cmd.sh
+   ```
 4. Validate your solution:
    ```bash
    tld check
@@ -61,7 +68,14 @@ journalctl -u nginx -o json-pretty
    tld start lnx-query-system-journal
    ```
 2. Query systemd journal logs by service unit and time range.
-3. Create an executable script at `$HOME/log-test/journal_query_cmd.sh` executing `journalctl -u ssh.service --since "1 hour ago"`.
+3. Create an executable script at `$HOME/log-test/journal_query_cmd.sh` executing `journalctl -u ssh.service --since "1 hour ago"`:
+   ```bash
+   cat << 'EOF' > ~/log-test/journal_query_cmd.sh
+   #!/bin/bash
+   journalctl -u ssh.service --since "1 hour ago"
+   EOF
+   chmod +x ~/log-test/journal_query_cmd.sh
+   ```
 4. Validate your solution:
    ```bash
    tld check

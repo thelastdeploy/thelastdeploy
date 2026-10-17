@@ -43,9 +43,20 @@ VFS decouples application file I/O from specific storage drivers through Superbl
    ```bash
    tld start lnx-explore-inodes-and-filesystems
    ```
-2. Create directory `$HOME/vfs-test`.
-3. Inspect inode metadata (`stat`) and system inode usage (`df -i`).
-4. Write output summary line `INODE_METADATA_EXPLORED` to `$HOME/vfs-test/inode_report.txt`.
+2. Create directory `$HOME/vfs-test`:
+   ```bash
+   mkdir -p ~/vfs-test
+   ```
+3. Inspect inode metadata (`stat`) and system inode usage (`df -i`):
+   ```bash
+   stat /etc/passwd
+   df -i /
+   ```
+4. Write output summary line `INODE_METADATA_EXPLORED` to `$HOME/vfs-test/inode_report.txt`:
+   ```bash
+   echo 'INODE_METADATA_EXPLORED' > ~/vfs-test/inode_report.txt
+   cat ~/vfs-test/inode_report.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -56,9 +67,20 @@ VFS decouples application file I/O from specific storage drivers through Superbl
    ```bash
    tld start lnx-trace-file-access
    ```
-2. Create directory `$HOME/vfs-test`.
-3. Inspect open file tables (`lsof`) and file locks (`/proc/locks`).
-4. Write output line `FILE_LOCKS_TRACED` into `$HOME/vfs-test/file_locks.txt`.
+2. Create directory `$HOME/vfs-test`:
+   ```bash
+   mkdir -p ~/vfs-test
+   ```
+3. Inspect open file tables (`lsof`) and file locks (`/proc/locks`):
+   ```bash
+   cat /proc/locks | head -n 10
+   cat /proc/sys/fs/file-nr
+   ```
+4. Write output line `FILE_LOCKS_TRACED` into `$HOME/vfs-test/file_locks.txt`:
+   ```bash
+   echo 'FILE_LOCKS_TRACED' > ~/vfs-test/file_locks.txt
+   cat ~/vfs-test/file_locks.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

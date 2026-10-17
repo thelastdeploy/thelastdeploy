@@ -46,7 +46,11 @@ High-level defaults in `/etc/default/grub` generate `/boot/grub/grub.cfg` via `u
    ```
 2. Create directory `$HOME/grub-test`.
 3. Inspect `/etc/default/grub` file settings.
-4. Write summary line `GRUB_CONFIG_INSPECTED` to `$HOME/grub-test/grub_summary.txt`.
+4. Write summary line `GRUB_CONFIG_INSPECTED` to `$HOME/grub-test/grub_summary.txt`:
+   ```bash
+   mkdir -p ~/grub-test
+   echo "GRUB_CONFIG_INSPECTED" > ~/grub-test/grub_summary.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -58,7 +62,11 @@ High-level defaults in `/etc/default/grub` generate `/boot/grub/grub.cfg` via `u
    tld start lnx-manage-kernel-boot-options
    ```
 2. Create directory `$HOME/grub-test`.
-3. Create file `$HOME/grub-test/kernel_flags.txt` containing custom kernel flags configuration line `GRUB_CMDLINE_LINUX="quiet splash systemd.unit=multi-user.target"`.
+3. Create file `$HOME/grub-test/kernel_flags.txt` containing custom kernel flags configuration line `GRUB_CMDLINE_LINUX="quiet splash systemd.unit=multi-user.target"`:
+   ```bash
+   mkdir -p ~/grub-test
+   echo 'GRUB_CMDLINE_LINUX="quiet splash systemd.unit=multi-user.target"' > ~/grub-test/kernel_flags.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check

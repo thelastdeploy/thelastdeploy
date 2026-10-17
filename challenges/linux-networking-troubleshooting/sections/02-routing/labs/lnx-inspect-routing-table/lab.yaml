@@ -19,5 +19,6 @@ environment:
 setup:
   seed_commands:
   - mkdir -p $HOME/net-test/routing
+  - rm -f $HOME/net-test/default_gateway.txt
   - "printf 'default via 192.168.1.1 dev eth0 proto dhcp src 192.168.1.105 metric 100\\n10.0.0.0/24 dev eth1 proto kernel scope link src 10.0.0.50\\n192.168.1.0/24 dev eth0 proto kernel scope link src 192.168.1.105 metric 100\\n' > $HOME/net-test/routing/routes.txt"
-version: 2
+version: 3

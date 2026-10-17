@@ -11,4 +11,5 @@ instructions: '1. Create directory `$HOME/atomic-test`.
    - Uses a lock file `$HOME/atomic-test/script.lock` to prevent concurrent runs.
    - Writes updated data to temporary file first before atomically replacing `$HOME/atomic-test/target.txt` (`mv temp file target.txt`).
 3. Execute `$HOME/atomic-test/safe_update.sh`.'
-version: 1
+version: 2
+

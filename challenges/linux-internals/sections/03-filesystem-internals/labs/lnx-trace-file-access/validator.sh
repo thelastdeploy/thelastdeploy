@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "FILE_LOCKS_TRACED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'FILE_LOCKS_TRACED'."
     exit 1

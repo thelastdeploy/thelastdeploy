@@ -19,10 +19,22 @@ Kernel observability tools enable continuous inspection of kernel function execu
    ```bash
    tld start lnx-trace-kernel-system-behavior
    ```
-2. Create directory `$HOME/kernel-tracing`.
-3. Inspect `/sys/kernel/tracing/available_tracers` and `/sys/kernel/tracing/events/`.
-4. Write `KERNEL_TRACEFS_AND_FTRACE_EVENTS_EXAMINED` into `$HOME/kernel-tracing/trace_analysis.log`.
+2. Create directory `$HOME/kernel-tracing`:
+   ```bash
+   mkdir -p ~/kernel-tracing
+   ```
+3. Inspect available tracers and events in tracefs:
+   ```bash
+   cat /sys/kernel/tracing/available_tracers 2>/dev/null || cat /sys/kernel/debug/tracing/available_tracers 2>/dev/null || true
+   ls -la /sys/kernel/tracing/events/ 2>/dev/null || ls -la /sys/kernel/debug/tracing/events/ 2>/dev/null || true
+   ```
+4. Write `KERNEL_TRACEFS_AND_FTRACE_EVENTS_EXAMINED` into `$HOME/kernel-tracing/trace_analysis.log`:
+   ```bash
+   echo 'KERNEL_TRACEFS_AND_FTRACE_EVENTS_EXAMINED' > ~/kernel-tracing/trace_analysis.log
+   cat ~/kernel-tracing/trace_analysis.log
+   ```
 5. Validate your solution:
    ```bash
    tld check
    ```
+

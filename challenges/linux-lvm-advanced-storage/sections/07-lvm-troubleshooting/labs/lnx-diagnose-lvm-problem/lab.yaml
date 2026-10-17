@@ -10,4 +10,4 @@ setup:
 instructions: '1. Create directory `$HOME/lvm-diag`.
 2. Inspect LVM scanner commands (`pvscan`, `vgscan`, `lvscan`).
 3. Write output line `LVM_DIAGNOSTICS_COMPLETED` to `$HOME/lvm-diag/diag_report.txt`.'
-version: 1
+version: 2

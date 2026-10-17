@@ -2,4 +2,4 @@ id: 02-cpu-optimization
 title: "CPU Scheduler Tuning & Affinity Optimization"
 order: 2
 xp: 95
-version: 1
+version: 2

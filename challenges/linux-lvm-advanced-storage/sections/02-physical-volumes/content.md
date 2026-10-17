@@ -53,7 +53,11 @@ vgs
    ```
 2. Create directory `$HOME/pv-test`.
 3. Document `pvcreate` command syntax for block device initialization.
-4. Write output summary line `PV_CREATE_COMMAND_VERIFIED` to `$HOME/pv-test/pv_info.txt`.
+4. Write output summary line `PV_CREATE_COMMAND_VERIFIED` to `$HOME/pv-test/pv_info.txt`:
+   ```bash
+   mkdir -p ~/pv-test
+   echo "PV_CREATE_COMMAND_VERIFIED" > ~/pv-test/pv_info.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -66,7 +70,11 @@ vgs
    ```
 2. Create directory `$HOME/pv-test`.
 3. Document `vgcreate` and `vgextend` syntax.
-4. Write summary `VG_MANAGEMENT_VERIFIED` to `$HOME/pv-test/vg_info.txt`.
+4. Write summary `VG_MANAGEMENT_VERIFIED` to `$HOME/pv-test/vg_info.txt`:
+   ```bash
+   mkdir -p ~/pv-test
+   echo "VG_MANAGEMENT_VERIFIED" > ~/pv-test/vg_info.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

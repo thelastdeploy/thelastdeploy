@@ -9,8 +9,18 @@ if [ ! -f "$SERVERS_FILE" ]; then
     exit 1
 fi
 
+if [ ! -s "$SERVERS_FILE" ]; then
+    echo "FAIL: $SERVERS_FILE is empty."
+    exit 1
+fi
+
 if [ ! -f "$CONFIG_FILE" ]; then
     echo "FAIL: $CONFIG_FILE does not exist."
+    exit 1
+fi
+
+if [ ! -s "$CONFIG_FILE" ]; then
+    echo "FAIL: $CONFIG_FILE is empty."
     exit 1
 fi
 

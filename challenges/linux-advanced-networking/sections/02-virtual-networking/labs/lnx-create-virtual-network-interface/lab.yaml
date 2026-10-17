@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/vnet-test`.
 2. Document virtual interface creation syntax (`ip link add dummy0 type dummy`).
 3. Write output `DUMMY_INTERFACE_VERIFIED` to `$HOME/vnet-test/vif_summary.txt`.'
-version: 1
+version: 2

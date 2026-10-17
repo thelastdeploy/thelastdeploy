@@ -62,12 +62,16 @@ LVM decouples physical disk geometry from logical partitions, enabling flexible 
    ```
 2. Create directory `$HOME/lvm-test`.
 3. Write the 5 LVM hierarchy layers in order into `$HOME/lvm-test/lvm_hierarchy.txt`:
-4. - Line 1: `1. Physical Volume (PV)`
-5. - Line 2: `2. Volume Group (VG)`
-6. - Line 3: `3. Logical Volume (LV)`
-7. - Line 4: `4. Filesystem`
-8. - Line 5: `5. Mount Point`
-9. Validate your solution:
+   ```bash
+   cat << 'EOF' > ~/lvm-test/lvm_hierarchy.txt
+   1. Physical Volume (PV)
+   2. Volume Group (VG)
+   3. Logical Volume (LV)
+   4. Filesystem
+   5. Mount Point
+   EOF
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
@@ -79,7 +83,11 @@ LVM decouples physical disk geometry from logical partitions, enabling flexible 
    ```
 2. Create directory `$HOME/lvm-test`.
 3. Run LVM inspection tools (`pvs`, `vgs`, `lvs` or display commands).
-4. Write output summary line `LVM_STORAGE_INSPECTED` into `$HOME/lvm-test/storage_summary.txt`.
+4. Write output summary line `LVM_STORAGE_INSPECTED` into `$HOME/lvm-test/storage_summary.txt`:
+   ```bash
+   mkdir -p ~/lvm-test
+   echo "LVM_STORAGE_INSPECTED" > ~/lvm-test/storage_summary.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

@@ -2,4 +2,5 @@ id: 03-memory-management
 title: "Memory Management Internals"
 order: 3
 xp: 105
-version: 1
+version: 2
+

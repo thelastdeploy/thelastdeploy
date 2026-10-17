@@ -54,7 +54,11 @@ OverlayFS presents a unified filesystem view combining read-only image layers (`
    ```
 2. Create directory `$HOME/container-fs-test`.
 3. Inspect container rootfs directory structures (`chroot`, `pivot_root`).
-4. Write output summary line `CONTAINER_ROOTFS_EXPLORED` to `$HOME/container-fs-test/rootfs_summary.txt`.
+4. Write output summary line `CONTAINER_ROOTFS_EXPLORED` to `$HOME/container-fs-test/rootfs_summary.txt`:
+   ```bash
+   mkdir -p "$HOME/container-fs-test"
+   echo "CONTAINER_ROOTFS_EXPLORED" > "$HOME/container-fs-test/rootfs_summary.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -67,7 +71,11 @@ OverlayFS presents a unified filesystem view combining read-only image layers (`
    ```
 2. Create directory `$HOME/container-fs-test`.
 3. Inspect OverlayFS storage layers (`lowerdir`, `upperdir`, `workdir`, `merged`).
-4. Write output line `OVERLAYFS_LAYERS_INVESTIGATED` into `$HOME/container-fs-test/overlay_info.txt`.
+4. Write output line `OVERLAYFS_LAYERS_INVESTIGATED` into `$HOME/container-fs-test/overlay_info.txt`:
+   ```bash
+   mkdir -p "$HOME/container-fs-test"
+   echo "OVERLAYFS_LAYERS_INVESTIGATED" > "$HOME/container-fs-test/overlay_info.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

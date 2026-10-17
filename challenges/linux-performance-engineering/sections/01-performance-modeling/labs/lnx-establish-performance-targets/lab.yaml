@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/perf-eng-test`.
 2. Define SLA target latency (p95 / p99) and throughput benchmark targets.
 3. Write target document output line `PERFORMANCE_SLA_TARGETS_DEFINED` to `$HOME/perf-eng-test/sla_targets.txt`.'
-version: 1
+version: 2

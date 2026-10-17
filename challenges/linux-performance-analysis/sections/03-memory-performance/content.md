@@ -47,9 +47,20 @@ Continuous non-zero `si` and `so` values indicate severe memory pressure and swa
    ```bash
    tld start lnx-analyze-memory-pressure
    ```
-2. Create directory `$HOME/mem-perf-test`.
-3. Inspect available RAM and page cache allocations (`free -m` and `/proc/meminfo`).
-4. Write summary line `MEMORY_PRESSURE_ANALYZED` to `$HOME/mem-perf-test/mem_report.txt`.
+2. Create directory `$HOME/mem-perf-test`:
+   ```bash
+   mkdir -p ~/mem-perf-test
+   ```
+3. Inspect available RAM and page cache allocations:
+   ```bash
+   free -m
+   cat /proc/meminfo | head -n 10
+   ```
+4. Write summary line `MEMORY_PRESSURE_ANALYZED` to `$HOME/mem-perf-test/mem_report.txt`:
+   ```bash
+   echo 'MEMORY_PRESSURE_ANALYZED' > ~/mem-perf-test/mem_report.txt
+   cat ~/mem-perf-test/mem_report.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -60,9 +71,19 @@ Continuous non-zero `si` and `so` values indicate severe memory pressure and swa
    ```bash
    tld start lnx-investigate-swap-activity
    ```
-2. Create directory `$HOME/mem-perf-test`.
-3. Inspect swap-in (`si`) and swap-out (`so`) statistics using `vmstat 1`.
-4. Write output summary line `SWAP_ACTIVITY_INVESTIGATED` to `$HOME/mem-perf-test/swap_report.txt`.
+2. Create directory `$HOME/mem-perf-test`:
+   ```bash
+   mkdir -p ~/mem-perf-test
+   ```
+3. Inspect swap-in (`si`) and swap-out (`so`) statistics using `vmstat 1`:
+   ```bash
+   vmstat 1 3
+   ```
+4. Write output summary line `SWAP_ACTIVITY_INVESTIGATED` to `$HOME/mem-perf-test/swap_report.txt`:
+   ```bash
+   echo 'SWAP_ACTIVITY_INVESTIGATED' > ~/mem-perf-test/swap_report.txt
+   cat ~/mem-perf-test/swap_report.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

@@ -8,6 +8,11 @@ if [ ! -f "$CONF_FILE" ]; then
     exit 1
 fi
 
+if [ ! -s "$CONF_FILE" ]; then
+    echo "ERROR: File $CONF_FILE is empty."
+    exit 1
+fi
+
 if grep -q "192.168.99.99" "$CONF_FILE"; then
     echo "ERROR: Unreachable gateway 192.168.99.99 still present in $CONF_FILE."
     exit 1

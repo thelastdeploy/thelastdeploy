@@ -9,4 +9,5 @@ setup:
 instructions: '1. Create `$HOME/parallel-test/data/` with 5 text files `f1.txt` ... `f5.txt` containing lowercase text `sample data X`.
 2. Write `$HOME/parallel-test/batch_processor.sh` to process all files in `$HOME/parallel-test/data/` in parallel, converting text to uppercase and saving outputs in `$HOME/parallel-test/results/`.
 3. Execute `$HOME/parallel-test/batch_processor.sh`.'
-version: 1
+version: 2
+

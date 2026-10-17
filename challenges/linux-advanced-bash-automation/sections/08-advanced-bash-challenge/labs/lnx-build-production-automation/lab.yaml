@@ -13,4 +13,5 @@ instructions: '1. Create directory `$HOME/bash-challenge/`.
    - Ensure idempotent file creation of `$HOME/bash-challenge/app.env` with `ENV=production` and `VERSION=2.0`.
    - Write line `PRODUCTION_AUTOMATION_COMPLETE` to `$HOME/bash-challenge/status.log`.
 3. Execute `$HOME/bash-challenge/production_tool.sh`.'
-version: 1
+version: 2
+

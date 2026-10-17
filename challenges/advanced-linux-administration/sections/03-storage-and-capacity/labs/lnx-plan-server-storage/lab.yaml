@@ -2,3 +2,11 @@ id: lnx-plan-server-storage
 title: "Plan Server Storage"
 xp: 45
 description: "Design storage partitioning, LVM volume allocation, and filesystem layout for high-availability servers."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/storage-admin
+  - rm -f $HOME/storage-admin/storage_plan.conf
+instructions: '1. Create directory `$HOME/storage-admin`.
+2. Plan LVM Volume Group allocations, thin provisioning pools, and mount point options.
+3. Write `ENTERPRISE_STORAGE_LAYOUT_PLANNED` into `$HOME/storage-admin/storage_plan.conf`.'
+version: 2

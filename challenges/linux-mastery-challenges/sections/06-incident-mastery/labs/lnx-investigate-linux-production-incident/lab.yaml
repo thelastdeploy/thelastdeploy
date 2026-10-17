@@ -2,3 +2,11 @@ id: lnx-investigate-linux-production-incident
 title: "Investigate Production Incident"
 xp: 100
 description: "Conduct end-to-end incident investigation, evidence preservation, and timeline correlation for a production breach."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mastery-incident
+  - rm -f $HOME/mastery-incident/incident_mastery.log
+instructions: '1. Create directory `$HOME/mastery-incident`.
+2. Preserve volatile process state, reconstruct security event timeline, and isolate unauthorized persistence.
+3. Write `PRODUCTION_INCIDENT_INVESTIGATION_MASTERED` into `$HOME/mastery-incident/incident_mastery.log`.'
+version: 2

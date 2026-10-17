@@ -45,7 +45,11 @@ Containment isolates compromised systems on the network (`iptables`), followed b
    ```
 2. Create directory `$HOME/recovery-test`.
 3. Apply containment rules isolating malicious outbound traffic while maintaining management access.
-4. Write output line `COMPROMISED_SYSTEM_CONTAINED` to `$HOME/recovery-test/containment_summary.txt`.
+4. Write output line `COMPROMISED_SYSTEM_CONTAINED` to `$HOME/recovery-test/containment_summary.txt`:
+   ```bash
+   mkdir -p "$HOME/recovery-test"
+   echo "COMPROMISED_SYSTEM_CONTAINED" > "$HOME/recovery-test/containment_summary.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -58,7 +62,11 @@ Containment isolates compromised systems on the network (`iptables`), followed b
    ```
 2. Create directory `$HOME/recovery-test`.
 3. Execute safe system restoration (remove persistence, rotate credentials, verify integrity).
-4. Write report summary line `SYSTEM_RESTORED_SAFELY` to `$HOME/recovery-test/restoration_report.txt`.
+4. Write report summary line `SYSTEM_RESTORED_SAFELY` to `$HOME/recovery-test/restoration_report.txt`:
+   ```bash
+   mkdir -p "$HOME/recovery-test"
+   echo "SYSTEM_RESTORED_SAFELY" > "$HOME/recovery-test/restoration_report.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

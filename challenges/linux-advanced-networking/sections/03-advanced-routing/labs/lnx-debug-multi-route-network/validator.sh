@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "ROUTE_LOOKUP_SUCCESS: 127.0.0.1" "$TARGET"; then
     echo "FAIL: $TARGET missing 'ROUTE_LOOKUP_SUCCESS: 127.0.0.1'."
     exit 1

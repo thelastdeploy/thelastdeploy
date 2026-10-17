@@ -6,8 +6,7 @@ environment:
 setup:
   seed_commands:
   - mkdir -p $HOME/log-test
-  - printf '{'timestamp':'12:00:00','level':'info','service':'api','msg':'ok'}\n{'timestamp':'12:01:00','level':'error','service':'auth','msg':'token
-    expired'}\n{'timestamp':'12:02:00','level':'error','service':'db','msg':'connection
-    timeout'}\n' > $HOME/log-test/events.json
+  - 'printf ''{"timestamp":"12:00:00","level":"info","service":"api","msg":"ok"}\n{"timestamp":"12:01:00","level":"error","service":"auth","msg":"token expired"}\n{"timestamp":"12:02:00","level":"error","service":"db","msg":"connection timeout"}\n'' > $HOME/log-test/events.json'
+  - cp $HOME/log-test/events.json $HOME/log-test/app.json
   - rm -f $HOME/log-test/json_errors.txt
-version: 2
+version: 3

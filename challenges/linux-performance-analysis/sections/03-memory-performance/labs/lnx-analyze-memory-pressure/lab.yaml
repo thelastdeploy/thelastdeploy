@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/mem-perf-test`.
 2. Inspect available RAM and page cache allocations (`free -m` and `/proc/meminfo`).
 3. Write summary line `MEMORY_PRESSURE_ANALYZED` to `$HOME/mem-perf-test/mem_report.txt`.'
-version: 1
+version: 2

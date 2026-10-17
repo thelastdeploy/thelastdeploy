@@ -22,7 +22,11 @@ Senior Linux system administration begins with thorough system discovery and bas
    ```
 2. Create directory `$HOME/sysadmin-audit`.
 3. Audit OS version, running services, listening ports, user accounts, and mounted filesystems.
-4. Write `PRODUCTION_SERVER_AUDIT_COMPLETED` into `$HOME/sysadmin-audit/system_inventory.log`.
+4. Write `PRODUCTION_SERVER_AUDIT_COMPLETED` into `$HOME/sysadmin-audit/system_inventory.log`:
+   ```bash
+   mkdir -p "$HOME/sysadmin-audit"
+   echo "PRODUCTION_SERVER_AUDIT_COMPLETED" > "$HOME/sysadmin-audit/system_inventory.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -35,7 +39,11 @@ Senior Linux system administration begins with thorough system discovery and bas
    ```
 2. Establish CPU, memory, network, and storage performance baseline thresholds.
 3. Define standard sysctl tuning parameters and security defaults.
-4. Write `OPERATIONAL_ADMINISTRATION_BASELINE_ESTABLISHED` into `$HOME/sysadmin-audit/admin_baseline.conf`.
+4. Write `OPERATIONAL_ADMINISTRATION_BASELINE_ESTABLISHED` into `$HOME/sysadmin-audit/admin_baseline.conf`:
+   ```bash
+   mkdir -p "$HOME/sysadmin-audit"
+   echo "OPERATIONAL_ADMINISTRATION_BASELINE_ESTABLISHED" > "$HOME/sysadmin-audit/admin_baseline.conf"
+   ```
 5. Validate your solution:
    ```bash
    tld check

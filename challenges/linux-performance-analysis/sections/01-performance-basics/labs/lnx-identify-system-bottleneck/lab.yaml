@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/perf-test`.
 2. Analyze system load average and resource utilization metrics to identify primary constrained subsystem.
 3. Write output line `BOTTLENECK_IDENTIFIED: CPU` to `$HOME/perf-test/bottleneck.txt`.'
-version: 1
+version: 2

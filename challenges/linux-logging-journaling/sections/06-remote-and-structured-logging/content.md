@@ -36,7 +36,10 @@ Enterprise environments ship logs over UDP/TCP port 514 using `rsyslog` or forwa
    tld start lnx-analyze-structured-logs
    ```
 2. Parse and analyze structured JSON log records.
-3. Filter error-level JSON records from `$HOME/log-test/app.json` and save to `$HOME/log-test/json_errors.txt`.
+3. Filter error-level JSON records from `$HOME/log-test/events.json` (or `$HOME/log-test/app.json`) and save to `$HOME/log-test/json_errors.txt`:
+   ```bash
+   grep '"level":"error"' ~/log-test/events.json > ~/log-test/json_errors.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check

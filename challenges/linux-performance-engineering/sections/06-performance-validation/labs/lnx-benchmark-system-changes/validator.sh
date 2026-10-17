@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "BENCHMARK_VALIDATION_COMPLETE: IMPROVEMENT_PROVED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'BENCHMARK_VALIDATION_COMPLETE: IMPROVEMENT_PROVED'."
     exit 1

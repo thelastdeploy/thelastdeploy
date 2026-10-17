@@ -12,4 +12,4 @@ instructions: '1. Create directory `$HOME/boot-test`.
    - Line 3: `3. KERNEL`
    - Line 4: `4. INITRAMFS`
    - Line 5: `5. SYSTEMD`'
-version: 1
+version: 2

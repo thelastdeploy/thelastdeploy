@@ -16,7 +16,11 @@ Incident mastery tests your ability to handle active security and operational ou
    ```
 2. Create directory `$HOME/mastery-incident`.
 3. Preserve volatile process state, reconstruct security event timeline, and isolate unauthorized persistence.
-4. Write `PRODUCTION_INCIDENT_INVESTIGATION_MASTERED` into `$HOME/mastery-incident/incident_mastery.log`.
+4. Write `PRODUCTION_INCIDENT_INVESTIGATION_MASTERED` into `$HOME/mastery-incident/incident_mastery.log`:
+   ```bash
+   mkdir -p "$HOME/mastery-incident"
+   echo "PRODUCTION_INCIDENT_INVESTIGATION_MASTERED" > "$HOME/mastery-incident/incident_mastery.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

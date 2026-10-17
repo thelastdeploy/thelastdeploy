@@ -49,9 +49,20 @@ Extracting `/proc/<PID>/cmdline`, `/proc/<PID>/environ`, and copying `/proc/<PID
    ```bash
    tld start lnx-collect-system-evidence
    ```
-2. Create directory `$HOME/evidence-test`.
-3. Collect system file and environment variable evidence (`/proc/<pid>/environ`, authorized_keys).
-4. Write output summary line `SYSTEM_EVIDENCE_COLLECTED` to `$HOME/evidence-test/system_evidence.txt`.
+2. Create directory `$HOME/evidence-test`:
+   ```bash
+   mkdir -p ~/evidence-test
+   ```
+3. Inspect environment variables and security credentials:
+   ```bash
+   cat /proc/self/environ | tr '\0' '\n' | head -n 10
+   ls -la ~/.ssh/ 2>/dev/null || true
+   ```
+4. Record system evidence marker into `$HOME/evidence-test/system_evidence.txt`:
+   ```bash
+   echo "SYSTEM_EVIDENCE_COLLECTED" > ~/evidence-test/system_evidence.txt
+   cat ~/evidence-test/system_evidence.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -62,10 +73,22 @@ Extracting `/proc/<PID>/cmdline`, `/proc/<PID>/environ`, and copying `/proc/<PID
    ```bash
    tld start lnx-collect-process-and-network-evidence
    ```
-2. Create directory `$HOME/evidence-test`.
-3. Collect volatile network connections (`ss -anp`) and process open file handles (`lsof`).
-4. Write output summary `PROC_NET_EVIDENCE_COLLECTED` to `$HOME/evidence-test/proc_net_evidence.txt`.
+2. Create directory `$HOME/evidence-test`:
+   ```bash
+   mkdir -p ~/evidence-test
+   ```
+3. Inspect volatile network sockets and process handles:
+   ```bash
+   ss -anp | head -n 10
+   lsof -P -n -i 2>/dev/null || true
+   ```
+4. Record process and network evidence marker into `$HOME/evidence-test/proc_net_evidence.txt`:
+   ```bash
+   echo "PROC_NET_EVIDENCE_COLLECTED" > ~/evidence-test/proc_net_evidence.txt
+   cat ~/evidence-test/proc_net_evidence.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
    ```
+

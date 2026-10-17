@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "CRITICAL_CHAIN_INSPECTED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'CRITICAL_CHAIN_INSPECTED'."
     exit 1

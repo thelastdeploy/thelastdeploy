@@ -47,7 +47,11 @@ Inspecting kernel logs (`dmesg | grep oom`) and process memory (`ps aux --sort=-
    ```
 2. Create directory `$HOME/res-outage-test`.
 3. Investigate severe resource exhaustion and OOM killer log entries.
-4. Write output summary line `RESOURCE_EXHAUSTION_DIAGNOSED` to `$HOME/res-outage-test/exhaustion_report.txt`.
+4. Write output summary line `RESOURCE_EXHAUSTION_DIAGNOSED` to `$HOME/res-outage-test/exhaustion_report.txt`:
+   ```bash
+   mkdir -p "$HOME/res-outage-test"
+   echo "RESOURCE_EXHAUSTION_DIAGNOSED" > "$HOME/res-outage-test/exhaustion_report.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -60,7 +64,11 @@ Inspecting kernel logs (`dmesg | grep oom`) and process memory (`ps aux --sort=-
    ```
 2. Create directory `$HOME/res-outage-test`.
 3. Terminate runaway memory leak process and restore system responsiveness.
-4. Write proof line `RESOURCE_STARVED_SERVER_RECOVERED` to `$HOME/res-outage-test/server_recovered.txt`.
+4. Write proof line `RESOURCE_STARVED_SERVER_RECOVERED` to `$HOME/res-outage-test/server_recovered.txt`:
+   ```bash
+   mkdir -p "$HOME/res-outage-test"
+   echo "RESOURCE_STARVED_SERVER_RECOVERED" > "$HOME/res-outage-test/server_recovered.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

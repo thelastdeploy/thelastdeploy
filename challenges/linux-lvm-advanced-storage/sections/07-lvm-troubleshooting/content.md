@@ -42,10 +42,18 @@ Scanner tools (`pvscan`/`vgscan`) and metadata backups (`vgcfgrestore`) restore 
    ```bash
    tld start lnx-diagnose-lvm-problem
    ```
-2. Create directory `$HOME/lvm-diag`.
-3. Inspect LVM scanner commands (`pvscan`, `vgscan`, `lvscan`).
-4. Write output line `LVM_DIAGNOSTICS_COMPLETED` to `$HOME/lvm-diag/diag_report.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/lvm-diag` and inspect scanner commands:
+   ```bash
+   mkdir -p "$HOME/lvm-diag"
+   pvscan
+   vgscan
+   lvscan
+   ```
+3. Write the diagnostic completion line into `$HOME/lvm-diag/diag_report.txt`:
+   ```bash
+   echo "LVM_DIAGNOSTICS_COMPLETED" > "$HOME/lvm-diag/diag_report.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
@@ -55,10 +63,12 @@ Scanner tools (`pvscan`/`vgscan`) and metadata backups (`vgcfgrestore`) restore 
    ```bash
    tld start lnx-recover-lvm-storage
    ```
-2. Create directory `$HOME/lvm-diag`.
-3. Document `vgcfgrestore` metadata recovery syntax.
-4. Write output summary `VGCFGRESTORE_RECOVERY_VERIFIED` into `$HOME/lvm-diag/recovery_summary.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/lvm-diag` and record the recovery verification string:
+   ```bash
+   mkdir -p "$HOME/lvm-diag"
+   echo "VGCFGRESTORE_RECOVERY_VERIFIED" > "$HOME/lvm-diag/recovery_summary.txt"
+   ```
+3. Validate your solution:
    ```bash
    tld check
    ```

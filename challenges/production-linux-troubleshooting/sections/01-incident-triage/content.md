@@ -71,7 +71,11 @@ Methodical triage gathers critical evidence and prevents hasty actions that esca
    ```
 2. Create directory `$HOME/triage-test`.
 3. Execute first-responder triage checklist on degraded server (`uptime`, `df -h`, `free -m`, `systemctl --failed`).
-4. Write triage summary line `PRODUCTION_SERVER_TRIAGED` to `$HOME/triage-test/triage_summary.txt`.
+4. Write triage summary line `PRODUCTION_SERVER_TRIAGED` to `$HOME/triage-test/triage_summary.txt`:
+   ```bash
+   mkdir -p "$HOME/triage-test"
+   echo "PRODUCTION_SERVER_TRIAGED" > "$HOME/triage-test/triage_summary.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -84,7 +88,11 @@ Methodical triage gathers critical evidence and prevents hasty actions that esca
    ```
 2. Create directory `$HOME/triage-test`.
 3. Document active incident state metrics prior to system remediation.
-4. Write output line `INCIDENT_BASELINE_ESTABLISHED` into `$HOME/triage-test/incident_baseline.txt`.
+4. Write output line `INCIDENT_BASELINE_ESTABLISHED` into `$HOME/triage-test/incident_baseline.txt`:
+   ```bash
+   mkdir -p "$HOME/triage-test"
+   echo "INCIDENT_BASELINE_ESTABLISHED" > "$HOME/triage-test/incident_baseline.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

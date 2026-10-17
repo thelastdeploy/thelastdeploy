@@ -2,3 +2,11 @@ id: lnx-secure-linux-production-system
 title: "Secure Linux Production System"
 xp: 80
 description: "Execute complete security hardening of an enterprise Linux production server."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mastery-sec
+  - rm -f $HOME/mastery-sec/security_mastery.conf
+instructions: '1. Create directory `$HOME/mastery-sec`.
+2. Harden SSH config, configure stateful firewall rules, and restrict sudo privileges.
+3. Write `PRODUCTION_SYSTEM_SECURITY_MASTERED` into `$HOME/mastery-sec/security_mastery.conf`.'
+version: 2

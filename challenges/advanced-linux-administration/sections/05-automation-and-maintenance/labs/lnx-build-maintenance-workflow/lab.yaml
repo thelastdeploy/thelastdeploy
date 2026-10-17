@@ -2,3 +2,12 @@ id: lnx-build-maintenance-workflow
 title: "Build Maintenance Workflow"
 xp: 60
 description: "Construct a production maintenance workflow using systemd timer units and backup hash verification."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/admin-auto
+  - rm -f $HOME/admin-auto/maintenance_workflow.status
+instructions: '1. Create directory `$HOME/admin-auto`.
+2. Configure a systemd timer unit (`.timer` + `.service`) to run routine maintenance jobs automatically.
+3. Implement archive checksum hash verification.
+4. Write `SYSTEMD_TIMER_MAINTENANCE_WORKFLOW_ACTIVE` into `$HOME/admin-auto/maintenance_workflow.status`.'
+version: 2

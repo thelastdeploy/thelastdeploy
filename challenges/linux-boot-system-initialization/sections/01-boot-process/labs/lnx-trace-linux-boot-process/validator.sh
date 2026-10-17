@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "1. FIRMWARE" "$TARGET" || ! grep -q "5. SYSTEMD" "$TARGET"; then
     echo "FAIL: $TARGET missing expected boot stages."
     exit 1

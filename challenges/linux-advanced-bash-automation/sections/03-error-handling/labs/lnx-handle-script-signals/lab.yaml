@@ -11,4 +11,5 @@ instructions: '1. Create directory `$HOME/trap-test`.
    - Touch lock file `$HOME/trap-test/work.lock`.
    - Register `trap` for `EXIT SIGINT SIGTERM` that removes `$HOME/trap-test/work.lock` and appends `Cleaned up lock file` to `$HOME/trap-test/cleanup_log.txt`.
 4. Execute `$HOME/trap-test/trap_demo.sh` to trigger trap completion.'
-version: 1
+version: 2
+

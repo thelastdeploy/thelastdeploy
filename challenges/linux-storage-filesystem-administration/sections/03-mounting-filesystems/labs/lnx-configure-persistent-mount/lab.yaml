@@ -7,4 +7,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/storage-test
   - 'printf "# /etc/fstab: static file system information.\nLABEL=cloudimg-rootfs   /               ext4    defaults        0 1\n" > $HOME/storage-test/mock_fstab'
-version: 2
+version: 3

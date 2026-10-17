@@ -21,15 +21,56 @@ This challenge evaluates your ability to refactor legacy shell automation script
    ```bash
    tld start lnx-build-production-automation
    ```
-2. Create directory `$HOME/bash-challenge/`.
-3. Write executable script `$HOME/bash-challenge/production_tool.sh` that implements all robust production practices:
-4. - Set `set -euo pipefail`.
-5. - Acquire lock file `$HOME/bash-challenge/temp.lock` and set `trap` on `EXIT` to remove `$HOME/bash-challenge/temp.lock`.
-6. - Define helper functions `log_info` and `log_error`.
-7. - Ensure idempotent file creation of `$HOME/bash-challenge/app.env` with `ENV=production` and `VERSION=2.0`.
-8. - Write line `PRODUCTION_AUTOMATION_COMPLETE` to `$HOME/bash-challenge/status.log`.
-9. Execute `$HOME/bash-challenge/production_tool.sh`.
-10. Validate your solution:
+2. Create directory `$HOME/bash-challenge`:
+   ```bash
+   mkdir -p ~/bash-challenge
+   ```
+3. Create the production automation script `$HOME/bash-challenge/production_tool.sh`:
+   ```bash
+   cat << 'EOF' > ~/bash-challenge/production_tool.sh
+   #!/bin/bash
+   set -euo pipefail
+
+   LOCK="$HOME/bash-challenge/temp.lock"
+   STATUS="$HOME/bash-challenge/status.log"
+   ENV_FILE="$HOME/bash-challenge/app.env"
+
+   cleanup() {
+       rm -f "$LOCK"
+   }
+   trap cleanup EXIT
+
+   touch "$LOCK"
+
+   log_info() {
+       echo "[INFO] $1"
+   }
+
+   log_error() {
+       echo "[ERROR] $1" >&2
+   }
+
+   log_info "Initializing production tool"
+
+   # Idempotent write to app.env
+   cat << 'ENVEOF' > "$ENV_FILE"
+   ENV=production
+   VERSION=2.0
+   ENVEOF
+
+   echo "PRODUCTION_AUTOMATION_COMPLETE" >> "$STATUS"
+   log_info "Production automation completed successfully"
+   EOF
+   chmod +x ~/bash-challenge/production_tool.sh
+   ```
+4. Execute `production_tool.sh`:
+   ```bash
+   ~/bash-challenge/production_tool.sh
+   cat ~/bash-challenge/status.log
+   cat ~/bash-challenge/app.env
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
+

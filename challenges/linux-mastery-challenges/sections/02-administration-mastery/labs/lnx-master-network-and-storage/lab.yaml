@@ -2,3 +2,11 @@ id: lnx-master-network-and-storage
 title: "Master Network and Storage"
 xp: 75
 description: "Orchestrate LVM storage expansion and complex multi-homed network interface routing."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mastery-admin
+  - rm -f $HOME/mastery-admin/net_storage_mastery.log
+instructions: '1. Create directory `$HOME/mastery-admin`.
+2. Perform live LVM logical volume expansion, online filesystem resize, and interface route adjustments.
+3. Write `NETWORK_AND_STORAGE_ORCHESTRATION_MASTERED` into `$HOME/mastery-admin/net_storage_mastery.log`.'
+version: 2

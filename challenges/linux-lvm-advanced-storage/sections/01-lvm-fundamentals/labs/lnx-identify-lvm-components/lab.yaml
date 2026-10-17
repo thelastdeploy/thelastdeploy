@@ -14,4 +14,4 @@ instructions: '1. Create directory `$HOME/lvm-test`.
    - Line 3: `3. Logical Volume (LV)`
    - Line 4: `4. Filesystem`
    - Line 5: `5. Mount Point`'
-version: 1
+version: 2

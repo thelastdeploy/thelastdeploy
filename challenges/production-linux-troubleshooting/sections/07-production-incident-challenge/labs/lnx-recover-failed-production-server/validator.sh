@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "PRODUCTION_INCIDENT_RESOLVED: SYSTEM_HEALTHY" "$TARGET"; then
     echo "FAIL: $TARGET missing 'PRODUCTION_INCIDENT_RESOLVED: SYSTEM_HEALTHY'."
     exit 1

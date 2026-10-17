@@ -46,7 +46,11 @@ Each target activates specific system services (networking, logging, storage mou
    ```
 2. Create directory `$HOME/sys-init-test`.
 3. Run `systemd-analyze critical-chain` to inspect critical boot ordering path.
-4. Write summary `CRITICAL_CHAIN_INSPECTED` to `$HOME/sys-init-test/critical_chain.txt`.
+4. Write summary `CRITICAL_CHAIN_INSPECTED` to `$HOME/sys-init-test/critical_chain.txt`:
+   ```bash
+   mkdir -p ~/sys-init-test
+   echo "CRITICAL_CHAIN_INSPECTED" > ~/sys-init-test/critical_chain.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -59,7 +63,11 @@ Each target activates specific system services (networking, logging, storage mou
    ```
 2. Create directory `$HOME/sys-init-test`.
 3. Run `systemd-analyze` to measure boot performance.
-4. Write output summary line `BOOT_TIME_ANALYZED` to `$HOME/sys-init-test/boot_time.txt`.
+4. Write output summary line `BOOT_TIME_ANALYZED` to `$HOME/sys-init-test/boot_time.txt`:
+   ```bash
+   mkdir -p ~/sys-init-test
+   echo "BOOT_TIME_ANALYZED" > ~/sys-init-test/boot_time.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

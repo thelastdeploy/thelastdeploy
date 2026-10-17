@@ -42,7 +42,11 @@ Tracing systemd dependency chains (`systemctl list-dependencies --failed`) isola
    ```
 2. Create directory `$HOME/svc-outage-test`.
 3. Investigate multi-tier service stack outage using `journalctl` and `systemctl status`.
-4. Write output summary line `SERVICE_OUTAGE_DIAGNOSED` to `$HOME/svc-outage-test/outage_diag.txt`.
+4. Write output summary line `SERVICE_OUTAGE_DIAGNOSED` to `$HOME/svc-outage-test/outage_diag.txt`:
+   ```bash
+   mkdir -p "$HOME/svc-outage-test"
+   echo "SERVICE_OUTAGE_DIAGNOSED" > "$HOME/svc-outage-test/outage_diag.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -55,7 +59,11 @@ Tracing systemd dependency chains (`systemctl list-dependencies --failed`) isola
    ```
 2. Create directory `$HOME/svc-outage-test`.
 3. Repair broken upstream service dependency and restart application stack.
-4. Write output summary `DEPENDENT_STACK_RECOVERED` to `$HOME/svc-outage-test/stack_recovery.txt`.
+4. Write output summary `DEPENDENT_STACK_RECOVERED` to `$HOME/svc-outage-test/stack_recovery.txt`:
+   ```bash
+   mkdir -p "$HOME/svc-outage-test"
+   echo "DEPENDENT_STACK_RECOVERED" > "$HOME/svc-outage-test/stack_recovery.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

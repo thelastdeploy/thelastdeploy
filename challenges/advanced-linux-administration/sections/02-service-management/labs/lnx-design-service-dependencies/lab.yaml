@@ -2,3 +2,11 @@ id: lnx-design-service-dependencies
 title: "Design Service Dependencies"
 xp: 45
 description: "Configure multi-tier systemd service unit dependencies and startup ordering."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/service-stack
+  - rm -f $HOME/service-stack/service_dependencies.log
+instructions: '1. Create directory `$HOME/service-stack`.
+2. Configure systemd unit file dependency directives (`Requires=`, `Wants=`, `After=`).
+3. Write `SYSTEMD_SERVICE_DEPENDENCIES_CONFIGURED` into `$HOME/service-stack/service_dependencies.log`.'
+version: 2

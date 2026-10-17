@@ -34,7 +34,10 @@ Common service failure indicators in logs:
    tld start lnx-correlate-service-logs
    ```
 2. Correlate failing systemd service units with log messages.
-3. Save the failing service unit name (`payment-processor.service`) to `$HOME/log-test/failing_unit.txt`.
+3. Save the failing service unit name (`payment-processor.service`) to `$HOME/log-test/failing_unit.txt`:
+   ```bash
+   echo "payment-processor.service" > ~/log-test/failing_unit.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check
@@ -46,7 +49,10 @@ Common service failure indicators in logs:
    tld start lnx-investigate-failed-service
    ```
 2. Investigate root cause of service startup failures.
-3. Save the root cause failure message (`Port 5432 already in use`) to `$HOME/log-test/service_root_cause.txt`.
+3. Save the root cause failure message (`Port 5432 already in use`) to `$HOME/log-test/service_root_cause.txt`:
+   ```bash
+   echo "Port 5432 already in use" > ~/log-test/service_root_cause.txt
+   ```
 4. Validate your solution:
    ```bash
    tld check

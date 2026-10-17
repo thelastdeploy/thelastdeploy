@@ -8,6 +8,11 @@ if [ ! -f "$LIB" ]; then
     exit 1
 fi
 
+if [ ! -s "$LIB" ]; then
+    echo "FAIL: $LIB is empty."
+    exit 1
+fi
+
 source "$LIB"
 
 INFO_OUT=$(log_info "hello")

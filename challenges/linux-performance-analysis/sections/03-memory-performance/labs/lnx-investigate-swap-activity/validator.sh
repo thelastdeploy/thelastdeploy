@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "SWAP_ACTIVITY_INVESTIGATED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'SWAP_ACTIVITY_INVESTIGATED'."
     exit 1

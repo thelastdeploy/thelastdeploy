@@ -5,7 +5,8 @@ setup:
   seed_commands:
   - mkdir -p $HOME/fw-test
   - rm -f $HOME/fw-test/fw_summary.txt
+  - 'which iptables >/dev/null 2>&1 || (printf "#!/bin/sh\necho \"Chain INPUT (policy ACCEPT)\"\necho \"Chain FORWARD (policy ACCEPT)\"\necho \"Chain OUTPUT (policy ACCEPT)\"\n" > /usr/local/bin/iptables && chmod +x /usr/local/bin/iptables)'
 instructions: '1. Create directory `$HOME/fw-test`.
 2. Inspect firewall rule chains (`iptables -L -n` or `nft list ruleset`).
 3. Write output summary `FIREWALL_CHAINS_INSPECTED` to `$HOME/fw-test/fw_summary.txt`.'
-version: 1
+version: 2

@@ -2,4 +2,4 @@ id: 06-container-security
 title: "Container Security, Capabilities & Seccomp"
 order: 6
 xp: 55
-version: 1
+version: 2

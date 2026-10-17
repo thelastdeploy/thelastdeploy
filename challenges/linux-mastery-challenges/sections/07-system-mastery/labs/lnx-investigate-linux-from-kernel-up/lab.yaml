@@ -2,3 +2,11 @@ id: lnx-investigate-linux-from-kernel-up
 title: "Investigate Linux From Kernel Up"
 xp: 110
 description: "Perform deep kernel-level analysis of process state transitions, page fault counters, VFS dentry caches, and tracefs events."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mastery-internals
+  - rm -f $HOME/mastery-internals/internals_mastery.log
+instructions: '1. Create directory `$HOME/mastery-internals`.
+2. Analyze kernel state interfaces in `/proc`, `/sys`, and `/sys/kernel/tracing`.
+3. Write `KERNEL_AND_SYSTEM_INTERNALS_MASTERED` into `$HOME/mastery-internals/internals_mastery.log`.'
+version: 2

@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "CPU_SATURATION_ANALYZED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'CPU_SATURATION_ANALYZED'."
     exit 1

@@ -19,9 +19,23 @@ In this capstone challenge, a production application server is running out of di
    ```bash
    tld start lnx-expand-production-storage
    ```
-2. Create directory `$HOME/lvm-capstone`.
-3. Write storage expansion automation script `$HOME/lvm-capstone/expand_app.sh` that demonstrates online expansion (`lvextend -r`).
-4. Write summary line `PRODUCTION_EXPANSION_COMPLETE` to `$HOME/lvm-capstone/expansion.log`.
+2. Create directory `$HOME/lvm-capstone`:
+   ```bash
+   mkdir -p "$HOME/lvm-capstone"
+   ```
+3. Write storage expansion automation script `$HOME/lvm-capstone/expand_app.sh`:
+   ```bash
+   cat << 'EOF' > "$HOME/lvm-capstone/expand_app.sh"
+   #!/usr/bin/env bash
+   # Online expansion of logical volume and filesystem
+   lvextend -L +5G -r /dev/vg_app/lv_data
+   EOF
+   chmod +x "$HOME/lvm-capstone/expand_app.sh"
+   ```
+4. Write summary line `PRODUCTION_EXPANSION_COMPLETE` to `$HOME/lvm-capstone/expansion.log`:
+   ```bash
+   echo "PRODUCTION_EXPANSION_COMPLETE" > "$HOME/lvm-capstone/expansion.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

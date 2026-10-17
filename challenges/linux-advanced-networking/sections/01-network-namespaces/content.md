@@ -61,30 +61,48 @@ Network namespaces provide isolated network stacks, connected to the host or oth
 
 ## Lab Tasks
 
-### Task 1: Connect Network Namespaces with veth Pairs (`lnx-connect-network-namespaces`)
-1. Start the lab:
-   ```bash
-   tld start lnx-connect-network-namespaces
-   ```
-2. Create directory `$HOME/netns-test`.
-3. Write script `$HOME/netns-test/connect_ns.sh` that demonstrates veth configuration syntax:
-4. - `ip netns add ns-demo`
-5. - `ip link add veth-h type veth peer name veth-n`
-6. - `ip link set veth-n netns ns-demo`
-7. Write summary `VETH_PAIR_CONFIGURED` to `$HOME/netns-test/veth_summary.txt`.
-8. Validate your solution:
-   ```bash
-   tld check
-   ```
-
-### Task 2: Create and Inspect Network Namespace (`lnx-create-network-namespace`)
+### Task 1: Create and Inspect Network Namespace (`lnx-create-network-namespace`)
 1. Start the lab:
    ```bash
    tld start lnx-create-network-namespace
    ```
-2. Create directory `$HOME/netns-test`.
-3. Write commands to inspect existing network namespaces using `ip netns list`.
-4. Write namespace list output line `NETNS_INSPECTED` to `$HOME/netns-test/ns_list.txt`.
+2. Create directory `$HOME/netns-test` and inspect network namespaces:
+   ```bash
+   mkdir -p "$HOME/netns-test"
+   ip netns list
+   ```
+3. Record the inspection marker into `$HOME/netns-test/ns_list.txt`:
+   ```bash
+   echo "NETNS_INSPECTED" > "$HOME/netns-test/ns_list.txt"
+   ```
+4. Validate your solution:
+   ```bash
+   tld check
+   ```
+
+### Task 2: Connect Network Namespaces with veth Pairs (`lnx-connect-network-namespaces`)
+1. Start the lab:
+   ```bash
+   tld start lnx-connect-network-namespaces
+   ```
+2. Create directory `$HOME/netns-test`:
+   ```bash
+   mkdir -p "$HOME/netns-test"
+   ```
+3. Create the veth connection script `$HOME/netns-test/connect_ns.sh`:
+   ```bash
+   cat << 'EOF' > "$HOME/netns-test/connect_ns.sh"
+   #!/usr/bin/env bash
+   ip netns add ns-demo
+   ip link add veth-h type veth peer name veth-n
+   ip link set veth-n netns ns-demo
+   EOF
+   chmod +x "$HOME/netns-test/connect_ns.sh"
+   ```
+4. Write summary line `VETH_PAIR_CONFIGURED` to `$HOME/netns-test/veth_summary.txt`:
+   ```bash
+   echo "VETH_PAIR_CONFIGURED" > "$HOME/netns-test/veth_summary.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

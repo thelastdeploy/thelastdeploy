@@ -54,9 +54,19 @@ Tuning `net.core.somaxconn`, TCP buffer sizes, and open file limits (`nofile`) e
    ```bash
    tld start lnx-analyze-kernel-performance
    ```
-2. Create directory `$HOME/kernel-opt-test`.
-3. Inspect kernel network stack tuneables (`net.core.somaxconn`, TCP window sizing, file descriptor limits).
-4. Write output summary line `KERNEL_TUNEABLES_ANALYZED` to `$HOME/kernel-opt-test/sysctl_analysis.txt`.
+2. Create directory `$HOME/kernel-opt-test`:
+   ```bash
+   mkdir -p ~/kernel-opt-test
+   ```
+3. Inspect kernel network stack tuneables (`net.core.somaxconn`, TCP window sizing, file descriptor limits):
+   ```bash
+   sysctl net.core.somaxconn fs.file-max 2>/dev/null || true
+   ```
+4. Write output summary line `KERNEL_TUNEABLES_ANALYZED` to `$HOME/kernel-opt-test/sysctl_analysis.txt`:
+   ```bash
+   echo 'KERNEL_TUNEABLES_ANALYZED' > ~/kernel-opt-test/sysctl_analysis.txt
+   cat ~/kernel-opt-test/sysctl_analysis.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -67,9 +77,19 @@ Tuning `net.core.somaxconn`, TCP buffer sizes, and open file limits (`nofile`) e
    ```bash
    tld start lnx-tune-system-performance
    ```
-2. Create directory `$HOME/kernel-opt-test`.
-3. Apply persistent sysctl tuning rules for high-throughput server workloads.
-4. Write configuration summary line `SYSTEM_PERFORMANCE_TUNED` to `$HOME/kernel-opt-test/system_tuned.txt`.
+2. Create directory `$HOME/kernel-opt-test`:
+   ```bash
+   mkdir -p ~/kernel-opt-test
+   ```
+3. Apply persistent sysctl tuning rules for high-throughput server workloads:
+   ```bash
+   sysctl -a 2>/dev/null | grep somaxconn || true
+   ```
+4. Write configuration summary line `SYSTEM_PERFORMANCE_TUNED` to `$HOME/kernel-opt-test/system_tuned.txt`:
+   ```bash
+   echo 'SYSTEM_PERFORMANCE_TUNED' > ~/kernel-opt-test/system_tuned.txt
+   cat ~/kernel-opt-test/system_tuned.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

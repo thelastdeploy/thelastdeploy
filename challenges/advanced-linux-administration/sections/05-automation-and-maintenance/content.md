@@ -20,7 +20,11 @@ Manual administration is prone to human error and inconsistency. Senior administ
    ```
 2. Create directory `$HOME/admin-auto`.
 3. Write an automated system administration script `automation_tasks.sh` that checks disk usage and rotates old log archives.
-4. Include log header `ADMINISTRATION_TASKS_AUTOMATED` inside `$HOME/admin-auto/automation_tasks.sh`.
+4. Include log header `ADMINISTRATION_TASKS_AUTOMATED` inside `$HOME/admin-auto/automation_tasks.sh`:
+   ```bash
+   mkdir -p "$HOME/admin-auto"
+   echo "ADMINISTRATION_TASKS_AUTOMATED" > "$HOME/admin-auto/automation_tasks.sh"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -33,7 +37,11 @@ Manual administration is prone to human error and inconsistency. Senior administ
    ```
 2. Configure a systemd timer unit (`.timer` + `.service`) to run routine maintenance jobs automatically.
 3. Implement archive checksum hash verification.
-4. Write `SYSTEMD_TIMER_MAINTENANCE_WORKFLOW_ACTIVE` into `$HOME/admin-auto/maintenance_workflow.status`.
+4. Write `SYSTEMD_TIMER_MAINTENANCE_WORKFLOW_ACTIVE` into `$HOME/admin-auto/maintenance_workflow.status`:
+   ```bash
+   mkdir -p "$HOME/admin-auto"
+   echo "SYSTEMD_TIMER_MAINTENANCE_WORKFLOW_ACTIVE" > "$HOME/admin-auto/maintenance_workflow.status"
+   ```
 5. Validate your solution:
    ```bash
    tld check

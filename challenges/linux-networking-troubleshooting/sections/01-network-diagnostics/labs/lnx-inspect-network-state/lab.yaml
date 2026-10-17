@@ -19,4 +19,5 @@ environment:
 setup:
   seed_commands:
   - mkdir -p $HOME/net-test
-version: 2
+  - rm -f $HOME/net-test/loopback.txt
+version: 3

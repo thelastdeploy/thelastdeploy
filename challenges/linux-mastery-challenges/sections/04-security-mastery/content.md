@@ -20,7 +20,11 @@ Security mastery evaluates your ability to harden production systems against una
    ```
 2. Create directory `$HOME/mastery-sec`.
 3. Harden SSH config, configure stateful firewall rules, and restrict sudo privileges.
-4. Write `PRODUCTION_SYSTEM_SECURITY_MASTERED` into `$HOME/mastery-sec/security_mastery.conf`.
+4. Write `PRODUCTION_SYSTEM_SECURITY_MASTERED` into `$HOME/mastery-sec/security_mastery.conf`:
+   ```bash
+   mkdir -p "$HOME/mastery-sec"
+   echo "PRODUCTION_SYSTEM_SECURITY_MASTERED" > "$HOME/mastery-sec/security_mastery.conf"
+   ```
 5. Validate your solution:
    ```bash
    tld check

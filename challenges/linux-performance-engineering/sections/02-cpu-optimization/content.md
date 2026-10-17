@@ -45,9 +45,20 @@ numactl --cpunodebind=0 --membind=0 /usr/bin/db_engine
    ```bash
    tld start lnx-analyze-cpu-contention
    ```
-2. Create directory `$HOME/cpu-opt-test`.
-3. Inspect CPU thread contention, context switching rates, and NUMA node statistics (`numastat`, `mpstat`).
-4. Write output summary line `CPU_CONTENTION_ANALYZED` to `$HOME/cpu-opt-test/contention_analysis.txt`.
+2. Create directory `$HOME/cpu-opt-test`:
+   ```bash
+   mkdir -p ~/cpu-opt-test
+   ```
+3. Inspect CPU thread contention, context switching rates, and NUMA node statistics (`numastat`, `mpstat`):
+   ```bash
+   vmstat 1 3
+   numastat 2>/dev/null || true
+   ```
+4. Write output summary line `CPU_CONTENTION_ANALYZED` to `$HOME/cpu-opt-test/contention_analysis.txt`:
+   ```bash
+   echo 'CPU_CONTENTION_ANALYZED' > ~/cpu-opt-test/contention_analysis.txt
+   cat ~/cpu-opt-test/contention_analysis.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -58,9 +69,19 @@ numactl --cpunodebind=0 --membind=0 /usr/bin/db_engine
    ```bash
    tld start lnx-optimize-cpu-bound-workload
    ```
-2. Create directory `$HOME/cpu-opt-test`.
-3. Apply CPU core affinity masking (`taskset -c`) and NUMA policy tuning (`numactl`).
-4. Write optimization report line `CPU_WORKLOAD_OPTIMIZED` to `$HOME/cpu-opt-test/cpu_optimization.txt`.
+2. Create directory `$HOME/cpu-opt-test`:
+   ```bash
+   mkdir -p ~/cpu-opt-test
+   ```
+3. Apply CPU core affinity masking (`taskset -c`) and NUMA policy tuning (`numactl`):
+   ```bash
+   taskset -c 0,1 echo "Running on dedicated cores"
+   ```
+4. Write optimization report line `CPU_WORKLOAD_OPTIMIZED` to `$HOME/cpu-opt-test/cpu_optimization.txt`:
+   ```bash
+   echo 'CPU_WORKLOAD_OPTIMIZED' > ~/cpu-opt-test/cpu_optimization.txt
+   cat ~/cpu-opt-test/cpu_optimization.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

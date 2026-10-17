@@ -19,9 +19,20 @@ Linux memory management decouples application virtual address space from actual 
    ```bash
    tld start lnx-investigate-virtual-memory
    ```
-2. Create directory `$HOME/mem-internals`.
-3. Inspect `/proc/self/maps` and `/proc/self/smaps`.
-4. Write `VIRTUAL_MEMORY_ADDRESS_MAPPINGS_ANALYZED` into `$HOME/mem-internals/vma_analysis.txt`.
+2. Create directory `$HOME/mem-internals`:
+   ```bash
+   mkdir -p ~/mem-internals
+   ```
+3. Inspect `/proc/self/maps` and `/proc/self/smaps`:
+   ```bash
+   head -n 15 /proc/self/maps
+   head -n 20 /proc/self/smaps
+   ```
+4. Write `VIRTUAL_MEMORY_ADDRESS_MAPPINGS_ANALYZED` into `$HOME/mem-internals/vma_analysis.txt`:
+   ```bash
+   echo 'VIRTUAL_MEMORY_ADDRESS_MAPPINGS_ANALYZED' > ~/mem-internals/vma_analysis.txt
+   cat ~/mem-internals/vma_analysis.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -32,10 +43,22 @@ Linux memory management decouples application virtual address space from actual 
    ```bash
    tld start lnx-trace-memory-management
    ```
-2. Inspect `/proc/vmstat` and `/proc/slabinfo`.
-3. Observe page fault counter increments during memory allocation.
-4. Write `PAGE_FAULTS_AND_SLAB_ALLOCATOR_TRACED` into `$HOME/mem-internals/page_fault_slab.log`.
+2. Create directory `$HOME/mem-internals`:
+   ```bash
+   mkdir -p ~/mem-internals
+   ```
+3. Inspect `/proc/vmstat` and `/proc/slabinfo`:
+   ```bash
+   grep -E "^(pgfault|pgmajfault)" /proc/vmstat
+   head -n 10 /proc/slabinfo
+   ```
+4. Write `PAGE_FAULTS_AND_SLAB_ALLOCATOR_TRACED` into `$HOME/mem-internals/page_fault_slab.log`:
+   ```bash
+   echo 'PAGE_FAULTS_AND_SLAB_ALLOCATOR_TRACED' > ~/mem-internals/page_fault_slab.log
+   cat ~/mem-internals/page_fault_slab.log
+   ```
 5. Validate your solution:
    ```bash
    tld check
    ```
+

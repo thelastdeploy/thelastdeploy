@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ -f "$HOME/net-failure/network_drop_analysis.txt" ] && grep -q "INTERMITTENT_PACKET_DROPS_TRACED_AND_FIXED" "$HOME/net-failure/network_drop_analysis.txt"; then
+TARGET="$HOME/net-failure/network_drop_analysis.txt"
+
+if [ ! -f "$TARGET" ] || [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is missing or empty."
+    exit 1
+fi
+
+if grep -q "INTERMITTENT_PACKET_DROPS_TRACED_AND_FIXED" "$TARGET"; then
     echo "PASS: Trace Intermittent Network Drops verified successfully."
     exit 0
 else

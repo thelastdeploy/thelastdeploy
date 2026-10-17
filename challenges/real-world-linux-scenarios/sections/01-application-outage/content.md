@@ -9,34 +9,53 @@ In real-world production outages, application error responses rarely state the t
 2. **Socket & Process Status**: `ss -xlp`, `systemctl status app.service`.
 3. **Environment & Filesystem**: `/proc/[pid]/environ`, file permissions on socket paths.
 
-
 ---
 
 ## Lab Tasks
 
 ### Task 1: Recover Unavailable Application (`lnx-recover-unavailable-application`)
-1. Start the lab:
+1. Start the lab session:
    ```bash
    tld start lnx-recover-unavailable-application
    ```
-2. Create directory `$HOME/app-outage`.
-3. Investigate service crash via journalctl and socket permissions.
-4. Restore service availability and verify HTTP 200 responses.
-5. Write `UNAVAILABLE_APPLICATION_RECOVERED_SUCCESSFULLY` into `$HOME/app-outage/application_recovery.log`.
-6. Validate your solution:
+2. Create the destination directory for outage reports:
+   ```bash
+   mkdir -p "$HOME/app-outage"
+   ```
+3. Investigate the service crash using `journalctl` and check UNIX domain socket path permissions.
+4. Restore service availability and verify application response health.
+5. Record the recovery verification marker into `$HOME/app-outage/application_recovery.log`:
+   ```bash
+   echo "UNAVAILABLE_APPLICATION_RECOVERED_SUCCESSFULLY" > "$HOME/app-outage/application_recovery.log"
+   ```
+6. Verify file contents:
+   ```bash
+   cat "$HOME/app-outage/application_recovery.log"
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```
 
 ### Task 2: Investigate Intermittent Application Failures (`lnx-investigate-intermittent-application`)
-1. Start the lab:
+1. Start the lab session:
    ```bash
    tld start lnx-investigate-intermittent-application
    ```
-2. Investigate intermittent application 504 gateway timeouts.
-3. Inspect open file descriptor limits (`/proc/[pid]/limits`) and active socket connections.
-4. Fix descriptor limit throttling and log `INTERMITTENT_FAILURE_ROOT_CAUSE_DIAGNOSED` into `$HOME/app-outage/intermittent_root_cause.txt`.
-5. Validate your solution:
+2. Ensure the outage reports directory exists:
+   ```bash
+   mkdir -p "$HOME/app-outage"
+   ```
+3. Investigate intermittent application 504 gateway timeouts by inspecting open file descriptor limits (`/proc/[pid]/limits`) and active socket connections (`ss -tulpn`).
+4. Remediate descriptor limit throttling and record the root cause diagnosis marker into `$HOME/app-outage/intermittent_root_cause.txt`:
+   ```bash
+   echo "INTERMITTENT_FAILURE_ROOT_CAUSE_DIAGNOSED" > "$HOME/app-outage/intermittent_root_cause.txt"
+   ```
+5. Verify file contents:
+   ```bash
+   cat "$HOME/app-outage/intermittent_root_cause.txt"
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```

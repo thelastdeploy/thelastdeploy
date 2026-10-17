@@ -57,9 +57,20 @@ The `/proc` pseudo-filesystem exposes kernel `task_struct` data directly to user
    ```bash
    tld start lnx-inspect-process-internals
    ```
-2. Create directory `$HOME/proc-internals-test`.
-3. Inspect process state and file descriptors in `/proc/self/` or `/proc/1/`.
-4. Write output summary line `PROCESS_INTERNALS_INSPECTED` to `$HOME/proc-internals-test/proc_info.txt`.
+2. Create directory `$HOME/proc-internals-test`:
+   ```bash
+   mkdir -p ~/proc-internals-test
+   ```
+3. Inspect process state and file descriptors in `/proc/self/` or `/proc/1/`:
+   ```bash
+   cat /proc/self/status | head -n 10
+   ls -l /proc/self/fd/
+   ```
+4. Write output summary line `PROCESS_INTERNALS_INSPECTED` to `$HOME/proc-internals-test/proc_info.txt`:
+   ```bash
+   echo 'PROCESS_INTERNALS_INSPECTED' > ~/proc-internals-test/proc_info.txt
+   cat ~/proc-internals-test/proc_info.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -70,9 +81,19 @@ The `/proc` pseudo-filesystem exposes kernel `task_struct` data directly to user
    ```bash
    tld start lnx-trace-process-lifecycle
    ```
-2. Create directory `$HOME/proc-internals-test`.
-3. Trace process parent-child hierarchy and lifecycle states (`pstree` or `ps -ef`).
-4. Write summary line `PROCESS_LIFECYCLE_TRACED` to `$HOME/proc-internals-test/lifecycle.txt`.
+2. Create directory `$HOME/proc-internals-test`:
+   ```bash
+   mkdir -p ~/proc-internals-test
+   ```
+3. Trace process parent-child hierarchy and lifecycle states (`pstree` or `ps -ef`):
+   ```bash
+   ps -ef | head -n 10
+   ```
+4. Write summary line `PROCESS_LIFECYCLE_TRACED` to `$HOME/proc-internals-test/lifecycle.txt`:
+   ```bash
+   echo 'PROCESS_LIFECYCLE_TRACED' > ~/proc-internals-test/lifecycle.txt
+   cat ~/proc-internals-test/lifecycle.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

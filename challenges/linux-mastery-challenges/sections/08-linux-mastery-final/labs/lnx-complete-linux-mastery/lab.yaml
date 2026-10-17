@@ -2,3 +2,11 @@ id: lnx-complete-linux-mastery
 title: "Complete Linux Mastery Grand Capstone"
 xp: 150
 description: "Execute the comprehensive Diagnose -> Repair -> Harden -> Verify workflow across a complex, multi-subsystem degraded Linux production environment."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/linux-mastery
+  - rm -f $HOME/linux-mastery/grand_mastery_completion.log
+instructions: '1. Create directory `$HOME/linux-mastery`.
+2. Diagnose, repair, harden, tune, and verify all broken subsystems across the entire Linux server stack.
+3. Write `GRAND_LINUX_MASTERY_TRACK_COMPLETED_SUCCESSFULLY` into `$HOME/linux-mastery/grand_mastery_completion.log`.'
+version: 2

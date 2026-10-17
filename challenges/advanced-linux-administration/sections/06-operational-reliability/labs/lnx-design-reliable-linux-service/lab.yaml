@@ -2,3 +2,11 @@ id: lnx-design-reliable-linux-service
 title: "Design Reliable Linux Service"
 xp: 65
 description: "Implement watchdog Supervision, synthetic health checks, and automatic restart handling for mission-critical services."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/reliability
+  - rm -f $HOME/reliability/reliability_design.log
+instructions: '1. Create directory `$HOME/reliability`.
+2. Configure systemd watchdog timer supervision and synthetic health checking script.
+3. Write `OPERATIONAL_RELIABILITY_HEALTHCHECK_ACTIVE` into `$HOME/reliability/reliability_design.log`.'
+version: 2

@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/syscall-test`.
 2. Trace process system calls using `strace -c`.
 3. Write output summary line `STRACE_SUMMARY_VERIFIED` to `$HOME/syscall-test/strace_summary.txt`.'
-version: 1
+version: 2

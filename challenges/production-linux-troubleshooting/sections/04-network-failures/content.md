@@ -46,7 +46,11 @@ Systematic socket (`ss`), HTTP (`curl`), firewall (`iptables`), and DNS (`dig`) 
    ```
 2. Create directory `$HOME/net-outage-test`.
 3. Investigate network connectivity failure using `ss`, `curl`, and `iptables`.
-4. Write output summary line `NETWORK_CONNECTIVITY_FAILURE_DIAGNOSED` to `$HOME/net-outage-test/net_diag.txt`.
+4. Write output summary line `NETWORK_CONNECTIVITY_FAILURE_DIAGNOSED` to `$HOME/net-outage-test/net_diag.txt`:
+   ```bash
+   mkdir -p "$HOME/net-outage-test"
+   echo "NETWORK_CONNECTIVITY_FAILURE_DIAGNOSED" > "$HOME/net-outage-test/net_diag.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -59,7 +63,11 @@ Systematic socket (`ss`), HTTP (`curl`), firewall (`iptables`), and DNS (`dig`) 
    ```
 2. Create directory `$HOME/net-outage-test`.
 3. Repair broken firewall rule or socket binding to restore network service flow.
-4. Write output summary `BROKEN_NETWORK_SERVICE_RECOVERED` to `$HOME/net-outage-test/net_recovered.txt`.
+4. Write output summary `BROKEN_NETWORK_SERVICE_RECOVERED` to `$HOME/net-outage-test/net_recovered.txt`:
+   ```bash
+   mkdir -p "$HOME/net-outage-test"
+   echo "BROKEN_NETWORK_SERVICE_RECOVERED" > "$HOME/net-outage-test/net_recovered.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

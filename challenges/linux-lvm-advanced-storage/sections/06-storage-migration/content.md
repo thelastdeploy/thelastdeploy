@@ -36,7 +36,11 @@ pvremove /dev/sdb1
    ```
 2. Create directory `$HOME/mig-test`.
 3. Document `pvmove` data migration procedure syntax.
-4. Write output summary `PVMOVE_MIGRATION_VERIFIED` to `$HOME/mig-test/pvmove_info.txt`.
+4. Write output summary `PVMOVE_MIGRATION_VERIFIED` to `$HOME/mig-test/pvmove_info.txt`:
+   ```bash
+   mkdir -p ~/mig-test
+   echo "PVMOVE_MIGRATION_VERIFIED" > ~/mig-test/pvmove_info.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

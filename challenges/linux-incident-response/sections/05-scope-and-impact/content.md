@@ -45,7 +45,11 @@ Package checksum verification (`debsums`/`rpm -V`) and shell history audits dete
    ```
 2. Create directory `$HOME/scope-test`.
 3. Audit system package integrity (`debsums`/`rpm -V`) and outbound lateral network connections.
-4. Write output summary line `INCIDENT_SCOPE_DETERMINED` into `$HOME/scope-test/incident_scope.txt`.
+4. Write output summary line `INCIDENT_SCOPE_DETERMINED` into `$HOME/scope-test/incident_scope.txt`:
+   ```bash
+   mkdir -p "$HOME/scope-test"
+   echo "INCIDENT_SCOPE_DETERMINED" > "$HOME/scope-test/incident_scope.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

@@ -10,4 +10,4 @@ setup:
 instructions: '1. Create directory `$HOME/lv-test`.
 2. Document formatting and fstab mount entry syntax for Logical Volumes.
 3. Write summary `LV_FILESYSTEM_CONFIGURED` into `$HOME/lv-test/mount_info.txt`.'
-version: 1
+version: 2

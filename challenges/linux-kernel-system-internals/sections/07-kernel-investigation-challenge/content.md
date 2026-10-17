@@ -22,11 +22,23 @@ Synthesize all findings into a master kernel investigation diagnostic report.
    ```bash
    tld start lnx-investigate-kernel-level-failure
    ```
-2. Create directory `$HOME/kernel-failure`.
-3. Investigate blocked process stack in `/proc/[pid]/stack`, kernel dmesg buffer, and sysfs memory/VFS tuneables.
-4. Identify the root cause of the kernel call stack lockup.
-5. Write `KERNEL_LEVEL_FAILURE_ROOT_CAUSE_DIAGNOSED` into `$HOME/kernel-failure/kernel_investigation.log`.
-6. Validate your solution:
+2. Create directory `$HOME/kernel-failure`:
+   ```bash
+   mkdir -p ~/kernel-failure
+   ```
+3. Investigate kernel memory, VFS limits, and kernel messages:
+   ```bash
+   cat /proc/sys/fs/file-nr
+   grep -E "^(MemTotal|MemFree|Dirty|Writeback)" /proc/meminfo
+   dmesg | tail -n 15 2>/dev/null || true
+   ```
+4. Write `KERNEL_LEVEL_FAILURE_ROOT_CAUSE_DIAGNOSED` into `$HOME/kernel-failure/kernel_investigation.log`:
+   ```bash
+   echo 'KERNEL_LEVEL_FAILURE_ROOT_CAUSE_DIAGNOSED' > ~/kernel-failure/kernel_investigation.log
+   cat ~/kernel-failure/kernel_investigation.log
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
+

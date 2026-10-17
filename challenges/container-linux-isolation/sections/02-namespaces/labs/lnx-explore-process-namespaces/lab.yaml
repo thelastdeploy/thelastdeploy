@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/ns-test`.
 2. Inspect namespace symbolic links in `/proc/self/ns/` across all 7 Linux namespace types.
 3. Write output summary `NAMESPACE_TYPES_EXPLORED` to `$HOME/ns-test/ns_types.txt`.'
-version: 1
+version: 2

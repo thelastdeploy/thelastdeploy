@@ -54,7 +54,11 @@ lsinitramfs /boot/initrd.img-$(uname -r) | head -n 20
    ```
 2. Create directory `$HOME/kernel-test`.
 3. Inspect `/proc/cmdline` and kernel version (`uname -r`).
-4. Write output summary line `KERNEL_CMDLINE_INSPECTED` to `$HOME/kernel-test/cmdline_info.txt`.
+4. Write output summary line `KERNEL_CMDLINE_INSPECTED` to `$HOME/kernel-test/cmdline_info.txt`:
+   ```bash
+   mkdir -p ~/kernel-test
+   echo "KERNEL_CMDLINE_INSPECTED" > ~/kernel-test/cmdline_info.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -67,7 +71,11 @@ lsinitramfs /boot/initrd.img-$(uname -r) | head -n 20
    ```
 2. Create directory `$HOME/kernel-test`.
 3. Inspect initramfs image structure in `/boot/` using `lsinitramfs` or `ls -l /boot/initrd*`.
-4. Write output summary `INITRAMFS_INSPECTED` to `$HOME/kernel-test/initramfs_summary.txt`.
+4. Write output summary `INITRAMFS_INSPECTED` to `$HOME/kernel-test/initramfs_summary.txt`:
+   ```bash
+   mkdir -p ~/kernel-test
+   echo "INITRAMFS_INSPECTED" > ~/kernel-test/initramfs_summary.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

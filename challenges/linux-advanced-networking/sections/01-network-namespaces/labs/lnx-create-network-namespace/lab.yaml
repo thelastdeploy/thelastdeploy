@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/netns-test`.
 2. Write commands to inspect existing network namespaces using `ip netns list`.
 3. Write namespace list output line `NETNS_INSPECTED` to `$HOME/netns-test/ns_list.txt`.'
-version: 1
+version: 2

@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/sys-init-test`.
 2. Run `systemd-analyze` to measure boot performance.
 3. Write output summary line `BOOT_TIME_ANALYZED` to `$HOME/sys-init-test/boot_time.txt`.'
-version: 1
+version: 2

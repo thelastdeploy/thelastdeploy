@@ -24,9 +24,16 @@ Filesystem issues in production environments range from unmounted partitions, co
    ```bash
    tld start lnx-diagnose-filesystem-problem
    ```
-2. Diagnose read-only filesystem mounts and I/O errors.
-3. Inspect system logs for filesystem mount errors and repair mount options.
-4. Validate your solution:
+2. Diagnose why a storage mount configuration fails by inspecting `$HOME/storage-test/broken_app/fstab_mock` and `$HOME/storage-test/broken_app/diag/issue.txt`.
+3. Create the missing mount target directory at `$HOME/storage-test/broken_app/mnt_missing_data`:
+   ```bash
+   mkdir -p ~/storage-test/broken_app/mnt_missing_data
+   ```
+4. Update `$HOME/storage-test/broken_app/fstab_mock` so the mount point points to `$HOME/storage-test/broken_app/mnt_missing_data`:
+   ```bash
+   sed -i "s|/mnt/missing_data|$HOME/storage-test/broken_app/mnt_missing_data|" ~/storage-test/broken_app/fstab_mock
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

@@ -8,6 +8,11 @@ if [ ! -f "$CONF_FILE" ]; then
     exit 1
 fi
 
+if [ ! -s "$CONF_FILE" ]; then
+    echo "ERROR: Configuration file $CONF_FILE is empty."
+    exit 1
+fi
+
 if grep -q "nameserver 0.0.0.0" "$CONF_FILE"; then
     echo "ERROR: Invalid nameserver 0.0.0.0 still present in $CONF_FILE."
     exit 1

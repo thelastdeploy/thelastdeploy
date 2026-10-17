@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/svc-net-test`.
 2. Run `ss -tulpn` or `ss -tun` to inspect listening network sockets.
 3. Write output summary `SOCKET_BINDINGS_INSPECTED` to `$HOME/svc-net-test/sockets.txt`.'
-version: 1
+version: 2

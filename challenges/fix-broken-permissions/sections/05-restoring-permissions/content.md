@@ -31,18 +31,18 @@ To complete the third lab task:
    tld start lnx-fix-broken-permissions
    ```
 2. **Restore Permissions**:
-   Apply read permissions `644` to `/var/log/app-server.log`
-   
+   Apply read permissions `644` to `/var/log/app-server.log`:
+   ```bash
+   sudo chmod 644 /var/log/app-server.log
+   ```
 
 3. **Validate and Complete**:
    Verify that `/var/log/app-server.log` is readable (`644` mode):
    ```bash
    tld check
    ```
-   
 
 4. **Stop the Session**:
    ```bash
    tld stop
    ```
-   

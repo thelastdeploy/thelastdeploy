@@ -2,3 +2,11 @@ id: lnx-secure-server-network
 title: "Secure Server Network"
 xp: 45
 description: "Configure stateful host firewall rules, drop unapproved inbound traffic, and secure listening interfaces."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/net-sec
+  - rm -f $HOME/net-sec/firewall_hardening.log
+instructions: '1. Create directory `$HOME/net-sec`.
+2. Configure firewall policy to restrict inbound traffic to required production ports.
+3. Write `STATEFUL_FIREWALL_RULES_CONFIGURED` into `$HOME/net-sec/firewall_hardening.log`.'
+version: 2

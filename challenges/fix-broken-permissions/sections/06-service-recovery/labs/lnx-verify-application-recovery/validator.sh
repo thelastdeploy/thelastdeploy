@@ -6,6 +6,11 @@ if [ ! -f /tmp/recovery_verified ]; then
   exit 1
 fi
 
+if [ ! -f /var/log/app-server.log ]; then
+  echo "FAIL: /var/log/app-server.log does not exist."
+  exit 1
+fi
+
 if [ ! -r /var/log/app-server.log ]; then
   echo "FAIL: /var/log/app-server.log must be readable."
   exit 1

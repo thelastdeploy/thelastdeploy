@@ -43,7 +43,11 @@ Correlating GRUB kernel parameters, `/etc/fstab` device UUIDs, and `journalctl -
    ```
 2. Create directory `$HOME/boot-fail-test`.
 3. Inspect sample broken `/etc/fstab` entries in `$HOME/boot-fail-test/fstab.broken` (referencing non-existent UUID `UUID=ffff-ffff`).
-4. Write diagnosis line `BOOT_FAIL_REASON: invalid_fstab_uuid` to `$HOME/boot-fail-test/diag_report.txt`.
+4. Write diagnosis line `BOOT_FAIL_REASON: invalid_fstab_uuid` to `$HOME/boot-fail-test/diag_report.txt`:
+   ```bash
+   mkdir -p ~/boot-fail-test
+   echo "BOOT_FAIL_REASON: invalid_fstab_uuid" > ~/boot-fail-test/diag_report.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -55,7 +59,10 @@ Correlating GRUB kernel parameters, `/etc/fstab` device UUIDs, and `journalctl -
    tld start lnx-recover-broken-boot-configuration
    ```
 2. Inspect `$HOME/boot-fail-test/fstab.broken`.
-3. Add `nofail` option or fix invalid UUID entry, writing repaired configuration to `$HOME/boot-fail-test/fstab.fixed`.
+3. Add `nofail` option or fix invalid UUID entry, writing repaired configuration to `$HOME/boot-fail-test/fstab.fixed`:
+   ```bash
+   sed 's/defaults/defaults,nofail/' ~/boot-fail-test/fstab.broken > ~/boot-fail-test/fstab.fixed
+   ```
 4. Validate your solution:
    ```bash
    tld check

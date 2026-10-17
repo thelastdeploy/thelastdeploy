@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "FORENSIC_INVESTIGATION_COMPLETE_SYSTEM_SECURED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'FORENSIC_INVESTIGATION_COMPLETE_SYSTEM_SECURED'."
     exit 1

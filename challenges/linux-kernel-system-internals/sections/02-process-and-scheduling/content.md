@@ -20,9 +20,20 @@ Observing context switches (`voluntary_ctxt_switches` vs `nonvoluntary_ctxt_swit
    ```bash
    tld start lnx-investigate-process-scheduling
    ```
-2. Create directory `$HOME/proc-sched`.
-3. Inspect `/proc/self/sched` and `/proc/schedstat`.
-4. Log `PROCESS_SCHEDULER_VRUNTIME_EXAMINED` into `$HOME/proc-sched/sched_investigation.log`.
+2. Create directory `$HOME/proc-sched`:
+   ```bash
+   mkdir -p ~/proc-sched
+   ```
+3. Inspect `/proc/self/sched` and `/proc/schedstat`:
+   ```bash
+   cat /proc/self/sched | head -n 15
+   head -n 5 /proc/schedstat
+   ```
+4. Write `PROCESS_SCHEDULER_VRUNTIME_EXAMINED` into `$HOME/proc-sched/sched_investigation.log`:
+   ```bash
+   echo 'PROCESS_SCHEDULER_VRUNTIME_EXAMINED' > ~/proc-sched/sched_investigation.log
+   cat ~/proc-sched/sched_investigation.log
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -33,10 +44,21 @@ Observing context switches (`voluntary_ctxt_switches` vs `nonvoluntary_ctxt_swit
    ```bash
    tld start lnx-trace-process-state-changes
    ```
-2. Observe process state changes in `/proc/[pid]/status` during process lifecycle events.
-3. Analyze voluntary vs non-voluntary context switches.
-4. Write `PROCESS_STATE_MACHINE_TRANSITIONS_TRACED` into `$HOME/proc-sched/state_trace.log`.
+2. Create directory `$HOME/proc-sched`:
+   ```bash
+   mkdir -p ~/proc-sched
+   ```
+3. Inspect process state and context switches in `/proc/self/status`:
+   ```bash
+   grep -E "^(State|voluntary_ctxt_switches|nonvoluntary_ctxt_switches)" /proc/self/status
+   ```
+4. Write `PROCESS_STATE_MACHINE_TRANSITIONS_TRACED` into `$HOME/proc-sched/state_trace.log`:
+   ```bash
+   echo 'PROCESS_STATE_MACHINE_TRANSITIONS_TRACED' > ~/proc-sched/state_trace.log
+   cat ~/proc-sched/state_trace.log
+   ```
 5. Validate your solution:
    ```bash
    tld check
    ```
+

@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/triage-test`.
 2. Document active incident state metrics prior to system remediation.
 3. Write output line `INCIDENT_BASELINE_ESTABLISHED` into `$HOME/triage-test/incident_baseline.txt`.'
-version: 1
+version: 2

@@ -2,4 +2,4 @@ id: 04-storage-and-io-optimization
 title: "Storage I/O Scheduler & Queue Depth Tuning"
 order: 4
 xp: 105
-version: 1
+version: 2

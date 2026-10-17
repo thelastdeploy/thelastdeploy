@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "PRODUCTION_SERVER_TRIAGED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'PRODUCTION_SERVER_TRIAGED'."
     exit 1

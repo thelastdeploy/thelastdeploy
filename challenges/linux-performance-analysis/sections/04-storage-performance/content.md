@@ -45,9 +45,19 @@ High `await` and `%util` in `iostat -xz` identify disk saturation, while `pidsta
    ```bash
    tld start lnx-analyze-disk-io
    ```
-2. Create directory `$HOME/io-perf-test`.
-3. Inspect storage device throughput (`IOPS`), latency (`await`), and utilization (`%util`) using `iostat -xz 1`.
-4. Write output summary line `DISK_IO_ANALYZED` to `$HOME/io-perf-test/io_analysis.txt`.
+2. Create directory `$HOME/io-perf-test`:
+   ```bash
+   mkdir -p ~/io-perf-test
+   ```
+3. Inspect storage device throughput (`IOPS`), latency (`await`), and utilization (`%util`):
+   ```bash
+   iostat -xz 1 3
+   ```
+4. Write output summary line `DISK_IO_ANALYZED` to `$HOME/io-perf-test/io_analysis.txt`:
+   ```bash
+   echo 'DISK_IO_ANALYZED' > ~/io-perf-test/io_analysis.txt
+   cat ~/io-perf-test/io_analysis.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -58,9 +68,19 @@ High `await` and `%util` in `iostat -xz` identify disk saturation, while `pidsta
    ```bash
    tld start lnx-trace-storage-bottleneck
    ```
-2. Create directory `$HOME/io-perf-test`.
-3. Trace process disk read/write throughput using `pidstat -d`.
-4. Write output line `OFFENDING_IO_PROCESS_TRACED` to `$HOME/io-perf-test/io_pid.txt`.
+2. Create directory `$HOME/io-perf-test`:
+   ```bash
+   mkdir -p ~/io-perf-test
+   ```
+3. Trace process disk read/write throughput using `pidstat -d`:
+   ```bash
+   pidstat -d 1 3
+   ```
+4. Write output line `OFFENDING_IO_PROCESS_TRACED` to `$HOME/io-perf-test/io_pid.txt`:
+   ```bash
+   echo 'OFFENDING_IO_PROCESS_TRACED' > ~/io-perf-test/io_pid.txt
+   cat ~/io-perf-test/io_pid.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

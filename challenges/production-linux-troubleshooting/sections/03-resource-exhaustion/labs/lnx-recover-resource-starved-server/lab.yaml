@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/res-outage-test`.
 2. Terminate runaway memory leak process and restore system responsiveness.
 3. Write proof line `RESOURCE_STARVED_SERVER_RECOVERED` to `$HOME/res-outage-test/server_recovered.txt`.'
-version: 1
+version: 2

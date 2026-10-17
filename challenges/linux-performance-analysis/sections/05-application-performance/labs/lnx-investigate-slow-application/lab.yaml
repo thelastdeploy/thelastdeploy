@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/app-perf-test`.
 2. Correlate application response latency against system metrics.
 3. Write summary output `APPLICATION_LATENCY_INVESTIGATED` into `$HOME/app-perf-test/app_latency.txt`.'
-version: 1
+version: 2

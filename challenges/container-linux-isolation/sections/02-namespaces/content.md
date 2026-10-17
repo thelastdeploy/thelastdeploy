@@ -54,7 +54,11 @@ nsenter --target <PID> --pid --net bash
    ```
 2. Create directory `$HOME/ns-test`.
 3. Inspect namespace symbolic links in `/proc/self/ns/` across all 7 Linux namespace types.
-4. Write output summary `NAMESPACE_TYPES_EXPLORED` to `$HOME/ns-test/ns_types.txt`.
+4. Write output summary `NAMESPACE_TYPES_EXPLORED` to `$HOME/ns-test/ns_types.txt`:
+   ```bash
+   mkdir -p "$HOME/ns-test"
+   echo "NAMESPACE_TYPES_EXPLORED" > "$HOME/ns-test/ns_types.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -67,7 +71,11 @@ nsenter --target <PID> --pid --net bash
    ```
 2. Create directory `$HOME/ns-test`.
 3. Use `unshare` syntax to create isolated PID, MNT, and UTS namespace environments (`unshare --uts --pid --fork`).
-4. Write summary `UNSHARE_NAMESPACE_CREATED` to `$HOME/ns-test/unshare_summary.txt`.
+4. Write summary `UNSHARE_NAMESPACE_CREATED` to `$HOME/ns-test/unshare_summary.txt`:
+   ```bash
+   mkdir -p "$HOME/ns-test"
+   echo "UNSHARE_NAMESPACE_CREATED" > "$HOME/ns-test/unshare_summary.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -80,7 +88,11 @@ nsenter --target <PID> --pid --net bash
    ```
 2. Create directory `$HOME/ns-test`.
 3. Troubleshoot namespace isolation problems (unshared mount points, hostname leakage).
-4. Write diagnosis output line `NAMESPACE_ISOLATION_DEBUGGED` to `$HOME/ns-test/ns_debug.txt`.
+4. Write diagnosis output line `NAMESPACE_ISOLATION_DEBUGGED` to `$HOME/ns-test/ns_debug.txt`:
+   ```bash
+   mkdir -p "$HOME/ns-test"
+   echo "NAMESPACE_ISOLATION_DEBUGGED" > "$HOME/ns-test/ns_debug.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

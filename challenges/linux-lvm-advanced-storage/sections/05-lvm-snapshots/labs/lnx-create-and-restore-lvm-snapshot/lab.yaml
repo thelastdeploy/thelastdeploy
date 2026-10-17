@@ -10,4 +10,4 @@ setup:
 instructions: '1. Create directory `$HOME/snap-test`.
 2. Document snapshot creation (`lvcreate -s`) and merge rollback syntax (`lvconvert --merge`).
 3. Write output summary line `LVM_SNAPSHOT_PROCEDURE_VERIFIED` to `$HOME/snap-test/snap_summary.txt`.'
-version: 1
+version: 2

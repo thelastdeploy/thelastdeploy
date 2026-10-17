@@ -10,4 +10,4 @@ setup:
 instructions: '1. Create directory `$HOME/resize-test`.
 2. Document `lvextend -r` syntax for online storage expansion.
 3. Write output summary line `LV_EXPAND_SYNTAX_VERIFIED` to `$HOME/resize-test/expand_summary.txt`.'
-version: 1
+version: 2

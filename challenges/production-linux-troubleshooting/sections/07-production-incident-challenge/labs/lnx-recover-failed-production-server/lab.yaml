@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/incident-capstone`.
 2. Diagnose and recover failed production server (isolate root cause, fix broken dependencies/ports/storage, verify service health).
 3. Write post-mortem report line `PRODUCTION_INCIDENT_RESOLVED: SYSTEM_HEALTHY` into `$HOME/incident-capstone/post_mortem.log`.'
-version: 1
+version: 2

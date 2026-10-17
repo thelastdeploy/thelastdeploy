@@ -48,9 +48,20 @@ Setting block scheduler to `none` (for NVMe) or `mq-deadline` (for SATA SSDs) op
    ```bash
    tld start lnx-analyze-io-workload
    ```
-2. Create directory `$HOME/io-opt-test`.
-3. Analyze storage I/O workload patterns (sequential vs random, block sizes, queue depth).
-4. Write output summary line `STORAGE_IO_WORKLOAD_ANALYZED` to `$HOME/io-opt-test/io_profile.txt`.
+2. Create directory `$HOME/io-opt-test`:
+   ```bash
+   mkdir -p ~/io-opt-test
+   ```
+3. Analyze storage I/O workload patterns (sequential vs random, block sizes, queue depth):
+   ```bash
+   lsblk
+   cat /sys/block/*/queue/scheduler 2>/dev/null || true
+   ```
+4. Write output summary line `STORAGE_IO_WORKLOAD_ANALYZED` to `$HOME/io-opt-test/io_profile.txt`:
+   ```bash
+   echo 'STORAGE_IO_WORKLOAD_ANALYZED' > ~/io-opt-test/io_profile.txt
+   cat ~/io-opt-test/io_profile.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -61,9 +72,19 @@ Setting block scheduler to `none` (for NVMe) or `mq-deadline` (for SATA SSDs) op
    ```bash
    tld start lnx-optimize-storage-performance
    ```
-2. Create directory `$HOME/io-opt-test`.
-3. Configure block device I/O scheduler (`mq-deadline`/`none`) and read-ahead parameters.
-4. Write output summary line `STORAGE_IO_PERFORMANCE_OPTIMIZED` to `$HOME/io-opt-test/io_tuning.txt`.
+2. Create directory `$HOME/io-opt-test`:
+   ```bash
+   mkdir -p ~/io-opt-test
+   ```
+3. Configure block device I/O scheduler (`mq-deadline`/`none`) and read-ahead parameters:
+   ```bash
+   blockdev --getra /dev/loop0 2>/dev/null || true
+   ```
+4. Write output summary line `STORAGE_IO_PERFORMANCE_OPTIMIZED` to `$HOME/io-opt-test/io_tuning.txt`:
+   ```bash
+   echo 'STORAGE_IO_PERFORMANCE_OPTIMIZED' > ~/io-opt-test/io_tuning.txt
+   cat ~/io-opt-test/io_tuning.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

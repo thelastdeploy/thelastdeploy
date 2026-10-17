@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "FAILURES_CORRELATED: PRIMARY_CAUSE_ISOLATED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'FAILURES_CORRELATED: PRIMARY_CAUSE_ISOLATED'."
     exit 1

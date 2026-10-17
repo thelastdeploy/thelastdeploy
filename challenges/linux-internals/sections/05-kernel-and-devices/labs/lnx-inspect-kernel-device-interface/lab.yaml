@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/sysfs-test`.
 2. Inspect virtual filesystems (`/proc`, `/sys`, `/dev`).
 3. Write output summary line `KERNEL_DEVICE_INTERFACES_INSPECTED` to `$HOME/sysfs-test/interfaces.txt`.'
-version: 1
+version: 2

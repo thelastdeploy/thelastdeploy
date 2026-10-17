@@ -28,7 +28,11 @@ Diagnosing and repairing container isolation flaws ensures processes remain secu
    ```
 2. Create directory `$HOME/isolation-challenge`.
 3. Identify isolation flaws across namespaces, cgroups, and OverlayFS, applying fixes.
-4. Write proof summary line `CONTAINER_ISOLATION_REPAIRED: SUCCESS` into `$HOME/isolation-challenge/isolation_fix.log`.
+4. Write proof summary line `CONTAINER_ISOLATION_REPAIRED: SUCCESS` into `$HOME/isolation-challenge/isolation_fix.log`:
+   ```bash
+   mkdir -p "$HOME/isolation-challenge"
+   echo "CONTAINER_ISOLATION_REPAIRED: SUCCESS" > "$HOME/isolation-challenge/isolation_fix.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

@@ -45,7 +45,11 @@ Production Linux Environment
    ```
 2. Create directory `$HOME/linux-mastery`.
 3. Diagnose, repair, harden, tune, and verify all broken subsystems across the entire Linux server stack.
-4. Write `GRAND_LINUX_MASTERY_TRACK_COMPLETED_SUCCESSFULLY` into `$HOME/linux-mastery/grand_mastery_completion.log`.
+4. Write `GRAND_LINUX_MASTERY_TRACK_COMPLETED_SUCCESSFULLY` into `$HOME/linux-mastery/grand_mastery_completion.log`:
+   ```bash
+   mkdir -p "$HOME/linux-mastery"
+   echo "GRAND_LINUX_MASTERY_TRACK_COMPLETED_SUCCESSFULLY" > "$HOME/linux-mastery/grand_mastery_completion.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

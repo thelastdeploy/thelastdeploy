@@ -11,4 +11,5 @@ instructions: '1. Create directory `$HOME/idempotent-test` and seed `$HOME/idemp
    - Sets `TIMEOUT=30` and updates `MAX_CONNECTIONS=200` in `app.conf`.
    - Ensures running `deploy.sh` multiple times produces exact same `app.conf` without duplicate lines.
 3. Execute `deploy.sh` twice.'
-version: 1
+version: 2
+

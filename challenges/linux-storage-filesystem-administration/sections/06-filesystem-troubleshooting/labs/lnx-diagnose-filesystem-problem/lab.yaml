@@ -25,4 +25,4 @@ setup:
   - "printf '# Mock fstab configuration\\nUUID=1234-5678 /mnt/missing_data ext4 defaults 0 2\\n' > $HOME/storage-test/broken_app/fstab_mock"
   - mkdir -p $HOME/storage-test/broken_app/diag
   - "echo 'REASON: Mount point directory /mnt/missing_data does not exist on filesystem' > $HOME/storage-test/broken_app/diag/issue.txt"
-version: 2
+version: 3

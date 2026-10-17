@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/io-perf-test`.
 2. Inspect storage device throughput (`IOPS`), latency (`await`), and utilization (`%util`) using `iostat -xz 1`.
 3. Write output summary line `DISK_IO_ANALYZED` to `$HOME/io-perf-test/io_analysis.txt`.'
-version: 1
+version: 2

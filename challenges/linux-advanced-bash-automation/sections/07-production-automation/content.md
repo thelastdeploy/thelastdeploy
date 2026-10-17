@@ -41,18 +41,40 @@ Combining structured log reporting, parameter validation, and safe cleanup routi
 
 ## Lab Tasks
 
-### Task 1: Automate System Maintenance Task (`lnx-automate-system-maintenance`)
+### Task 1: Automate System Maintenance Task (`lnx-automate-production-maintenance`)
 1. Start the lab:
    ```bash
-   tld start lnx-automate-system-maintenance
+   tld start lnx-automate-production-maintenance
    ```
-2. Create directory `$HOME/maint-test/logs`.
-3. Seed 3 old log files (`old1.log`, `old2.log`, `old3.log`) and 1 active log (`active.log`).
-4. Write executable script `$HOME/maint-test/maint.sh` that:
-5. - Compresses all `old*.log` files into `.gz` format (`gzip`).
-6. - Appends `MAINTENANCE_SUCCESS: 3 logs compressed` to `$HOME/maint-test/maint_summary.log`.
-7. Execute `$HOME/maint-test/maint.sh`.
-8. Validate your solution:
+2. Create directory `$HOME/maint-test/logs` and seed log files:
+   ```bash
+   mkdir -p ~/maint-test/logs
+   echo "old log 1" > ~/maint-test/logs/old1.log
+   echo "old log 2" > ~/maint-test/logs/old2.log
+   echo "old log 3" > ~/maint-test/logs/old3.log
+   echo "active log" > ~/maint-test/logs/active.log
+   ```
+3. Create the maintenance script `$HOME/maint-test/maint.sh`:
+   ```bash
+   cat << 'EOF' > ~/maint-test/maint.sh
+   #!/bin/bash
+   set -euo pipefail
+
+   LOG_DIR="$HOME/maint-test/logs"
+   SUMMARY="$HOME/maint-test/maint_summary.log"
+
+   gzip "$LOG_DIR"/old*.log
+   echo "MAINTENANCE_SUCCESS: 3 logs compressed" >> "$SUMMARY"
+   EOF
+   chmod +x ~/maint-test/maint.sh
+   ```
+4. Execute the maintenance script:
+   ```bash
+   ~/maint-test/maint.sh
+   cat ~/maint-test/maint_summary.log
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
+

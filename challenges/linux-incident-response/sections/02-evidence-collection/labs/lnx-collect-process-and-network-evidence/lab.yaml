@@ -8,4 +8,5 @@ setup:
 instructions: '1. Create directory `$HOME/evidence-test`.
 2. Collect volatile network connections (`ss -anp`) and process open file handles (`lsof`).
 3. Write output summary `PROC_NET_EVIDENCE_COLLECTED` to `$HOME/evidence-test/proc_net_evidence.txt`.'
-version: 1
+version: 2
+

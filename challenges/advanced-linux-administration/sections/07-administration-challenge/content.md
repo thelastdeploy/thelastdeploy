@@ -29,7 +29,11 @@ In this 125 XP Expert capstone challenge, you inherit an unmaintained Linux serv
    ```
 2. Create directory `$HOME/server-ops`.
 3. Execute complete operational overhaul: security hardening, LVM storage expansion, systemd service stack architecture, automated systemd maintenance timer, and health check monitoring.
-4. Write `PRODUCTION_SERVER_OPERATIONALIZED_AND_SECURED` into `$HOME/server-ops/operationalization_signoff.log`.
+4. Write `PRODUCTION_SERVER_OPERATIONALIZED_AND_SECURED` into `$HOME/server-ops/operationalization_signoff.log`:
+   ```bash
+   mkdir -p "$HOME/server-ops"
+   echo "PRODUCTION_SERVER_OPERATIONALIZED_AND_SECURED" > "$HOME/server-ops/operationalization_signoff.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

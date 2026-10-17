@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/recovery-test`.
 2. Apply containment rules isolating malicious outbound traffic while maintaining management access.
 3. Write output line `COMPROMISED_SYSTEM_CONTAINED` to `$HOME/recovery-test/containment_summary.txt`.'
-version: 1
+version: 2

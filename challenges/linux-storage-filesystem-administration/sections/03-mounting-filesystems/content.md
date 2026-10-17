@@ -24,8 +24,8 @@ Manual mounts do not survive system reboots. To configure persistent automatic v
 
 ### The 6 Fields of `/etc/fstab`:
 ```fstab
-# <file system>                          <mount point>  <type>  <options>  <dump>  <pass>
-UUID=a1b2c3d4-e5f6-7890-abcd-1234567890  /mnt/data      ext4    defaults   0       2
+# <file system>                             <mount point>  <type>  <options>  <dump>  <pass>
+UUID=a1b2c3d4-1234-5678-90ab-cdef12345678  /mnt/data      ext4    defaults   0       2
 ```
 
 1. **file system**: UUID (preferred for stability over `/dev/sd*`) or device path.
@@ -52,8 +52,11 @@ If `mount -a` executes cleanly without errors, all `/etc/fstab` entries are synt
    ```bash
    tld start lnx-configure-persistent-mount
    ```
-2. Configure persistent filesystem mounts in `/etc/fstab`.
-3. Create a mock fstab entry in `$HOME/storage-test/mock_fstab` specifying mount point, filesystem type, and default options.
+2. Configure persistent filesystem mounts for `/etc/fstab`.
+3. Add a persistent mount entry for volume `UUID=a1b2c3d4-1234-5678-90ab-cdef12345678` mounted at `/mnt/data` with filesystem type `ext4`, mount options `defaults`, dump `0`, and pass `2` to `$HOME/storage-test/mock_fstab`:
+   ```bash
+   echo 'UUID=a1b2c3d4-1234-5678-90ab-cdef12345678 /mnt/data ext4 defaults 0 2' >> ~/storage-test/mock_fstab
+   ```
 4. Validate your solution:
    ```bash
    tld check
@@ -65,7 +68,15 @@ If `mount -a` executes cleanly without errors, all `/etc/fstab` entries are synt
    tld start lnx-mount-storage-device
    ```
 2. Mount and unmount storage volumes.
-3. Create an executable script at `$HOME/storage-test/mount_cmd.sh` executing `mount` to attach storage volumes to target directories.
+3. Create an executable script at `$HOME/storage-test/mount_cmd.sh` containing the commands to mount `/dev/sdb1` to `/mnt/appdata` and unmount `/mnt/appdata`:
+   ```bash
+   cat << 'EOF' > ~/storage-test/mount_cmd.sh
+   #!/bin/bash
+   mount /dev/sdb1 /mnt/appdata
+   umount /mnt/appdata
+   EOF
+   chmod +x ~/storage-test/mount_cmd.sh
+   ```
 4. Validate your solution:
    ```bash
    tld check

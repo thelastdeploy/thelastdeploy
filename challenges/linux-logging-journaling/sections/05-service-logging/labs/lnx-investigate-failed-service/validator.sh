@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 CONTENT=$(cat "$TARGET")
 
 if ! echo "$CONTENT" | grep -qi "Port 5432 already in use"; then

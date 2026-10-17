@@ -16,7 +16,11 @@ System mastery evaluates your ability to look beneath userspace abstractions dow
    ```
 2. Create directory `$HOME/mastery-internals`.
 3. Analyze kernel state interfaces in `/proc`, `/sys`, and `/sys/kernel/tracing`.
-4. Write `KERNEL_AND_SYSTEM_INTERNALS_MASTERED` into `$HOME/mastery-internals/internals_mastery.log`.
+4. Write `KERNEL_AND_SYSTEM_INTERNALS_MASTERED` into `$HOME/mastery-internals/internals_mastery.log`:
+   ```bash
+   mkdir -p "$HOME/mastery-internals"
+   echo "KERNEL_AND_SYSTEM_INTERNALS_MASTERED" > "$HOME/mastery-internals/internals_mastery.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

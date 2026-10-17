@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "VGCFGRESTORE_RECOVERY_VERIFIED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'VGCFGRESTORE_RECOVERY_VERIFIED'."
     exit 1

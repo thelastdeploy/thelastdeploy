@@ -14,4 +14,4 @@ instructions: '1. Create directory `$HOME/resize-test`.
    - `3. resize2fs`
    - `4. lvreduce`
    - `5. mount`'
-version: 1
+version: 2

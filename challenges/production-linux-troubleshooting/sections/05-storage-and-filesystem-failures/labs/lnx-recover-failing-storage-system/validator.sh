@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "STORAGE_SYSTEM_RECOVERED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'STORAGE_SYSTEM_RECOVERED'."
     exit 1

@@ -55,14 +55,32 @@ Job control with `wait` and concurrency limits allows automation scripts to proc
    ```bash
    tld start lnx-manage-background-tasks
    ```
-2. Create directory `$HOME/bg-test`.
-3. Write executable script `$HOME/bg-test/bg_runner.sh`.
-4. Script requirements:
-5. - Launch 3 background tasks writing `task1`, `task2`, `task3` into `$HOME/bg-test/t1.txt`, `t2.txt`, `t3.txt`.
-6. - Call `wait` to block until all tasks complete.
-7. - Write `ALL_JOBS_DONE` into `$HOME/bg-test/jobs_complete.txt` after `wait` returns.
-8. Execute `$HOME/bg-test/bg_runner.sh`.
-9. Validate your solution:
+2. Create directory `$HOME/bg-test`:
+   ```bash
+   mkdir -p ~/bg-test
+   ```
+3. Create the script `$HOME/bg-test/bg_runner.sh`:
+   ```bash
+   cat << 'EOF' > ~/bg-test/bg_runner.sh
+   #!/bin/bash
+   set -euo pipefail
+
+   echo "task1" > ~/bg-test/t1.txt &
+   echo "task2" > ~/bg-test/t2.txt &
+   echo "task3" > ~/bg-test/t3.txt &
+
+   wait
+
+   echo "ALL_JOBS_DONE" > ~/bg-test/jobs_complete.txt
+   EOF
+   chmod +x ~/bg-test/bg_runner.sh
+   ```
+4. Execute the script:
+   ```bash
+   ~/bg-test/bg_runner.sh
+   cat ~/bg-test/jobs_complete.txt
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
@@ -72,10 +90,35 @@ Job control with `wait` and concurrency limits allows automation scripts to proc
    ```bash
    tld start lnx-run-parallel-automation
    ```
-2. Create `$HOME/parallel-test/data/` with 5 text files `f1.txt` ... `f5.txt` containing lowercase text `sample data X`.
-3. Write `$HOME/parallel-test/batch_processor.sh` to process all files in `$HOME/parallel-test/data/` in parallel, converting text to uppercase and saving outputs in `$HOME/parallel-test/results/`.
-4. Execute `$HOME/parallel-test/batch_processor.sh`.
+2. Create directories and seed sample data:
+   ```bash
+   mkdir -p ~/parallel-test/data ~/parallel-test/results
+   for i in {1..5}; do
+       echo "sample data $i" > ~/parallel-test/data/f$i.txt
+   done
+   ```
+3. Create `$HOME/parallel-test/batch_processor.sh` to process files in parallel:
+   ```bash
+   cat << 'EOF' > ~/parallel-test/batch_processor.sh
+   #!/bin/bash
+   set -euo pipefail
+
+   for file in ~/parallel-test/data/*.txt; do
+       filename=$(basename "$file")
+       tr '[:lower:]' '[:upper:]' < "$file" > ~/parallel-test/results/"$filename" &
+   done
+
+   wait
+   EOF
+   chmod +x ~/parallel-test/batch_processor.sh
+   ```
+4. Execute the batch processor:
+   ```bash
+   ~/parallel-test/batch_processor.sh
+   cat ~/parallel-test/results/f1.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
    ```
+

@@ -63,9 +63,21 @@ Preserving volatile RAM state (`ss`, `ps auxf`, `/proc`) before rebooting ensure
    ```bash
    tld start lnx-establish-incident-context
    ```
-2. Create directory `$HOME/ir-test`.
-3. Perform non-destructive incident observation (`w`, `who`, `uptime`).
-4. Write observation summary line `INCIDENT_CONTEXT_ESTABLISHED` to `$HOME/ir-test/context.txt`.
+2. Create directory `$HOME/ir-test`:
+   ```bash
+   mkdir -p ~/ir-test
+   ```
+3. Perform non-destructive incident observation:
+   ```bash
+   w
+   who
+   uptime
+   ```
+4. Record observation summary marker into `$HOME/ir-test/context.txt`:
+   ```bash
+   echo "INCIDENT_CONTEXT_ESTABLISHED" > ~/ir-test/context.txt
+   cat ~/ir-test/context.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -76,10 +88,23 @@ Preserving volatile RAM state (`ss`, `ps auxf`, `/proc`) before rebooting ensure
    ```bash
    tld start lnx-preserve-system-state
    ```
-2. Create directory `$HOME/ir-test`.
-3. Capture volatile system state (sockets, processes, login history).
-4. Write evidence output line `VOLATILE_SYSTEM_STATE_PRESERVED` to `$HOME/ir-test/volatile_state.txt`.
+2. Create directory `$HOME/ir-test`:
+   ```bash
+   mkdir -p ~/ir-test
+   ```
+3. Capture volatile system state:
+   ```bash
+   ss -tulpn
+   ps auxf | head -n 15
+   last -a | head -n 10
+   ```
+4. Record evidence output marker into `$HOME/ir-test/volatile_state.txt`:
+   ```bash
+   echo "VOLATILE_SYSTEM_STATE_PRESERVED" > ~/ir-test/volatile_state.txt
+   cat ~/ir-test/volatile_state.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
    ```
+

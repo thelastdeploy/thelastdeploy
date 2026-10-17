@@ -20,9 +20,21 @@ Understanding procfs entries like `/proc/sys/` and sysfs dynamic attributes is f
    ```bash
    tld start lnx-explore-kernel-information
    ```
-2. Create directory `$HOME/kernel-interface`.
-3. Inspect `/proc/version`, `/proc/cmdline`, and `/proc/sys/kernel/osrelease`.
-4. Write `KERNEL_VERSION_AND_CMDLINE_INSPECTED` to `$HOME/kernel-interface/kernel_info.txt`.
+2. Create directory `$HOME/kernel-interface`:
+   ```bash
+   mkdir -p ~/kernel-interface
+   ```
+3. Inspect `/proc/version`, `/proc/cmdline`, and `/proc/sys/kernel/osrelease`:
+   ```bash
+   cat /proc/version
+   cat /proc/cmdline
+   cat /proc/sys/kernel/osrelease
+   ```
+4. Write `KERNEL_VERSION_AND_CMDLINE_INSPECTED` to `$HOME/kernel-interface/kernel_info.txt`:
+   ```bash
+   echo 'KERNEL_VERSION_AND_CMDLINE_INSPECTED' > ~/kernel-interface/kernel_info.txt
+   cat ~/kernel-interface/kernel_info.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -33,9 +45,20 @@ Understanding procfs entries like `/proc/sys/` and sysfs dynamic attributes is f
    ```bash
    tld start lnx-investigate-proc-and-sys
    ```
-2. Explore process status in `/proc/self/status` and `/proc/self/smaps_rollup`.
-3. Inspect device buses in `/sys/bus/` and system parameters in `/sys/kernel/`.
-4. Write `PROC_SYS_SUBSYSTEM_HIERARCHY_ANALYZED` into `$HOME/kernel-interface/proc_sys_analysis.txt`.
+2. Create directory `$HOME/kernel-interface`:
+   ```bash
+   mkdir -p ~/kernel-interface
+   ```
+3. Explore process status in `/proc/self/status` and inspect device buses in `/sys/bus/`:
+   ```bash
+   cat /proc/self/status | head -n 10
+   ls -la /sys/bus/
+   ```
+4. Write `PROC_SYS_SUBSYSTEM_HIERARCHY_ANALYZED` into `$HOME/kernel-interface/proc_sys_analysis.txt`:
+   ```bash
+   echo 'PROC_SYS_SUBSYSTEM_HIERARCHY_ANALYZED' > ~/kernel-interface/proc_sys_analysis.txt
+   cat ~/kernel-interface/proc_sys_analysis.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

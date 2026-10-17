@@ -8,6 +8,11 @@ if [ ! -f "$ANSWER_FILE" ]; then
     exit 1
 fi
 
+if [ ! -s "$ANSWER_FILE" ]; then
+    echo "ERROR: Answer file $ANSWER_FILE is empty."
+    exit 1
+fi
+
 CONTENT=$(tr -d '[:space:]' < "$ANSWER_FILE")
 
 if [ "$CONTENT" != "192.168.1.1" ]; then

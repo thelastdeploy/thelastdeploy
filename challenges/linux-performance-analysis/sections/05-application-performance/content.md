@@ -34,9 +34,20 @@ Correlating application response metrics with system resource counters provides 
    ```bash
    tld start lnx-investigate-slow-application
    ```
-2. Create directory `$HOME/app-perf-test`.
-3. Correlate application response latency against system metrics.
-4. Write summary output `APPLICATION_LATENCY_INVESTIGATED` into `$HOME/app-perf-test/app_latency.txt`.
+2. Create directory `$HOME/app-perf-test`:
+   ```bash
+   mkdir -p ~/app-perf-test
+   ```
+3. Correlate application response latency against system metrics:
+   ```bash
+   uptime
+   vmstat 1 3
+   ```
+4. Write summary output `APPLICATION_LATENCY_INVESTIGATED` into `$HOME/app-perf-test/app_latency.txt`:
+   ```bash
+   echo 'APPLICATION_LATENCY_INVESTIGATED' > ~/app-perf-test/app_latency.txt
+   cat ~/app-perf-test/app_latency.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -47,9 +58,20 @@ Correlating application response metrics with system resource counters provides 
    ```bash
    tld start lnx-correlate-system-performance
    ```
-2. Create directory `$HOME/app-perf-test`.
-3. Correlate multi-subsystem metrics (CPU, Memory, Disk I/O).
-4. Write output summary line `METRICS_CORRELATED: SYSTEM_HEALTHY` into `$HOME/app-perf-test/correlation_report.txt`.
+2. Create directory `$HOME/app-perf-test`:
+   ```bash
+   mkdir -p ~/app-perf-test
+   ```
+3. Correlate multi-subsystem metrics (CPU, Memory, Disk I/O):
+   ```bash
+   free -m
+   iostat 1 3
+   ```
+4. Write output summary line `METRICS_CORRELATED: SYSTEM_HEALTHY` into `$HOME/app-perf-test/correlation_report.txt`:
+   ```bash
+   echo 'METRICS_CORRELATED: SYSTEM_HEALTHY' > ~/app-perf-test/correlation_report.txt
+   cat ~/app-perf-test/correlation_report.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

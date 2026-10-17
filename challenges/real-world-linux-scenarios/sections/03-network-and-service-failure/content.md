@@ -9,34 +9,54 @@ Network failures in production systems are frequently subtle. Common symptoms in
 - **Port Listening & Routing**: `ss -tulpn`, `ip route`, `ip addr`.
 - **Packet Path Inspection**: `tcpdump -nn -i any port 80`, `traceroute`, `ping -M do -s 1472`.
 
-
 ---
 
 ## Lab Tasks
 
 ### Task 1: Recover Broken Service Connectivity (`lnx-recover-broken-service-connectivity`)
-1. Start the lab:
+1. Start the lab session:
    ```bash
    tld start lnx-recover-broken-service-connectivity
    ```
-2. Create directory `$HOME/net-failure`.
+2. Create the destination directory for network failure logs:
+   ```bash
+   mkdir -p "$HOME/net-failure"
+   ```
 3. Diagnose service-to-service connection errors using `curl`, `dig`, and `nftables`/`iptables`.
 4. Fix DNS resolver configuration and firewall drop rules.
-5. Write `SERVICE_NETWORK_CONNECTIVITY_RESTORED` into `$HOME/net-failure/connectivity_recovery.log`.
-6. Validate your solution:
+5. Record the connectivity restoration verification marker into `$HOME/net-failure/connectivity_recovery.log`:
+   ```bash
+   echo "SERVICE_NETWORK_CONNECTIVITY_RESTORED" > "$HOME/net-failure/connectivity_recovery.log"
+   ```
+6. Verify file contents:
+   ```bash
+   cat "$HOME/net-failure/connectivity_recovery.log"
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```
 
 ### Task 2: Trace Intermittent Network Drops (`lnx-trace-intermittent-network-failure`)
-1. Start the lab:
+1. Start the lab session:
    ```bash
    tld start lnx-trace-intermittent-network-failure
    ```
-2. Inspect TCP queue overflow counters in `/proc/net/netstat` (`ListenOverflows`).
-3. Tune `net.core.somaxconn` and fix path MTU fragmentation.
-4. Write `INTERMITTENT_PACKET_DROPS_TRACED_AND_FIXED` into `$HOME/net-failure/network_drop_analysis.txt`.
-5. Validate your solution:
+2. Ensure the network failure directory exists:
+   ```bash
+   mkdir -p "$HOME/net-failure"
+   ```
+3. Inspect TCP queue overflow counters in `/proc/net/netstat` (`ListenOverflows`).
+4. Tune `net.core.somaxconn` and fix path MTU fragmentation issues.
+5. Record the network drop diagnosis marker into `$HOME/net-failure/network_drop_analysis.txt`:
+   ```bash
+   echo "INTERMITTENT_PACKET_DROPS_TRACED_AND_FIXED" > "$HOME/net-failure/network_drop_analysis.txt"
+   ```
+6. Verify file contents:
+   ```bash
+   cat "$HOME/net-failure/network_drop_analysis.txt"
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```

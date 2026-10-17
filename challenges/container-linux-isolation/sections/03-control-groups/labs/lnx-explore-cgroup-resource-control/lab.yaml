@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/cgroup-test`.
 2. Inspect cgroup v2 hierarchy at `/sys/fs/cgroup/` (`memory.max`, `cpu.max`, `pids.max`).
 3. Write output summary line `CGROUP_HIERARCHY_EXPLORED` to `$HOME/cgroup-test/cgroup_info.txt`.'
-version: 1
+version: 2

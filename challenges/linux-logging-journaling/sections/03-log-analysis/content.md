@@ -36,7 +36,10 @@ grep -i "error" /var/log/syslog | cut -d ' ' -f 5- | sort | uniq -c | sort -nr |
    tld start lnx-find-errors-in-logs
    ```
 2. Extract error and fatal log entries using `grep`.
-3. Extract all lines matching `ERROR` or `FATAL` from `$HOME/log-test/app.log` and save to `$HOME/log-test/error_summary.log`.
+3. Extract all lines matching `ERROR` or `FATAL` from `$HOME/log-test/app.log` and save to `$HOME/log-test/error_summary.log`:
+   ```bash
+   grep -E "ERROR|FATAL" ~/log-test/app.log > ~/log-test/error_summary.log
+   ```
 4. Validate your solution:
    ```bash
    tld check
@@ -48,7 +51,10 @@ grep -i "error" /var/log/syslog | cut -d ' ' -f 5- | sort | uniq -c | sort -nr |
    tld start lnx-trace-system-event
    ```
 2. Trace system events across log files by session ID.
-3. Extract all lines containing `session_id=1042` from `$HOME/log-test/system_trace.log` and save to `$HOME/log-test/session_1042_trace.log`.
+3. Extract all lines containing `session_id=1042` from `$HOME/log-test/system_trace.log` and save to `$HOME/log-test/session_1042_trace.log`:
+   ```bash
+   grep "session_id=1042" ~/log-test/system_trace.log > ~/log-test/session_1042_trace.log
+   ```
 4. Validate your solution:
    ```bash
    tld check

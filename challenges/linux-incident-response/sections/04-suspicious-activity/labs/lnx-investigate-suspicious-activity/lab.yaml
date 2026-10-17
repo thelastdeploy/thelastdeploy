@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/suspicious-test`.
 2. Inspect suspicious process activity (unlinked deleted binaries, hidden network sockets).
 3. Write output summary line `SUSPICIOUS_PROCESS_INVESTIGATED` to `$HOME/suspicious-test/process_analysis.txt`.'
-version: 1
+version: 2

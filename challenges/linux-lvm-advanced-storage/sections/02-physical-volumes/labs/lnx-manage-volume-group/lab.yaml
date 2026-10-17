@@ -10,4 +10,4 @@ setup:
 instructions: '1. Create directory `$HOME/pv-test`.
 2. Document `vgcreate` and `vgextend` syntax.
 3. Write summary `VG_MANAGEMENT_VERIFIED` to `$HOME/pv-test/vg_info.txt`.'
-version: 1
+version: 2

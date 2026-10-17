@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "PERFORMANCE_SLA_TARGETS_DEFINED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'PERFORMANCE_SLA_TARGETS_DEFINED'."
     exit 1

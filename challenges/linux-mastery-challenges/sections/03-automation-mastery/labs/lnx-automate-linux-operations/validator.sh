@@ -1,10 +1,22 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [ -f "$HOME/mastery-auto/automation_mastery.sh" ] && grep -q "PRODUCTION_LINUX_AUTOMATION_MASTERED" "$HOME/mastery-auto/automation_mastery.sh"; then
-    echo "PASS: Automate Linux Operations verified successfully."
-    exit 0
-else
-    echo "FAIL: Requirement not met for Automate Linux Operations."
+TARGET="$HOME/mastery-auto/automation_mastery.sh"
+
+if [ ! -f "$TARGET" ]; then
+    echo "FAIL: $TARGET does not exist."
     exit 1
 fi
+
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
+if ! grep -q "PRODUCTION_LINUX_AUTOMATION_MASTERED" "$TARGET"; then
+    echo "FAIL: $TARGET missing 'PRODUCTION_LINUX_AUTOMATION_MASTERED'."
+    exit 1
+fi
+
+echo "PASS: Automate Linux Operations verified successfully."
+exit 0

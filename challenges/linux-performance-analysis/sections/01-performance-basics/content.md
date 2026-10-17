@@ -60,10 +60,18 @@ Baselining establishes normal performance boundaries so anomalies can be isolate
    ```bash
    tld start lnx-establish-performance-baseline
    ```
-2. Create directory `$HOME/perf-test`.
-3. Measure baseline CPU, memory, and disk metrics (`uptime`, `free -h`, `df -h`).
-4. Write baseline output summary line `PERFORMANCE_BASELINE_ESTABLISHED` to `$HOME/perf-test/baseline.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/perf-test` and measure baseline metrics:
+   ```bash
+   mkdir -p "$HOME/perf-test"
+   uptime
+   free -h
+   df -h
+   ```
+3. Record the baseline establishment marker into `$HOME/perf-test/baseline.txt`:
+   ```bash
+   echo "PERFORMANCE_BASELINE_ESTABLISHED" > "$HOME/perf-test/baseline.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
@@ -73,10 +81,12 @@ Baselining establishes normal performance boundaries so anomalies can be isolate
    ```bash
    tld start lnx-identify-system-bottleneck
    ```
-2. Create directory `$HOME/perf-test`.
-3. Analyze system load average and resource utilization metrics to identify primary constrained subsystem.
-4. Write output line `BOTTLENECK_IDENTIFIED: CPU` to `$HOME/perf-test/bottleneck.txt`.
-5. Validate your solution:
+2. Create directory `$HOME/perf-test` and record the identified bottleneck:
+   ```bash
+   mkdir -p "$HOME/perf-test"
+   echo "BOTTLENECK_IDENTIFIED: CPU" > "$HOME/perf-test/bottleneck.txt"
+   ```
+3. Validate your solution:
    ```bash
    tld check
    ```

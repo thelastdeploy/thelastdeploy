@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "LV_EXPAND_SYNTAX_VERIFIED" "$TARGET"; then
     echo "FAIL: $TARGET missing 'LV_EXPAND_SYNTAX_VERIFIED'."
     exit 1

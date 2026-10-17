@@ -42,9 +42,21 @@ ls -la /sys/block/
    ```bash
    tld start lnx-inspect-kernel-device-interface
    ```
-2. Create directory `$HOME/sysfs-test`.
-3. Inspect virtual filesystems (`/proc`, `/sys`, `/dev`).
-4. Write output summary line `KERNEL_DEVICE_INTERFACES_INSPECTED` to `$HOME/sysfs-test/interfaces.txt`.
+2. Create directory `$HOME/sysfs-test`:
+   ```bash
+   mkdir -p ~/sysfs-test
+   ```
+3. Inspect virtual filesystems (`/proc`, `/sys`, `/dev`):
+   ```bash
+   ls -la /sys/block/
+   ls -la /dev/null
+   cat /proc/version
+   ```
+4. Write output summary line `KERNEL_DEVICE_INTERFACES_INSPECTED` to `$HOME/sysfs-test/interfaces.txt`:
+   ```bash
+   echo 'KERNEL_DEVICE_INTERFACES_INSPECTED' > ~/sysfs-test/interfaces.txt
+   cat ~/sysfs-test/interfaces.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

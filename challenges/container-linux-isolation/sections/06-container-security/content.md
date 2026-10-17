@@ -44,7 +44,11 @@ Dropping kernel capabilities and enforcing Seccomp syscall profiles prevents con
    ```
 2. Create directory `$HOME/container-sec-test`.
 3. Inspect Linux process capabilities (`CapEff` in `/proc/self/status`) and Seccomp profiles.
-4. Write output line `CONTAINER_CAPABILITIES_INVESTIGATED` to `$HOME/container-sec-test/sec_caps.txt`.
+4. Write output line `CONTAINER_CAPABILITIES_INVESTIGATED` to `$HOME/container-sec-test/sec_caps.txt`:
+   ```bash
+   mkdir -p "$HOME/container-sec-test"
+   echo "CONTAINER_CAPABILITIES_INVESTIGATED" > "$HOME/container-sec-test/sec_caps.txt"
+   ```
 5. Validate your solution:
    ```bash
    tld check

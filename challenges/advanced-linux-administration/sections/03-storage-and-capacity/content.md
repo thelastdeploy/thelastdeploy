@@ -21,7 +21,11 @@ Production Linux storage administration requires managing dynamic disk allocatio
    ```
 2. Create directory `$HOME/storage-admin`.
 3. Plan LVM Volume Group allocations, thin provisioning pools, and mount point options.
-4. Write `ENTERPRISE_STORAGE_LAYOUT_PLANNED` into `$HOME/storage-admin/storage_plan.conf`.
+4. Write `ENTERPRISE_STORAGE_LAYOUT_PLANNED` into `$HOME/storage-admin/storage_plan.conf`:
+   ```bash
+   mkdir -p "$HOME/storage-admin"
+   echo "ENTERPRISE_STORAGE_LAYOUT_PLANNED" > "$HOME/storage-admin/storage_plan.conf"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -34,7 +38,11 @@ Production Linux storage administration requires managing dynamic disk allocatio
    ```
 2. Extend LVM Volume Group and Logical Volume.
 3. Perform live online expansion of mount point filesystem without unmounting.
-4. Write `LIVE_PRODUCTION_STORAGE_EXPANDED_SUCCESSFULLY` into `$HOME/storage-admin/lvm_expansion.log`.
+4. Write `LIVE_PRODUCTION_STORAGE_EXPANDED_SUCCESSFULLY` into `$HOME/storage-admin/lvm_expansion.log`:
+   ```bash
+   mkdir -p "$HOME/storage-admin"
+   echo "LIVE_PRODUCTION_STORAGE_EXPANDED_SUCCESSFULLY" > "$HOME/storage-admin/lvm_expansion.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

@@ -8,4 +8,5 @@ setup:
 instructions: '1. Create directory `$HOME/ir-test`.
 2. Capture volatile system state (sockets, processes, login history).
 3. Write evidence output line `VOLATILE_SYSTEM_STATE_PRESERVED` to `$HOME/ir-test/volatile_state.txt`.'
-version: 1
+version: 2
+

@@ -20,7 +20,11 @@ Securing production servers requires strict access control at the network layer 
    ```
 2. Create directory `$HOME/net-sec`.
 3. Configure firewall policy to restrict inbound traffic to required production ports.
-4. Write `STATEFUL_FIREWALL_RULES_CONFIGURED` into `$HOME/net-sec/firewall_hardening.log`.
+4. Write `STATEFUL_FIREWALL_RULES_CONFIGURED` into `$HOME/net-sec/firewall_hardening.log`:
+   ```bash
+   mkdir -p "$HOME/net-sec"
+   echo "STATEFUL_FIREWALL_RULES_CONFIGURED" > "$HOME/net-sec/firewall_hardening.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -33,7 +37,11 @@ Securing production servers requires strict access control at the network layer 
    ```
 2. Enforce SSH key-only authentication, non-standard banners, and idle timeouts in `/etc/ssh/sshd_config`.
 3. Configure explicit sudoers rule limits for administrative accounts.
-4. Write `SSH_AND_SUDO_ACCESS_HARDENED` into `$HOME/net-sec/ssh_hardening.conf`.
+4. Write `SSH_AND_SUDO_ACCESS_HARDENED` into `$HOME/net-sec/ssh_hardening.conf`:
+   ```bash
+   mkdir -p "$HOME/net-sec"
+   echo "SSH_AND_SUDO_ACCESS_HARDENED" > "$HOME/net-sec/ssh_hardening.conf"
+   ```
 5. Validate your solution:
    ```bash
    tld check

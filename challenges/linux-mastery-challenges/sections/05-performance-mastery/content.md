@@ -16,7 +16,11 @@ Performance mastery tests your ability to model workloads, isolate multi-subsyst
    ```
 2. Create directory `$HOME/mastery-perf`.
 3. Apply cross-layer performance tuning (CPU affinity, sysctl vm/net parameters, block scheduler).
-4. Write `LINUX_WORKLOAD_PERFORMANCE_MASTERED` into `$HOME/mastery-perf/perf_mastery.log`.
+4. Write `LINUX_WORKLOAD_PERFORMANCE_MASTERED` into `$HOME/mastery-perf/perf_mastery.log`:
+   ```bash
+   mkdir -p "$HOME/mastery-perf"
+   echo "LINUX_WORKLOAD_PERFORMANCE_MASTERED" > "$HOME/mastery-perf/perf_mastery.log"
+   ```
 5. Validate your solution:
    ```bash
    tld check

@@ -46,9 +46,21 @@ Executing the complete performance engineering feedback loop proves your ability
    ```bash
    tld start lnx-optimize-production-workload
    ```
-2. Create directory `$HOME/perf-capstone`.
-3. Execute the 7-step performance engineering loop (Model, Measure, Find Bottleneck, Apply Cross-Layer Tuning, Benchmark, Compare, Validate SLA).
-4. Write master optimization report line `PRODUCTION_WORKLOAD_OPTIMIZED_AND_VALIDATED` into `$HOME/perf-capstone/optimization_validation.log`.
+2. Create directory `$HOME/perf-capstone`:
+   ```bash
+   mkdir -p ~/perf-capstone
+   ```
+3. Execute the 7-step performance engineering loop (Model, Measure, Find Bottleneck, Apply Cross-Layer Tuning, Benchmark, Compare, Validate SLA):
+   ```bash
+   uptime
+   vmstat 1 3
+   lsblk
+   ```
+4. Write master optimization report line `PRODUCTION_WORKLOAD_OPTIMIZED_AND_VALIDATED` into `$HOME/perf-capstone/optimization_validation.log`:
+   ```bash
+   echo 'PRODUCTION_WORKLOAD_OPTIMIZED_AND_VALIDATED' > ~/perf-capstone/optimization_validation.log
+   cat ~/perf-capstone/optimization_validation.log
+   ```
 5. Validate your solution:
    ```bash
    tld check

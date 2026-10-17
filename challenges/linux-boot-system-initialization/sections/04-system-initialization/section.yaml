@@ -2,4 +2,4 @@ id: 04-system-initialization
 title: "Userspace Initialization & Boot Ordering"
 order: 4
 xp: 80
-version: 1
+version: 2

@@ -49,7 +49,11 @@ Safe ext4 reduction sequence:
    ```
 2. Create directory `$HOME/resize-test`.
 3. Document `lvextend -r` syntax for online storage expansion.
-4. Write output summary line `LV_EXPAND_SYNTAX_VERIFIED` to `$HOME/resize-test/expand_summary.txt`.
+4. Write output summary line `LV_EXPAND_SYNTAX_VERIFIED` to `$HOME/resize-test/expand_summary.txt`:
+   ```bash
+   mkdir -p ~/resize-test
+   echo "LV_EXPAND_SYNTAX_VERIFIED" > ~/resize-test/expand_summary.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check
@@ -62,12 +66,16 @@ Safe ext4 reduction sequence:
    ```
 2. Create directory `$HOME/resize-test`.
 3. Document the 5 mandatory safe ext4 reduction steps in order into `$HOME/resize-test/safe_reduce_steps.txt`:
-4. - `1. umount`
-5. - `2. e2fsck -f`
-6. - `3. resize2fs`
-7. - `4. lvreduce`
-8. - `5. mount`
-9. Validate your solution:
+   ```bash
+   cat << 'EOF' > ~/resize-test/safe_reduce_steps.txt
+   1. umount
+   2. e2fsck -f
+   3. resize2fs
+   4. lvreduce
+   5. mount
+   EOF
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

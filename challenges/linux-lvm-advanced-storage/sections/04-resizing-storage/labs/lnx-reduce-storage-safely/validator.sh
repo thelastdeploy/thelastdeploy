@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "1. umount" "$TARGET" || ! grep -q "3. resize2fs" "$TARGET" || ! grep -q "4. lvreduce" "$TARGET"; then
     echo "FAIL: $TARGET missing required safe reduction steps sequence."
     exit 1

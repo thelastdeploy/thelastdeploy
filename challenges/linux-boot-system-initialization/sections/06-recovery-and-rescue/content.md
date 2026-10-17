@@ -53,7 +53,11 @@ chroot /mnt
    ```
 2. Create directory `$HOME/rescue-test`.
 3. Document root filesystem remount command syntax (`mount -o remount,rw /`).
-4. Write summary `RESCUE_MODE_RECOVERY_VERIFIED` to `$HOME/rescue-test/rescue_summary.txt`.
+4. Write summary `RESCUE_MODE_RECOVERY_VERIFIED` to `$HOME/rescue-test/rescue_summary.txt`:
+   ```bash
+   mkdir -p ~/rescue-test
+   echo "RESCUE_MODE_RECOVERY_VERIFIED" > ~/rescue-test/rescue_summary.txt
+   ```
 5. Validate your solution:
    ```bash
    tld check

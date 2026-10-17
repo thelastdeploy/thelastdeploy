@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/io-opt-test`.
 2. Configure block device I/O scheduler (`mq-deadline`/`none`) and read-ahead parameters.
 3. Write output summary line `STORAGE_IO_PERFORMANCE_OPTIMIZED` to `$HOME/io-opt-test/io_tuning.txt`.'
-version: 1
+version: 2

@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 if ! grep -q "INCIDENT_TIMELINE_BUILT" "$TARGET"; then
     echo "FAIL: $TARGET missing 'INCIDENT_TIMELINE_BUILT'."
     exit 1

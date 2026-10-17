@@ -8,6 +8,11 @@ if [ ! -f "$TARGET" ]; then
     exit 1
 fi
 
+if [ ! -s "$TARGET" ]; then
+    echo "FAIL: $TARGET is empty."
+    exit 1
+fi
+
 LINE_COUNT=$(wc -l < "$TARGET" | tr -d ' ')
 if [ "$LINE_COUNT" -ne 10 ]; then
     echo "FAIL: Expected 10 lines in $TARGET, found $LINE_COUNT."

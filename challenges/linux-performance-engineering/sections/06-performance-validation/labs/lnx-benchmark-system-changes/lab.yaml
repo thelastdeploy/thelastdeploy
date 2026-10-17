@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/bench-test`.
 2. Execute synthetic benchmark comparisons before and after system tuning changes (`fio` or `sysbench`).
 3. Write output comparison report line `BENCHMARK_VALIDATION_COMPLETE: IMPROVEMENT_PROVED` into `$HOME/bench-test/benchmark_comparison.txt`.'
-version: 1
+version: 2

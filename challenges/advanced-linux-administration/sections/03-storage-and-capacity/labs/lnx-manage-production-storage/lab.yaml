@@ -2,3 +2,12 @@ id: lnx-manage-production-storage
 title: "Manage Production Storage"
 xp: 55
 description: "Perform live online LVM logical volume expansion and filesystem resize under active workload."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/storage-admin
+  - rm -f $HOME/storage-admin/lvm_expansion.log
+instructions: '1. Create directory `$HOME/storage-admin`.
+2. Extend LVM Volume Group and Logical Volume.
+3. Perform live online expansion of mount point filesystem without unmounting.
+4. Write `LIVE_PRODUCTION_STORAGE_EXPANDED_SUCCESSFULLY` into `$HOME/storage-admin/lvm_expansion.log`.'
+version: 2

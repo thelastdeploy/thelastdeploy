@@ -2,3 +2,11 @@ id: lnx-automate-linux-operations
 title: "Automate Linux Operations"
 xp: 70
 description: "Build an idempotent, production-grade Linux maintenance script with automated error recovery and hash verification."
+setup:
+  seed_commands:
+  - mkdir -p $HOME/mastery-auto
+  - rm -f $HOME/mastery-auto/automation_mastery.sh
+instructions: '1. Create directory `$HOME/mastery-auto`.
+2. Author `automation_mastery.sh` with robust error trapping and systemd timer activation.
+3. Write header `PRODUCTION_LINUX_AUTOMATION_MASTERED` into `$HOME/mastery-auto/automation_mastery.sh`.'
+version: 2

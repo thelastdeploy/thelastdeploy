@@ -8,4 +8,4 @@ setup:
 instructions: '1. Create directory `$HOME/cpu-opt-test`.
 2. Apply CPU core affinity masking (`taskset -c`) and NUMA policy tuning (`numactl`).
 3. Write optimization report line `CPU_WORKLOAD_OPTIMIZED` to `$HOME/cpu-opt-test/cpu_optimization.txt`.'
-version: 1
+version: 2

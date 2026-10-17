@@ -5,15 +5,12 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -22,7 +19,6 @@ import (
 	"github.com/thelastdeploy/agent/internal/environment"
 	"github.com/thelastdeploy/agent/internal/queue"
 	"github.com/thelastdeploy/agent/internal/runtime/docker"
-	"github.com/thelastdeploy/agent/internal/validator"
 )
 
 // modulesResponse matches GET /modules
@@ -214,50 +210,6 @@ func syncFromGitHub(repo string, challengesDir string, targetModule string, targ
 		return fmt.Errorf("failed to parse ZIP file: %w", err)
 	}
 
-	// Pre-scan pass: Read all YAML versions from the ZIP in-memory
-	zipLabVersions := make(map[string]int)
-	zipSectionVersions := make(map[string]int)
-	zipModuleVersions := make(map[string]int)
-
-	for _, file := range zipReader.File {
-		parts := strings.Split(filepath.ToSlash(file.Name), "/")
-		challengesIdx := -1
-		for idx, part := range parts {
-			if part == "challenges" && idx == 1 {
-				challengesIdx = idx
-				break
-			}
-		}
-		if challengesIdx == -1 {
-			continue
-		}
-		relParts := parts[challengesIdx+1:]
-		if len(relParts) == 0 {
-			continue
-		}
-		if len(relParts) == 2 && relParts[1] == "module.yaml" {
-			moduleID := relParts[0]
-			if data, err := readZipFileContents(file); err == nil {
-				zipModuleVersions[moduleID] = parseYAMLVersion(data)
-			}
-		} else if len(relParts) == 4 && relParts[1] == "sections" && relParts[3] == "section.yaml" {
-			moduleID := relParts[0]
-			sectionID := relParts[2]
-			key := fmt.Sprintf("%s/sections/%s", moduleID, sectionID)
-			if data, err := readZipFileContents(file); err == nil {
-				zipSectionVersions[key] = parseYAMLVersion(data)
-			}
-		} else if len(relParts) == 6 && relParts[1] == "sections" && relParts[3] == "labs" && relParts[5] == "lab.yaml" {
-			moduleID := relParts[0]
-			sectionID := relParts[2]
-			labID := relParts[4]
-			key := fmt.Sprintf("%s/sections/%s/labs/%s", moduleID, sectionID, labID)
-			if data, err := readZipFileContents(file); err == nil {
-				zipLabVersions[key] = parseYAMLVersion(data)
-			}
-		}
-	}
-
 	var parentModule string
 	var parentSection string
 
@@ -329,12 +281,6 @@ func syncFromGitHub(repo string, challengesDir string, targetModule string, targ
 			} else {
 				continue
 			}
-		}
-
-		// Smart differential sync: skip extraction if local version matches zip version
-		if !shouldExtractFile(file, relParts, challengesDir, zipModuleVersions, zipSectionVersions, zipLabVersions) {
-			syncedModules[moduleID] = true
-			continue
 		}
 
 		destPath := filepath.Clean(filepath.Join(challengesDir, subpath))
@@ -455,13 +401,9 @@ func syncFromLocal(challengesDir, targetModule, targetLab string) error {
 			continue
 		}
 
-		// Smart version check: only copy module.yaml if changed
-		dstModuleYAML := filepath.Join(challengesDir, moduleID, "module.yaml")
-		if getLocalYAMLVersion(yamlPath) != getLocalYAMLVersion(dstModuleYAML) {
-			if err := cache.SaveRaw(challengesDir, moduleID, data); err != nil {
-				fmt.Fprintf(os.Stderr, "warn: failed to save %s: %v\n", moduleID, err)
-				continue
-			}
+		if err := cache.SaveRaw(challengesDir, moduleID, data); err != nil {
+			fmt.Fprintf(os.Stderr, "warn: failed to save %s: %v\n", moduleID, err)
+			continue
 		}
 
 		syncLocalSections(moduleID, challengesDir, parentSection, targetLab)
@@ -497,15 +439,10 @@ func syncLocalSections(moduleID, challengesDir, parentSection, targetLab string)
 		srcSecDir := filepath.Join(srcSectionsDir, sec.Name())
 		dstSecDir := filepath.Join(dstSectionsDir, sec.Name())
 
-		// Smart version check: only copy section if version changed
-		srcSecYAML := filepath.Join(srcSecDir, "section.yaml")
-		dstSecYAML := filepath.Join(dstSecDir, "section.yaml")
-		if getLocalYAMLVersion(srcSecYAML) != getLocalYAMLVersion(dstSecYAML) {
-			os.MkdirAll(dstSecDir, 0755)
-			for _, fname := range []string{"section.yaml", "content.md"} {
-				if data, err := os.ReadFile(filepath.Join(srcSecDir, fname)); err == nil {
-					os.WriteFile(filepath.Join(dstSecDir, fname), data, 0644)
-				}
+		os.MkdirAll(dstSecDir, 0755)
+		for _, fname := range []string{"section.yaml", "content.md"} {
+			if data, err := os.ReadFile(filepath.Join(srcSecDir, fname)); err == nil {
+				os.WriteFile(filepath.Join(dstSecDir, fname), data, 0644)
 			}
 		}
 
@@ -523,32 +460,7 @@ func syncLocalSections(moduleID, challengesDir, parentSection, targetLab string)
 				continue
 			}
 
-			// Smart version check: only copy lab files if version changed
-			srcLabYAML := filepath.Join(srcLabsDir, l.Name(), "lab.yaml")
-			dstLabYAML := filepath.Join(challengesDir, moduleID, "sections", sec.Name(), "labs", l.Name(), "lab.yaml")
-			srcLabHash, _ := validator.Sha256Sum(srcLabYAML)
-			dstLabHash, _ := validator.Sha256Sum(dstLabYAML)
-			needSync := (getLocalYAMLVersion(srcLabYAML) != getLocalYAMLVersion(dstLabYAML)) || (srcLabHash != dstLabHash)
-			if !needSync {
-				// If versions match, verify if the validator script was modified locally
-				srcValPath := filepath.Join(srcLabsDir, l.Name(), "validator.sh")
-				if _, err := os.Stat(srcValPath); os.IsNotExist(err) {
-					srcValPath = filepath.Join(srcLabsDir, l.Name(), "validator.py")
-				}
-				dstValPath := filepath.Join(challengesDir, moduleID, "sections", sec.Name(), "labs", l.Name(), "validator.sh")
-				if _, err := os.Stat(dstValPath); os.IsNotExist(err) {
-					dstValPath = filepath.Join(challengesDir, moduleID, "sections", sec.Name(), "labs", l.Name(), "validator.py")
-				}
-
-				srcHash, _ := validator.Sha256Sum(srcValPath)
-				dstHash, _ := validator.Sha256Sum(dstValPath)
-				if srcHash != "" && srcHash != dstHash {
-					needSync = true
-				}
-			}
-			if needSync {
-				syncLabFiles(moduleID, sec.Name(), l.Name(), challengesDir)
-			}
+			syncLabFiles(moduleID, sec.Name(), l.Name(), challengesDir)
 		}
 	}
 }
@@ -626,116 +538,4 @@ func syncFromAPI(apiBaseURL, challengesDir, targetModule string) error {
 
 	fmt.Printf("\nSynced %d module(s) to %s\n", count, challengesDir)
 	return nil
-}
-
-// --- Smart Syncing Helpers ---
-
-func parseYAMLVersion(data []byte) int {
-	lines := strings.Split(string(data), "\n")
-	for _, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
-			continue
-		}
-		// must be root level indentation
-		if len(line) > 0 && (line[0] == ' ' || line[0] == '\t') {
-			continue
-		}
-		idx := strings.Index(trimmed, ":")
-		if idx == -1 {
-			continue
-		}
-		key := strings.TrimSpace(trimmed[:idx])
-		val := strings.TrimSpace(trimmed[idx+1:])
-		if key == "version" {
-			v, _ := strconv.Atoi(val)
-			return v
-		}
-	}
-	return 1
-}
-
-func getLocalYAMLVersion(path string) int {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return 0 // force sync if file does not exist
-	}
-	return parseYAMLVersion(data)
-}
-
-func readZipFileContents(file *zip.File) ([]byte, error) {
-	rc, err := file.Open()
-	if err != nil {
-		return nil, err
-	}
-	defer rc.Close()
-	return io.ReadAll(rc)
-}
-
-func shouldExtractFile(file *zip.File, relParts []string, challengesDir string, zipModuleVersions, zipSectionVersions, zipLabVersions map[string]int) bool {
-	if len(relParts) == 0 {
-		return false
-	}
-	moduleID := relParts[0]
-
-	// 1. Is it a lab file?
-	if len(relParts) >= 5 && relParts[1] == "sections" && relParts[3] == "labs" {
-		labID := relParts[4]
-		sectionID := relParts[2]
-		labKey := fmt.Sprintf("%s/sections/%s/labs/%s", moduleID, sectionID, labID)
-		localLabYAMLPath := filepath.Join(challengesDir, moduleID, "sections", sectionID, "labs", labID, "lab.yaml")
-		zipVer := zipLabVersions[labKey]
-		if zipVer == 0 {
-			zipVer = 1
-		}
-		localVer := getLocalYAMLVersion(localLabYAMLPath)
-
-		// If it's the validator file, verify its integrity hash
-		if len(relParts) == 6 && (relParts[5] == "validator.sh" || relParts[5] == "validator.py") {
-			localValPath := filepath.Join(challengesDir, moduleID, "sections", sectionID, "labs", labID, relParts[5])
-			if _, err := os.Stat(localValPath); os.IsNotExist(err) {
-				return true // missing, must extract
-			}
-			zipData, err := readZipFileContents(file)
-			if err == nil {
-				// Normalize CRLF to LF and trim
-				normalizedZip := strings.ReplaceAll(string(zipData), "\r\n", "\n")
-				normalizedZip = strings.TrimRightFunc(normalizedZip, func(r rune) bool {
-					return r == '\n' || r == '\r' || r == ' ' || r == '\t'
-				})
-				hZip := sha256.New()
-				hZip.Write([]byte(normalizedZip))
-				zipHash := hex.EncodeToString(hZip.Sum(nil))
-
-				localHash, err := validator.Sha256Sum(localValPath)
-				if err != nil || localHash != zipHash {
-					return true // hash mismatch, force extract
-				}
-			}
-		}
-
-		return zipVer != localVer
-	}
-
-	// 2. Is it a section file?
-	if len(relParts) >= 3 && relParts[1] == "sections" {
-		sectionID := relParts[2]
-		sectionKey := fmt.Sprintf("%s/sections/%s", moduleID, sectionID)
-		localSecYAMLPath := filepath.Join(challengesDir, moduleID, "sections", sectionID, "section.yaml")
-		zipVer := zipSectionVersions[sectionKey]
-		if zipVer == 0 {
-			zipVer = 1
-		}
-		localVer := getLocalYAMLVersion(localSecYAMLPath)
-		return zipVer != localVer
-	}
-
-	// 3. Is it a module level file?
-	localModYAMLPath := filepath.Join(challengesDir, moduleID, "module.yaml")
-	zipVer := zipModuleVersions[moduleID]
-	if zipVer == 0 {
-		zipVer = 1
-	}
-	localVer := getLocalYAMLVersion(localModYAMLPath)
-	return zipVer != localVer
 }

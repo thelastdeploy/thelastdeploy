@@ -21,4 +21,4 @@ setup:
   seed_commands:
   - mkdir -p $HOME/net-test/resolv_fix
   - "printf '# Invalid nameserver IP\\nnameserver 0.0.0.0\\nsearch internal.net\\n' > $HOME/net-test/resolv_fix/resolv.conf"
-version: 2
+version: 3
