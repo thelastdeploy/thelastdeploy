@@ -5,6 +5,19 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      target:
+        description: "Target to deploy (select 'all' to deploy & seed everything)"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - "all"
+          - "challenges"
+          - "cli"
+          - "frontend"
+          - "backend"
+          - "landing"
 
 jobs:
 
@@ -36,6 +49,7 @@ jobs:
         shell: bash
         env:
           BEFORE_SHA: ${{ github.event.before }}
+          TARGET: ${{ inputs.target }}
         run: |
 
           python <<'EOF'
@@ -49,10 +63,35 @@ jobs:
           with open(".ci/components.yaml") as f:
               config = yaml.safe_load(f)
 
-          # On workflow_dispatch there may be no HEAD~1 (or the diff would be empty/irrelevant)
-          # Force all components to be detected so manual runs always seed
+          target = os.environ.get("TARGET", "").strip().lower()
+
           if os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch":
-              changed = ["challenges/__force_seed__"]
+              if target == "all" or not target:
+                  changed = [
+                      "agent/__force_cli__",
+                      "challenges/__force_challenges__",
+                      "web/frontend/__force_frontend__",
+                      "web/backend/__force_backend__",
+                      "landing/__force_landing__",
+                  ]
+              elif target == "cli":
+                  changed = ["agent/__force_cli__"]
+              elif target == "challenges":
+                  changed = ["challenges/__force_challenges__"]
+              elif target == "frontend":
+                  changed = ["web/frontend/__force_frontend__"]
+              elif target == "backend":
+                  changed = ["web/backend/__force_backend__"]
+              elif target == "landing":
+                  changed = ["landing/__force_landing__"]
+              else:
+                  changed = [
+                      "agent/__force_cli__",
+                      "challenges/__force_challenges__",
+                      "web/frontend/__force_frontend__",
+                      "web/backend/__force_backend__",
+                      "landing/__force_landing__",
+                  ]
           else:
               before_sha = os.environ.get("BEFORE_SHA", "").strip()
               if before_sha and before_sha != "0000000000000000000000000000000000000000":
@@ -278,7 +317,7 @@ jobs:
   seed-challenges:
     name: Seed Challenges (Database)
     needs: detect-components
-    if: needs.detect-components.outputs.challenges == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.detect-components.outputs.challenges == 'true'
     runs-on: ubuntu-latest
 
     steps:
