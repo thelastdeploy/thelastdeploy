@@ -103,7 +103,6 @@ func Start(lab *cache.Lab) error {
 	if len(lab.ModuleSharedSeed) > 0 {
 		fmt.Println("⚙  Applying module environment baseline inside container...")
 		for _, cmdStr := range lab.ModuleSharedSeed {
-			fmt.Printf("  $ %s\n", cmdStr)
 			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "export XDG_RUNTIME_DIR=/run/user/0; cd /workspace && " + cmdStr})
 			if err != nil || res.ExitCode != 0 {
 				fmt.Fprintf(os.Stderr, "  warn: shared seed command exited with code %d: %s\n", res.ExitCode, res.Stderr)
@@ -116,7 +115,6 @@ func Start(lab *cache.Lab) error {
 	if len(lab.SeedCommands) > 0 {
 		fmt.Println("⚙  Applying lab scenario broken state inside container...")
 		for _, cmdStr := range lab.SeedCommands {
-			fmt.Printf("  $ %s\n", cmdStr)
 			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "export XDG_RUNTIME_DIR=/run/user/0; cd /workspace && " + cmdStr})
 			if err != nil || res.ExitCode != 0 {
 				fmt.Fprintf(os.Stderr, "  warn: seed command exited with code %d: %s\n", res.ExitCode, res.Stderr)
@@ -148,8 +146,8 @@ func Start(lab *cache.Lab) error {
 	}
 
 	fmt.Println("Entering interactive lab container shell...")
-	fmt.Println("👉 Run 'tld check' right here inside this shell whenever you are ready to validate.")
-	fmt.Println("👉 Run 'tld stop' or type 'exit' when finished.")
+	fmt.Println("👉 Run 'tld check' inside this shell whenever you are ready to validate.")
+	fmt.Println("👉 Run 'tld stop' when you are done.")
 
 	_ = eng.Attach(ctx, containerID)
 
