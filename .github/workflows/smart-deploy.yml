@@ -25,7 +25,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Install Python dependencies
         run: |
@@ -34,6 +34,8 @@ jobs:
       - name: Detect Changed Components
         id: detect
         shell: bash
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
         run: |
 
           python <<'EOF'
@@ -52,10 +54,23 @@ jobs:
           if os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch":
               changed = ["challenges/__force_seed__"]
           else:
-              changed = subprocess.check_output(
-                  ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
-                  text=True
-              ).splitlines()
+              before_sha = os.environ.get("BEFORE_SHA", "").strip()
+              if before_sha and before_sha != "0000000000000000000000000000000000000000":
+                  try:
+                      changed = subprocess.check_output(
+                          ["git", "diff", "--name-only", before_sha, "HEAD"],
+                          text=True
+                      ).splitlines()
+                  except subprocess.CalledProcessError:
+                      changed = subprocess.check_output(
+                          ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
+                          text=True
+                      ).splitlines()
+              else:
+                  changed = subprocess.check_output(
+                      ["git", "diff", "--name-only", "HEAD~1", "HEAD"],
+                      text=True
+                  ).splitlines()
 
           print("\n================ Changed Files ================\n")
 
