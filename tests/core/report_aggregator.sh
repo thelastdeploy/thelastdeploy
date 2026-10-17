@@ -33,6 +33,31 @@ init_aggregator() {
   "results": []
 }
 EOF
+    else
+        # Prune stale records where the test script was removed or renamed
+        python3 - <<PYEOF
+import json
+import os
+
+summary_path = '$SUMMARY_JSON'
+labs_dir = '$LABS_DIR'
+try:
+    with open(summary_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    results = data.get("results", [])
+    valid_results = [r for r in results if os.path.exists(os.path.join(labs_dir, r.get("test_path", "")))]
+    if len(valid_results) != len(results):
+        data["results"] = valid_results
+        data["total_test_cases"] = len(valid_results)
+        data["total_executed"] = len(valid_results)
+        data["total_passed"] = sum(1 for r in valid_results if r.get("status") == "PASSED")
+        data["total_failed"] = sum(1 for r in valid_results if r.get("status") == "FAILED")
+        data["pass_rate_pct"] = round((data["total_passed"] / data["total_executed"]) * 100, 1) if data["total_executed"] > 0 else 0.0
+        with open(summary_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=2)
+except Exception:
+    pass
+PYEOF
     fi
 }
 
