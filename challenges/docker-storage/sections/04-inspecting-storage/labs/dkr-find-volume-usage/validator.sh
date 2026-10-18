@@ -5,8 +5,8 @@ set -euo pipefail
 FILE_PATH="$HOME/docker-test/volume_destination.txt"
 
 # 1. Check if file exists
-if [ ! -f "$FILE_PATH" ]; then
-  echo "FAIL: File '$FILE_PATH' not found."
+if [ ! -f "$FILE_PATH" ] || [ ! -s "$FILE_PATH" ]; then
+  echo "FAIL: File '$FILE_PATH' not found or is empty."
   exit 1
 fi
 

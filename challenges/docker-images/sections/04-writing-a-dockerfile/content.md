@@ -37,29 +37,43 @@ Here are the most common instructions used when authoring a Dockerfile:
 
 ## Lab Tasks
 
-### Task 1: Create first Dockerfile
-1. Start the lab in your terminal:
+### Task 1: Create first Dockerfile (`dkr-create-first-dockerfile`)
+1. Start the lab session:
    ```bash
    tld start dkr-create-first-dockerfile
    ```
-2. Navigate to the directory `~/docker-build/first-dockerfile/`.
-3. Create a `Dockerfile` with the following requirements:
-   - Use `alpine:3.18` as the base image.
-   - Set an environment variable `APP_COLOR` to `blue` using `ENV`.
-   - Set the default command to print `Hello DevLab` using `CMD` (use JSON array syntax: `CMD ["echo", "Hello DevLab"]` or shell format).
-4. Verify the task:
+2. Create the target directory and author a `Dockerfile` inside `~/docker-build/first-dockerfile/`:
+   ```bash
+   mkdir -p "$HOME/docker-build/first-dockerfile"
+   cat << 'EOF' > "$HOME/docker-build/first-dockerfile/Dockerfile"
+   FROM alpine:3.18
+   ENV APP_COLOR=blue
+   CMD ["echo", "Hello DevLab"]
+   EOF
+   ```
+3. Verify file contents:
+   ```bash
+   cat "$HOME/docker-build/first-dockerfile/Dockerfile"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Fix broken Dockerfile
-1. Start the lab in your terminal:
+### Task 2: Fix broken Dockerfile (`dkr-fix-broken-dockerfile`)
+1. Start the lab session:
    ```bash
    tld start dkr-fix-broken-dockerfile
    ```
-2. In the directory `~/docker-build/broken-dockerfile/`, you will find a `Dockerfile` that fails to build due to a syntax error.
-3. Fix the syntax error in the Dockerfile so that it successfully builds.
-4. Verify the task:
+2. In `~/docker-build/broken-dockerfile/Dockerfile`, fix the syntax error (change invalid instruction `RUNN` to `RUN`):
+   ```bash
+   sed -i 's/RUNN/RUN/' "$HOME/docker-build/broken-dockerfile/Dockerfile"
+   ```
+3. Verify the corrected Dockerfile:
+   ```bash
+   cat "$HOME/docker-build/broken-dockerfile/Dockerfile"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

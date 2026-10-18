@@ -2,6 +2,8 @@ id: git-sync-local-and-remote
 title: Sync Local and Remote Project
 xp: 30
 estimated_minutes: 10
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -29,4 +31,4 @@ setup:
     - git -C $HOME/temp-git-repo commit -m 'Team remote update'
     - git -C $HOME/temp-git-repo push origin HEAD
     - rm -rf $HOME/temp-git-repo
-version: 1
+version: 2

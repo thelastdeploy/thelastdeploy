@@ -26,8 +26,8 @@ if ! echo "$MSG" | grep -q -i "revert"; then
 fi
 
 # Verify file contents
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: Config file '$FILE' not found."
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: Config file '$FILE' not found or empty."
   exit 1
 fi
 

@@ -2,9 +2,11 @@ id: git-create-repository
 title: "Initialize a New Repository"
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
     - "rm -rf $HOME/git-challenge"
     - "mkdir -p $HOME/git-challenge"
-version: 1
+version: 2

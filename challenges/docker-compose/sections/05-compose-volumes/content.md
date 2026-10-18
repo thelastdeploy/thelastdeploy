@@ -35,19 +35,41 @@ Docker Compose will automatically create the volume when you run `docker compose
 
 ## Lab Tasks
 
-### Task 1: Persist database data with named volumes
-1. Start the task:
+### Task 1: Persist database data with named volumes (`dkr-persist-database-data`)
+1. Start the lab session:
    ```bash
    tld start dkr-persist-database-data
    ```
-2. Navigate to `~/docker-compose/volumes/`.
-3. Create a `docker-compose.yml` declaring:
-   - A service named `db` using `postgres:15-alpine` image.
-   - An environment variable `POSTGRES_PASSWORD=secret` for `db`.
-   - A top-level named volume called `db_data`.
-   - Mount the `db_data` volume inside the `db` container at `/var/lib/postgresql/data`.
-4. Run `docker compose up -d` to launch the stack.
-5. Run the validator to confirm persistence configurations:
+2. Navigate to `~/docker-compose/volumes/`:
+   ```bash
+   cd "$HOME/docker-compose/volumes"
+   ```
+3. Create a `docker-compose.yml` declaring the database service and top-level named volume:
+   ```yaml
+   cat << 'EOF' > docker-compose.yml
+   version: "3.8"
+
+   services:
+     db:
+       image: postgres:15-alpine
+       environment:
+         - POSTGRES_PASSWORD=secret
+       volumes:
+         - db_data:/var/lib/postgresql/data
+
+   volumes:
+     db_data:
+   EOF
+   ```
+4. Start the stack in detached mode:
+   ```bash
+   docker compose up -d
+   ```
+5. Verify the running container and its mount:
+   ```bash
+   docker compose ps
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```

@@ -2,6 +2,12 @@
 # validator.sh — docker-compose / 03-multi-service-applications / dkr-run-web-and-db
 set -euo pipefail
 
+COMPOSE_PATH="$HOME/docker-compose/multi-service/docker-compose.yml"
+if [ ! -f "$COMPOSE_PATH" ] || [ ! -s "$COMPOSE_PATH" ]; then
+  echo "FAIL: docker-compose.yml not found or is empty at '$COMPOSE_PATH'."
+  exit 1
+fi
+
 # 1. Find running container for web service
 WEB_CID=$(docker ps --filter "label=com.docker.compose.project=multi-service" --filter "label=com.docker.compose.service=web" --filter "status=running" -q)
 

@@ -33,9 +33,9 @@ if [ "$LOCAL_HEAD" != "$REMOTE_HEAD" ]; then
   exit 1
 fi
 
-# Verify stable-feature.txt exists
-if [ ! -f "$REPO_DIR/stable-feature.txt" ]; then
-  echo "FAIL: 'stable-feature.txt' not found in working copy."
+# Verify stable-feature.txt exists and is not empty
+if [ ! -f "$REPO_DIR/stable-feature.txt" ] || [ ! -s "$REPO_DIR/stable-feature.txt" ]; then
+  echo "FAIL: 'stable-feature.txt' not found or empty in working copy."
   exit 1
 fi
 

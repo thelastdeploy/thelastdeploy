@@ -2,6 +2,8 @@ id: git-stage-file
 title: Stage a Modified File
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -9,4 +11,4 @@ setup:
     - mkdir -p $HOME/git-challenge
     - git -C $HOME/git-challenge init -b main
     - echo '# My Project' > $HOME/git-challenge/README.md
-version: 1
+version: 2

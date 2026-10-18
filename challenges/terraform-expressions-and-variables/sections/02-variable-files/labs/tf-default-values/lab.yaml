@@ -2,6 +2,8 @@ id: tf-default-values
 title: Define Variable Default Values
 xp: 15
 estimated_minutes: 4
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

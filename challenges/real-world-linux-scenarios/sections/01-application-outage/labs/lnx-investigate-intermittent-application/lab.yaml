@@ -2,4 +2,6 @@ id: lnx-investigate-intermittent-application
 title: "Investigate Intermittent Application Failures"
 xp: 65
 description: "Identify root cause of intermittent request timeouts caused by thread pool exhaustion and file descriptor leaks."
+environment:
+  profile: tld-ubuntu
 version: 2

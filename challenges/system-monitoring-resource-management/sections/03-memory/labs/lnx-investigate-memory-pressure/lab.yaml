@@ -14,6 +14,8 @@ instructions: '
   3. Write the killed process name (`java_backend`) into `$HOME/mon-test/oom_process.txt`.
 
   '
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p '$HOME/mon-test/oom'

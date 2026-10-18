@@ -11,9 +11,9 @@ if [ ! -d "$REPO_DIR/.git" ]; then
   exit 1
 fi
 
-# Verify file exists
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File '$FILE' not found."
+# Verify file exists and is not empty
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File '$FILE' not found or empty."
   exit 1
 fi
 

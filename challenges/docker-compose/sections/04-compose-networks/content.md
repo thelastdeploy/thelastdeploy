@@ -46,22 +46,55 @@ In this setup:
 
 ## Lab Tasks
 
-### Task 1: Connect services via custom networks
-1. Start the task:
+### Task 1: Connect services via custom networks (`dkr-connect-compose-services`)
+1. Start the lab session:
    ```bash
    tld start dkr-connect-compose-services
    ```
-2. Navigate to `~/docker-compose/networks/`.
-3. Create a `docker-compose.yml` declaring three services and two custom networks:
-   - Networks:
-     - `frontend-net` (custom bridge network)
-     - `backend-net` (custom bridge network)
-   - Services:
-     - `web`: using `nginx:alpine`, connected to `frontend-net` only, mapping host port `8082:80`.
-     - `api`: using `nginx:alpine` (or another web server/alpine image), connected to BOTH `frontend-net` and `backend-net`.
-     - `db`: using `postgres:15-alpine`, connected to `backend-net` only, environment variable `POSTGRES_PASSWORD=secret`.
-4. Run `docker compose up -d` to launch the stack.
-5. Verify the network isolation:
+2. Navigate to `~/docker-compose/networks/`:
+   ```bash
+   cd "$HOME/docker-compose/networks"
+   ```
+3. Create a `docker-compose.yml` file configuring `web`, `api`, and `db` across `frontend-net` and `backend-net`:
+   ```yaml
+   cat << 'EOF' > docker-compose.yml
+   version: "3.8"
+
+   services:
+     web:
+       image: nginx:alpine
+       networks:
+         - frontend-net
+       ports:
+         - "8082:80"
+
+     api:
+       image: nginx:alpine
+       networks:
+         - frontend-net
+         - backend-net
+
+     db:
+       image: postgres:15-alpine
+       networks:
+         - backend-net
+       environment:
+         - POSTGRES_PASSWORD=secret
+
+   networks:
+     frontend-net:
+     backend-net:
+   EOF
+   ```
+4. Start the stack in detached mode:
+   ```bash
+   docker compose up -d
+   ```
+5. Verify running containers:
+   ```bash
+   docker compose ps
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```

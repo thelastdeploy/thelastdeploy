@@ -37,26 +37,46 @@ A three-way merge occurs when both branches have diverged (meaning new commits w
 
 ## Lab Tasks
 
-### Task 1: Fast-Forward Merge
-1. Start the lab in your terminal:
+### Task 1: Fast-Forward Merge (`git-fast-forward-merge`)
+1. Start the lab session:
    ```bash
    tld start git-fast-forward-merge
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Fast-forward merge completed successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Ensure you are on the `main` branch:
+   ```bash
+   git switch main
+   ```
+4. Merge the `feature-ff` branch into `main` using a fast-forward merge:
+   ```bash
+   git merge feature-ff
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Merge a Feature Branch
-1. Start the lab in your terminal:
+### Task 2: Merge a Feature Branch (`git-merge-feature`)
+1. Start the lab session:
    ```bash
    tld start git-merge-feature
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Branch 'feature-abc' merged into '$ACTIVE_BRANCH' successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Ensure you are on the `main` branch:
+   ```bash
+   git switch main
+   ```
+4. Merge the diverged `feature-abc` branch into `main`:
+   ```bash
+   git merge feature-abc -m "Merge feature-abc into main"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

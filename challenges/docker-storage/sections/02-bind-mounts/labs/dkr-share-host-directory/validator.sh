@@ -32,6 +32,11 @@ if [ "$MOUNT_SOURCE" != "$EXPECTED_SOURCE" ]; then
 fi
 
 # 4. Check if the site is serving the correct content
+if ! docker exec nginx-mount test -s /usr/share/nginx/html/index.html; then
+  echo "FAIL: File /usr/share/nginx/html/index.html does not exist or is empty inside container."
+  exit 1
+fi
+
 CONTENT=$(docker exec nginx-mount cat /usr/share/nginx/html/index.html 2>/dev/null || echo "")
 CONTENT_CLEANED=$(echo "$CONTENT" | tr -d '\r' | xargs)
 

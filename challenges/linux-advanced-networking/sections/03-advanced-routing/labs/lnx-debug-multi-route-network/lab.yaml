@@ -1,6 +1,8 @@
 id: lnx-debug-multi-route-network
 title: Debug Multi-Route Network Configuration
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/route-test

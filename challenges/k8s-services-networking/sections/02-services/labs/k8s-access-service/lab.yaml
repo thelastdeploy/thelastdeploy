@@ -2,6 +2,8 @@ id: k8s-access-service
 title: "Access a Service Internal to Cluster"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-kind
 setup:
   type: kind
   resource_limits_cpu: 1

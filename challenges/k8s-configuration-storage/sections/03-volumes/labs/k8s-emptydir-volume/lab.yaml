@@ -2,6 +2,8 @@ id: k8s-emptydir-volume
 title: "Create transient emptyDir Volume"
 xp: 35
 estimated_minutes: 5
+environment:
+  profile: tld-kind
 setup:
   type: kind
   resource_limits_cpu: 1

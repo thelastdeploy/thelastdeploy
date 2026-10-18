@@ -2,4 +2,6 @@ id: lnx-trace-device-kernel-interface
 title: "Trace Device Kernel Interface"
 xp: 55
 description: "Trace character/block device major:minor allocations and udev event streams."
+environment:
+  profile: tld-ubuntu
 version: 2

@@ -1,6 +1,8 @@
 id: lnx-trace-file-access
 title: Trace File Access and Open File Table
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/vfs-test

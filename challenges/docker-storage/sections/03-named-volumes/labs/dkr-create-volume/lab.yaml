@@ -2,8 +2,10 @@ id: dkr-create-volume
 title: "Create volume"
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
     - "docker volume rm app-data-vol || true"
-version: 1
+version: 2

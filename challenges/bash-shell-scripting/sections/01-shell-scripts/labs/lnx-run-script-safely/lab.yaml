@@ -1,6 +1,8 @@
 id: lnx-run-script-safely
 title: Run Scripts Safely with Strict Options
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/script-test

@@ -1,6 +1,8 @@
 id: lnx-diagnose-failed-service
 title: Diagnose Failed Service
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/fail-test

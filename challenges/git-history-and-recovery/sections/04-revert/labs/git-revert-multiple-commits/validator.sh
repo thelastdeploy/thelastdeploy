@@ -30,9 +30,9 @@ if [ -f "$REPO_DIR/three.txt" ] || [ -f "$REPO_DIR/four.txt" ]; then
   exit 1
 fi
 
-# Verify preserved files DO exist
-if [ ! -f "$REPO_DIR/one.txt" ] || [ ! -f "$REPO_DIR/two.txt" ]; then
-  echo "FAIL: File 'one.txt' or 'two.txt' is missing from the working directory."
+# Verify preserved files DO exist and are not empty
+if [ ! -f "$REPO_DIR/one.txt" ] || [ ! -s "$REPO_DIR/one.txt" ] || [ ! -f "$REPO_DIR/two.txt" ] || [ ! -s "$REPO_DIR/two.txt" ]; then
+  echo "FAIL: File 'one.txt' or 'two.txt' is missing or empty in the working directory."
   exit 1
 fi
 

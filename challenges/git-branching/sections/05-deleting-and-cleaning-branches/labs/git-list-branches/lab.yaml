@@ -2,6 +2,8 @@ id: git-list-branches
 title: List Branches
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -16,4 +18,4 @@ setup:
     - git -C $HOME/git-challenge branch feature-login
     - git -C $HOME/git-challenge branch feature-payment
     - git -C $HOME/git-challenge branch bugfix-header
-version: 1
+version: 2

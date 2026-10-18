@@ -2,6 +2,8 @@ id: lnx-identify-broken-permissions
 title: Identify Broken Permissions
 xp: 45
 estimated_minutes: 10
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

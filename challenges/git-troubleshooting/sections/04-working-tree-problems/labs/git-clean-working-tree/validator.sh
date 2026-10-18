@@ -24,9 +24,9 @@ if [ -d "$REPO_DIR/build" ]; then
   exit 1
 fi
 
-# Verify tracked file exists
-if [ ! -f "$REPO_DIR/hello.txt" ]; then
-  echo "FAIL: Tracked file 'hello.txt' is missing."
+# Verify tracked file exists and is not empty
+if [ ! -f "$REPO_DIR/hello.txt" ] || [ ! -s "$REPO_DIR/hello.txt" ]; then
+  echo "FAIL: Tracked file 'hello.txt' is missing or empty."
   exit 1
 fi
 

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Check if container broken-web exists and is running
-if ! docker ps --filter name=broken-web --format '{{.Names}}' | grep -q "broken-web"; then
+if ! docker ps --filter name=broken-web --format '{{.Names}}' | grep -q "^broken-web$"; then
   echo "FAIL: Container 'broken-web' not found running."
   exit 1
 fi

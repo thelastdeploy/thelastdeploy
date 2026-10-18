@@ -3,6 +3,11 @@
 set -euo pipefail
 
 # 1. Check if the volume contains the file at its root with the correct content
+if ! docker run --rm -v restored-db-vol:/data alpine test -s /data/db_state.json; then
+  echo "FAIL: File 'db_state.json' does not exist or is empty at the root of volume 'restored-db-vol'."
+  exit 1
+fi
+
 CONTENT=$(docker run --rm -v restored-db-vol:/data alpine cat /data/db_state.json 2>/dev/null || echo "")
 CONTENT_CLEANED=$(echo "$CONTENT" | tr -d '[:space:]')
 

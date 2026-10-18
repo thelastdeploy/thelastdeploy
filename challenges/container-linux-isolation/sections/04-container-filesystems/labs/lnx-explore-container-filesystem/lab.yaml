@@ -1,6 +1,8 @@
 id: lnx-explore-container-filesystem
 title: Explore Container Filesystem Abstractions
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/container-fs-test

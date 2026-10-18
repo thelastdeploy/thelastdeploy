@@ -1,6 +1,8 @@
 id: lnx-investigate-memory-mapping
 title: Investigate Shared Memory and Anonymous Mappings
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/mem-internals-test

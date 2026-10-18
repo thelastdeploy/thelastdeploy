@@ -1,6 +1,8 @@
 id: lnx-disable-unnecessary-services
 title: Disable Unnecessary Services and Daemons
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/svc-sec-test

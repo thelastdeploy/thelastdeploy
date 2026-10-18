@@ -5,13 +5,13 @@ set -euo pipefail
 IMAGE_FILE="$HOME/docker-test/image_id.txt"
 CONTAINER_FILE="$HOME/docker-test/container_id.txt"
 
-if [ ! -f "$IMAGE_FILE" ]; then
-  echo "FAIL: File ~/docker-test/image_id.txt not found."
+if [ ! -f "$IMAGE_FILE" ] || [ ! -s "$IMAGE_FILE" ]; then
+  echo "FAIL: File ~/docker-test/image_id.txt not found or is empty."
   exit 1
 fi
 
-if [ ! -f "$CONTAINER_FILE" ]; then
-  echo "FAIL: File ~/docker-test/container_id.txt not found."
+if [ ! -f "$CONTAINER_FILE" ] || [ ! -s "$CONTAINER_FILE" ]; then
+  echo "FAIL: File ~/docker-test/container_id.txt not found or is empty."
   exit 1
 fi
 

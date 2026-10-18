@@ -1,6 +1,8 @@
 id: lnx-benchmark-system-changes
 title: Benchmark and Validate System Tuning Changes
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/bench-test

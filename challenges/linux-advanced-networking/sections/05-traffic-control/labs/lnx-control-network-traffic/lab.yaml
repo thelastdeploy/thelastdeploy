@@ -1,6 +1,8 @@
 id: lnx-control-network-traffic
 title: Control Network Traffic Shaping with tc
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/tc-test

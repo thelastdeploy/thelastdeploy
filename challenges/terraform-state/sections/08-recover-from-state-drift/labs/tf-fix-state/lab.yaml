@@ -2,6 +2,8 @@ id: tf-fix-state
 title: Reconcile Drifting Infrastructure
 xp: 30
 estimated_minutes: 8
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

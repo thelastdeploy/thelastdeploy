@@ -16,15 +16,25 @@ When a container immediately exits or fails to boot:
 
 ## Lab Tasks
 
-### Task 1: Recover crashing container
-1. Start the lab in your terminal:
+### Task 1: Recover crashing container (`dkr-recover-crashing-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-recover-crashing-container
    ```
-2. A stopped container named `crashing-service` has been created on your host but it fails to start because it was created with an invalid startup command.
-3. Investigate the failure. Read the logs or inspect the container to identify the issue.
-4. Stop/remove the broken container and run a new working container in detached mode named `crashing-service` using the `alpine` image with the correct startup command: `sleep 1000`.
-5. Verify the task:
+2. A stopped container named `crashing-service` has been created on your host but fails to run properly due to an invalid command (`sleepy 1000`). Inspect its configuration:
+   ```bash
+   docker inspect crashing-service --format '{{.Config.Cmd}}'
+   ```
+3. Remove the broken container and run a new container in detached mode named `crashing-service` using the `alpine` image with the correct command (`sleep 1000`):
+   ```bash
+   docker rm -f crashing-service
+   docker run -d --name crashing-service alpine sleep 1000
+   ```
+4. Verify the container is running:
+   ```bash
+   docker ps --filter name=crashing-service
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

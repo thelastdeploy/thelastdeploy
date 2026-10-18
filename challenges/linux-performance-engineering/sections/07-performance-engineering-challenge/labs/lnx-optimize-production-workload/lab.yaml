@@ -1,6 +1,8 @@
 id: lnx-optimize-production-workload
 title: Optimize Production Workload Capstone
 xp: 110
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/perf-capstone

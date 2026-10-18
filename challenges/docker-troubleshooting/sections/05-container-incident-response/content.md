@@ -23,31 +23,40 @@ When a critical production app crashes repeatedly (known as a crash loop), you m
 
 ## Lab Tasks
 
-### Task 1: Investigate a production incident
-1. Start the task:
+### Task 1: Investigate a production incident (`dkr-investigate-production-incident`)
+1. Start the lab session:
    ```bash
    tld start dkr-investigate-production-incident
    ```
-2. Navigate to `~/docker-troubleshooting/incident/`.
-3. Try to run the compose stack (`docker compose up -d`). Notice that the `app` container fails immediately and enters a stopped state.
-4. Check the logs:
+2. Navigate to `~/docker-troubleshooting/incident/`:
    ```bash
-   docker compose logs app
+   cd "$HOME/docker-troubleshooting/incident"
    ```
-5. You will see a crash message:
-   `FATAL: config.json not found at /etc/app/config.json`
-6. To resolve this:
-   - Create a file on the host at `~/docker-troubleshooting/incident/config.json`.
-   - In this file, write:
-     ```json
-     {"status": "ok"}
-     ```
-   - Edit the `docker-compose.yml` file to mount `./config.json` inside the `app` container at `/etc/app/config.json`.
-7. Re-launch the stack:
+3. Create the required `config.json` file with valid content:
+   ```bash
+   echo '{"status": "ok"}' > config.json
+   ```
+4. Update `docker-compose.yml` to mount `./config.json` into `/etc/app/config.json`:
+   ```yaml
+   cat << 'EOF' > docker-compose.yml
+   version: "3.8"
+   services:
+     app:
+       image: alpine
+       command: sh -c "if [ ! -f /etc/app/config.json ]; then echo FATAL - config.json not found at /etc/app/config.json >&2 && exit 1; else echo App running... && sleep 3600; fi"
+       volumes:
+         - ./config.json:/etc/app/config.json
+   EOF
+   ```
+5. Launch the compose stack in detached mode:
    ```bash
    docker compose up -d
    ```
-8. Verify the fix:
+6. Verify the application container is running:
+   ```bash
+   docker compose ps
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```

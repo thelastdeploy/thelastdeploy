@@ -24,5 +24,5 @@ if ! curl -s --connect-timeout 2 http://localhost:8080 >/dev/null; then
   exit 1
 fi
 
-echo "PASS: Compose stack is up and running Nginx on port 8080!"
+echo "PASS: Compose stack is up and running Nginx on port 8080."
 exit 0

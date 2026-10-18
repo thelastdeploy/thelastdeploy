@@ -2,6 +2,8 @@ id: git-restore-file
 title: Restore a Tracked File
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -14,4 +16,4 @@ setup:
     - git -C $HOME/git-challenge add app.js
     - git -C $HOME/git-challenge commit -m 'Add app.js'
     - echo 'console.log("broken code");' > $HOME/git-challenge/app.js
-version: 1
+version: 2

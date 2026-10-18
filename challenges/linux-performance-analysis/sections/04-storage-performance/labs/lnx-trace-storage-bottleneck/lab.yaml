@@ -1,6 +1,8 @@
 id: lnx-trace-storage-bottleneck
 title: Trace Process Storage I/O Bottleneck
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/io-perf-test

@@ -2,6 +2,8 @@ id: nginx-production-outage
 title: "Recover Production Outage"
 xp: 30
 estimated_minutes: 10
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

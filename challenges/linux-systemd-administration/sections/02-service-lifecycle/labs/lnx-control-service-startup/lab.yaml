@@ -1,6 +1,8 @@
 id: lnx-control-service-startup
 title: Control Service Boot Startup
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/service-test

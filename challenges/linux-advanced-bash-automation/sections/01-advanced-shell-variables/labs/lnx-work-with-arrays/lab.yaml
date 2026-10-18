@@ -1,6 +1,8 @@
 id: lnx-work-with-arrays
 title: Work with Arrays in Bash
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/array-test

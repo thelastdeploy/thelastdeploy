@@ -2,6 +2,8 @@ id: git-return-to-main
 title: Return to Main Branch
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -20,4 +22,4 @@ setup:
     - git -C $HOME/git-challenge add three.txt
     - git -C $HOME/git-challenge commit -m 'Third commit'
     - git -C $HOME/git-challenge checkout HEAD~2
-version: 1
+version: 2

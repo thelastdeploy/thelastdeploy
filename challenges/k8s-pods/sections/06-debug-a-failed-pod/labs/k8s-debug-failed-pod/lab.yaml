@@ -2,6 +2,8 @@ id: k8s-debug-failed-pod
 title: "Debug Pod Image Typo"
 xp: 40
 estimated_minutes: 10
+environment:
+  profile: tld-kind
 setup:
   type: kind
   resource_limits_cpu: 1

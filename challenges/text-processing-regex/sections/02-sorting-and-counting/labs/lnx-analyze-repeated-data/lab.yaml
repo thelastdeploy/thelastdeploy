@@ -1,6 +1,8 @@
 id: lnx-analyze-repeated-data
 title: Analyze Repeated Data with Sort and Uniq
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/text-test

@@ -2,6 +2,12 @@
 # validator.sh — docker-compose / 05-compose-volumes / dkr-persist-database-data
 set -euo pipefail
 
+COMPOSE_PATH="$HOME/docker-compose/volumes/docker-compose.yml"
+if [ ! -f "$COMPOSE_PATH" ] || [ ! -s "$COMPOSE_PATH" ]; then
+  echo "FAIL: docker-compose.yml not found or is empty at '$COMPOSE_PATH'."
+  exit 1
+fi
+
 # 1. Get container ID
 DB_CID=$(docker ps --filter "label=com.docker.compose.project=volumes" --filter "label=com.docker.compose.service=db" --filter "status=running" -q)
 

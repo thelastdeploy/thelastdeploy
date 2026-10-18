@@ -2,6 +2,8 @@ id: git-complete-merge
 title: Complete the Merge Commit
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -24,4 +26,4 @@ setup:
     - git -C $HOME/git-challenge merge feature-conflict || true
     - echo '<h1>Resolved Site</h1>' > $HOME/git-challenge/index.html
     - git -C $HOME/git-challenge add index.html
-version: 1
+version: 2

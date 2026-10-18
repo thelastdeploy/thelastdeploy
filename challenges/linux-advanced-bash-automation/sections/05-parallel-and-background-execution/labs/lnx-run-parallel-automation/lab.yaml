@@ -1,6 +1,8 @@
 id: lnx-run-parallel-automation
 title: Run Parallel Automation Tasks
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/parallel-test/data $HOME/parallel-test/results

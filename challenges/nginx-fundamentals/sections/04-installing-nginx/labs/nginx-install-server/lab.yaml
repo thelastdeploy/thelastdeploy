@@ -3,6 +3,8 @@ title: "Install Nginx Server"
 xp: 20
 estimated_minutes: 5
 install_target: nginx
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

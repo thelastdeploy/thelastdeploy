@@ -56,26 +56,46 @@ The `-c` stands for *create*.
 
 ## Lab Tasks
 
-### Task 1: Create a Branch
-1. Start the lab in your terminal:
+### Task 1: Create a Branch (`git-create-branch`)
+1. Start the lab session:
    ```bash
    tld start git-create-branch
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Branch 'feature-login' created successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Create a new branch named `feature-login`:
+   ```bash
+   git branch feature-login
+   ```
+4. Verify that the branch exists in the branch list:
+   ```bash
+   git branch --list
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Switch to a Branch
-1. Start the lab in your terminal:
+### Task 2: Switch to a Branch (`git-switch-branch`)
+1. Start the lab session:
    ```bash
    tld start git-switch-branch
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Successfully switched to branch 'feature-login'.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Switch your working directory to the existing `feature-login` branch:
+   ```bash
+   git switch feature-login
+   ```
+4. Confirm that the current active branch is `feature-login`:
+   ```bash
+   git branch --show-current
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

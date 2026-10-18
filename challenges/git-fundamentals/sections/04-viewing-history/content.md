@@ -1,3 +1,5 @@
+# Viewing History
+
 Once you have made one or more commits, you can review the revision log using `git log`.
 
 ### The `git log` Command
@@ -23,14 +25,21 @@ git log --oneline -n 3
 
 ## Lab Tasks
 
-### Task 1: Inspect Repository Log
-1. Start the lab in your terminal:
+### Task 1: Inspect Repository Log (`git-inspect-history`)
+1. Start the lab session:
    ```bash
    tld start git-inspect-history
    ```
-2. Find the full 40-character commit hash of the latest commit in the `~/git-challenge` repository.
-3. Save this commit hash (without any other text) to a file named `latest_commit.txt` in the `~/git-challenge` directory.
-4. Verify the task to earn your XP:
+2. Navigate to `~/git-challenge/` and retrieve the full 40-character commit hash of the latest commit:
+   ```bash
+   cd "$HOME/git-challenge"
+   git rev-parse HEAD > latest_commit.txt
+   ```
+3. Inspect the file to confirm it contains only the 40-character hash:
+   ```bash
+   cat latest_commit.txt
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

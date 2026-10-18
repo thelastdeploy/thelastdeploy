@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Check if container static-web exists and is running
-if ! docker ps --filter name=static-web --format '{{.Names}}' | grep -q "static-web"; then
+if ! docker ps --filter name=static-web --format '{{.Names}}' | grep -q "^static-web$"; then
   echo "FAIL: Container 'static-web' not found running."
   exit 1
 fi

@@ -1,6 +1,8 @@
 id: lnx-triage-production-server
 title: Triage Production Server Incident
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/triage-test

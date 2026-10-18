@@ -2,6 +2,8 @@ id: tf-repeat-resources
 title: Repeat Resources with count or for_each
 xp: 25
 estimated_minutes: 6
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

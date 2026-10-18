@@ -1,6 +1,8 @@
 id: lnx-understand-effective-permissions
 title: Understand Effective Permission Evaluation
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test

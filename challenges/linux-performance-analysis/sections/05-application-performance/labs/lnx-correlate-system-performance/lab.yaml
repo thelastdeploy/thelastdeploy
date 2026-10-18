@@ -1,6 +1,8 @@
 id: lnx-correlate-system-performance
 title: Correlate System Performance Metrics
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/app-perf-test

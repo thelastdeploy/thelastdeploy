@@ -1,6 +1,8 @@
 id: lnx-analyze-service-dependencies
 title: Analyze Service Dependencies
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/target-test

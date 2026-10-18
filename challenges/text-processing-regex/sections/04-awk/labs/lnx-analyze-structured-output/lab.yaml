@@ -1,6 +1,8 @@
 id: lnx-analyze-structured-output
 title: Analyze Structured Output with AWK
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/text-test

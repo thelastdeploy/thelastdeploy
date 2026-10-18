@@ -4,8 +4,8 @@ set -euo pipefail
 
 FILE="$HOME/docker-test/container_flag.txt"
 
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File ~/docker-test/container_flag.txt not found."
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File ~/docker-test/container_flag.txt not found or is empty."
   exit 1
 fi
 

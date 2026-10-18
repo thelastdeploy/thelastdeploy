@@ -2,6 +2,8 @@ id: nginx-request-variables
 title: "Configure Request Variables"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

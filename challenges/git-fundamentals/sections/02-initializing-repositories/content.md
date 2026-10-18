@@ -1,3 +1,5 @@
+# Initializing Repositories
+
 To start tracking a project with Git, you must initialize a Git repository in the project's root directory.
 
 ### The `git init` Command
@@ -16,13 +18,21 @@ git init my-project
 
 ## Lab Tasks
 
-### Task 1: Initialize a New Repository
-1. Start the lab in your terminal:
+### Task 1: Initialize a New Repository (`git-create-repository`)
+1. Start the lab session:
    ```bash
    tld start git-create-repository
    ```
-2. Initialize a Git repository inside the `~/git-challenge` directory.
-3. Verify the task to earn your XP:
+2. Navigate to `~/git-challenge/` and initialize the repository:
+   ```bash
+   cd "$HOME/git-challenge"
+   git init
+   ```
+3. Verify that the hidden `.git/` folder has been generated:
+   ```bash
+   ls -la "$HOME/git-challenge/.git"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

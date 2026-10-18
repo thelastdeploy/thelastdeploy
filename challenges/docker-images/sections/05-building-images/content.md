@@ -22,15 +22,20 @@ docker build -t custom-service:1.0 .
 
 ## Lab Tasks
 
-### Task 1: Build a custom image
-1. Start the lab in your terminal:
+### Task 1: Build a custom image (`dkr-build-custom-image`)
+1. Start the lab session:
    ```bash
    tld start dkr-build-custom-image
    ```
-2. Navigate to the directory `~/docker-build/custom-app/`.
-3. In this directory, a valid Dockerfile is already created for you.
-4. Your task is to build this Dockerfile into an image tagged as `my-custom-app:v1.0`.
-5. Verify the task:
+2. Navigate to `~/docker-build/custom-app/` and build the image tagged as `my-custom-app:v1.0`:
+   ```bash
+   docker build -t my-custom-app:v1.0 "$HOME/docker-build/custom-app"
+   ```
+3. Verify that the image has been built and listed in local storage:
+   ```bash
+   docker images my-custom-app:v1.0
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

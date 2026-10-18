@@ -1,6 +1,8 @@
 id: lnx-recover-remote-server
 title: Recover Remote Server SSH Access and Client Config
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ssh-challenge/remote_server/.ssh

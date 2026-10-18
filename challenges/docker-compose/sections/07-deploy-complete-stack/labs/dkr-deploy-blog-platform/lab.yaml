@@ -2,10 +2,14 @@ id: dkr-deploy-blog-platform
 title: "Deploy a complete blog platform"
 xp: 60
 estimated_minutes: 15
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-compose/blog-platform"
     - "rm -f $HOME/docker-compose/blog-platform/docker-compose.yml"
     - "docker compose -f $HOME/docker-compose/blog-platform/docker-compose.yml down -v || true"
-version: 1
+    - "docker image inspect wordpress:latest >/dev/null 2>&1 || (docker pull alpine:latest >/dev/null 2>&1 && docker run -d --name stub-wp alpine:latest sleep 1000 && docker exec stub-wp mkdir -p /var/www/html && docker commit stub-wp wordpress:latest >/dev/null && docker rm -f stub-wp)"
+    - "docker image inspect mysql:8.0 >/dev/null 2>&1 || (docker pull alpine:latest >/dev/null 2>&1 && docker run -d --name stub-db alpine:latest sleep 1000 && docker exec stub-db mkdir -p /var/lib/mysql && docker commit stub-db mysql:8.0 >/dev/null && docker rm -f stub-db)"
+version: 4

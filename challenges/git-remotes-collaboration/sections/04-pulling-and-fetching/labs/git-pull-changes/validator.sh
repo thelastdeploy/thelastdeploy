@@ -27,9 +27,9 @@ if [ "$LOCAL_COMMIT" != "$REMOTE_COMMIT" ]; then
   exit 1
 fi
 
-# Verify update.txt exists
-if [ ! -f "$REPO_DIR/update.txt" ]; then
-  echo "FAIL: update.txt not found in working copy."
+# Verify update.txt exists and is not empty
+if [ ! -f "$REPO_DIR/update.txt" ] || [ ! -s "$REPO_DIR/update.txt" ]; then
+  echo "FAIL: update.txt not found or empty in working copy."
   exit 1
 fi
 

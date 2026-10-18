@@ -29,6 +29,11 @@ if [ "$MOUNT_NAME" != "db-storage-vol" ]; then
 fi
 
 # 4. Check index.html content
+if ! docker exec db-container-new test -s /usr/share/nginx/html/index.html; then
+  echo "FAIL: File /usr/share/nginx/html/index.html does not exist or is empty inside db-container-new."
+  exit 1
+fi
+
 CONTENT=$(docker exec db-container-new cat /usr/share/nginx/html/index.html 2>/dev/null || echo "")
 CONTENT_CLEANED=$(echo "$CONTENT" | tr -d '\r' | xargs)
 

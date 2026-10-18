@@ -1,3 +1,5 @@
+# What is Version Control?
+
 Version Control Systems (VCS) are tools used to track changes in source code over time. They allow multiple developers to work on the same project simultaneously, view project history, compare code differences, and revert files back to previous states when bugs occur.
 
 ### Why Use Version Control?

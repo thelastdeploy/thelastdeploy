@@ -37,27 +37,50 @@ Once you have written a valid `docker-compose.yml` in a directory, you can manag
 
 ## Lab Tasks
 
-### Task 1: Create a basic Compose file
-1. Start the first task:
+### Task 1: Create a basic Compose file (`dkr-create-compose-file`)
+1. Start the lab session:
    ```bash
    tld start dkr-create-compose-file
    ```
-2. Navigate to `~/docker-compose/first-compose/`.
-3. Create a file named `docker-compose.yml`.
-4. Define a service named `web` using the `nginx:alpine` image and exposing host port `8080` mapped to container port `80`.
-5. Run the validator:
+2. Navigate to `~/docker-compose/first-compose/`:
+   ```bash
+   cd "$HOME/docker-compose/first-compose"
+   ```
+3. Create a `docker-compose.yml` file defining a `web` service using the `nginx:alpine` image with port mapping `8080:80`:
+   ```yaml
+   cat << 'EOF' > docker-compose.yml
+   version: "3.8"
+   services:
+     web:
+       image: nginx:alpine
+       ports:
+         - "8080:80"
+   EOF
+   ```
+4. Verify the file contents:
+   ```bash
+   cat docker-compose.yml
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Launch the stack
-1. Start the next task:
+### Task 2: Launch the stack (`dkr-launch-compose-stack`)
+1. Start the lab session:
    ```bash
    tld start dkr-launch-compose-stack
    ```
-2. Go to `~/docker-compose/first-compose/`.
-3. Start the compose stack in detached mode.
-4. Run the validator:
+2. Navigate to `~/docker-compose/first-compose/` and start the compose stack in detached mode:
+   ```bash
+   cd "$HOME/docker-compose/first-compose"
+   docker compose up -d
+   ```
+3. Verify that the service is running and serving traffic:
+   ```bash
+   curl -s http://localhost:8080
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

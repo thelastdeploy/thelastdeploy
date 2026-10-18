@@ -3,9 +3,15 @@ set -euo pipefail
 
 REPO_DIR="$HOME/git-challenge"
 
-# Verify README.md exists
-if [ ! -f "$REPO_DIR/README.md" ]; then
-  echo "FAIL: README.md not found."
+# Verify .git exists
+if [ ! -d "$REPO_DIR/.git" ]; then
+  echo "FAIL: Git repository not initialized inside $REPO_DIR."
+  exit 1
+fi
+
+# Verify README.md exists and is non-empty
+if [ ! -f "$REPO_DIR/README.md" ] || [ ! -s "$REPO_DIR/README.md" ]; then
+  echo "FAIL: README.md not found or is empty in $REPO_DIR."
   exit 1
 fi
 

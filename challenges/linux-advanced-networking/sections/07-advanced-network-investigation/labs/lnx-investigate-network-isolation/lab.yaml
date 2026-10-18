@@ -1,6 +1,8 @@
 id: lnx-investigate-network-isolation
 title: Investigate Network Isolation Issues
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/net-inv-test

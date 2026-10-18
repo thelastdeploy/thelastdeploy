@@ -1,6 +1,8 @@
 id: lnx-analyze-kernel-performance
 title: Analyze Kernel Subsystem Tuneables
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/kernel-opt-test

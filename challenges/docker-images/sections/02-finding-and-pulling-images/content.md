@@ -30,24 +30,38 @@ docker pull <image-name>:<tag>
 
 ## Lab Tasks
 
-### Task 1: Pull Nginx image
-1. Start the lab in your terminal:
+### Task 1: Pull Nginx image (`dkr-pull-nginx`)
+1. Start the lab session:
    ```bash
    tld start dkr-pull-nginx
    ```
-2. Download the default (latest) `nginx` image from Docker Hub.
-3. Verify the task:
+2. Pull the default `latest` Nginx image from Docker Hub:
+   ```bash
+   docker pull nginx
+   ```
+3. Verify that the image has been downloaded locally:
+   ```bash
+   docker images nginx:latest
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Pull specific version
-1. Start the lab in your terminal:
+### Task 2: Pull specific version (`dkr-pull-specific-version`)
+1. Start the lab session:
    ```bash
    tld start dkr-pull-specific-version
    ```
-2. Pull Nginx version `1.21.6` from Docker Hub.
-3. Verify the task:
+2. Pull Nginx pinned to version `1.21.6`:
+   ```bash
+   docker pull nginx:1.21.6
+   ```
+3. Verify that the pinned version image exists locally:
+   ```bash
+   docker images nginx:1.21.6
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

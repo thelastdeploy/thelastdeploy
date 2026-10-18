@@ -2,6 +2,8 @@ id: nginx-proxy-python-app
 title: "Proxy Python App"
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

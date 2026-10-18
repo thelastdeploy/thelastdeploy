@@ -4,8 +4,8 @@ set -euo pipefail
 
 FILE="$HOME/docker-test/source_image.txt"
 
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File ~/docker-test/source_image.txt not found."
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File ~/docker-test/source_image.txt not found or is empty."
   exit 1
 fi
 

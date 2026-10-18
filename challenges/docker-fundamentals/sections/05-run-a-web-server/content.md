@@ -29,27 +29,40 @@ Here, `-p 8080:80` means: **route any traffic hitting port 8080 of my host machi
 
 ## Lab Tasks
 
-### Task 1: Access web container
-1. Start the lab in your terminal:
+### Task 1: Access web container (`dkr-access-web-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-access-web-container
    ```
 2. A background web server container named `secret-web` has been started and mapped to host port `8082`.
-3. Query the homepage of this web server using the `curl` command. Capture the HTTP response code of the request and save it to a file named `web_status.txt` inside your `~/docker-test/` directory.
-   *Hint: You can use `curl -s -o /dev/null -w "%{http_code}" http://localhost:8082` to output just the status code (e.g. `200`).*
-4. Verify the task:
+3. Query the homepage and save its HTTP response code into `~/docker-test/web_status.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   curl -s -o /dev/null -w "%{http_code}" http://localhost:8082 > "$HOME/docker-test/web_status.txt"
+   ```
+4. Verify file contents:
+   ```bash
+   cat "$HOME/docker-test/web_status.txt"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Run an Nginx container
-1. Start the lab in your terminal:
+### Task 2: Run an Nginx container (`dkr-run-nginx`)
+1. Start the lab session:
    ```bash
    tld start dkr-run-nginx
    ```
-2. Your goal is to start a background (detached) container named `my-nginx-server` using the official `nginx` (or `nginx:alpine`) image.
-3. Map port `8085` on your host machine to port `80` inside the container.
-4. Verify the task:
+2. Start a detached container named `my-nginx-server` mapping host port `8085` to container port `80`:
+   ```bash
+   docker run -d --name my-nginx-server -p 8085:80 nginx:alpine
+   ```
+3. Verify the container is running and port mapped:
+   ```bash
+   docker ps --filter name=my-nginx-server
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

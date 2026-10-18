@@ -14,6 +14,8 @@ instructions: '
   3. Write its PID (`3912`) into `$HOME/mon-test/top_cpu_pid.txt`.
 
   '
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p '$HOME/mon-test/ps'

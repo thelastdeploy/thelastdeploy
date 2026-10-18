@@ -1,6 +1,8 @@
 id: lnx-recover-failing-storage-system
 title: Recover Failing Storage & Filesystem System
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/storage-outage-test

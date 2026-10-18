@@ -1,6 +1,8 @@
 id: lnx-model-system-workload
 title: Model System Workload Profile
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/perf-eng-test

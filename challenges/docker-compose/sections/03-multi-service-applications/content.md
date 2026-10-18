@@ -42,33 +42,63 @@ Note: If you scale a service, you cannot bind it to a static host port in the co
 
 ## Lab Tasks
 
-### Task 1: Run web and database services
-1. Start the task:
+### Task 1: Run web and database services (`dkr-run-web-and-db`)
+1. Start the lab session:
    ```bash
    tld start dkr-run-web-and-db
    ```
-2. Navigate to `~/docker-compose/multi-service/`.
-3. Create a `docker-compose.yml` defining two services:
-   - `web`: using `nginx:alpine`, ports `"8081:80"`
-   - `db`: using `postgres:15-alpine`
-   - Define the following environment variables for `db`:
-     - `POSTGRES_USER=admin`
-     - `POSTGRES_PASSWORD=secret`
-     - `POSTGRES_DB=mydb`
-4. Start the stack in detached mode using `docker compose up -d`.
-5. Run the validator:
+2. Navigate to `~/docker-compose/multi-service/`:
+   ```bash
+   cd "$HOME/docker-compose/multi-service"
+   ```
+3. Create a `docker-compose.yml` file defining `web` and `db` services:
+   ```yaml
+   cat << 'EOF' > docker-compose.yml
+   version: "3.8"
+   services:
+     web:
+       image: nginx:alpine
+       ports:
+         - "8081:80"
+     db:
+       image: postgres:15-alpine
+       environment:
+         - POSTGRES_USER=admin
+         - POSTGRES_PASSWORD=secret
+         - POSTGRES_DB=mydb
+   EOF
+   ```
+4. Start the multi-service stack in detached mode:
+   ```bash
+   docker compose up -d
+   ```
+5. Verify running containers:
+   ```bash
+   docker compose ps
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Inspect and scale Compose services
-1. Start the next task:
+### Task 2: Inspect and scale Compose services (`dkr-inspect-compose-services`)
+1. Start the lab session:
    ```bash
    tld start dkr-inspect-compose-services
    ```
-2. Navigate to `~/docker-compose/multi-service/`. A preconfigured compose file is provided.
-3. Scale the `web` service to 2 instances.
-4. Run the validator:
+2. Navigate to `~/docker-compose/multi-service/`:
+   ```bash
+   cd "$HOME/docker-compose/multi-service"
+   ```
+3. Scale the `web` service to 2 instances:
+   ```bash
+   docker compose up -d --scale web=2
+   ```
+4. Verify the running containers:
+   ```bash
+   docker compose ps
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

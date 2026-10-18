@@ -2,6 +2,8 @@ id: nginx-fix-installation
 title: "Fix Broken Installation"
 xp: 50
 estimated_minutes: 15
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

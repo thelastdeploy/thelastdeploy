@@ -1,6 +1,8 @@
 id: lnx-automate-production-maintenance
 title: Automate System Maintenance Task
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/maint-test/logs

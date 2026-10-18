@@ -2,6 +2,8 @@ id: git-first-push
 title: Push Changes to Remote
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -22,4 +24,4 @@ setup:
     - echo 'new feature' > $HOME/git-challenge/features.txt
     - git -C $HOME/git-challenge add features.txt
     - git -C $HOME/git-challenge commit -m 'Add local feature'
-version: 1
+version: 2

@@ -24,9 +24,9 @@ if [ "$PARENT_COUNT" -ne 2 ]; then
   exit 1
 fi
 
-# Verify file actually exists
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: index.html not found."
+# Verify file actually exists and is not empty
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: index.html not found or empty."
   exit 1
 fi
 

@@ -44,26 +44,50 @@ To resolve a conflict, you must manually edit the conflicted files:
 
 ## Lab Tasks
 
-### Task 1: Complete the Merge Commit
-1. Start the lab in your terminal:
+### Task 1: Resolve Merge Conflict (`git-resolve-merge-conflict`)
+1. Start the lab session:
    ```bash
-   tld start git-complete-merge
+   tld start git-resolve-merge-conflict
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Merge commit completed successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Inspect `index.html` to find conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`):
+   ```bash
+   cat index.html
+   ```
+4. Resolve the conflict by removing the conflict markers and saving your desired clean content:
+   ```bash
+   echo "<h1>Merged Site</h1>" > index.html
+   ```
+5. Stage the resolved file without completing the commit yet:
+   ```bash
+   git add index.html
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Resolve Merge Conflict
-1. Start the lab in your terminal:
+### Task 2: Complete the Merge Commit (`git-complete-merge`)
+1. Start the lab session:
    ```bash
-   tld start git-resolve-merge-conflict
+   tld start git-complete-merge
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Merge conflict in index.html resolved and staged successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Complete the merge commit for the staged resolution:
+   ```bash
+   git commit -m "Merge branch feature-conflict into main"
+   ```
+4. Confirm that the merge commit has been created with two parents:
+   ```bash
+   git log -1 --format="%h %P"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

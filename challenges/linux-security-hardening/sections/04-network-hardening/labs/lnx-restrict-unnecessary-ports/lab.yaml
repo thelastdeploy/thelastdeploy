@@ -1,6 +1,8 @@
 id: lnx-restrict-unnecessary-ports
 title: Restrict Unnecessary Network Ports
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/net-sec-test

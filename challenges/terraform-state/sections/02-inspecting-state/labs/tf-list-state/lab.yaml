@@ -2,6 +2,8 @@ id: tf-list-state
 title: List Resources in State
 xp: 15
 estimated_minutes: 4
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

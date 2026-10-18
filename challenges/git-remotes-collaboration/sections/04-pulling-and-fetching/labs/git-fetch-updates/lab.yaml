@@ -2,6 +2,8 @@ id: git-fetch-updates
 title: Fetch Remote Updates
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -29,4 +31,4 @@ setup:
     - git -C $HOME/temp-git-repo commit -m 'Add updates on server'
     - git -C $HOME/temp-git-repo push origin HEAD
     - rm -rf $HOME/temp-git-repo
-version: 1
+version: 2

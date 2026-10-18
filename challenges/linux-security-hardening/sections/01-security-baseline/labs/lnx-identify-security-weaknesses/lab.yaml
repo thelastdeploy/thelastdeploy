@@ -1,6 +1,8 @@
 id: lnx-identify-security-weaknesses
 title: Identify System Security Weaknesses
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test

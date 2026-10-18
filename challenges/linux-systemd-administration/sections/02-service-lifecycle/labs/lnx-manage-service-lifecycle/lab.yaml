@@ -1,6 +1,8 @@
 id: lnx-manage-service-lifecycle
 title: Manage Service Lifecycle
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/service-test

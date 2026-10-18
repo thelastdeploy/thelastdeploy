@@ -30,26 +30,48 @@ docker logs my-app
 
 ## Lab Tasks
 
-### Task 1: Find container error
-1. Start the lab in your terminal:
+### Task 1: Find container error (`dkr-find-container-error`)
+1. Start the lab session:
    ```bash
    tld start dkr-find-container-error
    ```
-2. A background container named `buggy-app` is currently running and logging outputs. Find the log line starting with `CRITICAL_ERROR:`.
-3. Save the error message text *after* the colon (e.g. `db_connection_failed` if the log is `CRITICAL_ERROR: db_connection_failed`) to a file named `error_msg.txt` inside your `~/docker-test/` directory.
-4. Verify the task:
+2. A background container named `buggy-app` is currently running and logging outputs. Inspect its logs:
+   ```bash
+   docker logs buggy-app
+   ```
+3. Extract the critical error text following `CRITICAL_ERROR:` and save it to `~/docker-test/error_msg.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   docker logs buggy-app 2>&1 | grep "CRITICAL_ERROR:" | awk -F': ' '{print $2}' > "$HOME/docker-test/error_msg.txt"
+   ```
+4. Verify file contents:
+   ```bash
+   cat "$HOME/docker-test/error_msg.txt"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Read container logs
-1. Start the lab in your terminal:
+### Task 2: Read container logs (`dkr-read-container-logs`)
+1. Start the lab session:
    ```bash
    tld start dkr-read-container-logs
    ```
-2. There is a stopped container named `logger-app` on your system. Read its logs to find the line containing the secret flag (`SECRET_FLAG=...`).
-3. Save that complete line (e.g., `SECRET_FLAG=abc...`) to a file named `container_flag.txt` inside your `~/docker-test/` directory.
-4. Verify the task:
+2. Inspect logs of the stopped container named `logger-app`:
+   ```bash
+   docker logs logger-app
+   ```
+3. Extract the complete line starting with `SECRET_FLAG=` and save it into `~/docker-test/container_flag.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   docker logs logger-app 2>&1 | grep "SECRET_FLAG=" > "$HOME/docker-test/container_flag.txt"
+   ```
+4. Verify file contents:
+   ```bash
+   cat "$HOME/docker-test/container_flag.txt"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

@@ -1,6 +1,8 @@
 id: lnx-inspect-sudo-access
 title: Inspect Sudo Privileges with Sudo List
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test

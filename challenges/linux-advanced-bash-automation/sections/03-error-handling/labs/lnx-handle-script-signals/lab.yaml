@@ -1,6 +1,8 @@
 id: lnx-handle-script-signals
 title: Handle Script Traps and Signals
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/trap-test

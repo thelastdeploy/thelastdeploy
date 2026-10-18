@@ -2,6 +2,8 @@ id: lnx-design-reliable-linux-service
 title: "Design Reliable Linux Service"
 xp: 65
 description: "Implement watchdog Supervision, synthetic health checks, and automatic restart handling for mission-critical services."
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/reliability

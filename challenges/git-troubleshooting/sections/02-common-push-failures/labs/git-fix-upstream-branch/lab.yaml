@@ -2,6 +2,8 @@ id: git-fix-upstream-branch
 title: Fix Upstream Tracking Branch
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -23,4 +25,4 @@ setup:
     - echo 'dev edits' > $HOME/git-challenge/dev.txt
     - git -C $HOME/git-challenge add dev.txt
     - git -C $HOME/git-challenge commit -m 'Add dev file'
-version: 1
+version: 2

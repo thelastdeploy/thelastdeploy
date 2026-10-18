@@ -1,6 +1,8 @@
 id: lnx-manage-background-tasks
 title: Manage Background Tasks
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/bg-test

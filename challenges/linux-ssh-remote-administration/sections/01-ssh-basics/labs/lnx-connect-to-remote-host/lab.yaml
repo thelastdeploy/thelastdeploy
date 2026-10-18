@@ -1,6 +1,8 @@
 id: lnx-connect-to-remote-host
 title: Connect to a Remote Host via SSH
 xp: 15
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test

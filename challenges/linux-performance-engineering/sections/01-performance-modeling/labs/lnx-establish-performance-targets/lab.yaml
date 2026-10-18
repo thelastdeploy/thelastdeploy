@@ -1,6 +1,8 @@
 id: lnx-establish-performance-targets
 title: Establish SLA and Performance Targets
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/perf-eng-test

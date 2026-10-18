@@ -1,6 +1,8 @@
 id: lnx-use-advanced-parameter-expansion
 title: Use Advanced Parameter Expansion
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/param-test

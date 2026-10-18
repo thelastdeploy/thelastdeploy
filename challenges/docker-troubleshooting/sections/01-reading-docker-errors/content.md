@@ -31,28 +31,40 @@ An exit code of `137` typically indicates the container was terminated by the OO
 
 ## Lab Tasks
 
-### Task 1: Find startup error token
-1. Start the lab:
+### Task 1: Identify container startup error (`dkr-identify-startup-error`)
+1. Start the lab session:
    ```bash
    tld start dkr-identify-startup-error
    ```
-2. A container named `crashing-app` ran but crashed immediately.
-3. Inspect its log output or configuration to find the error code token (format: `ERR_TOKEN_XXXXX`).
-4. Write this token to `~/docker-troubleshooting/errors/startup-token.txt`.
-5. Verify the task:
+2. Inspect the logs of the failed container `crashing-app`:
+   ```bash
+   docker logs crashing-app
+   ```
+3. Extract the error token (`ERR_TOKEN_XY123`) from the output and write it to `~/docker-troubleshooting/errors/startup-token.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-troubleshooting/errors"
+   docker logs crashing-app 2>&1 | grep -o 'ERR_TOKEN_[A-Z0-9]*' > "$HOME/docker-troubleshooting/errors/startup-token.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Find network error port
-1. Start the next lab:
+### Task 2: Identify container network error (`dkr-identify-network-error`)
+1. Start the lab session:
    ```bash
    tld start dkr-identify-network-error
    ```
-2. A client container named `api-client` failed to connect to a dependency.
-3. Find the logs of `api-client` to determine what port number it attempted to connect to.
-4. Save only this port number (e.g. `9999`) to `~/docker-troubleshooting/errors/network-port.txt`.
-5. Verify the task:
+2. Inspect the logs of `api-client` to determine which port connection failed:
+   ```bash
+   docker logs api-client
+   ```
+3. Extract the port number (`9999`) and write it to `~/docker-troubleshooting/errors/network-port.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-troubleshooting/errors"
+   echo "9999" > "$HOME/docker-troubleshooting/errors/network-port.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

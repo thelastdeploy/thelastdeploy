@@ -13,8 +13,8 @@ if [[ "$NETWORKS" != *"debug-net"* ]]; then
 fi
 
 # 2. Check if output file exists and has correct content
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File ~/docker-test/debug_output.txt not found. Execute a curl request from client-app and save output."
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File ~/docker-test/debug_output.txt not found or is empty. Execute a curl request from client-app and save output."
   exit 1
 fi
 

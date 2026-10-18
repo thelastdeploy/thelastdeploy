@@ -1,6 +1,8 @@
 id: lnx-audit-file-permissions
 title: Audit File Permissions and Octal Masks
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test/configs

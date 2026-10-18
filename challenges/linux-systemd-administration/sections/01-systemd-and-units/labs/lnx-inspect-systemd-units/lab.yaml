@@ -1,6 +1,8 @@
 id: lnx-inspect-systemd-units
 title: Inspect systemd Units
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/systemd-test

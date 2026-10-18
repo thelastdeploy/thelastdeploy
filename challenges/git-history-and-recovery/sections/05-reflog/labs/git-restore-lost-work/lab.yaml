@@ -2,6 +2,8 @@ id: git-restore-lost-work
 title: Restore Lost Work
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -18,4 +20,4 @@ setup:
     - git -C $HOME/git-challenge commit -m 'Add critical data'
     - git -C $HOME/git-challenge rev-parse HEAD > $HOME/git-challenge/.correct-hash
     - git -C $HOME/git-challenge reset --hard HEAD~1
-version: 1
+version: 2

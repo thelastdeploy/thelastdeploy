@@ -24,9 +24,9 @@ if git -C "$REPO_DIR" show-ref --verify refs/heads/auth-feature &>/dev/null; the
   exit 1
 fi
 
-# Verify auth.js exists
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File 'auth.js' not found. Did you create and merge it?"
+# Verify auth.js exists and is non-empty
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File 'auth.js' not found or is empty. Did you create and merge it?"
   exit 1
 fi
 

@@ -1,6 +1,8 @@
 id: lnx-investigate-service-outage
 title: Investigate Production Service Outage
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/svc-outage-test

@@ -1,6 +1,8 @@
 id: lnx-analyze-memory-behavior
 title: Analyze Kernel Memory Allocator Behavior
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/mem-opt-test

@@ -3,6 +3,8 @@ title: "Identify container network error"
 xp: 25
 estimated_minutes: 5
 order: 2
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:

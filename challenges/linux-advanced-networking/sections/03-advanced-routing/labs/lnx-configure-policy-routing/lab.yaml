@@ -1,6 +1,8 @@
 id: lnx-configure-policy-routing
 title: Configure Policy Routing Rules
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/route-test

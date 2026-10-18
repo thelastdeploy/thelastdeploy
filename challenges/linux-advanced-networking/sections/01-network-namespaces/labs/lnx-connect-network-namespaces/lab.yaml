@@ -1,6 +1,8 @@
 id: lnx-connect-network-namespaces
 title: Connect Network Namespaces with veth Pairs
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/netns-test

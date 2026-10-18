@@ -1,6 +1,8 @@
 id: lnx-preserve-system-state
 title: Preserve Volatile System State
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ir-test

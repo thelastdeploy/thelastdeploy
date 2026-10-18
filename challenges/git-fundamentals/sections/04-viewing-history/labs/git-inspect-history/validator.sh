@@ -4,8 +4,14 @@ set -euo pipefail
 REPO_DIR="$HOME/git-challenge"
 TARGET_FILE="$REPO_DIR/latest_commit.txt"
 
-if [ ! -f "$TARGET_FILE" ]; then
-  echo "FAIL: File latest_commit.txt not found."
+# Verify .git exists
+if [ ! -d "$REPO_DIR/.git" ]; then
+  echo "FAIL: Git repository not initialized inside $REPO_DIR."
+  exit 1
+fi
+
+if [ ! -f "$TARGET_FILE" ] || [ ! -s "$TARGET_FILE" ]; then
+  echo "FAIL: File latest_commit.txt not found or is empty in $REPO_DIR."
   exit 1
 fi
 

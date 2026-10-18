@@ -1,6 +1,8 @@
 id: lnx-debug-broken-container-isolation
 title: Debug Broken Container Isolation Capstone
 xp: 85
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/isolation-challenge

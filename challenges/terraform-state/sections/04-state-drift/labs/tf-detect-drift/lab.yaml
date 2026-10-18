@@ -2,6 +2,8 @@ id: tf-detect-drift
 title: Detect Infrastructure State Drift
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

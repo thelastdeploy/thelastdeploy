@@ -3,6 +3,8 @@ title: "Investigate a production incident"
 xp: 60
 estimated_minutes: 15
 order: 1
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:

@@ -2,4 +2,6 @@ id: lnx-trace-memory-management
 title: "Trace Memory Management & Page Faults"
 xp: 60
 description: "Trace major/minor page faults, page cache behavior, and kernel slab cache utilization."
+environment:
+  profile: tld-ubuntu
 version: 2

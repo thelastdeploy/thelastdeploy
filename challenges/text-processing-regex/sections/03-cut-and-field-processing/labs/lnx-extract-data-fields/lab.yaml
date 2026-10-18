@@ -1,6 +1,8 @@
 id: lnx-extract-data-fields
 title: Extract Character Ranges using Cut
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/text-test

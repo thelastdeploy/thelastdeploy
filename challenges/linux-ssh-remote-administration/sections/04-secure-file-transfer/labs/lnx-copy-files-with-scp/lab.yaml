@@ -1,6 +1,8 @@
 id: lnx-copy-files-with-scp
 title: Copy Files Remotely using SCP
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test

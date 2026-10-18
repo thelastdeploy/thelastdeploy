@@ -2,6 +2,8 @@ id: tf-module-inputs
 title: Pass Input Arguments to a Module
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

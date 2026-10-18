@@ -29,8 +29,8 @@ if [ "$ABS_REMOTE_URL" != "$ABS_REMOTE_PATH" ]; then
 fi
 
 # Check if clone fetched the commit
-if [ ! -f "$REPO_DIR/hello.txt" ]; then
-  echo "FAIL: hello.txt not found in working copy. Clone was not successful."
+if [ ! -f "$REPO_DIR/hello.txt" ] || [ ! -s "$REPO_DIR/hello.txt" ]; then
+  echo "FAIL: hello.txt not found or is empty in working copy. Clone was not successful."
   exit 1
 fi
 

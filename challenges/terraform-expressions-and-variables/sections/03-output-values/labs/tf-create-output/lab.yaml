@@ -2,6 +2,8 @@ id: tf-create-output
 title: Create an Output Value
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

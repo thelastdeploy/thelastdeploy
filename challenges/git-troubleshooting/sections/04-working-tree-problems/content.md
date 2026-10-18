@@ -15,7 +15,7 @@ To also delete untracked directories, use the `-d` flag:
 ```bash
 git clean -fd
 ```
-Use `git clean -n` or `git clean -nd` to do a **dry run** to inspect what files would be deleted before running the actual deletion.
+Use `git clean -n` or `git clean -nd` to perform a **dry run** to inspect what files would be removed before running the actual deletion.
 
 ---
 
@@ -26,7 +26,7 @@ If you edit a tracked file and realize the edits are incorrect, you can restore 
 ```bash
 git restore <file-path>
 ```
-(Previously, developers ran `git checkout -- <file-path>` which achieves the same result).
+*(In older Git versions, developers used `git checkout -- <file-path>` which achieves the same result)*.
 
 ---
 
@@ -43,7 +43,7 @@ This restores your working directory to a clean HEAD state. Once you are ready t
 ```bash
 git stash pop
 ```
-(This restores the stashed modifications and removes them from the stash list).
+(This restores the stashed modifications and removes them from the stash stack).
 To view all active stashes:
 ```bash
 git stash list
@@ -53,38 +53,88 @@ git stash list
 
 ## Lab Tasks
 
-### Task 1: Clean Working Tree
-1. Start the lab in your terminal:
+### Task 1: Clean Working Tree (`git-clean-working-tree`)
+1. Start the lab session:
    ```bash
    tld start git-clean-working-tree
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Working tree cleaned successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Inspect the untracked files and directories:
+   ```bash
+   git status
+   ```
+4. Perform a dry-run to preview what will be removed:
+   ```bash
+   git clean -nd
+   ```
+5. Remove all untracked files and directories forcefully:
+   ```bash
+   git clean -fd
+   ```
+6. Confirm that only tracked files remain:
+   ```bash
+   git status
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Restore a Tracked File
-1. Start the lab in your terminal:
+### Task 2: Restore a Tracked File (`git-restore-file`)
+1. Start the lab session:
    ```bash
    tld start git-restore-file
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Tracked file restored successfully to stable commit.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Inspect the unstaged modifications in `app.js`:
+   ```bash
+   git diff app.js
+   ```
+4. Restore `app.js` to its committed state, discarding local edits:
+   ```bash
+   git restore app.js
+   ```
+5. Confirm that `app.js` has been restored to stable code:
+   ```bash
+   git status
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 3: Stash Local Modifications
-1. Start the lab in your terminal:
+### Task 3: Stash Local Modifications (`git-stash-changes`)
+1. Start the lab session:
    ```bash
    tld start git-stash-changes
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Changes stashed successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Inspect the unstaged modifications in `hello.txt`:
+   ```bash
+   git status
+   ```
+4. Save the uncommitted changes to the stash stack:
+   ```bash
+   git stash
+   ```
+5. Confirm that the working directory is now clean:
+   ```bash
+   git status
+   ```
+6. Verify that your changes are saved in the stash list:
+   ```bash
+   git stash list
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```

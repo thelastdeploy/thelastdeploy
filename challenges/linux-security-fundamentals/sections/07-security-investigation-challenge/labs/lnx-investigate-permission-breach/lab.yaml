@@ -1,6 +1,8 @@
 id: lnx-investigate-permission-breach
 title: Investigate and Remediate Security Privilege Breach
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/security-breach/sudoers.d

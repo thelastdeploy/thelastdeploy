@@ -16,6 +16,8 @@ instructions: '
   4. Write `disk_io` into `$HOME/mon-test/root_cause.txt`.
 
   '
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p '$HOME/mon-test/correlate'

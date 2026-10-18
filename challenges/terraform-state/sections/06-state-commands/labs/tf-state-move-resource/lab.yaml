@@ -2,6 +2,8 @@ id: tf-state-move-resource
 title: Rename Resource using State Move
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

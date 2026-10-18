@@ -2,6 +2,8 @@ id: tf-use-tfvars
 title: Use a terraform.tfvars File
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

@@ -1,6 +1,8 @@
 id: lnx-perform-remote-maintenance
 title: Perform Automated Remote Maintenance
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test

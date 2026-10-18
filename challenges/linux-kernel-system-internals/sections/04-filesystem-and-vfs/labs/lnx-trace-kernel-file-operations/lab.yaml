@@ -2,4 +2,6 @@ id: lnx-trace-kernel-file-operations
 title: "Trace Kernel File Operations"
 xp: 60
 description: "Trace kernel file system operations, inode caching, and page cache flush mechanisms."
+environment:
+  profile: tld-ubuntu
 version: 2

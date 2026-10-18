@@ -1,6 +1,8 @@
 id: lnx-build-interactive-script
 title: Build an Interactive Shell Script
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/script-test

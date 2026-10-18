@@ -1,6 +1,8 @@
 id: lnx-manage-kernel-boot-options
 title: Manage Kernel Boot Parameters
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/grub-test

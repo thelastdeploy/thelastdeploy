@@ -1,6 +1,8 @@
 id: lnx-explore-cgroup-resource-control
 title: Explore cgroup Resource Control Hierarchy
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/cgroup-test

@@ -1,6 +1,8 @@
 id: lnx-investigate-isolated-processes
 title: Investigate Isolated Process States
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/iso-test

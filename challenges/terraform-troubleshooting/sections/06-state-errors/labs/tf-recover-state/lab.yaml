@@ -2,6 +2,8 @@ id: tf-recover-state
 title: Recover from Corrupt or Missing State
 xp: 25
 estimated_minutes: 6
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

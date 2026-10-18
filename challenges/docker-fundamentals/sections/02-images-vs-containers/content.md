@@ -35,27 +35,52 @@ This means you can start 10 separate containers from the exact same image, and t
 
 ## Lab Tasks
 
-### Task 1: Find container source image
-1. Start the lab in your terminal:
+### Task 1: Find container source image (`dkr-find-container-source-image`)
+1. Start the lab session:
    ```bash
    tld start dkr-find-container-source-image
    ```
-2. A background container named `source-check-target` is currently running. Your goal is to find the exact image name (including tag, if specified) used to run this container.
-3. Save the image name (e.g., `alpine:3.18.5`) to a file named `source_image.txt` inside a new directory named `docker-test` in your home directory (`~/docker-test/source_image.txt`).
-4. Verify the task:
+2. A background container named `source-check-target` is currently running. Inspect its source image:
+   ```bash
+   docker inspect source-check-target --format '{{.Config.Image}}'
+   ```
+3. Create the test output directory and save the source image name into `~/docker-test/source_image.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   docker inspect source-check-target --format '{{.Config.Image}}' > "$HOME/docker-test/source_image.txt"
+   ```
+4. Verify file contents:
+   ```bash
+   cat "$HOME/docker-test/source_image.txt"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Identify image and container
-1. Start the lab in your terminal:
+### Task 2: Identify image and container (`dkr-identify-image-and-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-identify-image-and-container
    ```
-2. Your local Docker environment contains a `hello-world:latest` image and a stopped container named `ident-target-container`.
-3. Locate the **IMAGE ID** of `hello-world:latest` and save it to a file named `image_id.txt` inside `~/docker-test/`.
-4. Locate the **CONTAINER ID** of the stopped container named `ident-target-container` and save it to a file named `container_id.txt` inside `~/docker-test/`.
-5. Verify the task:
+2. Ensure the test output directory exists:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   ```
+3. Locate the IMAGE ID of `hello-world:latest` and save it to `~/docker-test/image_id.txt`:
+   ```bash
+   docker images hello-world:latest --format '{{.ID}}' > "$HOME/docker-test/image_id.txt"
+   ```
+4. Locate the CONTAINER ID of the stopped container named `ident-target-container` and save it to `~/docker-test/container_id.txt`:
+   ```bash
+   docker ps -a --filter name=ident-target-container --format '{{.ID}}' > "$HOME/docker-test/container_id.txt"
+   ```
+5. Verify file contents:
+   ```bash
+   cat "$HOME/docker-test/image_id.txt"
+   cat "$HOME/docker-test/container_id.txt"
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```

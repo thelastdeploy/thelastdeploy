@@ -19,9 +19,9 @@ if [ "$COMMIT_COUNT" -ne 2 ]; then
   exit 1
 fi
 
-# Verify .gitignore exists
-if [ ! -f "$GITIGNORE" ]; then
-  echo "FAIL: .gitignore file not found."
+# Verify .gitignore exists and is not empty
+if [ ! -f "$GITIGNORE" ] || [ ! -s "$GITIGNORE" ]; then
+  echo "FAIL: .gitignore file not found or empty."
   exit 1
 fi
 
@@ -37,9 +37,9 @@ if git -C "$REPO_DIR" ls-tree -r HEAD --name-only | grep -q "password.txt"; then
   exit 1
 fi
 
-# Verify password.txt still exists in working tree (they didn't delete it physically, just cached)
-if [ ! -f "$PASSWORD" ]; then
-  echo "FAIL: 'password.txt' was physically deleted. You should untrack it from Git but preserve it in the working tree."
+# Verify password.txt still exists in working tree and is not empty
+if [ ! -f "$PASSWORD" ] || [ ! -s "$PASSWORD" ]; then
+  echo "FAIL: 'password.txt' was physically deleted or empty. You should untrack it from Git but preserve it in the working tree."
   exit 1
 fi
 

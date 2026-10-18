@@ -3,12 +3,15 @@ title: "Recover persistent data"
 xp: 40
 estimated_minutes: 10
 order: 1
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-troubleshooting/persistence/postgres_data"
+    - "docker run -d --name init-pg -v $HOME/docker-troubleshooting/persistence/postgres_data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=secret postgres:15-alpine && until docker exec init-pg pg_isready -U postgres >/dev/null 2>&1; do sleep 1; done && docker rm -f init-pg"
     - "echo 'RECOVERED_DATA_88' > $HOME/docker-troubleshooting/persistence/postgres_data/marker.txt"
     - "echo -e 'version: \"3.8\"\nservices:\n  db:\n    image: postgres:15-alpine\n    environment:\n      - POSTGRES_PASSWORD=secret\n    volumes:\n      - ./postgres_data:/var/lib/postgresql' > $HOME/docker-troubleshooting/persistence/docker-compose.yml"
     - "docker compose -f $HOME/docker-troubleshooting/persistence/docker-compose.yml down -v || true"
     - "docker compose -f $HOME/docker-troubleshooting/persistence/docker-compose.yml up -d"
-version: 1
+version: 3

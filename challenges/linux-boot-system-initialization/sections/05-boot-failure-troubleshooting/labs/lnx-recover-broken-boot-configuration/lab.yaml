@@ -1,6 +1,8 @@
 id: lnx-recover-broken-boot-configuration
 title: Recover Broken Boot Configuration
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/boot-fail-test

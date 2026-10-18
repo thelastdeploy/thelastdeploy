@@ -2,6 +2,8 @@ id: git-stash-changes
 title: Stash Local Modifications
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -14,4 +16,4 @@ setup:
     - git -C $HOME/git-challenge add hello.txt
     - git -C $HOME/git-challenge commit -m 'Initial commit'
     - echo 'stash me' > $HOME/git-challenge/hello.txt
-version: 1
+version: 2

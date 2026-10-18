@@ -1,6 +1,8 @@
 id: lnx-determine-incident-scope
 title: Determine Incident Scope and Lateral Movement
 xp: 60
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/scope-test

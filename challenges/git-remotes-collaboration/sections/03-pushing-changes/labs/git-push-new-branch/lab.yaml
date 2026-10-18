@@ -2,6 +2,8 @@ id: git-push-new-branch
 title: Push a New Local Branch
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -23,4 +25,4 @@ setup:
     - echo 'console.log("login");' > $HOME/git-challenge/login.js
     - git -C $HOME/git-challenge add login.js
     - git -C $HOME/git-challenge commit -m 'Add login file'
-version: 1
+version: 2

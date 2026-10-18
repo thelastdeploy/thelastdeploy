@@ -1,6 +1,8 @@
 id: lnx-investigate-system-from-internals
 title: Investigate System Behavior using Linux Internals Capstone
 xp: 80
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/internals-challenge

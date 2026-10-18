@@ -2,6 +2,8 @@ id: tf-build-local-project
 title: Build local infrastructure project
 xp: 30
 estimated_minutes: 10
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

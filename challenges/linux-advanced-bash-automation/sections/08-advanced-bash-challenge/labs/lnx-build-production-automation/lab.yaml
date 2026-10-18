@@ -1,6 +1,8 @@
 id: lnx-build-production-automation
 title: Build Production Automation Tool Capstone
 xp: 70
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/bash-challenge

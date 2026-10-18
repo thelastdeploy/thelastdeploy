@@ -2,6 +2,8 @@ id: git-mixed-reset
 title: Perform a Mixed Reset
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -19,4 +21,4 @@ setup:
     - echo 'third' > $HOME/git-challenge/three.txt
     - git -C $HOME/git-challenge add three.txt
     - git -C $HOME/git-challenge commit -m 'Third commit'
-version: 1
+version: 2

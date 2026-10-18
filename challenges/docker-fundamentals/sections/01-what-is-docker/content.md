@@ -16,7 +16,7 @@ You might be thinking: *isn't this just a VM?* Not quite.
 
 | | Virtual Machine | Container |
 |---|---|---|
-| Includes OS | ✅ Full OS | ❌ Shares host OS kernel |
+| Includes OS | Full OS | Shares host OS kernel |
 | Startup time | Minutes | Milliseconds |
 | Size | GBs | MBs |
 | Isolation | Strong | Strong (but lighter) |

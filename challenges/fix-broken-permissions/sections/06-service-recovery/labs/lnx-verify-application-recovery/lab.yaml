@@ -2,6 +2,8 @@ id: lnx-verify-application-recovery
 title: Verify Application Recovery
 xp: 40
 estimated_minutes: 10
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

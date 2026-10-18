@@ -4,9 +4,9 @@ set -euo pipefail
 
 FILE_PATH="$HOME/docker-test/image_arch.txt"
 
-# 1. Check if the file exists
-if [ ! -f "$FILE_PATH" ]; then
-  echo "FAIL: File '$FILE_PATH' not found."
+# 1. Check if the file exists and is not empty
+if [ ! -f "$FILE_PATH" ] || [ ! -s "$FILE_PATH" ]; then
+  echo "FAIL: File '$FILE_PATH' not found or is empty."
   exit 1
 fi
 

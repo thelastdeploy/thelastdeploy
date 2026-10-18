@@ -15,40 +15,64 @@ When designing a production-grade compose configuration:
 
 ## Lab Tasks
 
-### Task 1: Deploy a complete blog platform
-1. Start the task:
+### Task 1: Deploy a complete blog platform (`dkr-deploy-blog-platform`)
+1. Start the lab session:
    ```bash
    tld start dkr-deploy-blog-platform
    ```
-2. Navigate to `~/docker-compose/blog-platform/`.
-3. Create a `docker-compose.yml` that implements the following stack requirements:
-   - **Networks**:
-     - A custom bridge network named `blog-net`.
-   - **Volumes**:
-     - A named volume called `wp_data`.
-     - A named volume called `db_data`.
-   - **Services**:
-     - `wordpress`:
-       - Use the `wordpress:latest` image.
-       - Connect it only to the `blog-net` network.
-       - Expose host port `8083` mapped to container port `80`.
-       - Mount the `wp_data` volume inside the container at `/var/www/html`.
-       - Configure the environment variables to connect to the database:
-         - `WORDPRESS_DB_HOST=db` (resolving the database service name)
-         - `WORDPRESS_DB_USER=wordpress`
-         - `WORDPRESS_DB_PASSWORD=wordpass`
-         - `WORDPRESS_DB_NAME=wordpress`
-     - `db`:
-       - Use the `mysql:8.0` image.
-       - Connect it only to the `blog-net` network.
-       - Mount the `db_data` volume inside the container at `/var/lib/mysql`.
-       - Configure the environment variables:
-         - `MYSQL_RANDOM_ROOT_PASSWORD=yes`
-         - `MYSQL_USER=wordpress`
-         - `MYSQL_PASSWORD=wordpass`
-         - `MYSQL_DATABASE=wordpress`
-4. Deploy the stack in detached mode (`docker compose up -d`).
-5. Run the validator:
+2. Navigate to `~/docker-compose/blog-platform/`:
+   ```bash
+   cd "$HOME/docker-compose/blog-platform"
+   ```
+3. Create the `docker-compose.yml` file configuring WordPress and MySQL:
+   ```yaml
+   cat << 'EOF' > docker-compose.yml
+   version: "3.8"
+
+   services:
+     wordpress:
+       image: wordpress:latest
+       networks:
+         - blog-net
+       ports:
+         - "8083:80"
+       volumes:
+         - wp_data:/var/www/html
+       environment:
+         - WORDPRESS_DB_HOST=db
+         - WORDPRESS_DB_USER=wordpress
+         - WORDPRESS_DB_PASSWORD=wordpass
+         - WORDPRESS_DB_NAME=wordpress
+
+     db:
+       image: mysql:8.0
+       networks:
+         - blog-net
+       volumes:
+         - db_data:/var/lib/mysql
+       environment:
+         - MYSQL_RANDOM_ROOT_PASSWORD=yes
+         - MYSQL_USER=wordpress
+         - MYSQL_PASSWORD=wordpass
+         - MYSQL_DATABASE=wordpress
+
+   networks:
+     blog-net:
+
+   volumes:
+     wp_data:
+     db_data:
+   EOF
+   ```
+4. Start the stack in detached mode:
+   ```bash
+   docker compose up -d
+   ```
+5. Verify running services:
+   ```bash
+   docker compose ps
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```

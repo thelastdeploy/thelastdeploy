@@ -1,3 +1,5 @@
+# Ignoring Files
+
 Often, you will have temporary files, build artifacts, compiled outputs, local configs, or dependency folders (like `node_modules` or `.venv`) that you do not want to commit or track in Git.
 
 ### The `.gitignore` File
@@ -23,14 +25,21 @@ logs/*.txt
 
 ## Lab Tasks
 
-### Task 1: Configure Git Ignore List
-1. Start the lab in your terminal:
+### Task 1: Configure Git Ignore List (`git-configure-gitignore`)
+1. Start the lab session:
    ```bash
    tld start git-configure-gitignore
    ```
-2. Create or edit a `.gitignore` file inside the `~/git-challenge` directory.
-3. Configure it to ignore all files ending in `.log` (e.g., `*.log`).
-4. Verify the task to earn your XP:
+2. Navigate to `~/git-challenge/` and append the `*.log` rule to `.gitignore`:
+   ```bash
+   cd "$HOME/git-challenge"
+   echo "*.log" >> .gitignore
+   ```
+3. Test that log files are now recognized as ignored by Git:
+   ```bash
+   git check-ignore -v debug.log
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

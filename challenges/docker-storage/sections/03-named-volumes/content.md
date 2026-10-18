@@ -35,30 +35,50 @@ If the volume `my-volume` does not exist when starting the container, Docker aut
 
 ## Lab Tasks
 
-### Task 1: Create volume
-1. Start the lab in your terminal:
+### Task 1: Create volume (`dkr-create-volume`)
+1. Start the lab session:
    ```bash
    tld start dkr-create-volume
    ```
-2. Create a named volume named `app-data-vol` using the Docker volume management CLI.
-3. Verify the task:
+2. Create a named volume named `app-data-vol` using the Docker volume management CLI:
+   ```bash
+   docker volume create app-data-vol
+   ```
+3. Verify that the volume was created:
+   ```bash
+   docker volume ls | grep app-data-vol
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Persist application data
-1. Start the lab in your terminal:
+### Task 2: Persist application data (`dkr-persist-application-data`)
+1. Start the lab session:
    ```bash
    tld start dkr-persist-application-data
    ```
-2. Start a background Nginx container named `db-container` using the `nginx:alpine` image. Mount the pre-created named volume `db-storage-vol` to `/usr/share/nginx/html` inside the container.
-3. Write a file named `index.html` inside the mounted directory `/usr/share/nginx/html/` of the container. The content of the file must be exactly:
-   ```text
-   Database persistent content
+2. Start an initial container named `db-container` using the `nginx:alpine` image with the volume `db-storage-vol` mounted to `/usr/share/nginx/html`:
+   ```bash
+   docker run -d --name db-container -v db-storage-vol:/usr/share/nginx/html nginx:alpine
    ```
-4. Stop and remove the `db-container` container.
-5. Create a **new** Nginx container named `db-container-new` using the `nginx:alpine` image, and mount the **same** volume `db-storage-vol` to `/usr/share/nginx/html`.
-6. Verify the task:
+3. Write `Database persistent content` into `/usr/share/nginx/html/index.html` inside the container:
+   ```bash
+   docker exec db-container sh -c 'echo "Database persistent content" > /usr/share/nginx/html/index.html'
+   ```
+4. Stop and remove the initial container `db-container`:
+   ```bash
+   docker rm -f db-container
+   ```
+5. Create a new container named `db-container-new` mounting the same volume `db-storage-vol` to `/usr/share/nginx/html`:
+   ```bash
+   docker run -d --name db-container-new -v db-storage-vol:/usr/share/nginx/html nginx:alpine
+   ```
+6. Verify the persistent file inside the new container:
+   ```bash
+   docker exec db-container-new cat /usr/share/nginx/html/index.html
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```

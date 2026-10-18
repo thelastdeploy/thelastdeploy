@@ -1,6 +1,8 @@
 id: lnx-investigate-privilege-access
 title: Investigate Permissive Sudoers Rules
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test

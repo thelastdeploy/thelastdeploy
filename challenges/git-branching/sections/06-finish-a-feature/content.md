@@ -35,14 +35,41 @@ Following this workflow ensures that the main branch remains clean and deployabl
 
 ## Lab Tasks
 
-### Task 1: Complete Feature Workflow
-1. Start the lab in your terminal:
+### Task 1: Complete Feature Workflow (`git-complete-feature-workflow`)
+1. Start the lab session:
    ```bash
    tld start git-complete-feature-workflow
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Complete feature branch workflow executed successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Create and switch to a new branch named `auth-feature`:
+   ```bash
+   git switch -c auth-feature
+   ```
+4. Create the file `auth.js` with the required JavaScript statement:
+   ```bash
+   echo 'console.log("auth");' > auth.js
+   ```
+5. Stage and commit `auth.js` with a commit message describing the auth feature:
+   ```bash
+   git add auth.js
+   git commit -m "Implement auth feature"
+   ```
+6. Switch back to the `main` branch:
+   ```bash
+   git switch main
+   ```
+7. Merge the `auth-feature` branch into `main`:
+   ```bash
+   git merge auth-feature
+   ```
+8. Clean up by deleting the merged `auth-feature` branch:
+   ```bash
+   git branch -d auth-feature
+   ```
+9. Validate your solution:
    ```bash
    tld check
    ```

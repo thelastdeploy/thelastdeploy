@@ -2,6 +2,12 @@
 # validator.sh — docker-compose / 07-deploy-complete-stack / dkr-deploy-blog-platform
 set -euo pipefail
 
+COMPOSE_PATH="$HOME/docker-compose/blog-platform/docker-compose.yml"
+if [ ! -f "$COMPOSE_PATH" ] || [ ! -s "$COMPOSE_PATH" ]; then
+  echo "FAIL: docker-compose.yml not found or is empty at '$COMPOSE_PATH'."
+  exit 1
+fi
+
 # 1. Get container IDs
 WP_CID=$(docker ps --filter "label=com.docker.compose.project=blog-platform" --filter "label=com.docker.compose.service=wordpress" --filter "status=running" -q)
 DB_CID=$(docker ps --filter "label=com.docker.compose.project=blog-platform" --filter "label=com.docker.compose.service=db" --filter "status=running" -q)

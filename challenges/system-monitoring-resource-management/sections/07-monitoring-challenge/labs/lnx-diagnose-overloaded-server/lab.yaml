@@ -9,6 +9,8 @@ order: 1
 instructions: "\n1. Inspect `$HOME/mon-challenge/incident/top_dump.txt`.\n2. Identify\
   \ the rogue process PID (`7782`) consuming 99.9% CPU and 82.4% MEM.\n3. Update `$HOME/mon-challenge/incident/report.txt`\
   \ so it contains:\n   STATUS: RESOLVED\n   ROGUE_PID: 7782\n   BOTTLENECK: cpu_memory\n"
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p '$HOME/mon-challenge/incident'

@@ -1,6 +1,8 @@
 id: lnx-find-insecure-files
 title: Find Insecure World-Writable Files
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test/audit_dir

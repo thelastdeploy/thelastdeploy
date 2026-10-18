@@ -2,6 +2,8 @@ id: git-revert-multiple-commits
 title: Revert Multiple Commits
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -22,4 +24,4 @@ setup:
     - echo '4' > $HOME/git-challenge/four.txt
     - git -C $HOME/git-challenge add four.txt
     - git -C $HOME/git-challenge commit -m 'Fourth commit'
-version: 1
+version: 2

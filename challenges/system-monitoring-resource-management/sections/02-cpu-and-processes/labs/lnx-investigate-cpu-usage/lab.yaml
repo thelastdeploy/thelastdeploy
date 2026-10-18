@@ -14,6 +14,8 @@ instructions: '
   3. Write the numerical percentage (`85.2`) into `$HOME/mon-test/user_cpu.txt`.
 
   '
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p '$HOME/mon-test/cpu'

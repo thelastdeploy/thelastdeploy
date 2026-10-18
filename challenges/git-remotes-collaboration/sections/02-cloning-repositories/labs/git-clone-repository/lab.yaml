@@ -2,6 +2,8 @@ id: git-clone-repository
 title: Clone a Remote Repository
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -16,4 +18,4 @@ setup:
     - git -C $HOME/temp-git-repo remote add origin $HOME/git-remote-server.git
     - git -C $HOME/temp-git-repo push -u origin HEAD
     - rm -rf $HOME/temp-git-repo
-version: 1
+version: 2

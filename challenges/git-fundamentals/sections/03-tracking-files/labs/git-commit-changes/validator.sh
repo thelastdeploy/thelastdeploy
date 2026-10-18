@@ -3,6 +3,12 @@ set -euo pipefail
 
 REPO_DIR="$HOME/git-challenge"
 
+# Verify .git exists
+if [ ! -d "$REPO_DIR/.git" ]; then
+  echo "FAIL: Git repository not initialized inside $REPO_DIR."
+  exit 1
+fi
+
 # Verify a commit has been made
 if ! git -C "$REPO_DIR" log -1 >/dev/null 2>&1; then
   echo "FAIL: No commits found in the repository."

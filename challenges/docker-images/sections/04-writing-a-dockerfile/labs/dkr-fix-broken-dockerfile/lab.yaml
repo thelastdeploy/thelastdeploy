@@ -2,6 +2,8 @@ id: dkr-fix-broken-dockerfile
 title: "Fix broken Dockerfile"
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
@@ -10,4 +12,4 @@ setup:
     - "echo 'RUNN apk add --no-cache curl' >> $HOME/docker-build/broken-dockerfile/Dockerfile"
     - "echo 'CMD [\"echo\", \"hello\"]' >> $HOME/docker-build/broken-dockerfile/Dockerfile"
     - "docker rmi -f test-fixed-df || true"
-version: 1
+version: 2

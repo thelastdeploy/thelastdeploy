@@ -2,6 +2,8 @@ id: tf-fix-provider-errors
 title: Fix Uninitialized Provider Errors
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

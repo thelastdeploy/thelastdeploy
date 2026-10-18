@@ -1,6 +1,8 @@
 id: lnx-tune-system-performance
 title: Tune System Performance Parameters
 xp: 60
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/kernel-opt-test

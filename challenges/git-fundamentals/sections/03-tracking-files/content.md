@@ -1,3 +1,5 @@
+# Tracking Files
+
 In Git, files pass through three states before being safely recorded in the history database:
 1. **Working Directory**: Modifying local files that are not yet tracked or have unstaged modifications.
 2. **Staging Area (Index)**: Staging files with `git add` to prepare them for the next commit.
@@ -23,24 +25,40 @@ git commit -m "Initialize project with README document"
 
 ## Lab Tasks
 
-### Task 1: Stage a Modified File
-1. Start the lab in your terminal:
+### Task 1: Stage a Modified File (`git-stage-file`)
+1. Start the lab session:
    ```bash
    tld start git-stage-file
    ```
-2. Add the existing `README.md` file in the `~/git-challenge` directory to the Git staging area (index) without committing it.
-3. Verify the task to earn your XP:
+2. Navigate to `~/git-challenge/` and stage `README.md` without committing it:
+   ```bash
+   cd "$HOME/git-challenge"
+   git add README.md
+   ```
+3. Check status to verify that `README.md` is in the staging area:
+   ```bash
+   git status
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Commit Your Staged Changes
-1. Start the lab in your terminal:
+### Task 2: Commit Your Staged Changes (`git-commit-changes`)
+1. Start the lab session:
    ```bash
    tld start git-commit-changes
    ```
-2. Commit the staged `README.md` changes to the repository in `~/git-challenge`. Ensure the working tree is clean.
-3. Verify the task:
+2. Navigate to `~/git-challenge/` and commit the staged changes:
+   ```bash
+   cd "$HOME/git-challenge"
+   git commit -m "Add README file"
+   ```
+3. Confirm that the working tree is clean:
+   ```bash
+   git status
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

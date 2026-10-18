@@ -2,6 +2,8 @@ id: tf-init-validate-format
 title: Initialize, Validate, and Format
 xp: 25
 estimated_minutes: 8
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

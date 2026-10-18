@@ -1,6 +1,8 @@
 id: lnx-trace-userspace-initialization
 title: Trace Userspace Initialization Sequence
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sys-init-test

@@ -1,6 +1,8 @@
 id: lnx-process-delimited-data
 title: Process Delimited CSV Files with Cut
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/text-test

@@ -2,6 +2,8 @@ id: dkr-find-volume-usage
 title: "Find volume usage"
 xp: 15
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
@@ -11,4 +13,4 @@ setup:
     - "docker run -d --name analytics-app -v analytics-vol:/var/log/analytics alpine tail -f /dev/null"
     - "mkdir -p $HOME/docker-test"
     - "rm -f $HOME/docker-test/volume_destination.txt"
-version: 1
+version: 2

@@ -1,6 +1,8 @@
 id: lnx-investigate-persistence-mechanism
 title: Investigate Malicious Persistence Mechanisms
 xp: 60
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/suspicious-test

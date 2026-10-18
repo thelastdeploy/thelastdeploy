@@ -1,6 +1,8 @@
 id: lnx-secure-executable-permissions
 title: Secure SUID/SGID Executable Permissions
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/fs-sec-test

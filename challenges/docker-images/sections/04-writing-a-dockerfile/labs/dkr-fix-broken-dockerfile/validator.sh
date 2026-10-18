@@ -5,9 +5,9 @@ set -euo pipefail
 DF_DIR="$HOME/docker-build/broken-dockerfile"
 DF_PATH="$DF_DIR/Dockerfile"
 
-# 1. Check if Dockerfile exists
-if [ ! -f "$DF_PATH" ]; then
-  echo "FAIL: Dockerfile not found at '$DF_PATH'."
+# 1. Check if Dockerfile exists and is not empty
+if [ ! -f "$DF_PATH" ] || [ ! -s "$DF_PATH" ]; then
+  echo "FAIL: Dockerfile not found or is empty at '$DF_PATH'."
   exit 1
 fi
 

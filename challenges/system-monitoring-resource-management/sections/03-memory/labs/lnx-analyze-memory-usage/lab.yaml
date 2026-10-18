@@ -14,6 +14,8 @@ instructions: '
   3. Write the available memory value (`7.0Gi`) into `$HOME/mon-test/avail_ram.txt`.
 
   '
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p '$HOME/mon-test/mem'

@@ -1,6 +1,8 @@
 id: lnx-trace-system-behavior
 title: Trace System Execution Behavior
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/trace-test

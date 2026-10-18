@@ -2,6 +2,8 @@ id: git-fast-forward-merge
 title: Fast-Forward Merge
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -18,4 +20,4 @@ setup:
     - git -C $HOME/git-challenge add ff.txt
     - git -C $HOME/git-challenge commit -m 'Add ff change'
     - git -C $HOME/git-challenge checkout main
-version: 1
+version: 2

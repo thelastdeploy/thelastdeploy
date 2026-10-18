@@ -3,9 +3,11 @@ title: "Create a basic Compose file"
 xp: 25
 estimated_minutes: 5
 order: 1
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-compose/first-compose"
     - "rm -f $HOME/docker-compose/first-compose/docker-compose.yml"
-version: 1
+version: 2

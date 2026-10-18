@@ -2,8 +2,10 @@ id: dkr-publish-port
 title: "Publish a port on localhost"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
     - "docker rm -f static-web || true"
-version: 1
+version: 2

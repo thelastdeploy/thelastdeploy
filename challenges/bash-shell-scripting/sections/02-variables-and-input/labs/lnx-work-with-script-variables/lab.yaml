@@ -1,6 +1,8 @@
 id: lnx-work-with-script-variables
 title: Work with Script Variables and Arguments
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/script-test

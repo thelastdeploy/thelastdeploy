@@ -25,15 +25,22 @@ The output contains key fields for each mount:
 
 ## Lab Tasks
 
-### Task 1: Find volume usage
-1. Start the lab in your terminal:
+### Task 1: Find volume usage (`dkr-find-volume-usage`)
+1. Start the lab session:
    ```bash
    tld start dkr-find-volume-usage
    ```
 2. A background container named `analytics-app` is already running with a named volume `analytics-vol` mounted to a specific directory inside the container.
-3. Use `docker inspect` to inspect `analytics-app` and locate the **Destination** path where the volume `analytics-vol` is mounted.
-4. Save the exact path (e.g., `/var/log/analytics`) to the file `~/docker-test/volume_destination.txt` (create the parent directory `~/docker-test/` if it does not exist).
-5. Verify the task:
+3. Inspect the container to locate the destination mount path of `analytics-vol` and save it to `~/docker-test/volume_destination.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   docker inspect --format '{{range .Mounts}}{{if eq .Name "analytics-vol"}}{{.Destination}}{{end}}{{end}}' analytics-app > "$HOME/docker-test/volume_destination.txt"
+   ```
+4. Verify the saved destination path:
+   ```bash
+   cat "$HOME/docker-test/volume_destination.txt"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

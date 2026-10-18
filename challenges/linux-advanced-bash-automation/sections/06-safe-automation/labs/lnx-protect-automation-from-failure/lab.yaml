@@ -1,6 +1,8 @@
 id: lnx-protect-automation-from-failure
 title: Protect Automation with Lock Files and Atomic Swaps
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/atomic-test

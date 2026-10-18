@@ -32,26 +32,38 @@ docker run -d --name db -p 127.0.0.1:5432:5432 postgres
 
 ## Lab Tasks
 
-### Task 1: Expose web service
-1. Start the lab in your terminal:
+### Task 1: Expose web service (`dkr-expose-web-service`)
+1. Start the lab session:
    ```bash
    tld start dkr-expose-web-service
    ```
-2. Your goal is to start a background (detached) Nginx container named `web-service` using the official `nginx:alpine` image.
-3. Expose it by mapping port `8088` of your host machine to port `80` inside the container.
-4. Verify the task:
+2. Start a background container named `web-service` using the `nginx:alpine` image mapping host port `8088` to container port `80`:
+   ```bash
+   docker run -d --name web-service -p 8088:80 nginx:alpine
+   ```
+3. Verify that the web service is accessible:
+   ```bash
+   curl -s http://localhost:8088
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Publish a port on localhost
-1. Start the lab in your terminal:
+### Task 2: Publish a port on localhost (`dkr-publish-port`)
+1. Start the lab session:
    ```bash
    tld start dkr-publish-port
    ```
-2. Start a background Nginx container named `static-web` using the `nginx:alpine` image.
-3. Map host port `8089` to container port `80`, but restrict it to only listen on the host loopback IP `127.0.0.1`.
-4. Verify the task:
+2. Start a background container named `static-web` using the `nginx:alpine` image mapping container port `80` to host port `8089` bound strictly to loopback IP `127.0.0.1`:
+   ```bash
+   docker run -d --name static-web -p 127.0.0.1:8089:80 nginx:alpine
+   ```
+3. Verify that the port is accessible on localhost:
+   ```bash
+   curl -s http://127.0.0.1:8089
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

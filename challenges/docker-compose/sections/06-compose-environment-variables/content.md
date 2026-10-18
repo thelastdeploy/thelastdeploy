@@ -35,20 +35,33 @@ When you run `docker compose up`, Docker Compose automatically:
 
 ## Lab Tasks
 
-### Task 1: Use .env file for configuration
-1. Start the task:
+### Task 1: Use .env file for configuration (`dkr-fix-env-configuration`)
+1. Start the lab session:
    ```bash
    tld start dkr-fix-env-configuration
    ```
-2. Navigate to `~/docker-compose/env-vars/`.
-3. You will find a `docker-compose.yml` file with database and app services. It references `${DB_PASSWORD}` but does not have a `.env` file yet.
-4. Create a `.env` file in the `~/docker-compose/env-vars/` directory.
-5. In the `.env` file, define the variable:
-   ```env
-   DB_PASSWORD=supersecure123
+2. Navigate to `~/docker-compose/env-vars/`:
+   ```bash
+   cd "$HOME/docker-compose/env-vars"
    ```
-6. Start the stack in detached mode using `docker compose up -d`.
-7. Verify that the variables are correctly loaded and active in the containers:
+3. Inspect the existing `docker-compose.yml` file:
+   ```bash
+   cat docker-compose.yml
+   ```
+   Notice that both `app` and `db` reference `${DB_PASSWORD}`.
+4. Create the `.env` file containing the required database password:
+   ```bash
+   echo "DB_PASSWORD=supersecure123" > .env
+   ```
+5. Start the stack in detached mode:
+   ```bash
+   docker compose up -d
+   ```
+6. Verify running services:
+   ```bash
+   docker compose ps
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```

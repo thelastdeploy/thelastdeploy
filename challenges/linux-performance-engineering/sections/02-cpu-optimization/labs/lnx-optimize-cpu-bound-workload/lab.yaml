@@ -1,6 +1,8 @@
 id: lnx-optimize-cpu-bound-workload
 title: Optimize CPU-Bound Workload Execution
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/cpu-opt-test

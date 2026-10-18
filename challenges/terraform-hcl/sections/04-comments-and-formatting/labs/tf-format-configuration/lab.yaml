@@ -2,6 +2,8 @@ id: tf-format-configuration
 title: Comment and Format Configuration
 xp: 15
 estimated_minutes: 4
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

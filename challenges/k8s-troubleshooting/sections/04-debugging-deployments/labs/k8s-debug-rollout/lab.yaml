@@ -2,6 +2,8 @@ id: k8s-debug-rollout
 title: "Identify Stuck Rollout Cause"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-kind
 setup:
   type: kind
   resource_limits_cpu: 1

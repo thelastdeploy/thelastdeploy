@@ -1,6 +1,8 @@
 id: lnx-compose-command-output
 title: Compose Command Output in Scripts
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sub-test

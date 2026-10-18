@@ -1,6 +1,8 @@
 id: lnx-configure-key-authentication
 title: Configure Authorized Keys and Permissions
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test/key_dir

@@ -2,6 +2,8 @@ id: dkr-read-container-logs
 title: "Read container logs"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
@@ -9,4 +11,4 @@ setup:
     - "docker run --name logger-app alpine sh -c 'echo \"SECRET_FLAG=docker_logging_master\"'"
     - "mkdir -p $HOME/docker-test"
     - "rm -f $HOME/docker-test/container_flag.txt"
-version: 1
+version: 2

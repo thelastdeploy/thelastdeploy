@@ -1,6 +1,8 @@
 id: lnx-collect-system-evidence
 title: Collect System File & Environment Evidence
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/evidence-test

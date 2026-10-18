@@ -1,6 +1,8 @@
 id: lnx-build-output-report
 title: Build Output Report with AWK Aggregation
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/text-test

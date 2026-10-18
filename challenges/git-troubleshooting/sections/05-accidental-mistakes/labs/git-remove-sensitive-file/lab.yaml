@@ -2,6 +2,8 @@ id: git-remove-sensitive-file
 title: Remove Sensitive File
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -16,4 +18,4 @@ setup:
     - echo 'my_secret_key' > $HOME/git-challenge/password.txt
     - git -C $HOME/git-challenge add password.txt
     - git -C $HOME/git-challenge commit -m 'Add password file'
-version: 1
+version: 2

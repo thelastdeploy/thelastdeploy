@@ -34,25 +34,39 @@ Once inside, you are in an isolated Ubuntu container file system! Type `exit` to
 
 ## Lab Tasks
 
-### Task 1: Run alpine container
-1. Start the lab in your terminal:
+### Task 1: Run alpine container (`dkr-run-alpine-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-run-alpine-container
    ```
-2. Your goal is to run a container using the `alpine` image named `my-alpine-run` that prints the message `Hello from Alpine` to stdout and then exits.
-   *Hint: You can pass arguments to the container command, e.g. `docker run --name my-alpine-run alpine echo "Hello from Alpine"`.*
-3. Verify the task:
+2. Run a container named `my-alpine-run` using the `alpine` image that echoes `Hello from Alpine`:
+   ```bash
+   docker run --name my-alpine-run alpine echo "Hello from Alpine"
+   ```
+3. Verify the container execution and output logs:
+   ```bash
+   docker ps -a --filter name=my-alpine-run
+   docker logs my-alpine-run
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Run hello-world container
-1. Start the lab in your terminal:
+### Task 2: Run hello-world container (`dkr-run-hello`)
+1. Start the lab session:
    ```bash
    tld start dkr-run-hello
    ```
-2. Run the official `hello-world` container. This will verify that your Docker installation is fully working and the engine can pull images from Docker Hub.
-3. Verify the task:
+2. Run the official `hello-world` container:
+   ```bash
+   docker run hello-world
+   ```
+3. Verify the container executed:
+   ```bash
+   docker ps -a --filter ancestor=hello-world
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

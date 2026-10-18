@@ -8,6 +8,11 @@ if ! docker ps --filter name=notes-viewer --format '{{.Names}}' | grep -q "^note
   exit 1
 fi
 
+if ! docker exec notes-viewer test -s /notes/notes.txt; then
+  echo "FAIL: File /notes/notes.txt does not exist or is empty inside container."
+  exit 1
+fi
+
 # 2. Check the file content inside the container
 CONTENT=$(docker exec notes-viewer cat /notes/notes.txt 2>/dev/null || echo "")
 CONTENT_CLEANED=$(echo "$CONTENT" | tr -d '\r' | xargs)

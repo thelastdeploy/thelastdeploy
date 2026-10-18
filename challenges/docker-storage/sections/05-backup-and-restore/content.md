@@ -36,18 +36,22 @@ docker run --rm \
 
 ## Lab Tasks
 
-### Task 1: Backup volume
-1. Start the lab in your terminal:
+### Task 1: Backup volume (`dkr-backup-volume`)
+1. Start the lab session:
    ```bash
    tld start dkr-backup-volume
    ```
 2. A named volume `prod-db-vol` exists and contains critical database files.
-3. Your goal is to back up all contents of `prod-db-vol` into a tar archive file named `backup.tar` inside the host directory `~/docker-backup/` (which is already created for you).
-4. Run a temporary container using the template above by making the following substitutions:
-   - Replace `<volume-name>` with `prod-db-vol`.
-   - Replace `<host-backup-directory>` with `~/docker-backup` (or the absolute path `$HOME/docker-backup`).
-   - Replace `<backup-file-name>` with `backup`.
-5. Verify the task:
+3. Run a temporary container to archive the contents of `prod-db-vol` into `backup.tar` inside `~/docker-backup/`:
+   ```bash
+   mkdir -p "$HOME/docker-backup"
+   docker run --rm -v prod-db-vol:/volume -v "$HOME/docker-backup:/backup" alpine tar cvf /backup/backup.tar -C /volume .
+   ```
+4. Verify the created archive contents:
+   ```bash
+   tar -tvf "$HOME/docker-backup/backup.tar"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

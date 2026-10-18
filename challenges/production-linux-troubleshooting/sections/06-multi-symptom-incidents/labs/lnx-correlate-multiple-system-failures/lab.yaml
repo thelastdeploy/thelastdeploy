@@ -1,6 +1,8 @@
 id: lnx-correlate-multiple-system-failures
 title: Correlate Multiple Concurrent System Failures
 xp: 60
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/multi-inc-test

@@ -2,9 +2,11 @@ id: git-save-project-state
 title: "Save Your Project State"
 xp: 40
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
     - "rm -rf $HOME/git-challenge"
     - "mkdir -p $HOME/git-challenge"
-version: 1
+version: 2

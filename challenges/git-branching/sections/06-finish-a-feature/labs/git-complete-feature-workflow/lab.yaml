@@ -2,6 +2,8 @@ id: git-complete-feature-workflow
 title: Complete Feature Workflow
 xp: 30
 estimated_minutes: 10
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -13,4 +15,4 @@ setup:
     - echo 'hello' > $HOME/git-challenge/file.txt
     - git -C $HOME/git-challenge add file.txt
     - git -C $HOME/git-challenge commit -m 'Initial commit'
-version: 1
+version: 2

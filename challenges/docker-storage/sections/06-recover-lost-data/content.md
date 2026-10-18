@@ -36,19 +36,21 @@ docker run --rm \
 
 ## Lab Tasks
 
-### Task 1: Restore application data
-1. Start the lab in your terminal:
+### Task 1: Restore application data (`dkr-restore-application-data`)
+1. Start the lab session:
    ```bash
    tld start dkr-restore-application-data
    ```
-2. An empty volume named `restored-db-vol` is already created for you.
-3. A backup archive `backup.tar` is present in the host directory `~/docker-restore-source/`.
-4. Your goal is to restore the files inside `~/docker-restore-source/backup.tar` into the named volume `restored-db-vol`.
-5. Run a temporary container using the template above by making the following substitutions:
-   - Replace `<volume-name>` with `restored-db-vol`.
-   - Replace `<host-backup-directory>` with `~/docker-restore-source` (or the absolute path `$HOME/docker-restore-source`).
-   - Replace `<backup-file-name>` with `backup`.
-6. Verify the task:
+2. An empty volume named `restored-db-vol` is created for you, and a backup archive `backup.tar` is located at `~/docker-restore-source/backup.tar`.
+3. Run a temporary container to extract the archive contents into `restored-db-vol`:
+   ```bash
+   docker run --rm -v restored-db-vol:/volume -v "$HOME/docker-restore-source:/backup" alpine tar xvf /backup/backup.tar -C /volume
+   ```
+4. Verify the restored file inside the volume:
+   ```bash
+   docker run --rm -v restored-db-vol:/data alpine cat /data/db_state.json
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

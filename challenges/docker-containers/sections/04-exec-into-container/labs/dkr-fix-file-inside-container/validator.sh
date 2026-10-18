@@ -3,8 +3,13 @@
 set -euo pipefail
 
 # Check if container app-to-fix exists and is running
-if ! docker ps --filter name=app-to-fix --format '{{.Names}}' | grep -q "app-to-fix"; then
+if ! docker ps --filter name=app-to-fix --format '{{.Names}}' | grep -q "^app-to-fix$"; then
   echo "FAIL: Container 'app-to-fix' not found running."
+  exit 1
+fi
+
+if ! docker exec app-to-fix test -s /app/config.txt; then
+  echo "FAIL: File /app/config.txt does not exist or is empty inside container."
   exit 1
 fi
 

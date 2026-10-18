@@ -31,15 +31,25 @@ docker image inspect -f '{{.Config.Cmd}}' nginx:alpine
 
 ## Lab Tasks
 
-### Task 1: Find image metadata
-1. Start the lab in your terminal:
+### Task 1: Find image metadata (`dkr-find-image-metadata`)
+1. Start the lab session:
    ```bash
    tld start dkr-find-image-metadata
    ```
-2. The image `alpine:3.18.5` is pre-pulled on your system.
-3. Extract the **Architecture** metadata field of this image using `docker image inspect` and write it to the file `~/docker-test/image_arch.txt` (create the parent directory `~/docker-test/` if it does not exist).
-4. For example, if the architecture is `amd64`, the file should contain exactly `amd64` (or `arm64`, depending on your host machine's architecture).
-5. Verify the task:
+2. The image `alpine:3.18.5` is pre-pulled on your system. Extract its Architecture metadata:
+   ```bash
+   docker image inspect -f '{{.Architecture}}' alpine:3.18.5
+   ```
+3. Create the test output directory and save the architecture into `~/docker-test/image_arch.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   docker image inspect -f '{{.Architecture}}' alpine:3.18.5 > "$HOME/docker-test/image_arch.txt"
+   ```
+4. Verify file contents:
+   ```bash
+   cat "$HOME/docker-test/image_arch.txt"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

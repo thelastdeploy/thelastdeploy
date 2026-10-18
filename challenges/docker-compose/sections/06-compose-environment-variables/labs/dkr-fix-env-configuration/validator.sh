@@ -2,10 +2,16 @@
 # validator.sh — docker-compose / 06-compose-environment-variables / dkr-fix-env-configuration
 set -euo pipefail
 
+COMPOSE_PATH="$HOME/docker-compose/env-vars/docker-compose.yml"
+if [ ! -f "$COMPOSE_PATH" ] || [ ! -s "$COMPOSE_PATH" ]; then
+  echo "FAIL: docker-compose.yml not found or is empty at '$COMPOSE_PATH'."
+  exit 1
+fi
+
 # 1. Check if .env file exists and contains the password
 ENV_PATH="$HOME/docker-compose/env-vars/.env"
-if [ ! -f "$ENV_PATH" ]; then
-  echo "FAIL: .env file not found at '$ENV_PATH'."
+if [ ! -f "$ENV_PATH" ] || [ ! -s "$ENV_PATH" ]; then
+  echo "FAIL: .env file not found or is empty at '$ENV_PATH'."
   exit 1
 fi
 

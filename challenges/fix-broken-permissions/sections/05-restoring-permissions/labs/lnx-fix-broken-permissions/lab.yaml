@@ -2,6 +2,8 @@ id: lnx-fix-broken-permissions
 title: Fix Broken Permissions
 xp: 50
 estimated_minutes: 10
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

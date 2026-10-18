@@ -1,6 +1,8 @@
 id: lnx-observe-system-calls
 title: Observe System Call Boundary
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/syscall-test

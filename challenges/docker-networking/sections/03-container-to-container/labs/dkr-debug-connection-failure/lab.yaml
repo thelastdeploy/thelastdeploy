@@ -2,6 +2,8 @@ id: dkr-debug-connection-failure
 title: "Debug connection failure"
 xp: 35
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
@@ -13,4 +15,4 @@ setup:
     - "docker exec client-app apk add --no-cache curl"
     - "mkdir -p $HOME/docker-test"
     - "rm -f $HOME/docker-test/debug_output.txt"
-version: 2
+version: 3

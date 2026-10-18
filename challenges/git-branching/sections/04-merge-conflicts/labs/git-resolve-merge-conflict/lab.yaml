@@ -2,6 +2,8 @@ id: git-resolve-merge-conflict
 title: Resolve Merge Conflict
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -22,4 +24,4 @@ setup:
     - git -C $HOME/git-challenge add index.html
     - git -C $HOME/git-challenge commit -m 'Edit on main'
     - git -C $HOME/git-challenge merge feature-conflict || true
-version: 1
+version: 2

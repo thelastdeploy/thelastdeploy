@@ -1,6 +1,8 @@
 id: lnx-inspect-kernel-device-interface
 title: Inspect Kernel and Device Interfaces in sysfs and procfs
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sysfs-test

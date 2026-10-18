@@ -1,6 +1,8 @@
 id: lnx-explore-linux-process-isolation
 title: Explore Linux Process Isolation
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/iso-test

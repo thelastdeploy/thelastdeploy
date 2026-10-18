@@ -11,9 +11,9 @@ if [ ! -d "$REPO_DIR/.git" ]; then
   exit 1
 fi
 
-# Verify remote-details.txt exists
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File '$FILE' not found. Did you save the output of 'git remote -v'?"
+# Verify remote-details.txt exists and is non-empty
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File '$FILE' not found or is empty. Did you save the output of 'git remote -v'?"
   exit 1
 fi
 

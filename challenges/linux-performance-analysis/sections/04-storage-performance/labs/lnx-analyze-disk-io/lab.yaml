@@ -1,6 +1,8 @@
 id: lnx-analyze-disk-io
 title: Analyze Disk I/O Utilization and Latency
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/io-perf-test

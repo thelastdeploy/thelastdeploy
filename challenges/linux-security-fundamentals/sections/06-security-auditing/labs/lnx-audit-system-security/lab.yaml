@@ -1,6 +1,8 @@
 id: lnx-audit-system-security
 title: Perform System Security Baseline Audit
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test

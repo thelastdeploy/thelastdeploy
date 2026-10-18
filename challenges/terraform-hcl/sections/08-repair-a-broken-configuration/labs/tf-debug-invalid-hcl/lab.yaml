@@ -2,6 +2,8 @@ id: tf-debug-invalid-hcl
 title: Debug Invalid HCL Configuration
 xp: 30
 estimated_minutes: 8
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

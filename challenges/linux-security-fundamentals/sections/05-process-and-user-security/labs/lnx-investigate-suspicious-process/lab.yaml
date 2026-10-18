@@ -1,6 +1,8 @@
 id: lnx-investigate-suspicious-process
 title: Investigate Suspicious Processes and Backdoors
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test

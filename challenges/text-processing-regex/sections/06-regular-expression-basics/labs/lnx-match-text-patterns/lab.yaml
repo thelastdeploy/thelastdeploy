@@ -1,6 +1,8 @@
 id: lnx-match-text-patterns
 title: Match Text Patterns with Grep Anchors
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/text-test

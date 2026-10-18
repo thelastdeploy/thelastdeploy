@@ -2,6 +2,12 @@
 # validator.sh — docker-troubleshooting / 03-service-unreachable / dkr-restore-service-connectivity
 set -euo pipefail
 
+COMPOSE_PATH="$HOME/docker-troubleshooting/connectivity/docker-compose.yml"
+if [ ! -f "$COMPOSE_PATH" ] || [ ! -s "$COMPOSE_PATH" ]; then
+  echo "FAIL: docker-compose.yml not found or is empty at '$COMPOSE_PATH'."
+  exit 1
+fi
+
 # 1. Get container IDs
 WEB_CID=$(docker ps --filter "label=com.docker.compose.project=connectivity" --filter "label=com.docker.compose.service=web" --filter "status=running" -q)
 DB_CID=$(docker ps --filter "label=com.docker.compose.project=connectivity" --filter "label=com.docker.compose.service=db" --filter "status=running" -q)

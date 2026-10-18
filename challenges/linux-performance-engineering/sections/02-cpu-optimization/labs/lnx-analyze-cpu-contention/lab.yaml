@@ -1,6 +1,8 @@
 id: lnx-analyze-cpu-contention
 title: Analyze CPU Scheduler Contention
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/cpu-opt-test

@@ -1,6 +1,8 @@
 id: lnx-create-virtual-network-interface
 title: Create Virtual Network Interfaces
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/vnet-test

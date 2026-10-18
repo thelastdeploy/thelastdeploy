@@ -2,6 +2,8 @@ id: git-clean-working-tree
 title: Clean Working Tree
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -16,4 +18,4 @@ setup:
     - echo 'log data' > $HOME/git-challenge/debug.log
     - echo 'temp data' > $HOME/git-challenge/temp.tmp
     - echo 'binary' > $HOME/git-challenge/build/out.bin
-version: 1
+version: 2

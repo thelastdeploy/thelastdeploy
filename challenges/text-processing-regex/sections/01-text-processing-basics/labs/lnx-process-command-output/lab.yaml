@@ -1,6 +1,8 @@
 id: lnx-process-command-output
 title: Process Command Output with Head and Redirection
 xp: 15
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/text-test

@@ -2,6 +2,8 @@ id: k8s-use-configmap
 title: "Use ConfigMap as Env Var"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-kind
 setup:
   type: kind
   resource_limits_cpu: 1

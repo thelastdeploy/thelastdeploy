@@ -14,17 +14,42 @@ If you bring down the container with `docker compose down` and restart it, any d
 
 ## Lab Tasks
 
-### Task 1: Recover persistent data
-1. Start the task:
+### Task 1: Recover persistent data (`dkr-recover-persistent-data`)
+1. Start the lab session:
    ```bash
    tld start dkr-recover-persistent-data
    ```
-2. Navigate to `~/docker-troubleshooting/persistence/`.
-3. In this folder, a seed directory `./postgres_data/` has been prepared on the host and contains persistent database marker files.
-4. Open the `docker-compose.yml` file. It has a volume mapping typo that mounts `./postgres_data` inside the container at `/var/lib/postgresql` instead of `/var/lib/postgresql/data`.
-5. Edit the `docker-compose.yml` file to correct this mapping.
-6. Run `docker compose up -d` to reload the service.
-7. Verify the task:
+2. Navigate to `~/docker-troubleshooting/persistence/`:
+   ```bash
+   cd "$HOME/docker-troubleshooting/persistence"
+   ```
+3. Inspect the existing `docker-compose.yml` to observe the erroneous mount path:
+   ```bash
+   cat docker-compose.yml
+   ```
+4. Update `docker-compose.yml` so that `./postgres_data` is mounted to the correct Postgres data directory (`/var/lib/postgresql/data`):
+   ```yaml
+   cat << 'EOF' > docker-compose.yml
+   version: "3.8"
+
+   services:
+     db:
+       image: postgres:15-alpine
+       environment:
+         - POSTGRES_PASSWORD=secret
+       volumes:
+         - ./postgres_data:/var/lib/postgresql/data
+   EOF
+   ```
+5. Apply the updated volume mapping:
+   ```bash
+   docker compose up -d
+   ```
+6. Verify running services:
+   ```bash
+   docker compose ps
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Check if container isolated-app is running
-if ! docker ps --filter name=isolated-app --format '{{.Names}}' | grep -q "isolated-app"; then
+if ! docker ps --filter name=isolated-app --format '{{.Names}}' | grep -q "^isolated-app$"; then
   echo "FAIL: Container 'isolated-app' is not running."
   exit 1
 fi

@@ -2,6 +2,12 @@
 # validator.sh — docker-troubleshooting / 05-container-incident-response / dkr-investigate-production-incident
 set -euo pipefail
 
+COMPOSE_PATH="$HOME/docker-troubleshooting/incident/docker-compose.yml"
+if [ ! -f "$COMPOSE_PATH" ] || [ ! -s "$COMPOSE_PATH" ]; then
+  echo "FAIL: docker-compose.yml not found or is empty at '$COMPOSE_PATH'."
+  exit 1
+fi
+
 # 1. Get container ID
 APP_CID=$(docker ps --filter "label=com.docker.compose.project=incident" --filter "label=com.docker.compose.service=app" --filter "status=running" -q)
 

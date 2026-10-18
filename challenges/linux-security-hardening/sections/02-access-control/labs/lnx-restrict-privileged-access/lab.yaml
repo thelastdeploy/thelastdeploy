@@ -1,6 +1,8 @@
 id: lnx-restrict-privileged-access
 title: Restrict Privileged Access with sudo
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/access-test

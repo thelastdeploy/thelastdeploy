@@ -1,6 +1,8 @@
 id: lnx-investigate-overlay-filesystem
 title: Investigate OverlayFS Storage Layers
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/container-fs-test

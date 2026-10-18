@@ -2,6 +2,8 @@ id: git-inspect-history
 title: Inspect Repository Log
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -14,4 +16,4 @@ setup:
     - git -C $HOME/git-challenge add README.md
     - git -C $HOME/git-challenge commit -m 'Initial commit'
     - rm -f $HOME/git-challenge/latest_commit.txt
-version: 1
+version: 2

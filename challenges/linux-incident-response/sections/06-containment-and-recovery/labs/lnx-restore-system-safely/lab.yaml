@@ -1,6 +1,8 @@
 id: lnx-restore-system-safely
 title: Restore System Safely from Known Good State
 xp: 65
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/recovery-test

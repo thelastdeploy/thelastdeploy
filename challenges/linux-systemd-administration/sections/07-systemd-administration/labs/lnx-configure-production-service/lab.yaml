@@ -1,6 +1,8 @@
 id: lnx-configure-production-service
 title: Configure Production systemd Service
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/prod-service-test

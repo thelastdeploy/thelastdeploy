@@ -3,20 +3,20 @@
 set -euo pipefail
 
 # Check if container crashing-service exists
-if ! docker ps -a --filter name=crashing-service --format '{{.Names}}' | grep -q "crashing-service"; then
+if ! docker ps -a --filter name=crashing-service --format '{{.Names}}' | grep -q "^crashing-service$"; then
   echo "FAIL: Container 'crashing-service' not found."
   exit 1
 fi
 
 # Check if it is running
-RUNNING=$(docker inspect crashing-service --format '{{.State.Running}}')
+RUNNING=$(docker inspect crashing-service --format '{{.State.Running}}' 2>/dev/null || echo "false")
 if [ "$RUNNING" != "true" ]; then
   echo "FAIL: Container 'crashing-service' is not running."
   exit 1
 fi
 
 # Check if the execution command matches sleep 1000
-CMD=$(docker inspect crashing-service --format '{{.Config.Cmd}}')
+CMD=$(docker inspect crashing-service --format '{{.Config.Cmd}}' 2>/dev/null || echo "")
 if [[ "$CMD" != *"sleep"* ]] || [[ "$CMD" != *"1000"* ]] || [[ "$CMD" == *"sleepy"* ]]; then
   echo "FAIL: Container 'crashing-service' command has not been corrected. Got command: '$CMD'"
   exit 1

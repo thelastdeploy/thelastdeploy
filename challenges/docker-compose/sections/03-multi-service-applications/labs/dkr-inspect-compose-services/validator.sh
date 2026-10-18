@@ -18,5 +18,5 @@ if [ "$DB_COUNT" -ne 1 ]; then
   exit 1
 fi
 
-echo "PASS: Successfully scaled service 'web' to 2 instances!"
+echo "PASS: Successfully scaled service 'web' to 2 instances."
 exit 0

@@ -3,6 +3,11 @@ set -euo pipefail
 
 REPO_DIR="$HOME/git-challenge"
 
+if [ ! -d "$REPO_DIR" ]; then
+  echo "FAIL: Directory $REPO_DIR does not exist."
+  exit 1
+fi
+
 if [ ! -d "$REPO_DIR/.git" ]; then
   echo "FAIL: Git repository not initialized inside $REPO_DIR (missing .git directory)."
   exit 1

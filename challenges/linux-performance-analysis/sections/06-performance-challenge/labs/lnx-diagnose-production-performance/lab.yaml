@@ -1,6 +1,8 @@
 id: lnx-diagnose-production-performance
 title: Diagnose Production Performance Degradation Capstone
 xp: 75
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/perf-challenge

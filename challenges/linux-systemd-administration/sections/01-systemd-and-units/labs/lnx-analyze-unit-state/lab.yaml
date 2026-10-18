@@ -1,6 +1,8 @@
 id: lnx-analyze-unit-state
 title: Analyze Unit State
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/systemd-test

@@ -1,6 +1,8 @@
 id: lnx-trace-process-lifecycle
 title: Trace Process Execution Lifecycle
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/proc-internals-test

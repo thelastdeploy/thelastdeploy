@@ -24,6 +24,7 @@ run_preflight() {
     echo -e "  ${GREEN}✓${RESET} Isolated Dev CLI ready: $CLI"
     echo -e "  ${GREEN}✓${RESET} Target environment: local (config dir: $TLD_DIR)"
     echo -e "  ${CYAN}⚙${RESET} Syncing challenge definitions into dev environment..."
+    find "$TLD_DIR/challenges" -name "module.json" -delete 2>/dev/null || true
     (cd "$PROJECT_ROOT" && "$CLI" sync --all >/dev/null 2>&1 || true)
     echo -e "  ${GREEN}✓${RESET} Challenge definitions synced."
 

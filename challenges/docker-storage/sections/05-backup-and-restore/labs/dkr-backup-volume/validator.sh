@@ -5,8 +5,8 @@ set -euo pipefail
 TAR_PATH="$HOME/docker-backup/backup.tar"
 
 # 1. Check if the tarball exists
-if [ ! -f "$TAR_PATH" ]; then
-  echo "FAIL: Backup archive 'backup.tar' not found in ~/docker-backup/."
+if [ ! -f "$TAR_PATH" ] || [ ! -s "$TAR_PATH" ]; then
+  echo "FAIL: Backup archive 'backup.tar' not found or is empty in ~/docker-backup/."
   exit 1
 fi
 

@@ -3,6 +3,8 @@ title: "Identify container startup error"
 xp: 25
 estimated_minutes: 5
 order: 1
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:

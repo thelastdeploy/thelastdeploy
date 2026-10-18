@@ -38,26 +38,46 @@ git push -u origin <branch-name>
 
 ## Lab Tasks
 
-### Task 1: Push Changes to Remote
-1. Start the lab in your terminal:
+### Task 1: Push Changes to Remote (`git-first-push`)
+1. Start the lab session:
    ```bash
    tld start git-first-push
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Changes successfully pushed to the remote repository.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Ensure you are on the `main` branch and inspect the unpushed commit:
+   ```bash
+   git status
+   ```
+4. Push your local commits to the remote `origin` repository:
+   ```bash
+   git push origin main
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Push a New Local Branch
-1. Start the lab in your terminal:
+### Task 2: Push a New Local Branch (`git-push-new-branch`)
+1. Start the lab session:
    ```bash
    tld start git-push-new-branch
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: New local branch pushed and tracking configured successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Push the `feature-login` branch to `origin` and establish upstream tracking using the `-u` flag:
+   ```bash
+   git push -u origin feature-login
+   ```
+4. Verify that upstream tracking is established:
+   ```bash
+   git branch -vv
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

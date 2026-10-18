@@ -1,6 +1,8 @@
 id: lnx-configure-ssh-client
 title: Configure SSH Client Connection Aliases
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test/config_dir

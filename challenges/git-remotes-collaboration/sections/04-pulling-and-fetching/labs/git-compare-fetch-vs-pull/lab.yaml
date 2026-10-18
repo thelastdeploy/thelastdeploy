@@ -2,6 +2,8 @@ id: git-compare-fetch-vs-pull
 title: Compare Fetch vs Pull
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -30,4 +32,4 @@ setup:
     - git -C $HOME/temp-git-repo commit -m 'Compare commit details'
     - git -C $HOME/temp-git-repo push origin feature-compare
     - rm -rf $HOME/temp-git-repo
-version: 1
+version: 2

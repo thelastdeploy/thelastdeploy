@@ -30,9 +30,9 @@ if git -C "$REPO_DIR" diff --cached --name-only | grep -q "three.txt"; then
   exit 1
 fi
 
-# Verify three.txt exists in working tree
-if [ ! -f "$REPO_DIR/three.txt" ]; then
-  echo "FAIL: File 'three.txt' not found in working directory."
+# Verify three.txt exists in working tree and is not empty
+if [ ! -f "$REPO_DIR/three.txt" ] || [ ! -s "$REPO_DIR/three.txt" ]; then
+  echo "FAIL: File 'three.txt' not found or empty in working directory."
   exit 1
 fi
 

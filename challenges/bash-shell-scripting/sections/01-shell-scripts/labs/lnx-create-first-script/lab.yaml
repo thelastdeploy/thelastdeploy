@@ -1,6 +1,8 @@
 id: lnx-create-first-script
 title: Create Your First Shell Script
 xp: 15
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/script-test

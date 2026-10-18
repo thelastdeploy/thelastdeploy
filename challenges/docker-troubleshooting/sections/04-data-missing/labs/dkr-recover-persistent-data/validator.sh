@@ -2,6 +2,12 @@
 # validator.sh — docker-troubleshooting / 04-data-missing / dkr-recover-persistent-data
 set -euo pipefail
 
+COMPOSE_PATH="$HOME/docker-troubleshooting/persistence/docker-compose.yml"
+if [ ! -f "$COMPOSE_PATH" ] || [ ! -s "$COMPOSE_PATH" ]; then
+  echo "FAIL: docker-compose.yml not found or is empty at '$COMPOSE_PATH'."
+  exit 1
+fi
+
 # 1. Get database container ID
 DB_CID=$(docker ps --filter "label=com.docker.compose.project=persistence" --filter "label=com.docker.compose.service=db" --filter "status=running" -q)
 

@@ -2,6 +2,8 @@ id: k8s-debug-network-path
 title: "Debug Service Endpoints"
 xp: 35
 estimated_minutes: 5
+environment:
+  profile: tld-kind
 setup:
   type: kind
   resource_limits_cpu: 1

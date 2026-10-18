@@ -2,6 +2,8 @@ id: nginx-pretty-url
 title: "Configure Pretty URL Rewrite"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

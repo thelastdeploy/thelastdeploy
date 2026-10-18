@@ -36,35 +36,56 @@ A Docker container passes through several states during its lifetime: Created, R
 
 ## Lab Tasks
 
-### Task 1: Remove a container
-1. Start the lab in your terminal:
+### Task 1: Remove a container (`dkr-remove-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-remove-container
    ```
-2. Your system has a stopped container named `old-trash-container`. Delete this container permanently.
-3. Verify the task:
+2. Your system has a stopped container named `old-trash-container`. Permanently remove it:
+   ```bash
+   docker rm old-trash-container
+   ```
+3. Verify the container has been deleted:
+   ```bash
+   docker ps -a --filter name=old-trash-container
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Start a stopped container
-1. Start the lab in your terminal:
+### Task 2: Start a stopped container (`dkr-start-stopped-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-start-stopped-container
    ```
-2. There is an existing stopped container named `stopped-sleeper` on your host. Start the container so that it runs in the background.
-3. Verify the task:
+2. Start the existing stopped container named `stopped-sleeper`:
+   ```bash
+   docker start stopped-sleeper
+   ```
+3. Verify the container is running:
+   ```bash
+   docker ps --filter name=stopped-sleeper
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 3: Stop a running container
-1. Start the lab in your terminal:
+### Task 3: Stop a running container (`dkr-stop-running-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-stop-running-container
    ```
-2. A container named `runaway-container` is currently running. Stop it safely (do not delete or remove it).
-3. Verify the task:
+2. Stop the running container named `runaway-container` safely without removing it:
+   ```bash
+   docker stop runaway-container
+   ```
+3. Verify the container is stopped:
+   ```bash
+   docker ps -a --filter name=runaway-container
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

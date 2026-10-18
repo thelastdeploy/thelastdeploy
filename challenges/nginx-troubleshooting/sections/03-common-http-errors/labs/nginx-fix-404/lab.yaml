@@ -2,6 +2,8 @@ id: nginx-fix-404
 title: "Fix a 404 Not Found Error"
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

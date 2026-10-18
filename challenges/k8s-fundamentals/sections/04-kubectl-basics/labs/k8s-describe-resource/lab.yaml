@@ -2,6 +2,8 @@ id: k8s-describe-resource
 title: "Describe a Resource"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-kind
 setup:
   type: kind
   resource_limits_cpu: 1

@@ -1,6 +1,8 @@
 id: lnx-establish-incident-context
 title: Establish Incident Context and Initial Observation
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ir-test

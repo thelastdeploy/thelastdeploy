@@ -1,6 +1,8 @@
 id: lnx-explore-inodes-and-filesystems
 title: Explore Inodes and Filesystem Metadata
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/vfs-test

@@ -1,6 +1,8 @@
 id: lnx-recover-dependent-services
 title: Recover Dependent Service Stack
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/svc-outage-test

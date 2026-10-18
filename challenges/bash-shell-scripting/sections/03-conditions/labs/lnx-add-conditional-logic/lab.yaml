@@ -1,6 +1,8 @@
 id: lnx-add-conditional-logic
 title: Add Conditional Logic
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/script-test

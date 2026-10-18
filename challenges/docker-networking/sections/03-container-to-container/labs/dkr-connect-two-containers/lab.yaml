@@ -2,6 +2,8 @@ id: dkr-connect-two-containers
 title: "Connect two containers"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
@@ -13,4 +15,4 @@ setup:
     - "docker exec client-source apk add --no-cache curl"
     - "mkdir -p $HOME/docker-test"
     - "rm -f $HOME/docker-test/fetched_page.txt"
-version: 2
+version: 3

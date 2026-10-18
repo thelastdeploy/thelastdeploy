@@ -2,6 +2,8 @@ id: git-recover-development-branch
 title: Recover Development Branch
 xp: 30
 estimated_minutes: 10
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -37,4 +39,4 @@ setup:
     - echo 'bug 2' > $HOME/git-challenge/bug2.txt
     - git -C $HOME/git-challenge add bug2.txt
     - git -C $HOME/git-challenge commit -m 'Add bug 2'
-version: 1
+version: 2

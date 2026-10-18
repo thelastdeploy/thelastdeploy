@@ -2,6 +2,8 @@ id: tf-check-version
 title: Verify Terraform Version
 xp: 10
 estimated_minutes: 3
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

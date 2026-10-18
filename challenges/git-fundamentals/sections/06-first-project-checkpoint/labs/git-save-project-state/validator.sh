@@ -8,8 +8,8 @@ if [ ! -d "$REPO/.git" ]; then
   exit 1
 fi
 
-if [ ! -f "$REPO/.gitignore" ]; then
-  echo "FAIL: .gitignore file not found."
+if [ ! -f "$REPO/.gitignore" ] || [ ! -s "$REPO/.gitignore" ]; then
+  echo "FAIL: .gitignore file not found or is empty in $REPO."
   exit 1
 fi
 
@@ -19,8 +19,8 @@ if ! git -C "$REPO" check-ignore -q "temp.tmp"; then
   exit 1
 fi
 
-if [ ! -f "$REPO/index.html" ]; then
-  echo "FAIL: index.html not found."
+if [ ! -f "$REPO/index.html" ] || [ ! -s "$REPO/index.html" ]; then
+  echo "FAIL: index.html not found or is empty in $REPO."
   exit 1
 fi
 

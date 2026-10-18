@@ -2,6 +2,8 @@ id: dkr-run-hello
 title: "Run hello-world container"
 xp: 50
 estimated_minutes: 10
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands: []

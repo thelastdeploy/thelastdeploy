@@ -2,6 +2,8 @@ id: nginx-exact-match
 title: "Configure Exact Match"
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

@@ -18,8 +18,8 @@ if [ -f "$REPO_DIR/.git/MERGE_HEAD" ]; then
 fi
 
 # Verify file has been restored to pre-merge state
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: index.html not found."
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: index.html not found or empty."
   exit 1
 fi
 

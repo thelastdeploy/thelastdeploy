@@ -2,6 +2,8 @@ id: tf-format-resource
 title: Format Your Resource Configuration
 xp: 15
 estimated_minutes: 3
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

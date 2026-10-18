@@ -2,6 +2,8 @@ id: nginx-alias-directive
 title: "Configure Alias Directive"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

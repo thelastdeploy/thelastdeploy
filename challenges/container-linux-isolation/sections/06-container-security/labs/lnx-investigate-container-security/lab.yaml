@@ -1,6 +1,8 @@
 id: lnx-investigate-container-security
 title: Investigate Container Security Capabilities and Seccomp
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/container-sec-test

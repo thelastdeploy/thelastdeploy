@@ -45,25 +45,38 @@ docker network disconnect my-custom-net my-running-container
 
 ## Lab Tasks
 
-### Task 1: Attach container to network
-1. Start the lab in your terminal:
+### Task 1: Attach container to network (`dkr-attach-container-network`)
+1. Start the lab session:
    ```bash
    tld start dkr-attach-container-network
    ```
-2. A running container named `isolated-app` and a custom network named `production-net` are available on your host.
-3. Attach the container `isolated-app` to the `production-net` network.
-4. Verify the task:
+2. A running container named `isolated-app` and a custom network named `production-net` are available. Connect the container to the network:
+   ```bash
+   docker network connect production-net isolated-app
+   ```
+3. Verify that `isolated-app` is attached to `production-net`:
+   ```bash
+   docker inspect isolated-app --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{end}}'
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Create a bridge network
-1. Start the lab in your terminal:
+### Task 2: Create a bridge network (`dkr-create-bridge-network`)
+1. Start the lab session:
    ```bash
    tld start dkr-create-bridge-network
    ```
-2. Create a user-defined bridge network named `custom-bridge-net`.
-3. Verify the task:
+2. Create a user-defined bridge network named `custom-bridge-net`:
+   ```bash
+   docker network create --driver bridge custom-bridge-net
+   ```
+3. Verify the network driver and creation:
+   ```bash
+   docker network inspect custom-bridge-net --format '{{.Driver}}'
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

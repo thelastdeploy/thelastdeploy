@@ -12,9 +12,9 @@ if [ ! -d "$REPO_DIR/.git" ]; then
   exit 1
 fi
 
-# Verify lost-hash.txt exists
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File '$FILE' not found. Please output the lost commit hash to '$FILE'."
+# Verify lost-hash.txt exists and is not empty
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File '$FILE' not found or empty. Please output the lost commit hash to '$FILE'."
   exit 1
 fi
 

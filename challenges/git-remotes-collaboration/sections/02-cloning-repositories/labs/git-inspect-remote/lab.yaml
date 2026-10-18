@@ -2,6 +2,8 @@ id: git-inspect-remote
 title: Inspect Remote Properties
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -17,4 +19,4 @@ setup:
     - git -C $HOME/temp-git-repo push -u origin HEAD
     - rm -rf $HOME/temp-git-repo
     - git clone $HOME/git-remote-server.git $HOME/git-challenge
-version: 1
+version: 2

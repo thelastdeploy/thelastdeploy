@@ -1,6 +1,8 @@
 id: lnx-investigate-swap-activity
 title: Investigate Swap Activity and Page Faults
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/mem-perf-test

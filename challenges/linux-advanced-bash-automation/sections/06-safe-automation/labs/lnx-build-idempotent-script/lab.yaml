@@ -1,6 +1,8 @@
 id: lnx-build-idempotent-script
 title: Build an Idempotent Automation Script
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/idempotent-test

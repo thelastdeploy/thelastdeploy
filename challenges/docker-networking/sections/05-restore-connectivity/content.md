@@ -16,15 +16,21 @@ When troubleshooting network connectivity issues:
 
 ## Lab Tasks
 
-### Task 1: Fix broken container network
-1. Start the lab in your terminal:
+### Task 1: Fix broken container network (`dkr-fix-broken-container-network`)
+1. Start the lab session:
    ```bash
    tld start dkr-fix-broken-container-network
    ```
-2. A running container named `broken-web` was supposed to serve a website inside the custom network `web-net`.
-3. However, `broken-web` is currently isolated (using the `none` network driver) and cannot talk to `web-net`.
-4. Restore connectivity. Attach `broken-web` to the `web-net` custom network.
-5. Verify the task:
+2. A running container named `broken-web` was started with the `none` network driver and cannot communicate on `web-net`. Disconnect the container from `none` and connect it to the `web-net` custom network:
+   ```bash
+   docker network disconnect none broken-web
+   docker network connect web-net broken-web
+   ```
+3. Verify that `broken-web` is attached to `web-net`:
+   ```bash
+   docker inspect broken-web --format '{{range $k, $v := .NetworkSettings.Networks}}{{$k}} {{end}}'
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

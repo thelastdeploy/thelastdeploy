@@ -2,6 +2,8 @@ id: k8s-sidecar-pod
 title: "Deploy a Sidecar Pod"
 xp: 40
 estimated_minutes: 10
+environment:
+  profile: tld-kind
 setup:
   type: kind
   resource_limits_cpu: 1

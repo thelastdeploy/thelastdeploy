@@ -26,21 +26,28 @@ When you build and run this container, Nginx will automatically serve your custo
 
 ## Lab Tasks
 
-### Task 1: Build a custom Nginx site
-1. Start the lab in your terminal:
+### Task 1: Build a custom Nginx site (`dkr-build-custom-nginx-site`)
+1. Start the lab session:
    ```bash
    tld start dkr-build-custom-nginx-site
    ```
-2. Navigate to the directory `~/docker-build/nginx-custom/`.
-3. In this directory, you will find a file named `index.html` containing:
-   ```html
-   <h1>Hello from Nginx</h1>
+2. Navigate to `~/docker-build/nginx-custom/` and author the `Dockerfile`:
+   ```bash
+   mkdir -p "$HOME/docker-build/nginx-custom"
+   cat << 'EOF' > "$HOME/docker-build/nginx-custom/Dockerfile"
+   FROM nginx:alpine
+   COPY index.html /usr/share/nginx/html/index.html
+   EOF
    ```
-4. Create a `Dockerfile` inside this directory:
-   - Use `nginx:alpine` as the base image.
-   - Copy `index.html` into `/usr/share/nginx/html/index.html` inside the image.
-5. Build the Docker image and tag it as `my-nginx-web:latest`.
-6. Verify the task:
+3. Build the Docker image tagged as `my-nginx-web:latest`:
+   ```bash
+   docker build -t my-nginx-web:latest "$HOME/docker-build/nginx-custom"
+   ```
+4. Verify that the image has been built and listed in local storage:
+   ```bash
+   docker images my-nginx-web:latest
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

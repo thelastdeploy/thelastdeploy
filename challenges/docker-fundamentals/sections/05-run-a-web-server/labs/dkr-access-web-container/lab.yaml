@@ -2,6 +2,8 @@ id: dkr-access-web-container
 title: "Access web container"
 xp: 35
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
@@ -9,4 +11,4 @@ setup:
     - "docker run -d --name secret-web -p 8082:80 nginx:alpine"
     - "mkdir -p $HOME/docker-test"
     - "rm -f $HOME/docker-test/web_status.txt"
-version: 1
+version: 2

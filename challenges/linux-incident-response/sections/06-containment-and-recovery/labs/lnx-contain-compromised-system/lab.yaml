@@ -1,6 +1,8 @@
 id: lnx-contain-compromised-system
 title: Contain Compromised System Safely
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/recovery-test

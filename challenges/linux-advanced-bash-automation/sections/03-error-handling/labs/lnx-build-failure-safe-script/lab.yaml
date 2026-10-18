@@ -1,6 +1,8 @@
 id: lnx-build-failure-safe-script
 title: Build a Failure-Safe Script with strict mode
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/err-test

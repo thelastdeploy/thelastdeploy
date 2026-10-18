@@ -1,6 +1,8 @@
 id: lnx-investigate-compromised-server
 title: Investigate Compromised Server Forensic Capstone
 xp: 100
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ir-capstone

@@ -1,6 +1,8 @@
 id: lnx-recover-service-startup
 title: Recover Service Startup
 xp: 50
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/fail-test

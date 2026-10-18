@@ -41,26 +41,43 @@ This shows tracking branch status, pull/push rules, and endpoints.
 
 ## Lab Tasks
 
-### Task 1: Clone a Remote Repository
-1. Start the lab in your terminal:
+### Task 1: Clone a Remote Repository (`git-clone-repository`)
+1. Start the lab session:
    ```bash
    tld start git-clone-repository
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Remote repository cloned successfully.
-4. Verify the task:
+2. Clone the remote repository located at `$HOME/git-remote-server.git` into `~/git-challenge`:
+   ```bash
+   git clone "$HOME/git-remote-server.git" "$HOME/git-challenge"
+   ```
+3. Navigate into the cloned repository and verify `hello.txt` is present:
+   ```bash
+   cd "$HOME/git-challenge"
+   ls -la hello.txt
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Inspect Remote Properties
-1. Start the lab in your terminal:
+### Task 2: Inspect Remote Properties (`git-inspect-remote`)
+1. Start the lab session:
    ```bash
    tld start git-inspect-remote
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Remote repository details inspected and recorded successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Inspect remote URLs in verbose mode and save the output to `remote-details.txt`:
+   ```bash
+   git remote -v > remote-details.txt
+   ```
+4. View the contents of `remote-details.txt` to verify origin endpoints:
+   ```bash
+   cat remote-details.txt
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

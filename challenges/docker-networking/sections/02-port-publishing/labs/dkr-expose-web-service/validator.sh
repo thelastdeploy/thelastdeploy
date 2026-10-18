@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Check if container web-service exists and is running
-if ! docker ps --filter name=web-service --format '{{.Names}}' | grep -q "web-service"; then
+if ! docker ps --filter name=web-service --format '{{.Names}}' | grep -q "^web-service$"; then
   echo "FAIL: Container 'web-service' not found running."
   exit 1
 fi

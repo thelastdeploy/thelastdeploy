@@ -63,6 +63,20 @@ harness_start_lab() {
 
     echo -e "  ${GREEN}✓${RESET} Container active: ${DIM}$ACTIVE_CONTAINER_ID${RESET}"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Lab environment ready. Container: $ACTIVE_CONTAINER_ID" >> "$CURRENT_TEST_LOG"
+
+    # For labs running an inner Docker daemon (tld-dind), seed common base images from host cache
+    if docker exec "$ACTIVE_CONTAINER_ID" which docker >/dev/null 2>&1; then
+        local missing_images=()
+        for img in "alpine:latest" "nginx:alpine" "postgres:15-alpine"; do
+            if ! docker exec "$ACTIVE_CONTAINER_ID" docker image inspect "$img" >/dev/null 2>&1; then
+                missing_images+=("$img")
+            fi
+        done
+        if [[ ${#missing_images[@]} -gt 0 ]]; then
+            docker save "${missing_images[@]}" 2>/dev/null | docker exec -i "$ACTIVE_CONTAINER_ID" docker load >/dev/null 2>&1 || true
+        fi
+    fi
+
     return 0
 }
 

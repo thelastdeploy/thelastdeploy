@@ -1,6 +1,8 @@
 id: lnx-optimize-storage-performance
 title: Optimize Storage I/O Performance
 xp: 60
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/io-opt-test

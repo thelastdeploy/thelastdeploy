@@ -1,6 +1,8 @@
 id: lnx-create-custom-service
 title: Create Custom systemd Service
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/unit-test

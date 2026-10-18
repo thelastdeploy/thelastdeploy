@@ -2,6 +2,8 @@ id: lnx-complete-linux-mastery
 title: "Complete Linux Mastery Grand Capstone"
 xp: 150
 description: "Execute the comprehensive Diagnose -> Repair -> Harden -> Verify workflow across a complex, multi-subsystem degraded Linux production environment."
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/linux-mastery

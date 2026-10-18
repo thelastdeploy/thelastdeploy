@@ -30,8 +30,8 @@ if [ "$LOCAL_HEAD" != "$CORRECT_HASH" ]; then
 fi
 
 # Verify file actually exists and contains the correct contents
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File '$FILE' not found in working copy."
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File '$FILE' not found or empty in working copy."
   exit 1
 fi
 

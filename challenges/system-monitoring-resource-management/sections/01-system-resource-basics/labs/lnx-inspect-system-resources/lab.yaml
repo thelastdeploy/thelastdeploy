@@ -14,6 +14,8 @@ instructions: '
   3. Write the total memory value (`16Gi`) into `$HOME/mon-test/total_ram.txt`.
 
   '
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/mon-test

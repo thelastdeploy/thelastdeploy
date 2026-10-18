@@ -1,6 +1,8 @@
 id: lnx-recover-broken-systemd-stack
 title: Recover Broken systemd Service Stack
 xp: 70
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/systemd-challenge

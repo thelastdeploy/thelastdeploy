@@ -1,6 +1,8 @@
 id: lnx-harden-sensitive-files
 title: Harden Sensitive System Files
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/fs-sec-test

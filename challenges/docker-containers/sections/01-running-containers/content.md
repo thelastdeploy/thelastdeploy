@@ -28,24 +28,38 @@ docker run -d alpine sleep 100
 
 ## Lab Tasks
 
-### Task 1: Name a container
-1. Start the lab in your terminal:
+### Task 1: Name a container (`dkr-name-a-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-name-a-container
    ```
-2. Start an `alpine` container in detached mode (background) named `custom-app` that runs `sleep 1000`.
-3. Verify the task:
+2. Start an `alpine` container in detached mode named `custom-app` that runs `sleep 1000`:
+   ```bash
+   docker run -d --name custom-app alpine sleep 1000
+   ```
+3. Verify the container is running:
+   ```bash
+   docker ps --filter name=custom-app
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Run a detached container
-1. Start the lab in your terminal:
+### Task 2: Run a detached container (`dkr-run-detached-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-run-detached-container
    ```
-2. Start an `alpine` container running in detached mode named `background-sleeper` that executes `sleep 500`.
-3. Verify the task:
+2. Start an `alpine` container in detached mode named `background-sleeper` that runs `sleep 500`:
+   ```bash
+   docker run -d --name background-sleeper alpine sleep 500
+   ```
+3. Verify the container is running:
+   ```bash
+   docker ps --filter name=background-sleeper
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

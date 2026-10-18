@@ -1,6 +1,8 @@
 id: lnx-explore-process-namespaces
 title: Explore Linux Namespace Types
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ns-test

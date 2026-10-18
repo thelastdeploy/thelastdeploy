@@ -1,6 +1,8 @@
 id: lnx-identify-root-cause
 title: Identify Root Cause of Production Outage
 xp: 70
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/multi-inc-test

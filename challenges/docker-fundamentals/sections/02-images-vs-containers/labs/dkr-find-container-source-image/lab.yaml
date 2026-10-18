@@ -2,6 +2,8 @@ id: dkr-find-container-source-image
 title: "Find container source image"
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
@@ -9,4 +11,4 @@ setup:
     - "docker run -d --name source-check-target alpine:3.18.5 sleep 1000"
     - "mkdir -p $HOME/docker-test"
     - "rm -f $HOME/docker-test/source_image.txt"
-version: 1
+version: 2

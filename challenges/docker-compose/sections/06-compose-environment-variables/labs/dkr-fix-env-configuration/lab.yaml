@@ -2,6 +2,8 @@ id: dkr-fix-env-configuration
 title: "Use .env file for configuration"
 xp: 45
 estimated_minutes: 10
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:

@@ -26,34 +26,50 @@ If you connect two containers `web-app` and `db-server` to a custom bridge netwo
 
 ## Lab Tasks
 
-### Task 1: Connect two containers
-1. Start the lab in your terminal:
+### Task 1: Connect two containers (`dkr-connect-two-containers`)
+1. Start the lab session:
    ```bash
    tld start dkr-connect-two-containers
    ```
-2. A custom bridge network named `lab-net` has been pre-created. Two containers are running in it:
+2. A custom bridge network named `lab-net` has been pre-created with two containers running in it:
    - `server-target` (an Nginx server on port 80)
-   - `client-source` (a simple Alpine shell container)
-3. Execute a `curl` request from **inside** `client-source` to fetch the homepage of `server-target` using its container name hostname (`server-target`).
-4. Save the command output (the HTML response) to a file named `fetched_page.txt` inside your `~/docker-test/` directory on the host.
-   *Hint: You can use `docker exec client-source curl -s http://server-target` to request the homepage and redirect the output to the target file on the host.*
-5. Verify the task:
+   - `client-source` (an Alpine container with curl installed)
+3. Execute `curl` from inside `client-source` to fetch the homepage of `server-target` and save the response to `~/docker-test/fetched_page.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   docker exec client-source curl -s http://server-target > "$HOME/docker-test/fetched_page.txt"
+   ```
+4. Verify the saved file contents:
+   ```bash
+   head -n 5 "$HOME/docker-test/fetched_page.txt"
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Debug connection failure
-1. Start the lab in your terminal:
+### Task 2: Debug connection failure (`dkr-debug-connection-failure`)
+1. Start the lab session:
    ```bash
    tld start dkr-debug-connection-failure
    ```
-2. Two containers have been started:
-   - `backend-service` (running on custom network `debug-net`)
-   - `client-app` (running on the default `bridge` network)
-3. Because they are on different networks, `client-app` cannot resolve or reach `backend-service`.
-4. Fix this connection issue by attaching `client-app` to the `debug-net` custom network using `docker network connect`.
-5. Once connected, execute a `curl` command inside `client-app` to fetch the homepage of `backend-service` (`http://backend-service:80`), and save the HTML response to a file named `debug_output.txt` inside your `~/docker-test/` directory on the host.
-6. Verify the task:
+2. Two containers are currently running:
+   - `backend-service` (attached to custom network `debug-net`)
+   - `client-app` (attached to the default `bridge` network)
+3. Connect `client-app` to the `debug-net` network:
+   ```bash
+   docker network connect debug-net client-app
+   ```
+4. Execute `curl` from inside `client-app` to fetch the homepage of `backend-service` and save the response to `~/docker-test/debug_output.txt`:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   docker exec client-app curl -s http://backend-service > "$HOME/docker-test/debug_output.txt"
+   ```
+5. Verify the saved file contents:
+   ```bash
+   head -n 5 "$HOME/docker-test/debug_output.txt"
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```

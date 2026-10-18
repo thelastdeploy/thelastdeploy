@@ -1,6 +1,8 @@
 id: lnx-build-reusable-shell-library
 title: Build a Reusable Shell Library
 xp: 35
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/lib-test

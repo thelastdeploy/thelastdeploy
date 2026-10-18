@@ -1,6 +1,8 @@
 id: lnx-trace-linux-boot-process
 title: Trace Linux Boot Process Stages
 xp: 25
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/boot-test

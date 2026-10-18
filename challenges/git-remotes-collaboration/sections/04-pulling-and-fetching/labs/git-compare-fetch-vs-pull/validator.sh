@@ -11,9 +11,9 @@ if [ ! -d "$REPO_DIR/.git" ]; then
   exit 1
 fi
 
-# Verify fetch-log.txt exists
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File '$FILE' not found. Did you save the remote commit message to fetch-log.txt?"
+# Verify fetch-log.txt exists and is not empty
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File '$FILE' not found or empty. Did you save the remote commit message to fetch-log.txt?"
   exit 1
 fi
 

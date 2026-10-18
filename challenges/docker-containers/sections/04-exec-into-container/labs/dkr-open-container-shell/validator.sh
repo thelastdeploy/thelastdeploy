@@ -3,8 +3,13 @@
 set -euo pipefail
 
 # Check if container interactive-shell-target exists and is running
-if ! docker ps --filter name=interactive-shell-target --format '{{.Names}}' | grep -q "interactive-shell-target"; then
+if ! docker ps --filter name=interactive-shell-target --format '{{.Names}}' | grep -q "^interactive-shell-target$"; then
   echo "FAIL: Container 'interactive-shell-target' not found running."
+  exit 1
+fi
+
+if ! docker exec interactive-shell-target test -s /tmp/touchme; then
+  echo "FAIL: File /tmp/touchme does not exist or is empty inside container."
   exit 1
 fi
 

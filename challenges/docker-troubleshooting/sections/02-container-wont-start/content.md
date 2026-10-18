@@ -27,16 +27,28 @@ To troubleshoot:
 
 ## Lab Tasks
 
-### Task 1: Fix container startup failure (port collision)
-1. Start the task:
+### Task 1: Fix container startup failure (`dkr-fix-startup-failure`)
+1. Start the lab session:
    ```bash
    tld start dkr-fix-startup-failure
    ```
-2. A background container named `host-port-occupier` is running and occupying host port `8084`.
-3. Try to run a container named `nginx-service` using the image `nginx:alpine` and mapping host port `8084` to container port `80`. It will fail because the port is already allocated.
-4. Stop and remove the blocking container (`host-port-occupier`).
-5. Run the new container `nginx-service` on port `8084:80`.
-6. Verify the solution:
+2. Verify that `host-port-occupier` is currently holding port 8084:
+   ```bash
+   docker ps --filter "name=host-port-occupier"
+   ```
+3. Stop and remove the occupying container:
+   ```bash
+   docker rm -f host-port-occupier
+   ```
+4. Start the required `nginx-service` container mapping port 8084 to port 80:
+   ```bash
+   docker run -d --name nginx-service -p 8084:80 nginx:alpine
+   ```
+5. Confirm that `nginx-service` is up and listening on port 8084:
+   ```bash
+   docker ps --filter "name=nginx-service"
+   ```
+6. Validate your solution:
    ```bash
    tld check
    ```

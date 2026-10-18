@@ -18,19 +18,52 @@ If a `web` container needs to talk to a `db` container, both MUST be connected t
 
 ## Lab Tasks
 
-### Task 1: Restore service connectivity
-1. Start the task:
+### Task 1: Restore service connectivity (`dkr-restore-service-connectivity`)
+1. Start the lab session:
    ```bash
    tld start dkr-restore-service-connectivity
    ```
-2. Navigate to `~/docker-troubleshooting/connectivity/`.
-3. You will find a `docker-compose.yml` file where:
-   - `web` is on network `web-net`
-   - `db` is on network `db-net`
-   - Because they are on separate networks, the web application cannot connect to the database.
-4. Edit the `docker-compose.yml` to put both services on the same network (you can use an existing network or define a new one).
-5. Run `docker compose up -d` to restart the stack.
-6. Verify the solution:
+2. Navigate to `~/docker-troubleshooting/connectivity/`:
+   ```bash
+   cd "$HOME/docker-troubleshooting/connectivity"
+   ```
+3. Inspect the current `docker-compose.yml` to see the network isolation between `web` and `db`:
+   ```bash
+   cat docker-compose.yml
+   ```
+4. Update `docker-compose.yml` so that both `web` and `db` connect to the same network (e.g. `app-net`):
+   ```yaml
+   cat << 'EOF' > docker-compose.yml
+   version: "3.8"
+
+   services:
+     web:
+       image: nginx:alpine
+       ports:
+         - "8085:80"
+       networks:
+         - app-net
+
+     db:
+       image: postgres:15-alpine
+       environment:
+         - POSTGRES_PASSWORD=secret
+       networks:
+         - app-net
+
+   networks:
+     app-net:
+   EOF
+   ```
+5. Apply the updated configuration:
+   ```bash
+   docker compose up -d
+   ```
+6. Verify running services:
+   ```bash
+   docker compose ps
+   ```
+7. Validate your solution:
    ```bash
    tld check
    ```

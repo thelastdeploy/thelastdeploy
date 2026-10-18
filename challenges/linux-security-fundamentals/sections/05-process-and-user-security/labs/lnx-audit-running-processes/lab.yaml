@@ -1,6 +1,8 @@
 id: lnx-audit-running-processes
 title: Audit Process User Ownership
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test

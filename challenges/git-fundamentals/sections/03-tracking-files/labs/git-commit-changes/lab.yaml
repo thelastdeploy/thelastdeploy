@@ -2,6 +2,8 @@ id: git-commit-changes
 title: Commit Your Staged Changes
 xp: 30
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -12,4 +14,4 @@ setup:
     - git config -f $HOME/git-challenge/.git/config user.name 'DevOps Student'
     - echo '# My Project' > $HOME/git-challenge/README.md
     - git -C $HOME/git-challenge add README.md
-version: 1
+version: 2

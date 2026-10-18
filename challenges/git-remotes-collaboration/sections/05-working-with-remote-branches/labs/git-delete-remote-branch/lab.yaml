@@ -2,6 +2,8 @@ id: git-delete-remote-branch
 title: Delete a Remote Branch
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -31,4 +33,4 @@ setup:
     - git -C $HOME/temp-git-repo push origin feature-trash
     - rm -rf $HOME/temp-git-repo
     - git -C $HOME/git-challenge fetch origin
-version: 1
+version: 2

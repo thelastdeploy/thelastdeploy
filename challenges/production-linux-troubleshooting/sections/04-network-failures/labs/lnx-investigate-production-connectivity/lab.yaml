@@ -1,6 +1,8 @@
 id: lnx-investigate-production-connectivity
 title: Investigate Production Network Connectivity Failure
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/net-outage-test

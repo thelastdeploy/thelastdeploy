@@ -12,8 +12,8 @@ if [ ! -d "$REPO_DIR/.git" ]; then
 fi
 
 # Verify remote-update.txt is present locally (proves they pulled first)
-if [ ! -f "$REPO_DIR/remote-update.txt" ]; then
-  echo "FAIL: remote-update.txt not found. Did you pull the latest remote changes before starting?"
+if [ ! -f "$REPO_DIR/remote-update.txt" ] || [ ! -s "$REPO_DIR/remote-update.txt" ]; then
+  echo "FAIL: remote-update.txt not found or empty. Did you pull the latest remote changes before starting?"
   exit 1
 fi
 

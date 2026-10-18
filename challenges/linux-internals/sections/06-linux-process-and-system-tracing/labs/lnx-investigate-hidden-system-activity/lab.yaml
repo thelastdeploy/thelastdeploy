@@ -1,6 +1,8 @@
 id: lnx-investigate-hidden-system-activity
 title: Investigate Hidden System and File Activity
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/trace-test

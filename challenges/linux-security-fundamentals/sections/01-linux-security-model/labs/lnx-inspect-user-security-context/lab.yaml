@@ -1,6 +1,8 @@
 id: lnx-inspect-user-security-context
 title: Inspect User Security Context and Group Memberships
 xp: 20
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/sec-test

@@ -36,28 +36,38 @@ docker run -d --env-file config.env app-image
 
 ## Lab Tasks
 
-### Task 1: Fix missing environment variable
-1. Start the lab in your terminal:
+### Task 1: Fix missing environment variable (`dkr-fix-missing-env-var`)
+1. Start the lab session:
    ```bash
    tld start dkr-fix-missing-env-var
    ```
-2. Your goal is to start a background (detached) container named `db-connector` using the `alpine` image running `sleep 1000`.
-3. The container must have the environment variable `DB_HOST` set to `database.internal` to pass validation.
-4. Verify the task:
+2. Start a background (detached) container named `db-connector` using the `alpine` image running `sleep 1000` with `DB_HOST` set to `database.internal`:
+   ```bash
+   docker run -d --name db-connector -e DB_HOST=database.internal alpine sleep 1000
+   ```
+3. Verify the environment variable inside the container:
+   ```bash
+   docker exec db-connector env | grep DB_HOST
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Run with environment variables
-1. Start the lab in your terminal:
+### Task 2: Run with environment variables (`dkr-run-with-env-var`)
+1. Start the lab session:
    ```bash
    tld start dkr-run-with-env-var
    ```
-2. Start a detached container named `env-app` using the `alpine` image running `sleep 1000`.
-3. Pass two environment variables to it:
-   - `APP_ENV` set to `production`
-   - `DEBUG` set to `false`
-4. Verify the task:
+2. Start a detached container named `env-app` using the `alpine` image running `sleep 1000` with `APP_ENV=production` and `DEBUG=false`:
+   ```bash
+   docker run -d --name env-app -e APP_ENV=production -e DEBUG=false alpine sleep 1000
+   ```
+3. Verify the environment variables inside the container:
+   ```bash
+   docker exec env-app env | grep -E 'APP_ENV|DEBUG'
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

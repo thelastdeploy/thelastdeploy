@@ -14,6 +14,8 @@ instructions: '
   3. Write the device name (`sdb`) into `$HOME/mon-test/saturated_device.txt`.
 
   '
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p '$HOME/mon-test/io'

@@ -1,6 +1,8 @@
 id: lnx-investigate-suspicious-activity
 title: Investigate Suspicious Process Activity
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/suspicious-test

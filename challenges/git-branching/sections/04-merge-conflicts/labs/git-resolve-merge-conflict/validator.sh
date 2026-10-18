@@ -11,9 +11,9 @@ if [ ! -d "$REPO_DIR/.git" ]; then
   exit 1
 fi
 
-# Verify index.html exists
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: index.html not found."
+# Verify index.html exists and is non-empty
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: index.html not found or is empty in $REPO_DIR."
   exit 1
 fi
 

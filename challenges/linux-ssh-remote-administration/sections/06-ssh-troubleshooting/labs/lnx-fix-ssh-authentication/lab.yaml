@@ -1,6 +1,8 @@
 id: lnx-fix-ssh-authentication
 title: Fix OpenSSH Permissions and Key Authentication
 xp: 40
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/ssh-test/broken_ssh/.ssh

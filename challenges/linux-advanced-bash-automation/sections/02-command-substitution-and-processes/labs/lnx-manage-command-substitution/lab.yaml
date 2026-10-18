@@ -1,6 +1,8 @@
 id: lnx-manage-command-substitution
 title: Manage Advanced Process Substitution
 xp: 30
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/proc-sub-test

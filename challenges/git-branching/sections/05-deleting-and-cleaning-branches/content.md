@@ -50,26 +50,46 @@ This skips the safety checks and permanently deletes the branch.
 
 ## Lab Tasks
 
-### Task 1: Delete a Merged Branch
-1. Start the lab in your terminal:
+### Task 1: Delete a Merged Branch (`git-delete-merged-branch`)
+1. Start the lab session:
    ```bash
    tld start git-delete-merged-branch
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Merged branch 'feature-old' deleted successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. Delete the merged branch `feature-old` using the `-d` flag:
+   ```bash
+   git branch -d feature-old
+   ```
+4. Verify that `feature-old` is deleted while `feature-active` remains intact:
+   ```bash
+   git branch --list
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: List Branches
-1. Start the lab in your terminal:
+### Task 2: List Branches (`git-list-branches`)
+1. Start the lab session:
    ```bash
    tld start git-list-branches
    ```
-2. Navigate to `~/git-challenge`.
-3. Complete the task requirements: Branch list saved and verified successfully.
-4. Verify the task:
+2. Navigate to `~/git-challenge/`:
+   ```bash
+   cd "$HOME/git-challenge"
+   ```
+3. List all local branches and redirect the output to `branches.txt`:
+   ```bash
+   git branch > branches.txt
+   ```
+4. View the contents of `branches.txt` to verify all branches are captured:
+   ```bash
+   cat branches.txt
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```

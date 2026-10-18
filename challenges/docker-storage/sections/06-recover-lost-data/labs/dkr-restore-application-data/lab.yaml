@@ -2,6 +2,8 @@ id: dkr-restore-application-data
 title: "Restore application data"
 xp: 25
 estimated_minutes: 5
+environment:
+  profile: tld-dind
 setup:
   type: shell
   seed_commands:
@@ -13,4 +15,4 @@ setup:
     - 'echo "{\"status\": \"restored\", \"version\": 3}" > /tmp/restore-seed/db_state.json'
     - "tar -cvf $HOME/docker-restore-source/backup.tar -C /tmp/restore-seed db_state.json"
     - "rm -rf /tmp/restore-seed"
-version: 3
+version: 4

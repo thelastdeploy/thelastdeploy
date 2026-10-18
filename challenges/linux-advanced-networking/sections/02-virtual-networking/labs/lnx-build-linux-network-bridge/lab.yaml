@@ -1,6 +1,8 @@
 id: lnx-build-linux-network-bridge
 title: Build Linux Network Bridge
 xp: 45
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/vnet-test

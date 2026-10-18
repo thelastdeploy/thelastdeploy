@@ -2,6 +2,8 @@ id: tf-import-resource
 title: Import an Existing Resource into State
 xp: 25
 estimated_minutes: 6
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:

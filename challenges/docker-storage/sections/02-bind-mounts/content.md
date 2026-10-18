@@ -25,31 +25,39 @@ docker run -d --mount type=bind,source=/path/on/host,target=/path/in/container n
 
 ## Lab Tasks
 
-### Task 1: Edit a mounted file
-1. Start the lab in your terminal:
+### Task 1: Edit a mounted file (`dkr-edit-mounted-file`)
+1. Start the lab session:
    ```bash
    tld start dkr-edit-mounted-file
    ```
-2. A background container named `notes-viewer` is already running with the host directory `~/docker-mount-test/` mapped to `/notes/` inside the container.
-3. Edit the file `~/docker-mount-test/notes.txt` on your host machine.
-4. Replace its content with exactly:
-   ```text
-   DevLab Rocks
+2. A background container named `notes-viewer` is running with the host directory `~/docker-mount-test/` mapped to `/notes/` inside the container.
+3. Update the file `~/docker-mount-test/notes.txt` on your host machine to contain exactly `DevLab Rocks`:
+   ```bash
+   echo "DevLab Rocks" > "$HOME/docker-mount-test/notes.txt"
    ```
-5. Verify the task:
+4. Verify the file contents reflected inside the running container:
+   ```bash
+   docker exec notes-viewer cat /notes/notes.txt
+   ```
+5. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Share host directory
-1. Start the lab in your terminal:
+### Task 2: Share host directory (`dkr-share-host-directory`)
+1. Start the lab session:
    ```bash
    tld start dkr-share-host-directory
    ```
-2. Start a background Nginx container named `nginx-mount` using the `nginx:alpine` image.
-3. Bind mount the host directory `~/docker-share/` (which is pre-created and contains an `index.html`) to the Nginx web root `/usr/share/nginx/html` inside the container.
-4. Expose the server by mapping host port `8085` to container port `80`.
-5. Verify the task:
+2. Start a background container named `nginx-mount` using the `nginx:alpine` image with port `8085:80` and the host directory `~/docker-share` mounted to `/usr/share/nginx/html`:
+   ```bash
+   docker run -d --name nginx-mount -p 8085:80 -v "$HOME/docker-share:/usr/share/nginx/html" nginx:alpine
+   ```
+3. Verify the container is running and serving content:
+   ```bash
+   curl -s http://localhost:8085
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

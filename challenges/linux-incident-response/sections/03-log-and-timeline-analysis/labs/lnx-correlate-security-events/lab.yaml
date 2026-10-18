@@ -1,6 +1,8 @@
 id: lnx-correlate-security-events
 title: Correlate Security Logs and Event Signatures
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/timeline-test

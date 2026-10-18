@@ -17,7 +17,7 @@ Because the output is long, you can use the `--format` (or `-f`) flag which acce
 ### Useful Format Examples
 * **Get IP Address**:
   ```bash
-  docker inspect --format '{{.NetworkSettings.IPAddress}}' my-container
+  docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-container
   ```
 * **Get Log Path**:
   ```bash
@@ -34,26 +34,40 @@ Alternatively, you can pipe the JSON output to utilities like `grep` or `jq` to 
 
 ## Lab Tasks
 
-### Task 1: Find container IP address
-1. Start the lab in your terminal:
+### Task 1: Find container IP address (`dkr-find-container-config`)
+1. Start the lab session:
    ```bash
    tld start dkr-find-container-config
    ```
-2. A container named `config-target` is running in the background. Locate its **IP Address** within the default network.
-3. Save only the IP address (e.g., `172.17.0.2`) to a file named `container_ip.txt` inside your `~/docker-test/` directory.
-4. Verify the task:
+2. A container named `config-target` is running in the background. Locate its IP address using `docker inspect` with formatting:
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' config-target > "$HOME/docker-test/container_ip.txt"
+   ```
+3. Verify file contents:
+   ```bash
+   cat "$HOME/docker-test/container_ip.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```
 
-### Task 2: Locate container log path
-1. Start the lab in your terminal:
+### Task 2: Locate container log path (`dkr-inspect-container`)
+1. Start the lab session:
    ```bash
    tld start dkr-inspect-container
    ```
-2. A background container named `inspect-target` is running. Your goal is to inspect it and locate the host filesystem path of its JSON log file (`LogPath`).
-3. Save the absolute file path (e.g., `/var/lib/docker/containers/...`) to a file named `log_path.txt` inside your `~/docker-test/` directory.
-4. Verify the task:
+2. A background container named `inspect-target` is running. Inspect it and locate the host filesystem path of its JSON log file (`LogPath`):
+   ```bash
+   mkdir -p "$HOME/docker-test"
+   docker inspect --format '{{.LogPath}}' inspect-target > "$HOME/docker-test/log_path.txt"
+   ```
+3. Verify file contents:
+   ```bash
+   cat "$HOME/docker-test/log_path.txt"
+   ```
+4. Validate your solution:
    ```bash
    tld check
    ```

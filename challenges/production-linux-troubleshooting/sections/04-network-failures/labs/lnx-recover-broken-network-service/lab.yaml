@@ -1,6 +1,8 @@
 id: lnx-recover-broken-network-service
 title: Recover Broken Network Service
 xp: 55
+environment:
+  profile: tld-ubuntu
 setup:
   seed_commands:
   - mkdir -p $HOME/net-outage-test

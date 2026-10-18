@@ -4,9 +4,9 @@ set -euo pipefail
 
 FILE_PATH="$HOME/docker-troubleshooting/errors/startup-token.txt"
 
-# 1. Check if file exists
-if [ ! -f "$FILE_PATH" ]; then
-  echo "FAIL: File not found at '$FILE_PATH'."
+# 1. Check if file exists and is non-empty
+if [ ! -f "$FILE_PATH" ] || [ ! -s "$FILE_PATH" ]; then
+  echo "FAIL: File not found or is empty at '$FILE_PATH'."
   exit 1
 fi
 

@@ -2,6 +2,8 @@ id: git-fix-non-fast-forward
 title: Fix Non-Fast-Forward Reject
 xp: 20
 estimated_minutes: 5
+environment:
+  profile: tld-ubuntu
 setup:
   type: shell
   seed_commands:
@@ -32,4 +34,4 @@ setup:
     - echo 'local edits' > $HOME/git-challenge/local.txt
     - git -C $HOME/git-challenge add local.txt
     - git -C $HOME/git-challenge commit -m 'Add local file'
-version: 1
+version: 2
