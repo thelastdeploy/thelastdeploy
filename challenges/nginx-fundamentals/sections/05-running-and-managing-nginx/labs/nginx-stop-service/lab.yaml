@@ -8,4 +8,4 @@ setup:
   type: shell
   seed_commands:
     - "sudo systemctl start nginx || true"
-version: 1
+version: 2

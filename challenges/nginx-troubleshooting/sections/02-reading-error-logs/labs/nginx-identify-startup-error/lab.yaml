@@ -7,8 +7,9 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "which nginx || (sudo apt-get update -y && sudo apt-get install -y nginx)"
     - "rm -f /tmp/failed_port.txt"
     # Seed error log with a bind error
     - "sudo mkdir -p /var/log/nginx"
     - "echo '2026/07/09 22:15:30 [emerg] 1234#1234: bind() to 0.0.0.0:9999 failed (98: Address already in use)' | sudo tee -a /var/log/nginx/error.log > /dev/null"
-version: 1
+version: 2

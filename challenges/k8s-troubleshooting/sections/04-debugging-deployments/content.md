@@ -45,8 +45,16 @@ This stops the current rollout and reverts back to the last known working Replic
    tld start k8s-debug-rollout
    ```
 2. Navigate to `~/k8s-troubleshooting`.
-3. Complete the task requirements: Successfully identified the stuck rollout image tag.
-4. Verify the task:
+3. Inspect the deployment `rollout-app` or its pods to identify the invalid image tag causing the rollout to fail:
+   ```bash
+   kubectl rollout status deployment/rollout-app
+   kubectl get deployment rollout-app -o jsonpath='{.spec.template.spec.containers[0].image}'
+   ```
+4. Save the exact invalid image tag into `~/k8s-troubleshooting/bad-image.txt`:
+   ```bash
+   kubectl get deployment rollout-app -o jsonpath='{.spec.template.spec.containers[0].image}' > ~/k8s-troubleshooting/bad-image.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
@@ -56,8 +64,15 @@ This stops the current rollout and reverts back to the last known working Replic
    ```bash
    tld start k8s-recover-failed-update
    ```
-2. Complete the task requirements: Stuck deployment rollout successfully resolved and updated.
-3. Verify the task:
+2. The deployment `rollout-app` is stuck due to an invalid image tag. Update the container image to `nginx:1.16.1` (or `nginx`):
+   ```bash
+   kubectl set image deployment/rollout-app rollout-app=nginx:1.16.1
+   ```
+3. Monitor the rollout status until the new replica is ready:
+   ```bash
+   kubectl rollout status deployment/rollout-app
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

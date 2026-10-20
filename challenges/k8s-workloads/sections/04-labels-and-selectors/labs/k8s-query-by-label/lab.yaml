@@ -15,4 +15,4 @@ setup:
     - 'kubectl run pod1 --image=nginx --labels="tier=backend,app=api" --context=kind-tld-k8s-query-by-label'
     - 'kubectl run pod2 --image=nginx --labels="tier=backend,app=worker" --context=kind-tld-k8s-query-by-label'
     - 'kubectl run pod3 --image=nginx --labels="tier=frontend,app=web" --context=kind-tld-k8s-query-by-label'
-version: 1
+version: 2

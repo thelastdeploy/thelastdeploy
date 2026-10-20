@@ -4,12 +4,20 @@ To work with Terraform, you need to install the Terraform Command Line Interface
 
 ## Installation Methods:
 
-### On Ubuntu/Debian Linux:
+### Standalone Binary Installation (Linux):
 ```bash
-sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
-wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
-echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-sudo apt-get update && sudo apt-get install terraform
+curl -fsSL https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip -o /tmp/terraform.zip
+sudo unzip -o /tmp/terraform.zip -d /usr/local/bin
+sudo chmod +x /usr/local/bin/terraform
+rm -f /tmp/terraform.zip
+```
+
+### On Ubuntu/Debian Linux (via APT):
+```bash
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com noble main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt-get update && sudo apt-get install -y terraform
 ```
 
 ### On macOS (using Homebrew):
@@ -33,9 +41,11 @@ terraform -version
    ```bash
    tld start tf-check-version
    ```
-2. Navigate to `~/terraform-challenge`.
-3. Complete the task requirements: Terraform CLI is operational.
-4. Verify the task:
+2. Verify that the Terraform CLI executable is operational by running:
+   ```bash
+   terraform -version
+   ```
+3. Verify the task:
    ```bash
    tld check
    ```
@@ -45,9 +55,12 @@ terraform -version
    ```bash
    tld start tf-install-cli
    ```
-2. Navigate to `~/terraform-challenge`.
-3. Complete the task requirements: Terraform CLI successfully found.
-4. Verify the task:
+2. Ensure that the `terraform` executable is present in your system `PATH`:
+   ```bash
+   which terraform || (curl -fsSL https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip -o /tmp/tf.zip && sudo unzip -qo /tmp/tf.zip -d /usr/local/bin && rm -f /tmp/tf.zip)
+   which terraform
+   ```
+3. Verify the task:
    ```bash
    tld check
    ```

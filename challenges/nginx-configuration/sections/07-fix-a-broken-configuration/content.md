@@ -29,13 +29,29 @@ It means you have configured `listen 80 default_server;` (or similar) in more th
 ## Lab Tasks
 
 ### Task 1: Fix duplicate default server configuration
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-debug-config
    ```
-2. The seed script has created a duplicate server block file `/etc/nginx/sites-available/duplicate-default` and enabled it by creating a symbolic link in `/etc/nginx/sites-enabled/`. This causes Nginx to fail starting due to conflicting `default_server` directives on port 80.
-3. Locate the duplicate file and fix the configuration so Nginx can start successfully.
-4. Verify the task:
+   A duplicate server block `/etc/nginx/sites-available/duplicate-default` has been linked into `/etc/nginx/sites-enabled/duplicate-default`, causing conflicting `default_server` definitions on port 80.
+2. Run `sudo nginx -t` to identify the conflicting directive:
+   ```bash
+   sudo nginx -t
+   ```
+3. Disable the duplicate site by unlinking it from `sites-enabled`:
+   ```bash
+   sudo rm /etc/nginx/sites-enabled/duplicate-default
+   ```
+4. Verify that the configuration syntax now passes:
+   ```bash
+   sudo nginx -t
+   ```
+5. Start the Nginx service:
+   ```bash
+   sudo systemctl start nginx
+   sudo systemctl status nginx
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```

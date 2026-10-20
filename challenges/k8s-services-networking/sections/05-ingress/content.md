@@ -62,8 +62,38 @@ spec:
    ```bash
    tld start k8s-create-ingress
    ```
-2. Complete the task requirements: Ingress resource created and configured correctly.
-3. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-services-networking
+   ```
+3. Create an Ingress resource manifest `app-ingress.yaml` named `app-ingress` with `ingressClassName: nginx` that routes requests for host `app.local` with prefix path `/` to `backend-service` on port `80`:
+   ```bash
+   cat <<EOF > ~/k8s-services-networking/app-ingress.yaml
+   apiVersion: networking.k8s.io/v1
+   kind: Ingress
+   metadata:
+     name: app-ingress
+   spec:
+     ingressClassName: nginx
+     rules:
+     - host: app.local
+       http:
+         paths:
+         - path: /
+           pathType: Prefix
+           backend:
+             service:
+               name: backend-service
+               port:
+                 number: 80
+   EOF
+   kubectl apply -f ~/k8s-services-networking/app-ingress.yaml
+   ```
+4. Verify the Ingress configuration:
+   ```bash
+   kubectl get ingress app-ingress
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
@@ -73,8 +103,19 @@ spec:
    ```bash
    tld start k8s-install-ingress
    ```
-2. Complete the task requirements: Ingress controller installed and running successfully.
-3. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-services-networking
+   ```
+3. Deploy the Ingress Controller by applying the provided manifest `ingress-controller.yaml`:
+   ```bash
+   kubectl apply -f ~/k8s-services-networking/ingress-controller.yaml
+   ```
+4. Wait for the Ingress Controller deployment to complete its rollout and become ready:
+   ```bash
+   kubectl rollout status deployment/ingress-nginx-controller -n ingress-nginx
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

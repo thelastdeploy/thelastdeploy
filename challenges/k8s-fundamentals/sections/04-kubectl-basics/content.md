@@ -59,9 +59,20 @@ kubectl run my-nginx --image=nginx
    ```bash
    tld start k8s-cluster-information
    ```
-2. Navigate to `~/k8s-fundamentals`.
-3. Complete the task requirements: Successfully verified cluster IP retrieval.
-4. Verify the task:
+2. Retrieve the ClusterIP of the default `kubernetes` service:
+   ```bash
+   kubectl get svc kubernetes
+   ```
+3. Extract the ClusterIP address and write it to `~/k8s-fundamentals/kubernetes-cluster-ip.txt`:
+   ```bash
+   mkdir -p ~/k8s-fundamentals
+   kubectl get svc kubernetes -o jsonpath='{.spec.clusterIP}' > ~/k8s-fundamentals/kubernetes-cluster-ip.txt
+   ```
+4. Verify that `~/k8s-fundamentals/kubernetes-cluster-ip.txt` contains solely the IP address (e.g. `10.96.0.1`):
+   ```bash
+   cat ~/k8s-fundamentals/kubernetes-cluster-ip.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -71,9 +82,20 @@ kubectl run my-nginx --image=nginx
    ```bash
    tld start k8s-describe-resource
    ```
-2. Navigate to `~/k8s-fundamentals`.
-3. Complete the task requirements: Successfully retrieved the tier label of web-server pod.
-4. Verify the task:
+2. Inspect the labels assigned to the `web-server` pod:
+   ```bash
+   kubectl get pod web-server --show-labels
+   ```
+3. Extract the value of the `tier` label and save solely that value into `~/k8s-fundamentals/web-tier-label.txt`:
+   ```bash
+   mkdir -p ~/k8s-fundamentals
+   kubectl get pod web-server -o jsonpath='{.metadata.labels.tier}' > ~/k8s-fundamentals/web-tier-label.txt
+   ```
+4. Confirm that `~/k8s-fundamentals/web-tier-label.txt` contains `web`:
+   ```bash
+   cat ~/k8s-fundamentals/web-tier-label.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -83,9 +105,20 @@ kubectl run my-nginx --image=nginx
    ```bash
    tld start k8s-list-resources
    ```
-2. Navigate to `~/k8s-fundamentals`.
-3. Complete the task requirements: Successfully listed and verified sorted pod list.
-4. Verify the task:
+2. List the names of all pods in the current namespace:
+   ```bash
+   kubectl get pods -o custom-columns=":metadata.name" --no-headers
+   ```
+3. Save the pod names, sorted alphabetically one per line, into `~/k8s-fundamentals/pods-list.txt`:
+   ```bash
+   mkdir -p ~/k8s-fundamentals
+   kubectl get pods -o custom-columns=":metadata.name" --no-headers | sort > ~/k8s-fundamentals/pods-list.txt
+   ```
+4. Confirm `~/k8s-fundamentals/pods-list.txt` contains the sorted list:
+   ```bash
+   cat ~/k8s-fundamentals/pods-list.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

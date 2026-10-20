@@ -10,4 +10,4 @@ setup:
   resource_limits_mem: 1024
   seed_commands:
     - "kubectl create namespace development --context=kind-tld-k8s-switch-namespace"
-version: 1
+version: 2

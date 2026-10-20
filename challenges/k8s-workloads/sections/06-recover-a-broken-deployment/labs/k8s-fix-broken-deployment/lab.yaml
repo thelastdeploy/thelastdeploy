@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-fix-broken-deployment &>/dev/null; do sleep 1; done'
     - 'kubectl create deployment broken-deploy --image=nginx:1.161.badtypo --context=kind-tld-k8s-fix-broken-deployment'
-version: 1
+version: 2

@@ -43,9 +43,20 @@ kubectl describe svc my-service -n my-namespace
    ```bash
    tld start k8s-explore-cluster
    ```
-2. Navigate to `~/k8s-fundamentals`.
-3. Complete the task requirements: Service ClusterIP successfully validated.
-4. Verify the task:
+2. Locate the service named `app-service` running in the `app-space` namespace:
+   ```bash
+   kubectl get svc -n app-space
+   ```
+3. Extract the ClusterIP of `app-service` and save it to `~/k8s-fundamentals/app-service-ip.txt`:
+   ```bash
+   mkdir -p ~/k8s-fundamentals
+   kubectl get svc app-service -n app-space -o jsonpath='{.spec.clusterIP}' > ~/k8s-fundamentals/app-service-ip.txt
+   ```
+4. Verify that `~/k8s-fundamentals/app-service-ip.txt` contains solely the IP address:
+   ```bash
+   cat ~/k8s-fundamentals/app-service-ip.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

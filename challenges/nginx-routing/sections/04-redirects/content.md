@@ -36,9 +36,17 @@ location /google {
    ```bash
    tld start nginx-http-redirect
    ```
-2. Configure a location block `/google` in the default site config that redirects clients to `https://www.google.com` using a temporary redirect (`302`).
-3. Reload Nginx.
-4. Verify the task:
+2. Configure a location block `/google` in `/etc/nginx/sites-available/default` that redirects incoming requests to `https://www.google.com` using a temporary redirect (`return 302 https://www.google.com;`).
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Confirm that accessing `http://localhost/google` returns a `302` response pointing to `https://www.google.com`:
+   ```bash
+   curl -I http://localhost/google
+   ```
+5. Verify your solution:
    ```bash
    tld check
    ```
@@ -48,9 +56,17 @@ location /google {
    ```bash
    tld start nginx-permanent-redirect
    ```
-2. Configure Nginx to permanently redirect `/old-page` to `/new-page` returning a `301` status code.
-3. Reload Nginx.
-4. Verify the task:
+2. Configure a location block `/old-page` in `/etc/nginx/sites-available/default` to permanently redirect to `/new-page` with a `301` status code (`return 301 /new-page;`).
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Confirm that accessing `http://localhost/old-page` returns a `301 Moved Permanently` response pointing to `/new-page`:
+   ```bash
+   curl -I http://localhost/old-page
+   ```
+5. Verify your solution:
    ```bash
    tld check
    ```
@@ -60,9 +76,17 @@ location /google {
    ```bash
    tld start nginx-temporary-redirect
    ```
-2. Configure Nginx to temporarily redirect `/promo` to `/landing-page` returning a `302` status code.
-3. Reload Nginx.
-4. Verify the task:
+2. Configure a location block `/promo` in `/etc/nginx/sites-available/default` to temporarily redirect to `/landing-page` with a `302` status code (`return 302 /landing-page;`).
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Confirm that accessing `http://localhost/promo` returns a `302 Found` response pointing to `/landing-page`:
+   ```bash
+   curl -I http://localhost/promo
+   ```
+5. Verify your solution:
    ```bash
    tld check
    ```

@@ -44,9 +44,19 @@ Warning events often highlight immediately why a pod fails to start (e.g. schedu
    ```bash
    tld start k8s-investigate-resources
    ```
-2. Navigate to `~/k8s-troubleshooting`.
-3. Complete the task requirements: Successfully queried and matched system pods.
-4. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-troubleshooting
+   ```
+3. Query all pods in the `kube-system` namespace and save their names, sorted alphabetically, to `~/k8s-troubleshooting/kube-system-pods.txt` (one pod name per line):
+   ```bash
+   kubectl get pods -n kube-system -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | sort > ~/k8s-troubleshooting/kube-system-pods.txt
+   ```
+4. Verify the file contents:
+   ```bash
+   cat ~/k8s-troubleshooting/kube-system-pods.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
@@ -56,9 +66,19 @@ Warning events often highlight immediately why a pod fails to start (e.g. schedu
    ```bash
    tld start k8s-read-events
    ```
-2. Navigate to `~/k8s-troubleshooting`.
-3. Complete the task requirements: Successfully retrieved and matched the warning reason.
-4. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-troubleshooting
+   ```
+3. Inspect warning events in the default namespace to identify the failure reason for `unschedulable-pod`:
+   ```bash
+   kubectl get events --field-selector type=Warning
+   ```
+4. Save the event reason (`FailedScheduling`) into `~/k8s-troubleshooting/warning-reason.txt`:
+   ```bash
+   echo "FailedScheduling" > ~/k8s-troubleshooting/warning-reason.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

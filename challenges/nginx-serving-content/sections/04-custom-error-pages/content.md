@@ -40,26 +40,48 @@ error_page 500 502 503 504 /50x.html;
 ## Lab Tasks
 
 ### Task 1: Configure custom 404 page
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-custom-404
    ```
-2. Create an HTML file named `404.html` in the root folder `/var/www/html/` containing the text `Custom 404 - File Not Found`.
-3. Configure the default server block `/etc/nginx/sites-available/default` to return `/404.html` for all `404` errors.
-4. Reload Nginx configuration.
-5. Verify the task:
+2. Create `/var/www/html/404.html` containing `Custom 404 - File Not Found`:
+   ```bash
+   echo 'Custom 404 - File Not Found' | sudo tee /var/www/html/404.html
+   ```
+3. Add the `error_page 404 /404.html;` directive inside the default server block in `/etc/nginx/sites-available/default`:
+   ```bash
+   sudo sed -i '/server_name _;/a \    error_page 404 /404.html;' /etc/nginx/sites-available/default
+   ```
+4. Test configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t && sudo systemctl reload nginx
+   ```
+5. Confirm by testing a non-existent path:
+   ```bash
+   curl -i http://localhost/doesnotexist
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```
 
 ### Task 2: Configure custom 500 error page
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-custom-500
    ```
-2. Create an HTML file named `50x.html` in the root folder `/var/www/html/` containing the text `Custom 50x - Server Error`.
-3. Configure the default server block to serve `/50x.html` for codes `500`, `502`, `503`, and `504`.
-4. Reload Nginx.
+2. Create `/var/www/html/50x.html` containing `Custom 50x - Server Error`:
+   ```bash
+   echo 'Custom 50x - Server Error' | sudo tee /var/www/html/50x.html
+   ```
+3. Configure the default server block in `/etc/nginx/sites-available/default` to map status codes 500, 502, 503, and 504 to `/50x.html`:
+   ```bash
+   sudo sed -i '/server_name _;/a \    error_page 500 502 503 504 /50x.html;' /etc/nginx/sites-available/default
+   ```
+4. Test configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t && sudo systemctl reload nginx
+   ```
 5. Verify the task:
    ```bash
    tld check

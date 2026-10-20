@@ -9,4 +9,4 @@ setup:
   seed_commands:
     - "sudo rm -f /etc/nginx/sites-available/mysite /etc/nginx/sites-available/mysite.conf"
     - "sudo rm -f /etc/nginx/sites-enabled/mysite /etc/nginx/sites-enabled/mysite.conf"
-version: 1
+version: 2

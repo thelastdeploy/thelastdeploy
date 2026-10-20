@@ -1,9 +1,9 @@
 id: k8s-install-kind
-title: "Install Kind and Kubectl"
+title: "Install and Verify Kubectl"
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-kind
 setup:
   type: shell
-version: 1
+version: 2

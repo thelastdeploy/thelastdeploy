@@ -10,4 +10,4 @@ setup:
     - rm -rf $HOME/terraform-resources-challenge
     - mkdir -p $HOME/terraform-resources-challenge
     - echo 'provider "random" {}' > $HOME/terraform-resources-challenge/main.tf
-version: 1
+version: 2

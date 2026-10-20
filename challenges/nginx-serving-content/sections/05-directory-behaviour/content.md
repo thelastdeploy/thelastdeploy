@@ -28,9 +28,12 @@ location /downloads/ {
    ```bash
    tld start nginx-disable-directory-listing
    ```
-2. The seed script has created an indexless directory `/var/www/html/secret/` containing private files.
-3. Configure Nginx (or verify) to ensure that accessing `http://localhost/secret/` returns a `403 Forbidden` response rather than listing the files.
-4. Verify the task:
+2. The seed script has provisioned an indexless directory `/var/www/html/secret/` containing private data files.
+3. Ensure Nginx is running and verify that accessing `http://localhost/secret/` returns a `403 Forbidden` response rather than listing directory contents:
+   ```bash
+   curl -i http://localhost/secret/
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```
@@ -40,10 +43,18 @@ location /downloads/ {
    ```bash
    tld start nginx-enable-directory-listing
    ```
-2. The seed script has created `/var/www/html/downloads/` with several package files but no index page.
-3. Configure a location block `/downloads/` inside `/etc/nginx/sites-available/default` so that directory listing is enabled for it.
-4. Reload Nginx.
-5. Verify the task:
+2. The seed script has provisioned `/var/www/html/downloads/` containing package archives (`pkg1.tar.gz`) without an `index.html` file.
+3. Configure a `location /downloads/` block inside `/etc/nginx/sites-available/default` so that directory listing is explicitly enabled using the `autoindex` directive.
+4. Validate the configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Confirm that accessing `http://localhost/downloads/` returns the directory listing containing `pkg1.tar.gz`:
+   ```bash
+   curl -s http://localhost/downloads/
+   ```
+6. Verify your solution:
    ```bash
    tld check
    ```

@@ -12,4 +12,4 @@ setup:
     - "mkdir -p $HOME/k8s-services-networking"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-create-nodeport &>/dev/null; do sleep 1; done'
     - 'kubectl create deployment backend-app --image=nginx --replicas=1 --context=kind-tld-k8s-create-nodeport'
-version: 1
+version: 2

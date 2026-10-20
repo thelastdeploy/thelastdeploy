@@ -52,8 +52,15 @@ In this example:
    ```bash
    tld start k8s-create-secret
    ```
-2. Complete the task requirements: Secret 'db-secret' successfully verified.
-3. Verify the task:
+2. Create a generic Secret named `db-secret` containing the key `password` with the value `supersecret`:
+   ```bash
+   kubectl create secret generic db-secret --from-literal=password=supersecret
+   ```
+3. Verify the Secret:
+   ```bash
+   kubectl get secret db-secret -o yaml
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```
@@ -63,8 +70,33 @@ In this example:
    ```bash
    tld start k8s-use-secret
    ```
-2. Complete the task requirements: Secret volume mount verified successfully.
-3. Verify the task:
+2. Create a Pod named `secret-explorer` using the `nginx` image that mounts the Secret `db-secret` as a volume at `/etc/db`:
+   ```bash
+   cat <<EOF | kubectl apply -f -
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: secret-explorer
+   spec:
+     volumes:
+     - name: secret-vol
+       secret:
+         secretName: db-secret
+     containers:
+     - name: app
+       image: nginx
+       volumeMounts:
+       - name: secret-vol
+         mountPath: /etc/db
+         readOnly: true
+   EOF
+   ```
+3. Wait for the pod to become ready and verify the secret file content inside the container:
+   ```bash
+   kubectl wait --for=condition=Ready pod/secret-explorer --timeout=60s
+   kubectl exec secret-explorer -- cat /etc/db/password
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

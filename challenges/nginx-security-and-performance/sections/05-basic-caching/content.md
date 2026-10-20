@@ -46,11 +46,24 @@ location / {
    ```bash
    tld start nginx-enable-cache
    ```
-2. Define a cache path at `/var/cache/nginx` with a `keys_zone` named `my_cache` and key size of `10m`, and `inactive` timeout of `60m` inside the `http` block of `/etc/nginx/nginx.conf`.
-3. Enable this cache inside location block `/app` in `/etc/nginx/sites-available/default` (which proxies to `http://127.0.0.1:8080`).
-4. Configure cache validity so that responses with status code `200` are cached for `10m`.
-5. Reload Nginx.
-6. Verify the task:
+2. Define a cache path at `/var/cache/nginx` with a `keys_zone` named `my_cache:10m` and an `inactive` timeout of `60m` inside the `http` block of `/etc/nginx/nginx.conf`:
+   ```nginx
+   proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=my_cache:10m inactive=60m;
+   ```
+3. Enable this cache inside location block `/app` in `/etc/nginx/sites-available/default` and configure cache validity for `200` responses for `10m`:
+   ```nginx
+   location /app {
+       proxy_pass http://127.0.0.1:8080;
+       proxy_cache my_cache;
+       proxy_cache_valid 200 10m;
+   }
+   ```
+4. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Verify your solution:
    ```bash
    tld check
    ```

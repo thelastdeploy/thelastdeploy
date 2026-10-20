@@ -58,8 +58,15 @@ kubectl exec nginx-pod -- ls -la /usr/share/nginx/html
    ```bash
    tld start k8s-exec-into-pod
    ```
-2. Complete the task requirements: Successfully validated container execution and hostname entry.
-3. Verify the task:
+2. Execute a command inside the running `exec-pod` container to write its hostname into `/tmp/hostname.txt`:
+   ```bash
+   kubectl exec exec-pod -- sh -c 'hostname > /tmp/hostname.txt'
+   ```
+3. Confirm that `/tmp/hostname.txt` exists inside the container and contains `exec-pod`:
+   ```bash
+   kubectl exec exec-pod -- cat /tmp/hostname.txt
+   ```
+4. Check your solution:
    ```bash
    tld check
    ```
@@ -69,9 +76,20 @@ kubectl exec nginx-pod -- ls -la /usr/share/nginx/html
    ```bash
    tld start k8s-inspect-pod
    ```
-2. Navigate to `~/k8s-pods`.
-3. Complete the task requirements: Pod IP successfully verified.
-4. Verify the task:
+2. Query the IP address of `test-pod` using `kubectl get pod`:
+   ```bash
+   kubectl get pod test-pod -o wide
+   ```
+3. Extract solely the pod IP and save it to `~/k8s-pods/pod-ip.txt`:
+   ```bash
+   mkdir -p ~/k8s-pods
+   kubectl get pod test-pod -o jsonpath='{.status.podIP}' > ~/k8s-pods/pod-ip.txt
+   ```
+4. Verify that `~/k8s-pods/pod-ip.txt` contains solely the IP address:
+   ```bash
+   cat ~/k8s-pods/pod-ip.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -81,9 +99,20 @@ kubectl exec nginx-pod -- ls -la /usr/share/nginx/html
    ```bash
    tld start k8s-view-pod-logs
    ```
-2. Navigate to `~/k8s-pods`.
-3. Complete the task requirements: Pod log message verified successfully.
-4. Verify the task:
+2. View the logs output by `logging-pod`:
+   ```bash
+   kubectl logs logging-pod
+   ```
+3. Extract the flag message (starting with `FLAG_LOG_MESSAGE_`) and save it to `~/k8s-pods/flag.txt`:
+   ```bash
+   mkdir -p ~/k8s-pods
+   kubectl logs logging-pod | grep -o 'FLAG_LOG_MESSAGE_[0-9]\+' > ~/k8s-pods/flag.txt
+   ```
+4. Confirm `~/k8s-pods/flag.txt` contains the flag:
+   ```bash
+   cat ~/k8s-pods/flag.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

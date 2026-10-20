@@ -2,4 +2,4 @@ id: k8s-recover-a-broken-application
 title: "Recover a Broken Application"
 order: 6
 xp: 20
-version: 1
+version: 2

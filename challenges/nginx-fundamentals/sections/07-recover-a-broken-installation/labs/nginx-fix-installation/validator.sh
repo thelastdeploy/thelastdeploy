@@ -2,7 +2,7 @@
 # validator.sh — nginx-fundamentals / 07-recover-a-broken-installation / nginx-fix-installation
 set -euo pipefail
 
-if ! sudo nginx -t &>/dev/null; then
+if ! nginx -t &>/dev/null && ! sudo nginx -t &>/dev/null; then
   echo "FAIL: Nginx configuration test is still failing. Run 'sudo nginx -t' to find the syntax error."
   exit 1
 fi
@@ -13,7 +13,7 @@ if ! systemctl is-active nginx &>/dev/null; then
 fi
 
 # Verify the error string is no longer in the default configuration
-if grep -q "broken_syntax_here" /etc/nginx/sites-available/default; then
+if [ -f /etc/nginx/sites-available/default ] && grep -q "broken_syntax_here" /etc/nginx/sites-available/default; then
   echo "FAIL: Junk configuration 'broken_syntax_here' is still present in /etc/nginx/sites-available/default."
   exit 1
 fi

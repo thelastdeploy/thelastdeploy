@@ -15,4 +15,4 @@ setup:
     - 'kubectl expose deployment backend-app --name=backend-service --port=80 --target-port=80 --context=kind-tld-k8s-create-ingress'
     - 'kubectl create namespace ingress-nginx --context=kind-tld-k8s-create-ingress'
     - 'kubectl create deployment ingress-nginx-controller --image=nginx:alpine -n ingress-nginx --context=kind-tld-k8s-create-ingress'
-version: 1
+version: 2

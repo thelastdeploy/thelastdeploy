@@ -27,8 +27,17 @@ HCL supports standard mathematical operators (`+`, `-`, `*`, `/`) and logical op
    ```bash
    tld start tf-basic-expressions
    ```
-2. Navigate to `~/terraform-hcl-challenge`.
-3. Complete the task requirements: String interpolation validated successfully.
+2. Navigate to the challenge directory:
+   ```bash
+   cd ~/terraform-hcl-challenge
+   ```
+3. Edit `main.tf` to update the `content` argument of the `local_file` resource using string interpolation syntax (`${...}`):
+   ```hcl
+   resource "local_file" "expr" {
+     content  = "Running in directory: ${path.module}"
+     filename = "/tmp/expr.txt"
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check

@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/k8s-troubleshooting"
     - "rm -f $HOME/k8s-troubleshooting/kube-system-pods.txt"
-version: 1
+version: 2

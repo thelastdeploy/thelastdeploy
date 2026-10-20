@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-exec-into-pod &>/dev/null; do sleep 1; done'
     - 'kubectl run exec-pod --image=nginx --context=kind-tld-k8s-exec-into-pod'
-version: 1
+version: 2

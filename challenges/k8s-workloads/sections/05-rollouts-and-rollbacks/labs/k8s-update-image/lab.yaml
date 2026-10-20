@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-update-image &>/dev/null; do sleep 1; done'
     - 'kubectl create deployment rollout-deploy --image=nginx:1.14.2 --context=kind-tld-k8s-update-image'
-version: 1
+version: 2

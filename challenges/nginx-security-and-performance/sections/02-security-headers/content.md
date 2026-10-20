@@ -46,9 +46,16 @@ add_header X-Frame-Options "DENY" always;
    ```bash
    tld start nginx-enable-hsts
    ```
-2. Configure the HSTS header in `/etc/nginx/sites-available/default` inside the main `server` context with a `max-age` of `31536000` seconds and the `always` flag.
-3. Reload Nginx.
-4. Verify the task:
+2. Configure the HSTS header inside the `server` block of `/etc/nginx/sites-available/default` with a `max-age` of `31536000` seconds and the `always` flag:
+   ```nginx
+   add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```
@@ -58,9 +65,16 @@ add_header X-Frame-Options "DENY" always;
    ```bash
    tld start nginx-content-security-policy
    ```
-2. Configure a basic CSP header in `/etc/nginx/sites-available/default` restricting `default-src` to `'self'` (include the `always` flag).
-3. Reload Nginx.
-4. Verify the task:
+2. Configure a basic CSP header in `/etc/nginx/sites-available/default` restricting `default-src` to `'self'` (including the `always` flag):
+   ```nginx
+   add_header Content-Security-Policy "default-src 'self';" always;
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```
@@ -70,9 +84,16 @@ add_header X-Frame-Options "DENY" always;
    ```bash
    tld start nginx-x-frame-options
    ```
-2. Configure the `X-Frame-Options` header to `DENY` globally inside `/etc/nginx/sites-available/default` (include the `always` flag).
-3. Reload Nginx.
-4. Verify the task:
+2. Configure the `X-Frame-Options` header to `DENY` inside `/etc/nginx/sites-available/default` (including the `always` flag):
+   ```nginx
+   add_header X-Frame-Options "DENY" always;
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```

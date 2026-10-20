@@ -53,8 +53,15 @@ kubectl get pods -l 'tier!=backend'
    ```bash
    tld start k8s-add-labels
    ```
-2. Complete the task requirements: Label environment=production verified successfully on metadata-pod.
-3. Verify the task:
+2. Add the label `environment=production` to the existing Pod named `metadata-pod`:
+   ```bash
+   kubectl label pod metadata-pod environment=production
+   ```
+3. Verify that the label is present:
+   ```bash
+   kubectl get pod metadata-pod --show-labels
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```
@@ -64,9 +71,19 @@ kubectl get pods -l 'tier!=backend'
    ```bash
    tld start k8s-query-by-label
    ```
-2. Navigate to `~/k8s-workloads`.
-3. Complete the task requirements: Successfully queried and verified backend pods list.
-4. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-workloads
+   ```
+3. Query all pods with the label `tier=backend` and save their names, sorted alphabetically, to `~/k8s-workloads/backend-pods.txt` (one name per line):
+   ```bash
+   kubectl get pods -l tier=backend -o custom-columns=":metadata.name" --no-headers | sort > ~/k8s-workloads/backend-pods.txt
+   ```
+4. Verify the file contents:
+   ```bash
+   cat ~/k8s-workloads/backend-pods.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
@@ -76,8 +93,14 @@ kubectl get pods -l 'tier!=backend'
    ```bash
    tld start k8s-selector-match
    ```
-2. Navigate to `~/k8s-workloads`.
-3. Complete the task requirements: Selector match query verified successfully.
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-workloads
+   ```
+3. Write the selector expression matching pods with both `tier=frontend` and `app=store` into `~/k8s-workloads/selector.txt`:
+   ```bash
+   echo "tier=frontend,app=store" > ~/k8s-workloads/selector.txt
+   ```
 4. Verify the task:
    ```bash
    tld check

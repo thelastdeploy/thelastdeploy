@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-debug-failed-pod &>/dev/null; do sleep 1; done'
     - 'kubectl run failing-image-pod --image=nginxxxx --context=kind-tld-k8s-debug-failed-pod'
-version: 1
+version: 2

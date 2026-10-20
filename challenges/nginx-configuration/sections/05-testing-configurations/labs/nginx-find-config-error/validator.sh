@@ -2,7 +2,7 @@
 # validator.sh — nginx-configuration / 05-testing-configurations / nginx-find-config-error
 set -euo pipefail
 
-if ! sudo nginx -t &>/dev/null; then
+if ! nginx -t &>/dev/null && ! sudo nginx -t &>/dev/null; then
   echo "FAIL: Nginx configuration test is still failing. Run 'sudo nginx -t' to find the missing semicolon."
   exit 1
 fi

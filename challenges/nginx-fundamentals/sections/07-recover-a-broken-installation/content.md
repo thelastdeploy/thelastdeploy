@@ -31,13 +31,29 @@ If Nginx fails to start or reload:
 ## Lab Tasks
 
 ### Task 1: Fix the broken Nginx installation
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-fix-installation
    ```
-   This will intentionally introduce a syntax error in your default Nginx configuration file. Nginx will be stopped.
-2. Troubleshoot and fix the error so Nginx can successfully pass the configuration check and start.
-3. Verify the task:
+   This environment contains an intentional syntax error in the default site configuration, preventing Nginx from starting.
+2. Run the Nginx configuration test to identify the corrupted file and line number:
+   ```bash
+   sudo nginx -t
+   ```
+3. Inspect `/etc/nginx/sites-available/default` and remove the erroneous directive `broken_syntax_here`:
+   ```bash
+   sudo sed -i 's/ broken_syntax_here//g' /etc/nginx/sites-available/default
+   ```
+4. Re-test the configuration to ensure the syntax is valid:
+   ```bash
+   sudo nginx -t
+   ```
+5. Start the Nginx service and verify that it is active:
+   ```bash
+   sudo systemctl start nginx
+   sudo systemctl status nginx
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```

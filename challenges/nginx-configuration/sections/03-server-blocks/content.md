@@ -50,27 +50,48 @@ sudo rm /etc/nginx/sites-enabled/mysite
 ## Lab Tasks
 
 ### Task 1: Create a server block configuration
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-create-server-block
    ```
-2. Create a server block configuration file named `mysite` under `/etc/nginx/sites-available/`.
-3. Configure it to:
-   - Listen on port `8080`.
-   - Match hostname `mysite.local`.
-   - Set the document root to `/var/www/mysite`.
+2. Create a server block configuration file named `mysite` under `/etc/nginx/sites-available/`:
+   ```bash
+   sudo tee /etc/nginx/sites-available/mysite << 'EOF'
+   server {
+       listen 8080;
+       server_name mysite.local;
+       root /var/www/mysite;
+       index index.html;
+
+       location / {
+           try_files $uri $uri/ =404;
+       }
+   }
+   EOF
+   ```
+3. Inspect the newly created configuration file:
+   ```bash
+   cat /etc/nginx/sites-available/mysite
+   ```
 4. Verify the task:
    ```bash
    tld check
    ```
 
 ### Task 2: Enable the server block configuration
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-enable-server-block
    ```
-2. Enable the server block by creating a symbolic link in `/etc/nginx/sites-enabled/` pointing to your `/etc/nginx/sites-available/mysite` configuration.
-3. Verify the task:
+2. Enable the server block by creating a symbolic link in `/etc/nginx/sites-enabled/` pointing to `/etc/nginx/sites-available/mysite`:
+   ```bash
+   sudo ln -s /etc/nginx/sites-available/mysite /etc/nginx/sites-enabled/mysite
+   ```
+3. Confirm the symbolic link is created and points to the correct target:
+   ```bash
+   ls -l /etc/nginx/sites-enabled/mysite
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

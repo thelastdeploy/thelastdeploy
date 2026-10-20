@@ -13,4 +13,4 @@ setup:
     - "rm -f $HOME/k8s-workloads/deployments-count.txt"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-list-deployments &>/dev/null; do sleep 1; done'
     - 'kubectl create deployment web --image=nginx --context=kind-tld-k8s-list-deployments'
-version: 1
+version: 2

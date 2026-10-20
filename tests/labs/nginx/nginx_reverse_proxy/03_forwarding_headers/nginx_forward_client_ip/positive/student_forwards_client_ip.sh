@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# Positive Test Flow: Forward Client IP
+# Module: nginx-reverse-proxy
+# Section: 03-forwarding-headers
+# Lab ID: nginx-forward-client-ip
+# ==============================================================================
+set -euo pipefail
+
+LAB_ID="nginx-forward-client-ip"
+
+# Step 1: Student adds X-Real-IP and X-Forwarded-For headers to location /node
+student_exec "sed -i '/location \\/node {/a \\\t\\tproxy_set_header X-Real-IP \\\$remote_addr;\\n\\t\\tproxy_set_header X-Forwarded-For \\\$proxy_add_x_forwarded_for;' /etc/nginx/sites-available/default" \
+    --desc "Student adds client IP forwarding headers to /node location" \
+    --expect-exit 0
+
+# Step 2: Student validates nginx configuration syntax
+student_exec "nginx -t" \
+    --desc "Student verifies nginx configuration syntax" \
+    --expect-exit 0 \
+    --expect-stderr "syntax is ok"
+
+# Step 3: Student reloads nginx
+student_exec "systemctl restart nginx" \
+    --desc "Student reloads nginx service" \
+    --expect-exit 0
+
+# Step 4: Student runs tld check to validate lab completion
+student_exec "tld check" \
+    --desc "Student runs tld check to validate lab completion" \
+    --expect-exit 0 \
+    --expect-stdout "PASS: Client IP forwarding headers configured successfully."

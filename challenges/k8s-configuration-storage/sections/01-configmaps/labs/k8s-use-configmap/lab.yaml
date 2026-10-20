@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-use-configmap &>/dev/null; do sleep 1; done'
     - 'kubectl create configmap app-config --from-literal=app.environment=production --context=kind-tld-k8s-use-configmap'
-version: 1
+version: 2

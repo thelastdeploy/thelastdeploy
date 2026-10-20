@@ -44,9 +44,23 @@ spec:
    ```bash
    tld start k8s-access-nodeport
    ```
-2. Navigate to `~/k8s-services-networking`.
-3. Complete the task requirements: NodePort service accessed successfully.
-4. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-services-networking
+   ```
+3. Retrieve the internal IP of the Kubernetes node:
+   ```bash
+   NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
+   ```
+4. Send an HTTP request to the NodePort service on port `30080` and save the response to `~/k8s-services-networking/nodeport-response.html`:
+   ```bash
+   curl -s "http://${NODE_IP}:30080" > ~/k8s-services-networking/nodeport-response.html
+   ```
+5. Verify the file contents:
+   ```bash
+   cat ~/k8s-services-networking/nodeport-response.html
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```
@@ -56,8 +70,34 @@ spec:
    ```bash
    tld start k8s-create-nodeport
    ```
-2. Complete the task requirements: NodePort service created successfully on nodePort 30080.
-3. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-services-networking
+   ```
+3. Create a YAML manifest named `nodeport-service.yaml` defining a `NodePort` Service named `nodeport-service` that exposes port `80` (target port `80`, static `nodePort: 30080`) selecting pods with `app: backend-app`:
+   ```bash
+   cat <<EOF > ~/k8s-services-networking/nodeport-service.yaml
+   apiVersion: v1
+   kind: Service
+   metadata:
+     name: nodeport-service
+   spec:
+     type: NodePort
+     selector:
+       app: backend-app
+     ports:
+     - port: 80
+       targetPort: 80
+       nodePort: 30080
+   EOF
+   kubectl apply -f ~/k8s-services-networking/nodeport-service.yaml
+   ```
+4. Verify the Service configuration and its active endpoints:
+   ```bash
+   kubectl get svc nodeport-service
+   kubectl get endpoints nodeport-service
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

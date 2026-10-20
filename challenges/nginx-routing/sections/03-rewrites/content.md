@@ -42,9 +42,20 @@ rewrite regex replacement [flag];
    tld start nginx-basic-rewrite
    ```
 2. The seed script has created `/var/www/html/newpath/file.html` containing `new content`.
-3. Configure a rewrite rule in the default server block to internally map requests from `/oldpath/file.html` to `/newpath/file.html`.
-4. Verify that hitting `/oldpath/file.html` returns `new content` with a `200 OK` code (an internal rewrite rather than a browser redirection).
-5. Verify the task:
+3. Configure a rewrite rule inside `/etc/nginx/sites-available/default` to internally rewrite requests matching `/oldpath/file.html` to `/newpath/file.html`:
+   ```nginx
+   rewrite ^/oldpath/file.html$ /newpath/file.html last;
+   ```
+4. Validate the configuration and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Confirm that accessing `http://localhost/oldpath/file.html` returns `200 OK` with `new content` without performing an external redirect:
+   ```bash
+   curl -i http://localhost/oldpath/file.html
+   ```
+6. Verify your solution:
    ```bash
    tld check
    ```
@@ -54,10 +65,21 @@ rewrite regex replacement [flag];
    ```bash
    tld start nginx-pretty-url
    ```
-2. The seed script has created `/var/www/html/product.html` containing a script template.
-3. Configure a rewrite rule mapping `/products/([0-9]+)` (where capture group 1 is a numeric product ID) internally to `/product.html?id=$1`.
-4. Reload Nginx.
-5. Verify the task:
+2. The seed script has created `/var/www/html/product.html` containing `product page`.
+3. Configure a rewrite rule inside `/etc/nginx/sites-available/default` mapping `/products/([0-9]+)` (where capture group 1 is a numeric product ID) internally to `/product.html?id=$1`:
+   ```nginx
+   rewrite ^/products/([0-9]+)$ /product.html?id=$1 last;
+   ```
+4. Validate the configuration and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Confirm that accessing `http://localhost/products/123` returns `200 OK` with `product page`:
+   ```bash
+   curl -i http://localhost/products/123
+   ```
+6. Verify your solution:
    ```bash
    tld check
    ```

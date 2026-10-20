@@ -38,12 +38,28 @@ Key directives explained:
 ## Lab Tasks
 
 ### Task 1: View and modify the default welcome page
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-default-page
    ```
-2. Modify the default welcome HTML page served by Nginx (typically at `/var/www/html/index.html`) so that it contains the text `Hello from The Last Deploy` inside an `<h1>` tag.
-3. Verify the task:
+2. Verify that the Nginx service is active and running:
+   ```bash
+   sudo systemctl start nginx
+   sudo systemctl status nginx
+   ```
+3. Inspect the current default HTML file:
+   ```bash
+   cat /var/www/html/index.html
+   ```
+4. Modify `/var/www/html/index.html` so that it contains the text `Hello from The Last Deploy` within an `<h1>` tag:
+   ```bash
+   echo '<h1>Hello from The Last Deploy</h1>' | sudo tee /var/www/html/index.html
+   ```
+5. Test serving the page locally over HTTP using `curl`:
+   ```bash
+   curl -s http://localhost/
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```

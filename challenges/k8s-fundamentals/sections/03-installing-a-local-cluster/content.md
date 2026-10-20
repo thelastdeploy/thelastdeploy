@@ -10,43 +10,38 @@ To learn and develop applications on Kubernetes, you don't need a multi-node clo
 
 ---
 
-## Getting Started with Kind
+## Working with Local Kubernetes Clusters
 
-`kind` uses container nodes to simulate a Kubernetes cluster. A control plane node and worker nodes are represented by Docker containers running systemd and the kubelet.
+To communicate with any Kubernetes cluster—whether running locally via single-node engines (like k3s or minikube) or in the cloud—the primary tool used by DevOps engineers is **kubectl**.
 
-### Kind Prerequisites
-Before using `kind`, you must have:
-- **Docker** installed and running on your host machine.
-- **kind** command-line tool.
-- **kubectl** command-line tool (to communicate with the cluster).
+### Kubectl Basics
+`kubectl` is the official command-line interface for communicating with the Kubernetes API server. It reads cluster connection credentials from a configuration file called `kubeconfig` (located by default at `~/.kube/config`).
 
-### Creating a Cluster
-To spin up a default cluster:
+To inspect client version and connection details:
 ```bash
-kind create cluster --name my-cluster
+kubectl version --client
+kubectl cluster-info
 ```
 
-To list running clusters:
+To list cluster nodes:
 ```bash
-kind get clusters
-```
-
-To delete a cluster:
-```bash
-kind delete cluster --name my-cluster
+kubectl get nodes
 ```
 
 ---
 
 ## Lab Tasks
 
-### Task 1: Install Kind and Kubectl
+### Task 1: Install and Verify Kubectl
 1. Start the lab in your terminal:
    ```bash
    tld start k8s-install-kind
    ```
-2. Complete the task requirements: Kind and Kubectl are successfully installed.
-3. Verify the task:
+2. Verify that the `kubectl` CLI binary is installed and accessible in your environment:
+   ```bash
+   kubectl version --client
+   ```
+3. Once verified, submit your solution:
    ```bash
    tld check
    ```
@@ -56,9 +51,20 @@ kind delete cluster --name my-cluster
    ```bash
    tld start k8s-verify-cluster
    ```
-2. Navigate to `~/k8s-fundamentals`.
-3. Complete the task requirements: Successfully verified cluster access and retrieved the control-plane node name.
-4. Verify the task:
+2. Inspect the nodes in the local Kubernetes cluster:
+   ```bash
+   kubectl get nodes
+   ```
+3. Extract the control-plane node name and write it into `~/k8s-fundamentals/node-name.txt`:
+   ```bash
+   mkdir -p ~/k8s-fundamentals
+   kubectl get nodes -o jsonpath='{.items[0].metadata.name}' > ~/k8s-fundamentals/node-name.txt
+   ```
+4. Verify that `~/k8s-fundamentals/node-name.txt` contains solely the control-plane node name:
+   ```bash
+   cat ~/k8s-fundamentals/node-name.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

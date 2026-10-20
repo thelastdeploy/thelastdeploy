@@ -10,10 +10,21 @@ if [ ! -f "$FILE" ]; then
 fi
 
 CONTENT=$(tr -d '[:space:]' < "$FILE")
-EXPECTED="tld-k8s-verify-cluster-control-plane"
 
-if [ "$CONTENT" != "$EXPECTED" ]; then
-  echo "FAIL: Incorrect node name in $FILE. Expected '$EXPECTED', got '$CONTENT'"
+if [ -z "$CONTENT" ]; then
+  echo "FAIL: $FILE is empty. Please save the control-plane node name into it."
+  exit 1
+fi
+
+ACTUAL_NODE=$(kubectl get nodes -o jsonpath='{.items[0].metadata.name}' 2>/dev/null || echo "")
+
+if [ -z "$ACTUAL_NODE" ]; then
+  echo "FAIL: Could not query cluster nodes. Is the cluster running?"
+  exit 1
+fi
+
+if [ "$CONTENT" != "$ACTUAL_NODE" ]; then
+  echo "FAIL: Incorrect node name in $FILE. Expected '$ACTUAL_NODE', got '$CONTENT'"
   exit 1
 fi
 

@@ -70,8 +70,20 @@ Describing a deployment displays replicas status, conditions (e.g. `Available`, 
    ```bash
    tld start k8s-create-deployment
    ```
-2. Complete the task requirements: Deployment 'nginx-deployment' successfully created with 3 running replicas.
-3. Verify the task:
+2. Create a Deployment manifest named `nginx-deployment.yaml` with the following configuration:
+   - Deployment name: `nginx-deployment`
+   - Replicas: `3`
+   - Image: `nginx:1.14.2`
+   - Matching labels: `app: nginx`
+3. Apply the manifest to your cluster:
+   ```bash
+   kubectl apply -f nginx-deployment.yaml
+   ```
+4. Confirm that all 3 replicas are ready:
+   ```bash
+   kubectl get deployment nginx-deployment
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -81,9 +93,20 @@ Describing a deployment displays replicas status, conditions (e.g. `Available`, 
    ```bash
    tld start k8s-list-deployments
    ```
-2. Navigate to `~/k8s-workloads`.
-3. Complete the task requirements: Deployments count successfully verified.
-4. Verify the task:
+2. Count the total number of deployments across all namespaces:
+   ```bash
+   kubectl get deployments -A --no-headers | wc -l
+   ```
+3. Save solely the numeric count to `~/k8s-workloads/deployments-count.txt`:
+   ```bash
+   mkdir -p ~/k8s-workloads
+   kubectl get deployments -A --no-headers | wc -l | tr -d ' ' > ~/k8s-workloads/deployments-count.txt
+   ```
+4. Confirm that `~/k8s-workloads/deployments-count.txt` contains the integer count:
+   ```bash
+   cat ~/k8s-workloads/deployments-count.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

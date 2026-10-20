@@ -45,9 +45,18 @@ The presence of a trailing slash in the `proxy_pass` destination changes how the
    ```bash
    tld start nginx-proxy-node-app
    ```
-2. Configure location block `/node` in the default server config `/etc/nginx/sites-available/default` to proxy requests to `http://127.0.0.1:3000`.
-3. Reload Nginx.
-4. Verify the task:
+2. Configure a location block `/node` inside `/etc/nginx/sites-available/default` to forward incoming requests to `http://127.0.0.1:3000`:
+   ```nginx
+   location /node {
+       proxy_pass http://127.0.0.1:3000;
+   }
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```
@@ -57,9 +66,18 @@ The presence of a trailing slash in the `proxy_pass` destination changes how the
    ```bash
    tld start nginx-proxy-python-app
    ```
-2. Configure location block `/python` in the default server config `/etc/nginx/sites-available/default` to proxy requests to `http://127.0.0.1:8000`.
-3. Reload Nginx.
-4. Verify the task:
+2. Configure a location block `/python` inside `/etc/nginx/sites-available/default` to forward incoming requests to `http://127.0.0.1:8000`:
+   ```nginx
+   location /python {
+       proxy_pass http://127.0.0.1:8000;
+   }
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```

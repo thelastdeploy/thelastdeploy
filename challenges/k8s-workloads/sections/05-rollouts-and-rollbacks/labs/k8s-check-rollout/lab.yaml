@@ -13,4 +13,4 @@ setup:
     - "rm -f $HOME/k8s-workloads/rollout-status.txt"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-check-rollout &>/dev/null; do sleep 1; done'
     - 'kubectl create deployment rollout-deploy --image=nginx --context=kind-tld-k8s-check-rollout'
-version: 1
+version: 2

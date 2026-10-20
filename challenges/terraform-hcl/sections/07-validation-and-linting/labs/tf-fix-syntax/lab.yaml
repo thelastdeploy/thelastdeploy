@@ -12,4 +12,4 @@ setup:
     - echo 'provider "local" {}' > $HOME/terraform-hcl-challenge/main.tf
     - "echo 'resource \"local_file\" \"syntax\" { content = \"Fix me!\" \n filename\
     \ = \"/tmp/syntax.txt\"' >> $HOME/terraform-hcl-challenge/main.tf"
-version: 1
+version: 2

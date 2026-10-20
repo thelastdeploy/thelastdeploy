@@ -42,9 +42,19 @@ A Pod remains in `Pending` state when it cannot be scheduled on any node in the 
    ```bash
    tld start k8s-debug-crashloopbackoff
    ```
-2. Navigate to `~/k8s-troubleshooting`.
-3. Complete the task requirements: Successfully identified the crashed error code from pod logs.
-4. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-troubleshooting
+   ```
+3. Inspect the logs of `crashing-app` to retrieve the fatal error code:
+   ```bash
+   kubectl logs crashing-app
+   ```
+4. Write the error code (`FATAL_ERROR_CODE_9876`) into `~/k8s-troubleshooting/crash-code.txt`:
+   ```bash
+   echo "FATAL_ERROR_CODE_9876" > ~/k8s-troubleshooting/crash-code.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
@@ -54,8 +64,19 @@ A Pod remains in `Pending` state when it cannot be scheduled on any node in the 
    ```bash
    tld start k8s-debug-imagepullbackoff
    ```
-2. Complete the task requirements: ImagePullBackOff resolved successfully! Pod is running.
-3. Verify the task:
+2. Inspect the failing pod `pull-failed-pod` to observe the image pull failure:
+   ```bash
+   kubectl describe pod pull-failed-pod
+   ```
+3. Update the container image to `nginx`:
+   ```bash
+   kubectl set image pod/pull-failed-pod pull-failed-pod=nginx
+   ```
+4. Wait for the pod to reach the `Running` phase:
+   ```bash
+   kubectl wait --for=condition=Ready pod/pull-failed-pod --timeout=60s
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
@@ -65,8 +86,25 @@ A Pod remains in `Pending` state when it cannot be scheduled on any node in the 
    ```bash
    tld start k8s-debug-pending-pod
    ```
-2. Complete the task requirements: Pending pod scheduling error resolved successfully.
-3. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-troubleshooting
+   ```
+3. Inspect `pending-pod` to view the scheduler warning event regarding insufficient CPU:
+   ```bash
+   kubectl describe pod pending-pod
+   ```
+4. Delete the pod, update `pending-pod.yaml` with a lower CPU request (e.g. `100m`), and re-apply:
+   ```bash
+   kubectl delete pod pending-pod
+   sed -i 's/cpu: "100"/cpu: "100m"/' ~/k8s-troubleshooting/pending-pod.yaml
+   kubectl apply -f ~/k8s-troubleshooting/pending-pod.yaml
+   ```
+5. Wait for the pod to be scheduled and reach the `Running` phase:
+   ```bash
+   kubectl wait --for=condition=Ready pod/pending-pod --timeout=60s
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```

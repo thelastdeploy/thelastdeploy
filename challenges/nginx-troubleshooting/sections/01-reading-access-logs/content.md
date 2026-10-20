@@ -44,9 +44,19 @@ You can use standard Linux text-processing commands to query Nginx logs:
    ```bash
    tld start nginx-find-client-request
    ```
-2. Search the Nginx access log file `/var/log/nginx/access.log` to find the request that was made using the User-Agent `SecretAgent`.
-3. Extract the client's IP address from that request line and write it into a file named `/tmp/client_ip.txt`.
-4. Verify the task:
+2. Search `/var/log/nginx/access.log` to find the request that was made with User-Agent `SecretAgent`:
+   ```bash
+   grep "SecretAgent" /var/log/nginx/access.log
+   ```
+3. Extract the client's IP address (the first column) from that log line and save it to `/tmp/client_ip.txt`:
+   ```bash
+   grep "SecretAgent" /var/log/nginx/access.log | awk '{print $1}' > /tmp/client_ip.txt
+   ```
+4. Verify the file contains the extracted IP:
+   ```bash
+   cat /tmp/client_ip.txt
+   ```
+5. Verify your solution:
    ```bash
    tld check
    ```

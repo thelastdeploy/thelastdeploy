@@ -11,9 +11,28 @@ You will now put everything you've learned about resources, providers, dependenc
    ```bash
    tld start tf-build-local-project
    ```
-2. Navigate to `~/terraform-resources-challenge`.
-3. Complete the task requirements: Local infrastructure project successfully provisioned and verified.
-4. Verify the task:
+2. Navigate to `~/terraform-resources-challenge`:
+   ```bash
+   cd ~/terraform-resources-challenge
+   ```
+3. Create `main.tf` declaring at least two resources (e.g. two `local_file` resources):
+   ```hcl
+   resource "local_file" "config" {
+     content  = "app_env=production\nlog_level=info"
+     filename = "/tmp/config.env"
+   }
+
+   resource "local_file" "status" {
+     content  = "status=ready"
+     filename = "/tmp/status.txt"
+   }
+   ```
+4. Initialize and apply the configuration:
+   ```bash
+   terraform init
+   terraform apply -auto-approve
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-recover-failed-update &>/dev/null; do sleep 1; done'
     - 'kubectl create deployment rollout-app --image=nginx:1.161.typo --context=kind-tld-k8s-recover-failed-update'
-version: 1
+version: 2

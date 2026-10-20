@@ -43,9 +43,10 @@ In this case, you must identify what is running on that port:
    ```bash
    tld start nginx-identify-startup-error
    ```
-2. Search the Nginx error log file `/var/log/nginx/error.log` to find the recent startup failure where Nginx couldn't bind to a socket address.
-3. Find the port number that was already in use and write just the port number (e.g. `9999`) to `/tmp/failed_port.txt`.
-4. Verify the task:
+2. Search the Nginx error log file `/var/log/nginx/error.log` to find the startup failure where Nginx could not bind to a socket address.
+3. Identify the conflicting port number that failed to bind and write only that port number (for example, `9999`) to `/tmp/failed_port.txt`.
+4. Ensure `/tmp/failed_port.txt` contains solely the numeric port without surrounding text or extra lines.
+5. Verify your solution:
    ```bash
    tld check
    ```

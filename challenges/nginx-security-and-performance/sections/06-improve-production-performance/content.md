@@ -52,13 +52,23 @@ If set too long (e.g. `300s`), idle connections remain open, locking up resource
    tld start nginx-optimize-production-config
    ```
 2. The seed script has modified `/etc/nginx/nginx.conf` to use a sub-optimal setup:
-   - `worker_processes 1;` (limits CPU core usage to one core).
-   - `keepalive_timeout 300;` (locks up sockets on idle connections).
+   - `worker_processes 1;`
+   - `keepalive_timeout 300;`
 3. Modify `/etc/nginx/nginx.conf` to optimize these parameters:
-   - Configure `worker_processes` to scale automatically (`auto`).
-   - Reduce the `keepalive_timeout` to `65` seconds.
-4. Reload Nginx.
-5. Verify the task:
+   - Configure `worker_processes` to scale automatically (`auto`):
+     ```nginx
+     worker_processes auto;
+     ```
+   - Reduce `keepalive_timeout` to `65` seconds:
+     ```nginx
+     keepalive_timeout 65;
+     ```
+4. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Verify your solution:
    ```bash
    tld check
    ```

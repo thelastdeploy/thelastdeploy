@@ -46,9 +46,19 @@ spec:
    ```bash
    tld start k8s-access-service
    ```
-2. Navigate to `~/k8s-services-networking`.
-3. Complete the task requirements: Successfully accessed the internal cluster service from the client pod.
-4. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-services-networking
+   ```
+3. Use `kubectl exec` to send an HTTP GET request from `client-pod` to the internal service `backend-service` on port 80, and save the response to `~/k8s-services-networking/backend-response.html`:
+   ```bash
+   kubectl exec client-pod -- curl -s http://backend-service > ~/k8s-services-networking/backend-response.html
+   ```
+4. Verify the file contents:
+   ```bash
+   cat ~/k8s-services-networking/backend-response.html
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
@@ -58,8 +68,16 @@ spec:
    ```bash
    tld start k8s-create-clusterip-service
    ```
-2. Complete the task requirements: ClusterIP service created and targets backend pods successfully.
-3. Verify the task:
+2. Create a `ClusterIP` Service named `backend-service` exposing port `80` and directing traffic to target port `80` on the `backend-app` pods (selector `app=backend-app`):
+   ```bash
+   kubectl expose deployment backend-app --name=backend-service --port=80 --target-port=80
+   ```
+3. Verify that the Service exists and has active endpoints targeting the backend pods:
+   ```bash
+   kubectl get svc backend-service
+   kubectl get endpoints backend-service
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

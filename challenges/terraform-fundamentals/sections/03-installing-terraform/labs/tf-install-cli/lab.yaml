@@ -8,4 +8,4 @@ setup:
   type: shell
   seed_commands:
     - echo 'Please install Terraform on your system.'
-version: 1
+version: 2

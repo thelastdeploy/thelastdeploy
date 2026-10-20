@@ -30,9 +30,23 @@ Formatting configurations with `terraform fmt` keeps key-value pairs aligned, ma
    ```bash
    tld start tf-format-configuration
    ```
-2. Navigate to `~/terraform-hcl-challenge`.
-3. Complete the task requirements: Configuration commented and formatted successfully.
-4. Verify the task:
+2. Navigate to the challenge directory:
+   ```bash
+   cd ~/terraform-hcl-challenge
+   ```
+3. Open `main.tf` and add a comment explaining the resource configuration (using `#`, `//`, or `/* ... */`):
+   ```hcl
+   # Configuration file for application settings
+   resource "local_file" "app" {
+     content  = "AppConfig"
+     filename = "/tmp/app.config"
+   }
+   ```
+4. Format the file using the Terraform CLI:
+   ```bash
+   terraform fmt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

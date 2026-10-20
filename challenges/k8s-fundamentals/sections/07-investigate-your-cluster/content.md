@@ -47,9 +47,26 @@ kubectl logs failing-pod -c app-container
    ```bash
    tld start k8s-cluster-investigation
    ```
-2. Navigate to `~/k8s-fundamentals`.
-3. Complete the task requirements: Successfully investigated cluster failure and retrieved the crash error code.
-4. Verify the task:
+2. Check the status of running pods and identify the failing pod `failing-app`:
+   ```bash
+   kubectl get pods
+   ```
+3. Retrieve the container logs (or previous instance logs if crash-looping) for `failing-app`:
+   ```bash
+   kubectl logs failing-app
+   # or if already crashed:
+   kubectl logs failing-app --previous
+   ```
+4. Locate the error code output by the container and write solely the error code string (e.g. `ERROR_CODE_7712`) into `~/k8s-fundamentals/crash-code.txt`:
+   ```bash
+   mkdir -p ~/k8s-fundamentals
+   kubectl logs failing-app > ~/k8s-fundamentals/crash-code.txt 2>/dev/null || kubectl logs failing-app --previous > ~/k8s-fundamentals/crash-code.txt
+   ```
+5. Confirm `~/k8s-fundamentals/crash-code.txt` contains solely the expected error code:
+   ```bash
+   cat ~/k8s-fundamentals/crash-code.txt
+   ```
+6. Check your solution:
    ```bash
    tld check
    ```

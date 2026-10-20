@@ -9,7 +9,7 @@ if [ ! -f "$FILE" ]; then
   exit 1
 fi
 
-CONTENT=$(tr -d '[:space:]' < "$FILE")
+CONTENT=$(tr -d '[:space:]' < "$FILE" | tr -d '"'"'")
 
 if [ "$CONTENT" != "nginx:1.161.typo" ]; then
   echo "FAIL: Bad image tag name in $FILE is incorrect: '$CONTENT' (expected: nginx:1.161.typo)."

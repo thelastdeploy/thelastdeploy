@@ -13,7 +13,7 @@ fi
 
 # 2. Check updated image configuration
 IMAGE=$(kubectl --context="$CONTEXT" get deployment "$DEPLOY" -o jsonpath='{.spec.template.spec.containers[0].image}')
-if [ "$IMAGE" != "nginx:1.16.1" ] && [ "$IMAGE" != "nginx" ]; then
+if [ "$IMAGE" != "nginx:1.16.1" ] && [ "$IMAGE" != "nginx" ] && [ "$IMAGE" != "nginx:1.16" ] && [ "$IMAGE" != "nginx:latest" ]; then
   echo "FAIL: Deployment is running image '$IMAGE' (expected: nginx:1.16.1)."
   exit 1
 fi

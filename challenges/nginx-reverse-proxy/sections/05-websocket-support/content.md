@@ -44,10 +44,21 @@ location /ws/ {
    ```bash
    tld start nginx-enable-websocket-proxy
    ```
-2. Configure a location block `/ws` inside `/etc/nginx/sites-available/default` to proxy requests to `http://127.0.0.1:9000`.
-3. Add the WebSocket upgrade header rules (`Upgrade` header using `$http_upgrade`, `Connection` header using `"upgrade"`, and HTTP version set to `1.1`).
-4. Reload Nginx.
-5. Verify the task:
+2. Configure a location block `/ws` inside `/etc/nginx/sites-available/default` to proxy requests to `http://127.0.0.1:9000` with WebSocket upgrade support:
+   ```nginx
+   location /ws {
+       proxy_pass http://127.0.0.1:9000;
+       proxy_http_version 1.1;
+       proxy_set_header Upgrade $http_upgrade;
+       proxy_set_header Connection "upgrade";
+   }
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```

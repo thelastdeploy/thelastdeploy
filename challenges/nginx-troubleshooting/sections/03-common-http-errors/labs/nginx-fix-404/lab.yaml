@@ -7,9 +7,10 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "which nginx || (sudo apt-get update -y && sudo apt-get install -y nginx)"
     - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
     # Replace root directive with invalid path
     - "sudo sed -i 's/root \\/var\\/www\\/html;/root \\/var\\/www\\/htm;/g' /etc/nginx/sites-available/default"
     - "sudo systemctl start nginx || true"
     - "sudo systemctl reload nginx || true"
-version: 1
+version: 2

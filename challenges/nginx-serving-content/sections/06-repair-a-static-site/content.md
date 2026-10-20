@@ -39,9 +39,21 @@ To ensure standard web folders can be traversed and read:
    ```bash
    tld start nginx-static-site-not-working
    ```
-2. The seed script has modified directory permissions of the default web index directory `/var/www/html` to `000` (revoked all read/execute access). This blocks Nginx from serving the page, causing a `403 Forbidden` error.
-3. Diagnose and fix the directory permissions so the welcome page can be served correctly.
-4. Verify the task:
+2. The seed script has modified directory permissions of the default web index directory `/var/www/html` to `000` (revoked all read/execute access), blocking Nginx from serving the page and causing `403 Forbidden` errors.
+3. Diagnose the issue using `curl` and inspect file/directory permissions:
+   ```bash
+   curl -i http://localhost/
+   ls -ld /var/www /var/www/html
+   ```
+4. Restore standard directory permissions (`755`) on `/var/www/html` so Nginx worker processes (`www-data`) can traverse and read the directory:
+   ```bash
+   sudo chmod 755 /var/www/html
+   ```
+5. Confirm that accessing `http://localhost/` returns `200 OK` with the welcome page content:
+   ```bash
+   curl -i http://localhost/
+   ```
+6. Verify your solution:
    ```bash
    tld check
    ```

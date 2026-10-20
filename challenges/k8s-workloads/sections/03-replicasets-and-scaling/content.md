@@ -43,8 +43,19 @@ One of Kubernetes' primary features is **Self-Healing**:
    ```bash
    tld start k8s-scale-deployment
    ```
-2. Complete the task requirements: Deployment 'web-deploy' successfully scaled to 5 running replicas.
-3. Verify the task:
+2. Check the current replicas of `web-deploy`:
+   ```bash
+   kubectl get deployment web-deploy
+   ```
+3. Scale the deployment up from 2 to 5 replicas:
+   ```bash
+   kubectl scale deployment web-deploy --replicas=5
+   ```
+4. Confirm that all 5 replicas are running and ready:
+   ```bash
+   kubectl get deployment web-deploy
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -54,9 +65,25 @@ One of Kubernetes' primary features is **Self-Healing**:
    ```bash
    tld start k8s-self-healing-demo
    ```
-2. Navigate to `~/k8s-workloads`.
-3. Complete the task requirements: Self-healing demo verified! New pod '$USER_POD' spawned automatically after deletion of '$INITIAL_POD'.
-4. Verify the task:
+2. Inspect the currently running pod of deployment `app-deploy`:
+   ```bash
+   cat ~/k8s-workloads/initial-pod.txt
+   kubectl get pods -l app=app-deploy
+   ```
+3. Delete the running pod to trigger self-healing:
+   ```bash
+   kubectl delete pod -l app=app-deploy
+   ```
+4. Wait for the ReplicaSet to spawn a replacement pod, then write the new pod's name to `~/k8s-workloads/new-pod.txt`:
+   ```bash
+   mkdir -p ~/k8s-workloads
+   kubectl get pods -l app=app-deploy -o jsonpath='{.items[0].metadata.name}' > ~/k8s-workloads/new-pod.txt
+   ```
+5. Confirm `~/k8s-workloads/new-pod.txt` contains the new pod name:
+   ```bash
+   cat ~/k8s-workloads/new-pod.txt
+   ```
+6. Check your solution:
    ```bash
    tld check
    ```

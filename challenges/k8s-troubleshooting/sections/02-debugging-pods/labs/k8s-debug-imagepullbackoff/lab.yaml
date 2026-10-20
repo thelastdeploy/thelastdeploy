@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-debug-imagepullbackoff &>/dev/null; do sleep 1; done'
     - 'kubectl run pull-failed-pod --image=nginxxxxxxx --context=kind-tld-k8s-debug-imagepullbackoff'
-version: 1
+version: 2

@@ -18,9 +18,23 @@ Maintaining formatted and validated files is key to ensuring configurations appl
    ```bash
    tld start tf-init-validate-format
    ```
-2. Navigate to `~/terraform-challenge`.
-3. Complete the task requirements: Configuration validated and formatted successfully.
-4. Verify the task:
+2. Navigate to the project directory:
+   ```bash
+   cd ~/terraform-challenge
+   ```
+3. Initialize the workspace to install the provider plugin:
+   ```bash
+   terraform init
+   ```
+4. Format the configuration files to canonical HCL style:
+   ```bash
+   terraform fmt
+   ```
+5. Validate the configuration syntax and structure:
+   ```bash
+   terraform validate
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```

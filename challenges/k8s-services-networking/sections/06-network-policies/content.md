@@ -56,8 +56,37 @@ CNIs like **Calico**, **Cilium**, and **Kube-router** fully enforce NetworkPolic
    ```bash
    tld start k8s-restrict-traffic
    ```
-2. Complete the task requirements: NetworkPolicy 'db-policy' restricts traffic correctly.
-3. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-services-networking
+   ```
+3. Create a NetworkPolicy manifest `db-policy.yaml` named `db-policy` that targets pods with label `role: db` and allows `Ingress` traffic exclusively from pods labeled `role: backend`:
+   ```bash
+   cat <<EOF > ~/k8s-services-networking/db-policy.yaml
+   apiVersion: networking.k8s.io/v1
+   kind: NetworkPolicy
+   metadata:
+     name: db-policy
+   spec:
+     podSelector:
+       matchLabels:
+         role: db
+     policyTypes:
+     - Ingress
+     ingress:
+     - from:
+       - podSelector:
+           matchLabels:
+             role: backend
+   EOF
+   kubectl apply -f ~/k8s-services-networking/db-policy.yaml
+   ```
+4. Verify the NetworkPolicy configuration:
+   ```bash
+   kubectl get networkpolicy db-policy
+   kubectl describe networkpolicy db-policy
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

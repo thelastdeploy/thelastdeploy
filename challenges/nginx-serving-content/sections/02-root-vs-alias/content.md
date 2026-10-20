@@ -42,25 +42,45 @@ When a request for `/assets/photo.jpg` arrives:
 ## Lab Tasks
 
 ### Task 1: Use the root directive
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-root-directive
    ```
-2. Configure a location block `/images/` inside `/etc/nginx/sites-available/default` using the `root` directive to serve files from `/var/www/static`.
-3. Reload Nginx configuration.
-4. Verify the task:
+2. Open `/etc/nginx/sites-available/default` and configure a location block `/images/` using the `root` directive to serve files from `/var/www/static`:
+   ```bash
+   sudo sed -i '/server_name _;/a \    location /images/ {\n        root /var/www/static;\n    }' /etc/nginx/sites-available/default
+   ```
+3. Test your configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t && sudo systemctl reload nginx
+   ```
+4. Verify that `/images/test.txt` is served correctly:
+   ```bash
+   curl -s http://localhost/images/test.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
 
 ### Task 2: Use the alias directive
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-alias-directive
    ```
-2. Configure a location block `/assets/` inside `/etc/nginx/sites-available/default` using the `alias` directive to serve files from `/var/www/static/media/`.
-3. Reload Nginx configuration.
-4. Verify the task:
+2. Open `/etc/nginx/sites-available/default` and configure a location block `/assets/` using the `alias` directive to serve files from `/var/www/static/media/`:
+   ```bash
+   sudo sed -i '/server_name _;/a \    location /assets/ {\n        alias /var/www/static/media/;\n    }' /etc/nginx/sites-available/default
+   ```
+3. Test your configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t && sudo systemctl reload nginx
+   ```
+4. Verify that `/assets/test.txt` is served correctly:
+   ```bash
+   curl -s http://localhost/assets/test.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

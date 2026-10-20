@@ -13,4 +13,4 @@ setup:
     - "rm -f $HOME/k8s-pods/restarts.txt"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-pod-restarts &>/dev/null; do sleep 1; done'
     - 'kubectl run restart-pod --image=alpine --context=kind-tld-k8s-pod-restarts -- sh -c "exit 0"'
-version: 1
+version: 2

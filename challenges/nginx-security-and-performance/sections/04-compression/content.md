@@ -44,10 +44,17 @@ http {
    ```bash
    tld start nginx-enable-gzip
    ```
-2. Enable Gzip compression globally in `/etc/nginx/nginx.conf` inside the `http` context.
-3. Configure `gzip_types` to include `text/css` and `application/json`.
-4. Reload Nginx.
-5. Verify the task:
+2. Enable Gzip compression globally in `/etc/nginx/nginx.conf` inside the `http` context and specify the MIME types:
+   ```nginx
+   gzip on;
+   gzip_types text/css application/json;
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```

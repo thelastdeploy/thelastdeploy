@@ -33,8 +33,17 @@ After installation, Nginx sets up a standard directory structure:
    ```bash
    tld start nginx-install-server
    ```
-2. Install the `nginx` package on your local system if it is not already installed (you can use your package manager, e.g. `apt` or `brew`, or configure it appropriately).
-3. Verify the task:
+2. Update your system package index and install the `nginx` package:
+   ```bash
+   sudo apt update
+   sudo apt install -y nginx
+   ```
+3. Verify that the `nginx` executable is located in your system `PATH`:
+   ```bash
+   which nginx
+   nginx -v
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```
@@ -44,8 +53,15 @@ After installation, Nginx sets up a standard directory structure:
    ```bash
    tld start nginx-verify-installation
    ```
-2. Verify that the default Nginx service files exist and Nginx can be located on the system path.
-3. Verify the task:
+2. Inspect the primary Nginx configuration directory to verify its default structure:
+   ```bash
+   ls -la /etc/nginx
+   ```
+3. Confirm that the core configuration file `nginx.conf` exists within `/etc/nginx`:
+   ```bash
+   test -f /etc/nginx/nginx.conf && echo "Configuration file found"
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

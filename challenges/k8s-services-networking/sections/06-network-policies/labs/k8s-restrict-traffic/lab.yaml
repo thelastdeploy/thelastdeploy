@@ -14,4 +14,4 @@ setup:
     - 'kubectl run frontend-pod --image=nginx --labels="role=frontend" --context=kind-tld-k8s-restrict-traffic'
     - 'kubectl run backend-pod --image=nginx --labels="role=backend" --context=kind-tld-k8s-restrict-traffic'
     - 'kubectl run secure-db-pod --image=nginx --labels="role=db" --context=kind-tld-k8s-restrict-traffic'
-version: 1
+version: 2

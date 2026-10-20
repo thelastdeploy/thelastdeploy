@@ -15,4 +15,4 @@ setup:
     - 'kubectl create deployment backend-app --image=nginx --replicas=1 --context=kind-tld-k8s-service-dns'
     - 'kubectl expose deployment backend-app --name=backend-service --port=80 --target-port=80 --context=kind-tld-k8s-service-dns'
     - 'kubectl run client-pod --image=busybox --context=kind-tld-k8s-service-dns --command -- sleep 3600'
-version: 1
+version: 2

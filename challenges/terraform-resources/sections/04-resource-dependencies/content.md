@@ -39,8 +39,23 @@ resource "local_file" "app" {
    ```bash
    tld start tf-explicit-dependency
    ```
-2. Navigate to `~/terraform-resources-challenge`.
-3. Complete the task requirements: Explicit dependency verified.
+2. Navigate to the challenge directory:
+   ```bash
+   cd ~/terraform-resources-challenge
+   ```
+3. Create `main.tf` and define two resources with an explicit dependency using `depends_on`:
+   ```hcl
+   resource "local_file" "db" {
+     content  = "database ready"
+     filename = "/tmp/db.txt"
+   }
+
+   resource "local_file" "app" {
+     content    = "application"
+     filename   = "/tmp/app.txt"
+     depends_on = [local_file.db]
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check
@@ -51,8 +66,21 @@ resource "local_file" "app" {
    ```bash
    tld start tf-implicit-dependency
    ```
-2. Navigate to `~/terraform-resources-challenge`.
-3. Complete the task requirements: Implicit dependency verified.
+2. Navigate to the challenge directory:
+   ```bash
+   cd ~/terraform-resources-challenge
+   ```
+3. Create `main.tf` and define an implicit dependency by referencing another resource's attribute:
+   ```hcl
+   resource "random_id" "server" {
+     byte_length = 8
+   }
+
+   resource "local_file" "config" {
+     content  = "Server ID: ${random_id.server.hex}"
+     filename = "/tmp/server_config.txt"
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check

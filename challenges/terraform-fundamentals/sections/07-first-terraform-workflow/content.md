@@ -15,9 +15,31 @@ Once applied, check that:
    ```bash
    tld start tf-complete-first-workflow
    ```
-2. Navigate to `~/terraform-challenge`.
-3. Complete the task requirements: Successfully initialized, planned, and applied first Terraform workflow.
-4. Verify the task:
+2. Navigate to the project directory:
+   ```bash
+   cd ~/terraform-challenge
+   ```
+3. Inspect the seeded `main.tf` configuration:
+   ```bash
+   cat main.tf
+   ```
+4. Initialize the workspace to install the required `local` provider:
+   ```bash
+   terraform init
+   ```
+5. Review the execution plan:
+   ```bash
+   terraform plan
+   ```
+6. Apply the configuration to create the `/tmp/pet.txt` resource:
+   ```bash
+   terraform apply -auto-approve
+   ```
+7. Verify the generated file:
+   ```bash
+   cat /tmp/pet.txt
+   ```
+8. Verify the task:
    ```bash
    tld check
    ```

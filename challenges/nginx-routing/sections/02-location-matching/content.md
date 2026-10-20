@@ -49,9 +49,18 @@ When a request arrives, Nginx resolves it as follows:
    ```bash
    tld start nginx-prefix-match
    ```
-2. Configure a prefix location block matching `/docs` to serve content from `/var/www/docs`.
-3. Reload Nginx.
-4. Verify the task:
+2. The seed script has created `/var/www/docs/index.html` with content `prefix test`.
+3. Configure a prefix location block `/docs` inside `/etc/nginx/sites-available/default` so that requests to `/docs` or `/docs/` serve content from `/var/www/docs` (using `root /var/www;` or `alias /var/www/docs/;`).
+4. Validate the configuration and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Confirm that accessing `http://localhost/docs/` returns `prefix test`:
+   ```bash
+   curl -s http://localhost/docs/
+   ```
+6. Verify your solution:
    ```bash
    tld check
    ```
@@ -61,9 +70,18 @@ When a request arrives, Nginx resolves it as follows:
    ```bash
    tld start nginx-exact-match
    ```
-2. Configure an exact location match `/special.html` using the `=` modifier to serve the file `/var/www/html/special.html`.
-3. Reload Nginx.
-4. Verify the task:
+2. The seed script has created `/var/www/html/special.html` with content `exact test`.
+3. Configure an exact location match `/special.html` using the `=` modifier inside `/etc/nginx/sites-available/default` to serve the file `/var/www/html/special.html`.
+4. Validate the configuration and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Confirm that accessing `http://localhost/special.html` returns `exact test`:
+   ```bash
+   curl -s http://localhost/special.html
+   ```
+6. Verify your solution:
    ```bash
    tld check
    ```
@@ -73,9 +91,18 @@ When a request arrives, Nginx resolves it as follows:
    ```bash
    tld start nginx-regex-match
    ```
-2. Configure a case-insensitive regex match location matching image files ending in `.jpg`, `.jpeg`, `.png`, or `.gif` using the `~*` modifier. Serve them from root `/var/www/html`.
-3. Reload Nginx.
-4. Verify the task:
+2. The seed script has created `/var/www/html/test.PNG` with content `regex test`.
+3. Configure a case-insensitive regex location matching image files ending in `.jpg`, `.jpeg`, `.png`, or `.gif` using the `~*` modifier inside `/etc/nginx/sites-available/default` (with `root /var/www/html;`).
+4. Validate the configuration and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Confirm that accessing `http://localhost/test.PNG` returns `regex test`:
+   ```bash
+   curl -s http://localhost/test.PNG
+   ```
+6. Verify your solution:
    ```bash
    tld check
    ```

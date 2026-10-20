@@ -38,14 +38,28 @@ location /blog/ {
 ## Lab Tasks
 
 ### Task 1: Set up a custom index priority
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-custom-index
    ```
-2. The seed script has created `/var/www/html/custom.html` containing the string `Custom welcome page`.
-3. Modify the `index` directive inside the default server block `/etc/nginx/sites-available/default` so that `custom.html` is checked **first** before `index.html` or any other file.
-4. Reload Nginx configuration.
-5. Verify the task:
+   A pre-seeded file `/var/www/html/custom.html` has been created containing the string `Custom welcome page`.
+2. Inspect `/etc/nginx/sites-available/default` to locate the current `index` directive:
+   ```bash
+   grep -n "index " /etc/nginx/sites-available/default
+   ```
+3. Update the `index` directive so that `custom.html` appears first in the list:
+   ```bash
+   sudo sed -i 's/index index.html/index custom.html index.html/' /etc/nginx/sites-available/default
+   ```
+4. Test configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t && sudo systemctl reload nginx
+   ```
+5. Confirm that querying the server root serves `custom.html`:
+   ```bash
+   curl -s http://localhost/
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```

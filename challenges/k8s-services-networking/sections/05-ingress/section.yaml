@@ -2,4 +2,4 @@ id: k8s-ingress
 title: "Routing Traffic with Ingress"
 order: 5
 xp: 10
-version: 1
+version: 2

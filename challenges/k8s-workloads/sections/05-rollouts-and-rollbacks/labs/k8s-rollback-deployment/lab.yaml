@@ -14,4 +14,4 @@ setup:
     - 'until [ "$(kubectl --context=kind-tld-k8s-rollback-deployment get deployment rollout-deploy -o jsonpath="{.status.readyReplicas}" 2>/dev/null)" = "1" ]; do sleep 1; done'
     - 'kubectl set image deployment/rollout-deploy nginx=nginx:1.16.1 --context=kind-tld-k8s-rollback-deployment'
     - 'until [ "$(kubectl --context=kind-tld-k8s-rollback-deployment get deployment rollout-deploy -o jsonpath="{.status.readyReplicas}" 2>/dev/null)" = "1" ]; do sleep 1; done'
-version: 1
+version: 2

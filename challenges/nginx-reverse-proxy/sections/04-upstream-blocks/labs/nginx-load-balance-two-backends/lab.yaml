@@ -7,9 +7,10 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "which nginx || (sudo apt-get update -y && sudo apt-get install -y nginx)"
     - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
     # Write default upstream definition if not present (in conf.d to keep default config simple)
     - "echo -e 'upstream backend_servers {\n    server 127.0.0.1:8001;\n    server 127.0.0.1:8002;\n}' | sudo tee /etc/nginx/conf.d/upstream.conf > /dev/null"
     - "sudo systemctl start nginx || true"
     - "sudo systemctl reload nginx || true"
-version: 1
+version: 2

@@ -7,8 +7,9 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "which nginx || (apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx)"
     - "sudo mkdir -p /var/www/html"
     - "echo 'Custom welcome page' | sudo tee /var/www/html/custom.html > /dev/null"
     - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
     - "sudo systemctl start nginx || true"
-version: 1
+version: 2

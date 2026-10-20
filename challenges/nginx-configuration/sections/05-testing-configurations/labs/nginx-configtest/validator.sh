@@ -3,8 +3,8 @@
 set -euo pipefail
 
 FILE="/tmp/config_test_result.txt"
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: File /tmp/config_test_result.txt not found. Did you run 'sudo nginx -t 2> /tmp/config_test_result.txt'?"
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: File /tmp/config_test_result.txt not found or empty. Did you run 'sudo nginx -t 2> /tmp/config_test_result.txt'?"
   exit 1
 fi
 

@@ -7,8 +7,8 @@ if [ ! -f "$FILE" ] && [ -f "$FILE.conf" ]; then
   FILE="$FILE.conf"
 fi
 
-if [ ! -f "$FILE" ]; then
-  echo "FAIL: Configuration file 'mysite' (or 'mysite.conf') not found in /etc/nginx/sites-available/"
+if [ ! -f "$FILE" ] || [ ! -s "$FILE" ]; then
+  echo "FAIL: Configuration file 'mysite' (or 'mysite.conf') not found or empty in /etc/nginx/sites-available/"
   exit 1
 fi
 

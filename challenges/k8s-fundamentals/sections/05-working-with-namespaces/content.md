@@ -54,8 +54,15 @@ After running this, running `kubectl get pods` will list pods in `development` n
    ```bash
    tld start k8s-create-namespace
    ```
-2. Complete the task requirements: Namespace 'production' created successfully.
-3. Verify the task:
+2. Create a new namespace named `production`:
+   ```bash
+   kubectl create namespace production
+   ```
+3. Verify that the namespace is listed:
+   ```bash
+   kubectl get namespaces
+   ```
+4. Check your solution:
    ```bash
    tld check
    ```
@@ -65,8 +72,16 @@ After running this, running `kubectl get pods` will list pods in `development` n
    ```bash
    tld start k8s-switch-namespace
    ```
-2. Complete the task requirements: Successfully switched default context namespace to development.
-3. Verify the task:
+2. Note that the `development` namespace has already been created for you.
+3. Switch your current kubectl context so that future commands target the `development` namespace by default:
+   ```bash
+   kubectl config set-context --current --namespace=development
+   ```
+4. Verify your current active context namespace:
+   ```bash
+   kubectl config view --minify -o jsonpath='{..namespace}'
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

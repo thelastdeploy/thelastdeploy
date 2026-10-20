@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-use-secret &>/dev/null; do sleep 1; done'
     - 'kubectl create secret generic db-secret --from-literal=password=supersecret --context=kind-tld-k8s-use-secret'
-version: 1
+version: 2

@@ -39,9 +39,20 @@ The `restartPolicy` specifies how Kubernetes responds when a container exits:
    ```bash
    tld start k8s-pod-restarts
    ```
-2. Navigate to `~/k8s-pods`.
-3. Complete the task requirements: Pod restarts successfully verified! (recorded: $USER_RESTARTS, actual: $ACTUAL_RESTARTS)
-4. Verify the task:
+2. Monitor the restart count of `restart-pod` using `kubectl get pod`:
+   ```bash
+   kubectl get pod restart-pod -w
+   ```
+3. Once the restart count reaches at least 2, query the exact restart count and save it to `~/k8s-pods/restarts.txt`:
+   ```bash
+   mkdir -p ~/k8s-pods
+   kubectl get pod restart-pod -o jsonpath='{.status.containerStatuses[0].restartCount}' > ~/k8s-pods/restarts.txt
+   ```
+4. Verify that `~/k8s-pods/restarts.txt` contains a valid integer (e.g. `2` or higher):
+   ```bash
+   cat ~/k8s-pods/restarts.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -51,9 +62,20 @@ The `restartPolicy` specifies how Kubernetes responds when a container exits:
    ```bash
    tld start k8s-watch-pod-lifecycle
    ```
-2. Navigate to `~/k8s-pods`.
-3. Complete the task requirements: Successfully verified pod lifecycle pending status.
-4. Verify the task:
+2. Inspect the lifecycle phase of a Pod while its init containers are executing:
+   ```bash
+   kubectl get pod init-pod
+   ```
+3. Record the high-level pod lifecycle phase (`Pending`) into `~/k8s-pods/init-status.txt`:
+   ```bash
+   mkdir -p ~/k8s-pods
+   echo "Pending" > ~/k8s-pods/init-status.txt
+   ```
+4. Confirm `~/k8s-pods/init-status.txt` contains `Pending`:
+   ```bash
+   cat ~/k8s-pods/init-status.txt
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

@@ -41,25 +41,42 @@ This is particularly useful when debugging macro inclusions and verifying direct
 ## Lab Tasks
 
 ### Task 1: Perform a configuration test
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-configtest
    ```
-2. Test the active Nginx configuration using `nginx -t`.
-3. Save the test output (redirecting standard error/output) into a file named `/tmp/config_test_result.txt`.
+2. Test the active Nginx configuration and redirect both stdout and stderr into `/tmp/config_test_result.txt`:
+   ```bash
+   sudo nginx -t > /tmp/config_test_result.txt 2>&1
+   ```
+3. Inspect the recorded test output:
+   ```bash
+   cat /tmp/config_test_result.txt
+   ```
 4. Verify the task:
    ```bash
    tld check
    ```
 
 ### Task 2: Find and fix configuration syntax error
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-find-config-error
    ```
-2. The seed script has intentionally introduced a syntax error (a missing semicolon or brace) in the default site configuration file `/etc/nginx/sites-available/default`.
-3. Use the troubleshooting steps to locate the error, fix it, and verify that the config test succeeds.
-4. Verify the task:
+   The default site configuration `/etc/nginx/sites-available/default` has a missing semicolon on a directive, causing configuration tests to fail.
+2. Run the Nginx configuration test to locate the exact file and line number:
+   ```bash
+   sudo nginx -t
+   ```
+3. Edit `/etc/nginx/sites-available/default` to restore the missing semicolon on the `root` directive:
+   ```bash
+   sudo sed -i 's/root \/var\/www\/html$/root \/var\/www\/html;/' /etc/nginx/sites-available/default
+   ```
+4. Verify that the configuration test now passes cleanly:
+   ```bash
+   sudo nginx -t
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

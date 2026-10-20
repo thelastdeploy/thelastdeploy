@@ -11,7 +11,7 @@ if ! grep -r -q "include[[:space:]]\+snippets/custom-headers.conf" /etc/nginx/ng
 fi
 
 # Ensure Nginx config syntax is correct
-if ! sudo nginx -t &>/dev/null; then
+if ! nginx -t &>/dev/null && ! sudo nginx -t &>/dev/null; then
   echo "FAIL: Nginx configuration test is failing. Please fix syntax errors."
   exit 1
 fi

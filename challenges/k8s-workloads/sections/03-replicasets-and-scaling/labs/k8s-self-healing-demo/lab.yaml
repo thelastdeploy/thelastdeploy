@@ -16,4 +16,4 @@ setup:
     - 'kubectl create deployment app-deploy --image=nginx --replicas=1 --context=kind-tld-k8s-self-healing-demo'
     - 'until [ "$(kubectl get pods -l app=app-deploy --context=kind-tld-k8s-self-healing-demo -o jsonpath="{.items[0].metadata.name}" 2>/dev/null)" != "" ]; do sleep 1; done'
     - 'kubectl get pods -l app=app-deploy --context=kind-tld-k8s-self-healing-demo -o jsonpath="{.items[0].metadata.name}" > $HOME/k8s-workloads/initial-pod.txt'
-version: 1
+version: 2

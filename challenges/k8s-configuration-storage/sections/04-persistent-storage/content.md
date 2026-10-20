@@ -62,8 +62,26 @@ Data written to `/usr/share/nginx/html` in this container will be persisted to t
    ```bash
    tld start k8s-create-pvc
    ```
-2. Complete the task requirements: PersistentVolumeClaim 'task-pv-claim' successfully verified.
-3. Verify the task:
+2. Create a PersistentVolumeClaim named `task-pv-claim` requesting `1Gi` storage with access mode `ReadWriteOnce`:
+   ```bash
+   cat <<EOF | kubectl apply -f -
+   apiVersion: v1
+   kind: PersistentVolumeClaim
+   metadata:
+     name: task-pv-claim
+   spec:
+     accessModes:
+       - ReadWriteOnce
+     resources:
+       requests:
+         storage: 1Gi
+   EOF
+   ```
+3. Verify the PersistentVolumeClaim:
+   ```bash
+   kubectl get pvc task-pv-claim
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```
@@ -73,8 +91,31 @@ Data written to `/usr/share/nginx/html` in this container will be persisted to t
    ```bash
    tld start k8s-mount-persistent-volume
    ```
-2. Complete the task requirements: PVC dynamic storage volume mount successfully verified.
-3. Verify the task:
+2. Create a Pod named `pv-pod` using the `nginx` image that mounts the existing PersistentVolumeClaim `task-pv-claim` at `/usr/share/nginx/html`:
+   ```bash
+   cat <<EOF | kubectl apply -f -
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: pv-pod
+   spec:
+     volumes:
+       - name: task-pv-storage
+         persistentVolumeClaim:
+           claimName: task-pv-claim
+     containers:
+       - name: task-pv-container
+         image: nginx
+         volumeMounts:
+           - mountPath: "/usr/share/nginx/html"
+             name: task-pv-storage
+   EOF
+   ```
+3. Wait for the pod to reach the `Running` phase and become ready:
+   ```bash
+   kubectl wait --for=condition=Ready pod/pv-pod --timeout=60s
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

@@ -7,6 +7,7 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "which nginx || (sudo apt-get update -y && sudo apt-get install -y nginx)"
     # Ensure default welcomes page exists
     - "sudo mkdir -p /var/www/html"
     - "if [ ! -f /var/www/html/index.html ]; then echo 'Welcome to Nginx' | sudo tee /var/www/html/index.html > /dev/null; fi"
@@ -14,4 +15,4 @@ setup:
     # Revoke permissions on the parent folder /var/www/html
     - "sudo chmod 000 /var/www/html"
     - "sudo systemctl start nginx || true"
-version: 1
+version: 2

@@ -8,4 +8,4 @@ setup:
   type: shell
   seed_commands:
     - "echo 'Verifying default Nginx configuration file presence'"
-version: 1
+version: 2

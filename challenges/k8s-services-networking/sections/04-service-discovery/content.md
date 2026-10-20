@@ -51,9 +51,19 @@ This will output the Service's ClusterIP and confirm CoreDNS is successfully res
    ```bash
    tld start k8s-service-dns
    ```
-2. Navigate to `~/k8s-services-networking`.
-3. Complete the task requirements: Service DNS successfully resolved and verified.
-4. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-services-networking
+   ```
+3. Use `kubectl exec` to run `nslookup` inside `client-pod` to resolve the DNS name of `backend-service`, and save the output to `~/k8s-services-networking/dns-resolve.txt`:
+   ```bash
+   kubectl exec client-pod -- nslookup backend-service > ~/k8s-services-networking/dns-resolve.txt || true
+   ```
+4. Verify the file contents to confirm that `backend-service` and its ClusterIP appear in the lookup result:
+   ```bash
+   cat ~/k8s-services-networking/dns-resolve.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

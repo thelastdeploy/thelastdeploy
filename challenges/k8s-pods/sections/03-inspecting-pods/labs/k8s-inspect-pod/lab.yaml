@@ -13,4 +13,4 @@ setup:
     - "rm -f $HOME/k8s-pods/pod-ip.txt"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-inspect-pod &>/dev/null; do sleep 1; done'
     - 'kubectl run test-pod --image=nginx --context=kind-tld-k8s-inspect-pod'
-version: 1
+version: 2

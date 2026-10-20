@@ -52,8 +52,15 @@ In this example, the container's environment variable `ENVIRONMENT` will be popu
    ```bash
    tld start k8s-create-configmap
    ```
-2. Complete the task requirements: ConfigMap 'app-config' successfully verified.
-3. Verify the task:
+2. Create a ConfigMap named `app-config` with key `app.environment` set to `production`:
+   ```bash
+   kubectl create configmap app-config --from-literal=app.environment=production
+   ```
+3. Verify the ConfigMap content:
+   ```bash
+   kubectl get configmap app-config -o yaml
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```
@@ -63,8 +70,30 @@ In this example, the container's environment variable `ENVIRONMENT` will be popu
    ```bash
    tld start k8s-use-configmap
    ```
-2. Complete the task requirements: ConfigMap environment variable injection verified successfully.
-3. Verify the task:
+2. Create a Pod named `config-explorer` using the `nginx` image that defines an environment variable `APP_ENV` sourced from ConfigMap `app-config` key `app.environment`:
+   ```bash
+   cat <<EOF | kubectl apply -f -
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: config-explorer
+   spec:
+     containers:
+     - name: app
+       image: nginx
+       env:
+       - name: APP_ENV
+         valueFrom:
+           configMapKeyRef:
+             name: app-config
+             key: app.environment
+   EOF
+   ```
+3. Wait for the pod to be running and ready:
+   ```bash
+   kubectl wait --for=condition=Ready pod/config-explorer --timeout=60s
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

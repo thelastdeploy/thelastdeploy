@@ -58,8 +58,19 @@ In this example, both containers mount the `shared-logs` volume at `/var/log`. T
    ```bash
    tld start k8s-sidecar-pod
    ```
-2. Complete the task requirements: Multi-container sidecar pod successfully verified.
-3. Verify the task:
+2. Create a Pod manifest named `multi-container-pod.yaml` defining a pod named `multi-container-pod` with:
+   - An `emptyDir` volume named `shared-logs`.
+   - A container named `app` that writes log messages into the shared volume.
+   - A container named `sidecar` that reads the logs from the shared volume.
+3. Deploy the multi-container pod to the cluster:
+   ```bash
+   kubectl apply -f multi-container-pod.yaml
+   ```
+4. Confirm both containers in `multi-container-pod` reach the `Running` state:
+   ```bash
+   kubectl get pod multi-container-pod
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

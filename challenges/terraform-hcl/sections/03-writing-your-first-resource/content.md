@@ -22,8 +22,17 @@ resource "local_file" "welcome" {
    ```bash
    tld start tf-first-resource
    ```
-2. Navigate to `~/terraform-hcl-challenge`.
-3. Complete the task requirements: First resource block created successfully.
+2. Navigate to the challenge directory:
+   ```bash
+   cd ~/terraform-hcl-challenge
+   ```
+3. Create a configuration file named `main.tf` with a `local_file` resource block named `welcome`:
+   ```hcl
+   resource "local_file" "welcome" {
+     content  = "Welcome to The Last Deploy!"
+     filename = "/tmp/welcome.txt"
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check
@@ -34,8 +43,14 @@ resource "local_file" "welcome" {
    ```bash
    tld start tf-format-resource
    ```
-2. Navigate to `~/terraform-hcl-challenge`.
-3. Complete the task requirements: Configuration formatted successfully.
+2. Navigate to the challenge directory:
+   ```bash
+   cd ~/terraform-hcl-challenge
+   ```
+3. Format the unaligned resource definition in `main.tf` according to canonical HCL style:
+   ```bash
+   terraform fmt
+   ```
 4. Verify the task:
    ```bash
    tld check

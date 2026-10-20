@@ -50,9 +50,19 @@ This creates a new revision copying the configuration of revision 2.
    ```bash
    tld start k8s-check-rollout
    ```
-2. Navigate to `~/k8s-workloads`.
-3. Complete the task requirements: Rollout status message verified successfully.
-4. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-workloads
+   ```
+3. Check the rollout status of deployment `rollout-deploy` and save the output to `~/k8s-workloads/rollout-status.txt`:
+   ```bash
+   kubectl rollout status deployment/rollout-deploy > ~/k8s-workloads/rollout-status.txt
+   ```
+4. Verify the file contents:
+   ```bash
+   cat ~/k8s-workloads/rollout-status.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
@@ -62,8 +72,15 @@ This creates a new revision copying the configuration of revision 2.
    ```bash
    tld start k8s-rollback-deployment
    ```
-2. Complete the task requirements: Deployment rolled back to nginx:1.14.2 successfully.
-3. Verify the task:
+2. Roll back the deployment `rollout-deploy` to its previous revision:
+   ```bash
+   kubectl rollout undo deployment/rollout-deploy
+   ```
+3. Wait for the rollback rollout to complete:
+   ```bash
+   kubectl rollout status deployment/rollout-deploy
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```
@@ -73,8 +90,15 @@ This creates a new revision copying the configuration of revision 2.
    ```bash
    tld start k8s-update-image
    ```
-2. Complete the task requirements: Deployment image successfully updated to nginx:1.16.1 and is running.
-3. Verify the task:
+2. Update the container image of deployment `rollout-deploy` (container `nginx`) to `nginx:1.16.1`:
+   ```bash
+   kubectl set image deployment/rollout-deploy nginx=nginx:1.16.1
+   ```
+3. Wait for the rollout to complete successfully:
+   ```bash
+   kubectl rollout status deployment/rollout-deploy
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

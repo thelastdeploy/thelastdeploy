@@ -7,6 +7,7 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "which nginx || (sudo apt-get update -y && sudo apt-get install -y nginx)"
     - "sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak || true"
     - "sudo systemctl start nginx || true"
-version: 1
+version: 2

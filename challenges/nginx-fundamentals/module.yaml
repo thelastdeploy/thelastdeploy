@@ -22,7 +22,7 @@ sections:
 - id: 07-recover-a-broken-installation
   order: 7
 verified: true
-version: 1
+version: 2
 shared_seed:
   - "mkdir -p /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled"
   - "systemctl enable nginx || true"

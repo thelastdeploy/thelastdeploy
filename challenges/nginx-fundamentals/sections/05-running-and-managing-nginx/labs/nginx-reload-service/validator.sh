@@ -9,7 +9,7 @@ if ! systemctl is-active nginx &>/dev/null; then
 fi
 
 # Let's check if the service is active and configuration syntax is correct.
-if ! sudo nginx -t &>/dev/null; then
+if ! nginx -t &>/dev/null && ! sudo nginx -t &>/dev/null; then
   echo "FAIL: Nginx configuration test failed. Please verify your configuration files."
   exit 1
 fi

@@ -9,4 +9,4 @@ setup:
   seed_commands:
     - rm -rf $HOME/terraform-resources-challenge
     - mkdir -p $HOME/terraform-resources-challenge
-version: 1
+version: 2

@@ -40,8 +40,21 @@ To recover and fix a stuck deployment:
    ```bash
    tld start k8s-fix-broken-deployment
    ```
-2. Complete the task requirements: Stuck deployment successfully recovered and is running.
-3. Verify the task:
+2. Inspect the stuck deployment `broken-deploy` and its pods to diagnose why the rollout failed:
+   ```bash
+   kubectl describe deployment broken-deploy
+   kubectl get pods
+   ```
+3. Update the container image of deployment `broken-deploy` to a valid image (e.g. `nginx:1.16.1`):
+   ```bash
+   kubectl set image deployment/broken-deploy broken-deploy=nginx:1.16.1
+   ```
+4. Wait for the rollout to complete and verify that the replica is ready:
+   ```bash
+   kubectl rollout status deployment/broken-deploy
+   kubectl get deployment broken-deploy
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

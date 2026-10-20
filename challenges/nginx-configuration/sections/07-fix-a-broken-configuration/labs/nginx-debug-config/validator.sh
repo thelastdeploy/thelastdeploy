@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # Ensure Nginx config syntax is correct (conflicts resolved)
-if ! sudo nginx -t &>/dev/null; then
+if ! nginx -t &>/dev/null && ! sudo nginx -t &>/dev/null; then
   echo "FAIL: Nginx configuration test is still failing. Check for duplicate default_server directives."
   exit 1
 fi

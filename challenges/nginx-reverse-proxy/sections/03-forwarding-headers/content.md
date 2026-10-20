@@ -37,9 +37,16 @@ location /app/ {
    ```bash
    tld start nginx-forward-host-header
    ```
-2. Modify the default server block `/etc/nginx/sites-available/default` inside location `/node` to forward the original Host header using the Nginx variable `$host`.
-3. Reload Nginx.
-4. Verify the task:
+2. Modify `/etc/nginx/sites-available/default` inside `location /node` to forward the original Host header using:
+   ```nginx
+   proxy_set_header Host $host;
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```
@@ -49,11 +56,17 @@ location /app/ {
    ```bash
    tld start nginx-forward-client-ip
    ```
-2. Modify location `/node` inside `/etc/nginx/sites-available/default` to forward:
-   - Client IP under header `X-Real-IP` using `$remote_addr`.
-   - Traversed proxy IP list under header `X-Forwarded-For` using `$proxy_add_x_forwarded_for`.
-3. Reload Nginx.
-4. Verify the task:
+2. Modify `location /node` inside `/etc/nginx/sites-available/default` to forward client IP headers:
+   ```nginx
+   proxy_set_header X-Real-IP $remote_addr;
+   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```

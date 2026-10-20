@@ -18,9 +18,29 @@ While validate checks syntax correctness, linting tools analyze best practices, 
    ```bash
    tld start tf-fix-syntax
    ```
-2. Navigate to `~/terraform-hcl-challenge`.
-3. Complete the task requirements: Syntax errors fixed and configuration validated.
-4. Verify the task:
+2. Navigate to the challenge directory:
+   ```bash
+   cd ~/terraform-hcl-challenge
+   ```
+3. Inspect `main.tf` to identify the missing closing brace `}` on the `local_file` resource block:
+   ```bash
+   cat main.tf
+   ```
+4. Fix the syntax error by closing the resource block:
+   ```hcl
+   provider "local" {}
+
+   resource "local_file" "syntax" {
+     content  = "Fix me!"
+     filename = "/tmp/syntax.txt"
+   }
+   ```
+5. Initialize and validate the configuration:
+   ```bash
+   terraform init
+   terraform validate
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```
@@ -30,9 +50,19 @@ While validate checks syntax correctness, linting tools analyze best practices, 
    ```bash
    tld start tf-validate-project
    ```
-2. Navigate to `~/terraform-hcl-challenge`.
-3. Complete the task requirements: Project is initialized and validated successfully.
-4. Verify the task:
+2. Navigate to the challenge directory:
+   ```bash
+   cd ~/terraform-hcl-challenge
+   ```
+3. Initialize the workspace to install required provider plugins:
+   ```bash
+   terraform init
+   ```
+4. Run validation to verify the project configurations:
+   ```bash
+   terraform validate
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

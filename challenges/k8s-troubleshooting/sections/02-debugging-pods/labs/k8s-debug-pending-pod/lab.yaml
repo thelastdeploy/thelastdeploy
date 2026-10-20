@@ -13,4 +13,4 @@ setup:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-debug-pending-pod &>/dev/null; do sleep 1; done'
     - 'echo -e "apiVersion: v1\nkind: Pod\nmetadata:\n  name: pending-pod\nspec:\n  containers:\n  - name: web\n    image: nginx\n    resources:\n      requests:\n        cpu: \"100\"" > $HOME/k8s-troubleshooting/pending-pod.yaml'
     - 'kubectl apply -f $HOME/k8s-troubleshooting/pending-pod.yaml --context=kind-tld-k8s-debug-pending-pod'
-version: 1
+version: 2

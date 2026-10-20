@@ -38,9 +38,22 @@ location /api {
    ```bash
    tld start nginx-fix-reverse-proxy
    ```
-2. The seed script has intentionally introduced a broken `proxy_pass` directive inside `/etc/nginx/sites-available/default` that contains a malformed target endpoint (`127.0.0.1:8080` without `http://`), causing the config check to fail.
-3. Diagnose and fix the configuration block so that the Nginx configuration check passes.
-4. Verify the task:
+2. The seed script has introduced a broken `proxy_pass` directive inside `/etc/nginx/sites-available/default` that contains a malformed target endpoint (`127.0.0.1:8080` without `http://`), causing the configuration check to fail:
+   ```bash
+   sudo nginx -t
+   ```
+3. Locate the broken `location /api` block in `/etc/nginx/sites-available/default` and update `proxy_pass` to include the `http://` scheme:
+   ```nginx
+   location /api {
+       proxy_pass http://127.0.0.1:8080;
+   }
+   ```
+4. Validate configuration syntax and start Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl start nginx
+   ```
+5. Verify your solution:
    ```bash
    tld check
    ```

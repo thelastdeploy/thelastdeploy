@@ -15,4 +15,4 @@ setup:
     - 'kubectl create deployment backend-app --image=nginx --replicas=1 --context=kind-tld-k8s-access-nodeport'
     - 'echo -e "apiVersion: v1\nkind: Service\nmetadata:\n  name: nodeport-service\nspec:\n  type: NodePort\n  selector:\n    app: backend-app\n  ports:\n  - port: 80\n    targetPort: 80\n    nodePort: 30080" > $HOME/k8s-services-networking/nodeport-svc.yaml'
     - 'kubectl apply -f $HOME/k8s-services-networking/nodeport-svc.yaml --context=kind-tld-k8s-access-nodeport'
-version: 1
+version: 2

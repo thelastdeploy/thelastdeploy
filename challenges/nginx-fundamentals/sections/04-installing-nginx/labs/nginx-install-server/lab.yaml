@@ -9,4 +9,4 @@ setup:
   type: shell
   seed_commands:
     - "echo 'Starting lab to check Nginx package installation'"
-version: 1
+version: 2

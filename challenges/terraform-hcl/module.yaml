@@ -24,4 +24,4 @@ sections:
 - id: 08-repair-a-broken-configuration
   order: 8
 verified: true
-version: 1
+version: 2

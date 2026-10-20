@@ -51,9 +51,19 @@ Nginx supports several load balancing algorithms, configured inside the upstream
    ```bash
    tld start nginx-create-upstream
    ```
-2. Create an upstream block named `backend_servers` in the `http` block of `/etc/nginx/nginx.conf` (or inside `/etc/nginx/conf.d/upstream.conf`).
-3. Add two backend servers: `127.0.0.1:8001` and `127.0.0.1:8002`.
-4. Verify the task:
+2. Create an upstream block named `backend_servers` in `/etc/nginx/conf.d/upstream.conf`:
+   ```nginx
+   upstream backend_servers {
+       server 127.0.0.1:8001;
+       server 127.0.0.1:8002;
+   }
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```
@@ -63,9 +73,18 @@ Nginx supports several load balancing algorithms, configured inside the upstream
    ```bash
    tld start nginx-load-balance-two-backends
    ```
-2. Configure a location block `/app` in `/etc/nginx/sites-available/default` that load balances requests to the `backend_servers` upstream pool.
-3. Reload Nginx.
-4. Verify the task:
+2. Configure a location block `/app` in `/etc/nginx/sites-available/default` that load balances requests to the `backend_servers` upstream pool:
+   ```nginx
+   location /app {
+       proxy_pass http://backend_servers;
+   }
+   ```
+3. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+4. Verify your solution:
    ```bash
    tld check
    ```

@@ -12,4 +12,4 @@ setup:
     - "mkdir -p $HOME/k8s-services-networking"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-create-clusterip-service &>/dev/null; do sleep 1; done'
     - 'kubectl create deployment backend-app --image=nginx --replicas=2 --context=kind-tld-k8s-create-clusterip-service'
-version: 1
+version: 2

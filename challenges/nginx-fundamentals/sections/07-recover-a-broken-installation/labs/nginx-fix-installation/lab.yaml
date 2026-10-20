@@ -7,7 +7,8 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "which nginx || (apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx)"
     - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
     - "sudo sed -i 's/listen 80 default_server;/listen 80 default_server; broken_syntax_here/' /etc/nginx/sites-available/default"
     - "sudo systemctl stop nginx || true"
-version: 1
+version: 2

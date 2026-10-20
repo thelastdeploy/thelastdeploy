@@ -40,26 +40,45 @@ server {
 ## Lab Tasks
 
 ### Task 1: Include a custom configuration snippet
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-include-config
    ```
-2. The seed script has created a snippet containing custom headers at `/etc/nginx/snippets/custom-headers.conf`.
-3. Include this snippet inside the `http` block of `/etc/nginx/nginx.conf` (or inside the default server block in `/etc/nginx/sites-available/default`).
-4. Verify the task:
+2. Inspect the pre-seeded snippet containing custom headers:
+   ```bash
+   cat /etc/nginx/snippets/custom-headers.conf
+   ```
+3. Include this snippet inside the default server block in `/etc/nginx/sites-available/default`:
+   ```bash
+   sudo sed -i '/server_name _;/a \    include /etc/nginx/snippets/custom-headers.conf;' /etc/nginx/sites-available/default
+   ```
+4. Verify the syntax of your configuration:
+   ```bash
+   sudo nginx -t
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
 
 ### Task 2: Organize configuration files
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-organize-configs
    ```
-2. Create a new custom configuration file named `upstream.conf` under `/etc/nginx/conf.d/`.
-3. Add a simple valid directive or block (for example, a comment or an empty upstream definition, e.g., `upstream myapp { server 127.0.0.1:9000; }`).
-4. Ensure Nginx configuration check passes.
-5. Verify the task:
+2. Create a new modular configuration file at `/etc/nginx/conf.d/upstream.conf`:
+   ```bash
+   sudo tee /etc/nginx/conf.d/upstream.conf << 'EOF'
+   upstream myapp {
+       server 127.0.0.1:9000;
+   }
+   EOF
+   ```
+3. Validate the configuration syntax:
+   ```bash
+   sudo nginx -t
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

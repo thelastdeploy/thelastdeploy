@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-scale-deployment &>/dev/null; do sleep 1; done'
     - 'kubectl create deployment web-deploy --image=nginx --replicas=2 --context=kind-tld-k8s-scale-deployment'
-version: 1
+version: 2

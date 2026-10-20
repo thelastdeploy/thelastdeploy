@@ -43,10 +43,23 @@ location /api/ {
    ```bash
    tld start nginx-limit-requests
    ```
-2. Define a rate-limiting zone named `mylimit` in `/etc/nginx/nginx.conf` tracking client IP addresses (`$binary_remote_addr`) with a memory size of `10m` and a rate of `5r/s`.
-3. Apply this zone inside location block `/api/` in the default server config `/etc/nginx/sites-available/default` with a `burst` capacity of `10` and `nodelay` active.
-4. Reload Nginx.
-5. Verify the task:
+2. Define a rate-limiting zone named `mylimit` inside the `http` block of `/etc/nginx/nginx.conf`:
+   ```nginx
+   limit_req_zone $binary_remote_addr zone=mylimit:10m rate=5r/s;
+   ```
+3. Apply this rate limit zone inside the `location /api/` block in `/etc/nginx/sites-available/default`:
+   ```nginx
+   location /api/ {
+       root /var/www/html;
+       limit_req zone=mylimit burst=10 nodelay;
+   }
+   ```
+4. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Verify your solution:
    ```bash
    tld check
    ```

@@ -17,7 +17,17 @@ By default, when a resource modification requires recreating it, Terraform destr
    tld start tf-replace-resource
    ```
 2. Navigate to `~/terraform-resources-challenge`.
-3. Complete the task requirements: Resource lifecycle configuration verified.
+3. Open `main.tf` and add a `lifecycle` block inside the `local_file.example` resource block specifying `create_before_destroy = true`:
+   ```hcl
+   resource "local_file" "example" {
+     content  = "Lifecycle test"
+     filename = "/tmp/lifecycle.txt"
+
+     lifecycle {
+       create_before_destroy = true
+     }
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check

@@ -13,4 +13,4 @@ setup:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-mount-persistent-volume &>/dev/null; do sleep 1; done'
     - 'echo -e "apiVersion: v1\nkind: PersistentVolumeClaim\nmetadata:\n  name: task-pv-claim\nspec:\n  accessModes:\n    - ReadWriteOnce\n  resources:\n    requests:\n      storage: 1Gi" > $HOME/k8s-storage/pvc.yaml'
     - 'kubectl apply -f $HOME/k8s-storage/pvc.yaml --context=kind-tld-k8s-mount-persistent-volume'
-version: 1
+version: 2

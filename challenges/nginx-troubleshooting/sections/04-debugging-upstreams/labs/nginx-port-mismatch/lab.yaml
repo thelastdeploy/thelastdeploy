@@ -7,18 +7,18 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "which nginx || (sudo apt-get update -y && sudo apt-get install -y nginx)"
     - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"
     # Ensure any active python servers on 8081 are killed
     - "sudo kill -9 $(sudo lsof -t -i:8081) &>/dev/null || true"
     # Start mock python server in background on port 8081
-    - "mkdir -p /tmp/backend-port && echo 'UPSTREAM OK' > /tmp/backend-port/index.html"
-    - "python3 -m http.server 8081 --directory /tmp/backend-port &>/dev/null &"
+    - "rm -rf /tmp/backend-port && mkdir -p /tmp/backend-port && echo 'UPSTREAM OK' | tee /tmp/backend-port/index.html /tmp/backend-port/app > /dev/null"
+    - "nohup python3 -m http.server 8081 --directory /tmp/backend-port >/dev/null 2>&1 &"
     # Create the upstream conf file
     - "echo -e 'upstream api_pool {\n    server 127.0.0.1:8088;\n}' | sudo tee /etc/nginx/conf.d/upstream.conf > /dev/null"
     # Configure /app location in default pointing to api_pool
     - "sudo sed -i '/location \\/app/,+3d' /etc/nginx/sites-available/default || true"
-    - "sudo sed -i '$ d' /etc/nginx/sites-available/default"
-    - "echo -e '    location /app {\n        proxy_pass http://api_pool;\n    }\n}' | sudo tee -a /etc/nginx/sites-available/default > /dev/null"
+    - "sudo sed -i '/server_name _;/a \\    location /app { proxy_pass http://api_pool; }' /etc/nginx/sites-available/default"
     - "sudo systemctl start nginx || true"
-    - "sudo systemctl reload nginx || true"
-version: 1
+    - "sudo systemctl restart nginx || true"
+version: 2

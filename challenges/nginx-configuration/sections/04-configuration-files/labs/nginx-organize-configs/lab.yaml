@@ -7,5 +7,6 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "sudo mkdir -p /etc/nginx/conf.d"
     - "sudo rm -f /etc/nginx/conf.d/upstream.conf"
-version: 1
+version: 2

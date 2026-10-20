@@ -51,9 +51,16 @@ Nginx, acting as a gateway or proxy, received an invalid response from the upstr
    ```bash
    tld start nginx-fix-403
    ```
-2. Diagnose why visiting the root site returns a `403 Forbidden` error. (Hint: check permissions on `/var/www/html/index.html`).
-3. Fix the permission issue so that Nginx can read the file.
-4. Verify the task:
+2. Inspect the permissions of `/var/www/html/index.html`:
+   ```bash
+   ls -la /var/www/html/index.html
+   ```
+3. Fix the permissions so that the Nginx worker process can read the file (e.g., grant world read permission `chmod 644` or `chmod +r`).
+4. Verify HTTP 200 response:
+   ```bash
+   curl -I http://localhost/
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -63,10 +70,17 @@ Nginx, acting as a gateway or proxy, received an invalid response from the upstr
    ```bash
    tld start nginx-fix-404
    ```
-2. Diagnose why requests to the root site return `404 Not Found`.
-3. Locate the typo in the configuration `/etc/nginx/sites-available/default` and fix it.
-4. Reload Nginx.
-5. Verify the task:
+2. Inspect the root directive in `/etc/nginx/sites-available/default`:
+   ```bash
+   grep -n "root" /etc/nginx/sites-available/default
+   ```
+3. Correct the misspelled document root path from `/var/www/htm` to `/var/www/html;`.
+4. Test and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -76,10 +90,14 @@ Nginx, acting as a gateway or proxy, received an invalid response from the upstr
    ```bash
    tld start nginx-fix-500
    ```
-2. Inspect the configuration `/etc/nginx/sites-available/default` and look at the location `/loop` block causing a 500 Internal Server Error.
-3. Remove the conflicting rewrite loop rules so that Nginx returns the static file at `/var/www/html/index.html` directly for `/loop` requests.
-4. Reload Nginx.
-5. Verify the task:
+2. Inspect the `/loop` location block inside `/etc/nginx/sites-available/default` and observe the circular rewrite rules.
+3. Remove the conflicting rewrite rules inside the `location /loop` block and configure it to serve `/index.html` (for example, using `try_files /index.html =404;`).
+4. Test and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -89,10 +107,17 @@ Nginx, acting as a gateway or proxy, received an invalid response from the upstr
    ```bash
    tld start nginx-fix-502
    ```
-2. Diagnose why accessing the location `/api` returns a `502 Bad Gateway` error.
-3. Locate the port of the running Python mock backend (already started for you) and update `/etc/nginx/sites-available/default` to proxy to the correct port.
-4. Reload Nginx.
-5. Verify the task:
+2. Check the active listening port of the background backend service:
+   ```bash
+   sudo ss -tulpn | grep python
+   ```
+3. In `/etc/nginx/sites-available/default`, locate the `location /api` block and update `proxy_pass` from port `9090` to the actual backend address `http://127.0.0.1:8080;`.
+4. Test and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

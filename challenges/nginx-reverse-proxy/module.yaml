@@ -20,8 +20,9 @@ sections:
 - id: 06-recover-a-broken-proxy
   order: 6
 verified: true
-version: 1
+version: 2
 shared_seed:
+  - "which nginx >/dev/null 2>&1 || (DEBIAN_FRONTEND=noninteractive apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends nginx)"
   - "mkdir -p /var/www/html /etc/nginx/sites-available /etc/nginx/sites-enabled"
   - "systemctl enable nginx || true"
   - "systemctl start nginx || true"

@@ -3,8 +3,8 @@
 set -euo pipefail
 
 HTML_FILE="/var/www/html/index.html"
-if [ ! -f "$HTML_FILE" ]; then
-  echo "FAIL: Default index page not found at $HTML_FILE"
+if [ ! -f "$HTML_FILE" ] || [ ! -s "$HTML_FILE" ]; then
+  echo "FAIL: Default index page not found or empty at $HTML_FILE"
   exit 1
 fi
 

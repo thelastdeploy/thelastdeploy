@@ -20,13 +20,24 @@ When Nginx fails to boot:
    ```bash
    tld start nginx-production-outage
    ```
-2. The Nginx service is stopped, and the configurations are corrupted with multiple bugs.
-3. Use `nginx -t` and the logs to diagnose and resolve:
-   - A missing semicolon in `/etc/nginx/nginx.conf`.
-   - A duplicate `default_server` directive in `/etc/nginx/sites-available/default` (remove it so only one server block has `default_server`).
-   - An invalid `proxy_pass` scheme in `/etc/nginx/sites-available/default` (e.g. `proxy_pass ht://127.0.0.1:8080;` instead of `http://`).
-4. Ensure Nginx configuration is valid, start the service, and verify it is running.
-5. Verify the task:
+2. Diagnose configuration issues iteratively using `nginx -t`:
+   ```bash
+   sudo nginx -t
+   ```
+3. Locate and fix the three configuration issues:
+   - Add the missing semicolon to the `keepalive_timeout 65` directive in `/etc/nginx/nginx.conf`.
+   - In `/etc/nginx/sites-available/default`, fix the invalid proxy scheme in the `/outage` location (`ht://` -> `http://`).
+   - In `/etc/nginx/sites-available/default`, resolve the duplicate `default_server` conflict (ensure only one server block is designated as `default_server`).
+4. Validate configuration syntax:
+   ```bash
+   sudo nginx -t
+   ```
+5. Start the Nginx service and verify its active status:
+   ```bash
+   sudo systemctl start nginx
+   sudo systemctl status nginx
+   ```
+6. Check your solution:
    ```bash
    tld check
    ```

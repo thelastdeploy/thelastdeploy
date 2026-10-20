@@ -13,4 +13,4 @@ setup:
     - "rm -f $HOME/k8s-troubleshooting/warning-reason.txt"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-read-events &>/dev/null; do sleep 1; done'
     - 'kubectl run unschedulable-pod --image=nginx --overrides="{\"spec\":{\"nodeSelector\":{\"disktype\":\"ssd-nonexistent\"}}}" --context=kind-tld-k8s-read-events'
-version: 1
+version: 2

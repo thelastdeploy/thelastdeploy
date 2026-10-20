@@ -14,4 +14,4 @@ setup:
     - echo '  content = "Debugging exercise"' >> $HOME/terraform-hcl-challenge/main.tf
     - echo '  filename /tmp/broken.txt' >> $HOME/terraform-hcl-challenge/main.tf
     - echo '}' >> $HOME/terraform-hcl-challenge/main.tf
-version: 1
+version: 2

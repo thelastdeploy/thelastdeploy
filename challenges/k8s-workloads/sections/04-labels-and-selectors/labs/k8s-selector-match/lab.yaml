@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/k8s-workloads"
     - "rm -f $HOME/k8s-workloads/selector.txt"
-version: 1
+version: 2

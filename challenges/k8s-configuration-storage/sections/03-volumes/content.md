@@ -45,8 +45,30 @@ Here, directory `/cache` inside the container is backed by the transient volume 
    ```bash
    tld start k8s-emptydir-volume
    ```
-2. Complete the task requirements: Transient emptyDir volume successfully verified.
-3. Verify the task:
+2. Create a Pod named `temp-data-pod` with a container named `main` (using image `nginx`) mounting an `emptyDir` volume at `/tmp/data`:
+   ```bash
+   cat <<EOF | kubectl apply -f -
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: temp-data-pod
+   spec:
+     volumes:
+     - name: temp-storage
+       emptyDir: {}
+     containers:
+     - name: main
+       image: nginx
+       volumeMounts:
+       - name: temp-storage
+         mountPath: /tmp/data
+   EOF
+   ```
+3. Wait for the pod to become ready:
+   ```bash
+   kubectl wait --for=condition=Ready pod/temp-data-pod --timeout=60s
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```
@@ -56,8 +78,38 @@ Here, directory `/cache` inside the container is backed by the transient volume 
    ```bash
    tld start k8s-shared-volume
    ```
-2. Complete the task requirements: Multi-container emptyDir shared volume successfully verified.
-3. Verify the task:
+2. Create a multi-container Pod named `sharing-pod` with containers `writer` and `reader`, both sharing an `emptyDir` volume mounted at `/shared`, with `writer` populating `/shared/message.txt`:
+   ```bash
+   cat <<EOF | kubectl apply -f -
+   apiVersion: v1
+   kind: Pod
+   metadata:
+     name: sharing-pod
+   spec:
+     volumes:
+     - name: shared-storage
+       emptyDir: {}
+     containers:
+     - name: writer
+       image: busybox
+       command: ["sh", "-c", "echo 'hello from shared volume' > /shared/message.txt && sleep 3600"]
+       volumeMounts:
+       - name: shared-storage
+         mountPath: /shared
+     - name: reader
+       image: busybox
+       command: ["sh", "-c", "sleep 3600"]
+       volumeMounts:
+       - name: shared-storage
+         mountPath: /shared
+   EOF
+   ```
+3. Wait for the pod to become ready and verify that the `reader` container can access `/shared/message.txt`:
+   ```bash
+   kubectl wait --for=condition=Ready pod/sharing-pod --timeout=60s
+   kubectl exec sharing-pod -c reader -- cat /shared/message.txt
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```

@@ -13,4 +13,4 @@ setup:
     - "rm -f $HOME/k8s-troubleshooting/crash-code.txt"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-debug-crashloopbackoff &>/dev/null; do sleep 1; done'
     - 'kubectl run crashing-app --image=alpine --context=kind-tld-k8s-debug-crashloopbackoff -- sh -c "echo FATAL_ERROR_CODE_9876 >&2 && exit 1"'
-version: 1
+version: 2

@@ -31,8 +31,14 @@ This downloads plugins to a hidden `.terraform/` directory.
    ```bash
    tld start tf-format-project
    ```
-2. Navigate to `~/terraform-challenge`.
-3. Complete the task requirements: Configurations formatted correctly.
+2. Navigate to the project directory:
+   ```bash
+   cd ~/terraform-challenge
+   ```
+3. Format all configuration files in the directory to canonical HCL style:
+   ```bash
+   terraform fmt
+   ```
 4. Verify the task:
    ```bash
    tld check
@@ -43,8 +49,14 @@ This downloads plugins to a hidden `.terraform/` directory.
    ```bash
    tld start tf-init-project
    ```
-2. Navigate to `~/terraform-challenge`.
-3. Complete the task requirements: Terraform workspace initialized successfully.
+2. Navigate to the project directory:
+   ```bash
+   cd ~/terraform-challenge
+   ```
+3. Initialize the Terraform workspace to prepare the working directory and install required providers:
+   ```bash
+   terraform init
+   ```
 4. Verify the task:
    ```bash
    tld check

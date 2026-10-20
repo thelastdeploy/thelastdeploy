@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/k8s-fundamentals"
     - "rm -f $HOME/k8s-fundamentals/kubernetes-cluster-ip.txt"
-version: 1
+version: 2

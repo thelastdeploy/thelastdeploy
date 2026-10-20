@@ -43,9 +43,19 @@ If the service `targetPort` is configured incorrectly (e.g. Service targetPort i
    ```bash
    tld start k8s-debug-network-path
    ```
-2. Navigate to `~/k8s-troubleshooting`.
-3. Complete the task requirements: Service endpoint network path verified successfully.
-4. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-troubleshooting
+   ```
+3. Query the pod IP address of `web-pod` and save it to `~/k8s-troubleshooting/endpoints.txt`:
+   ```bash
+   kubectl get pod web-pod -o jsonpath='{.status.podIP}' > ~/k8s-troubleshooting/endpoints.txt
+   ```
+4. Verify the file contents:
+   ```bash
+   cat ~/k8s-troubleshooting/endpoints.txt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```
@@ -55,8 +65,19 @@ If the service `targetPort` is configured incorrectly (e.g. Service targetPort i
    ```bash
    tld start k8s-fix-selector-mismatch
    ```
-2. Complete the task requirements: Service selector mismatch fixed successfully.
-3. Verify the task:
+2. Navigate to your working directory:
+   ```bash
+   cd ~/k8s-troubleshooting
+   ```
+3. Update the selector of `web-service` to match the pod label `app=web`:
+   ```bash
+   kubectl set selector service web-service app=web
+   ```
+4. Confirm that `web-service` now has active endpoints:
+   ```bash
+   kubectl get endpoints web-service
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

@@ -48,9 +48,16 @@ If one or both backend servers are offline, Nginx cannot connect and returns a `
    ```bash
    tld start nginx-backend-offline
    ```
-2. The location `/app` is configured to proxy to the upstream group `app_servers`, which has one server at `127.0.0.1:8081`. However, the backend server on port `8081` is currently offline.
-3. A mock Python script is placed at `/tmp/start_backend.sh`. Run this script in the background to start the backend listener on port `8081`.
-4. Verify the task:
+2. Observe that requesting `/app` returns `502 Bad Gateway` because the upstream server on `127.0.0.1:8081` is offline.
+3. Launch the provided backend startup script in the background:
+   ```bash
+   /tmp/start_backend.sh &
+   ```
+4. Verify that the backend is responding through Nginx:
+   ```bash
+   curl http://localhost/app
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```
@@ -60,10 +67,18 @@ If one or both backend servers are offline, Nginx cannot connect and returns a `
    ```bash
    tld start nginx-port-mismatch
    ```
-2. The location `/app` is returning a `502 Bad Gateway`. A mock backend is running on port `8081`.
-3. Check `/etc/nginx/conf.d/upstream.conf` and fix the port mismatch (the upstream block is currently configured to route to `127.0.0.1:8088`). Update it to `127.0.0.1:8081`.
-4. Reload Nginx.
-5. Verify the task:
+2. Notice that the location `/app` returns `502 Bad Gateway`. A mock backend is actively running on port `8081`.
+3. Open `/etc/nginx/conf.d/upstream.conf` and update the upstream server definition from port `8088` to `8081` (`server 127.0.0.1:8081;`).
+4. Test configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+5. Verify that `/app` returns `UPSTREAM OK`:
+   ```bash
+   curl http://localhost/app
+   ```
+6. Check your solution:
    ```bash
    tld check
    ```

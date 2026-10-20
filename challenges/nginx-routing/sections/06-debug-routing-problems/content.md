@@ -46,11 +46,23 @@ location ^~ /documents/ {
    tld start nginx-fix-routing
    ```
 2. The seed script has created:
-   - `/var/www/docs/documents/report.pdf` containing the text `docs report`.
-   - `/var/www/pdf/documents/report.pdf` containing the text `pdf report`.
-3. The default server configuration contains conflicting locations where the regex match `~ \.pdf$` overrides the standard `/documents/` prefix location, causing `/documents/report.pdf` to return `pdf report`.
-4. Fix the configuration so that requests under `/documents/` (including PDF files) are processed by the `/documents/` block and return the correct file content (`docs report`).
-5. Verify the task:
+   - `/var/www/docs/documents/report.pdf` containing `docs report`.
+   - `/var/www/pdf/documents/report.pdf` containing `pdf report`.
+3. The default server configuration contains conflicting locations where the regex match `~ \.pdf$` overrides the standard `/documents/` prefix location, causing `/documents/report.pdf` to return `pdf report`:
+   ```bash
+   curl -s http://localhost/documents/report.pdf
+   ```
+4. Modify the `/documents/` location block in `/etc/nginx/sites-available/default` by adding the `^~` modifier (`location ^~ /documents/ { ... }`) to stop regex evaluation when `/documents/` matches.
+5. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+6. Confirm that accessing `http://localhost/documents/report.pdf` now returns `docs report`:
+   ```bash
+   curl -s http://localhost/documents/report.pdf
+   ```
+7. Verify your solution:
    ```bash
    tld check
    ```

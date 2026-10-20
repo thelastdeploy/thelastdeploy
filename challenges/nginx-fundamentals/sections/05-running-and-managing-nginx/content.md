@@ -55,34 +55,59 @@ You can also interact with the Nginx binary directly. Some of the most common co
 ## Lab Tasks
 
 ### Task 1: Start Nginx Service
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-start-service
    ```
-2. Make sure the Nginx service is running on your system.
-3. Verify the task:
+2. Start the Nginx systemd service on your system:
+   ```bash
+   sudo systemctl start nginx
+   ```
+3. Confirm that the service is active and running:
+   ```bash
+   sudo systemctl status nginx
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```
 
 ### Task 2: Stop Nginx Service
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-stop-service
    ```
-2. Stop the running Nginx service on your system.
-3. Verify the task:
+2. Stop the running Nginx service:
+   ```bash
+   sudo systemctl stop nginx
+   ```
+3. Confirm that the service is no longer active:
+   ```bash
+   systemctl is-active nginx
+   ```
+4. Verify the task:
    ```bash
    tld check
    ```
 
 ### Task 3: Reload Nginx Service
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-reload-service
    ```
-2. Reload Nginx configuration cleanly.
-3. Verify the task:
+2. Verify that the Nginx configuration syntax is valid:
+   ```bash
+   sudo nginx -t
+   ```
+3. Reload the Nginx service without dropping existing connections:
+   ```bash
+   sudo systemctl reload nginx
+   ```
+4. Confirm that the service remains active:
+   ```bash
+   systemctl is-active nginx
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

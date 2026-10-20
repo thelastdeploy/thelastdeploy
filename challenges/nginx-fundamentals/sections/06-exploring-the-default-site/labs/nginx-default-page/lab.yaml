@@ -10,4 +10,4 @@ setup:
     - "sudo systemctl start nginx || true"
     - "sudo mkdir -p /var/www/html"
     - "if [ ! -f /var/www/html/index.html ]; then echo 'Welcome to Nginx' | sudo tee /var/www/html/index.html > /dev/null; fi"
-version: 1
+version: 2

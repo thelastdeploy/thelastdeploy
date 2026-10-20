@@ -11,4 +11,4 @@ setup:
     - mkdir -p $HOME/terraform-resources-challenge
     - "echo 'resource \"local_file\" \"app\" { content = \"v1\" \n filename = \"/tmp/app.txt\"\
     \ }' > $HOME/terraform-resources-challenge/main.tf"
-version: 1
+version: 2

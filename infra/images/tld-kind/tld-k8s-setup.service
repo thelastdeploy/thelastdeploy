@@ -1,0 +1,12 @@
+[Unit]
+Description=Initialize TLD Kubernetes Kubeconfig and Contexts
+After=k3s.service
+Wants=k3s.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/tld-k8s-setup.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

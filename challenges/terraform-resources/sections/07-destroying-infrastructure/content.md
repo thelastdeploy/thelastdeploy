@@ -5,7 +5,7 @@ When resources are no longer needed, you must tear them down to avoid costs and 
 The `terraform destroy` command:
 1. Examines your current `terraform.tfstate` file.
 2. Formulates a plan to delete all resources managed in the workspace.
-3. Teards down the infrastructure in reverse dependency order.
+3. Tears down the infrastructure in reverse dependency order.
 4. Removes resources from the state file.
 
 ---
@@ -17,8 +17,14 @@ The `terraform destroy` command:
    ```bash
    tld start tf-destroy-resource
    ```
-2. Navigate to `~/terraform-resources-challenge`.
-3. Complete the task requirements: Resource destroyed successfully.
+2. Navigate to `~/terraform-resources-challenge`:
+   ```bash
+   cd ~/terraform-resources-challenge
+   ```
+3. Destroy the provisioned resources using Terraform:
+   ```bash
+   terraform destroy -auto-approve
+   ```
 4. Verify the task:
    ```bash
    tld check

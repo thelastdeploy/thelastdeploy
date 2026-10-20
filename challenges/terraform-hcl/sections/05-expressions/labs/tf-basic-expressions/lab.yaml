@@ -13,4 +13,4 @@ setup:
     - echo '  content = ""' >> $HOME/terraform-hcl-challenge/main.tf
     - echo '  filename = "/tmp/expr.txt"' >> $HOME/terraform-hcl-challenge/main.tf
     - echo '}' >> $HOME/terraform-hcl-challenge/main.tf
-version: 1
+version: 2

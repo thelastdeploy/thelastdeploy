@@ -32,8 +32,22 @@ Kubernetes Pods can fail for various reasons. The most common runtime pod contai
    ```bash
    tld start k8s-debug-failed-pod
    ```
-2. Complete the task requirements: Successfully debugged and running pod with correct image.
-3. Verify the task:
+2. Inspect the status and events of `failing-image-pod`:
+   ```bash
+   kubectl get pod failing-image-pod
+   kubectl describe pod failing-image-pod
+   ```
+3. Notice the `ErrImagePull` / `ImagePullBackOff` error caused by the invalid image `nginxxxx`.
+4. Fix the image by updating it to `nginx`:
+   ```bash
+   kubectl set image pod/failing-image-pod failing-image-pod=nginx
+   ```
+   *(Alternatively, delete and recreate the pod using `kubectl run failing-image-pod --image=nginx`)*
+5. Wait for `failing-image-pod` to transition to the `Running` phase:
+   ```bash
+   kubectl get pod failing-image-pod
+   ```
+6. Check your solution:
    ```bash
    tld check
    ```

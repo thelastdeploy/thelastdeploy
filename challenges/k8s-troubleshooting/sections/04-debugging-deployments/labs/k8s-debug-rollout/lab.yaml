@@ -13,4 +13,4 @@ setup:
     - "rm -f $HOME/k8s-troubleshooting/bad-image.txt"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-debug-rollout &>/dev/null; do sleep 1; done'
     - 'kubectl create deployment rollout-app --image=nginx:1.161.typo --context=kind-tld-k8s-debug-rollout'
-version: 1
+version: 2

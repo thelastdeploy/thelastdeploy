@@ -48,8 +48,15 @@ kubectl delete -f pod-manifest.yaml
    ```bash
    tld start k8s-create-first-pod
    ```
-2. Complete the task requirements: Successfully created and running nginx-pod.
-3. Verify the task:
+2. Create an Nginx pod named `nginx-pod` using the `nginx` container image:
+   ```bash
+   kubectl run nginx-pod --image=nginx
+   ```
+3. Wait for the pod to transition to the `Running` phase:
+   ```bash
+   kubectl get pod nginx-pod
+   ```
+4. Check your solution:
    ```bash
    tld check
    ```
@@ -59,8 +66,19 @@ kubectl delete -f pod-manifest.yaml
    ```bash
    tld start k8s-delete-pod
    ```
-2. Complete the task requirements: Pod 'dynamic-pod' successfully deleted.
-3. Verify the task:
+2. Observe that a pod named `dynamic-pod` is currently running:
+   ```bash
+   kubectl get pods
+   ```
+3. Delete the `dynamic-pod`:
+   ```bash
+   kubectl delete pod dynamic-pod
+   ```
+4. Confirm that `dynamic-pod` no longer exists:
+   ```bash
+   kubectl get pods
+   ```
+5. Check your solution:
    ```bash
    tld check
    ```

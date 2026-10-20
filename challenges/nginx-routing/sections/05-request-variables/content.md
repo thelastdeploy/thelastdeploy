@@ -37,9 +37,23 @@ location /my-ip {
    ```
 2. Configure a location block `/info` inside `/etc/nginx/sites-available/default`.
 3. Set the response Content-Type to `text/plain` using `default_type text/plain;`.
-4. Configure it to return HTTP status `200` with the response body exactly matching: `Agent: <client_user_agent>` (use `$http_user_agent`).
-5. Reload Nginx.
-6. Verify the task:
+4. Configure it to return HTTP status `200` with the response body formatted as:
+   ```nginx
+   location /info {
+       default_type text/plain;
+       return 200 "Agent: $http_user_agent";
+   }
+   ```
+5. Validate configuration syntax and reload Nginx:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+6. Confirm that accessing `http://localhost/info` with a custom User-Agent echoes it back:
+   ```bash
+   curl -s -H "User-Agent: MyTestAgent" http://localhost/info
+   ```
+7. Verify your solution:
    ```bash
    tld check
    ```

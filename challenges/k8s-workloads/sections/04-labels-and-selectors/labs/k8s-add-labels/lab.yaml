@@ -11,4 +11,4 @@ setup:
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-add-labels &>/dev/null; do sleep 1; done'
     - 'kubectl run metadata-pod --image=nginx --context=kind-tld-k8s-add-labels'
-version: 1
+version: 2

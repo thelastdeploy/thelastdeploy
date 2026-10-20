@@ -16,9 +16,29 @@ Common syntax errors include:
    ```bash
    tld start tf-debug-invalid-hcl
    ```
-2. Navigate to `~/terraform-hcl-challenge`.
-3. Complete the task requirements: Configuration debugged and fixed successfully.
-4. Verify the task:
+2. Navigate to the challenge directory:
+   ```bash
+   cd ~/terraform-hcl-challenge
+   ```
+3. Inspect `main.tf` to find the missing assignment operator (`=`) on the `filename` argument:
+   ```bash
+   cat main.tf
+   ```
+4. Fix the syntax error by updating the argument to `filename = "/tmp/broken.txt"`:
+   ```hcl
+   provider "local" {}
+
+   resource "local_file" "broken" {
+     content  = "Debugging exercise"
+     filename = "/tmp/broken.txt"
+   }
+   ```
+5. Initialize the workspace and validate the configuration:
+   ```bash
+   terraform init
+   terraform validate
+   ```
+6. Verify the task:
    ```bash
    tld check
    ```

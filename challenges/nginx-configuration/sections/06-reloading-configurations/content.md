@@ -27,14 +27,27 @@ sudo nginx -t && sudo systemctl reload nginx
 ## Lab Tasks
 
 ### Task 1: Perform a safe reload
-1. Start the lab:
+1. Start the lab in your terminal:
    ```bash
    tld start nginx-safe-reload
    ```
-2. The seed script has modified the default site configuration file to listen on port `8085` instead of port `80`, but the service has not been reloaded to apply the changes yet.
-3. Verify that Nginx is NOT yet listening on port 8085 (e.g. `curl http://localhost:8085/` fails).
-4. Run the reload commands to safely apply the changes.
-5. Verify the task passes when port 8085 is successfully responding.
+   The configuration `/etc/nginx/sites-available/default` has been updated to listen on port `8085`, but the running daemon has not yet reloaded.
+2. Verify that Nginx is not yet serving traffic on port `8085`:
+   ```bash
+   curl -I http://localhost:8085/ || echo "Port 8085 not active yet"
+   ```
+3. Test configuration syntax before reloading:
+   ```bash
+   sudo nginx -t
+   ```
+4. Reload the Nginx service gracefully without dropping connections:
+   ```bash
+   sudo systemctl reload nginx
+   ```
+5. Confirm that port `8085` is now actively responding:
+   ```bash
+   curl -I http://localhost:8085/
+   ```
 6. Verify the task:
    ```bash
    tld check
