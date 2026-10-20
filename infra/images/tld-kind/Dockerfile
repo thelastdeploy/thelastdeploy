@@ -19,5 +19,7 @@ COPY tld-k8s-setup.service /etc/systemd/system/tld-k8s-setup.service
 RUN chmod +x /usr/local/bin/tld-k8s-setup.sh \
     && systemctl enable k3s.service tld-k8s-setup.service
 
+VOLUME ["/var/lib/rancher/k3s"]
+
 STOPSIGNAL SIGRTMIN+3
 CMD ["/sbin/init"]
