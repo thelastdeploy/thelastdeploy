@@ -10,7 +10,7 @@ set -euo pipefail
 LAB_ID="k8s-cluster-investigation"
 
 # Step 1: Student inspects failing container logs and extracts crash error code
-student_exec "mkdir -p \"\$HOME/k8s-fundamentals\" && { kubectl logs failing-app 2>/dev/null || kubectl logs failing-app --previous; } | grep -o 'ERROR_CODE_[0-9]\+' > \"\$HOME/k8s-fundamentals/crash-code.txt\"" \
+student_exec "mkdir -p \"\$HOME/k8s-fundamentals\" && for i in \$(seq 1 30); do { kubectl logs failing-app 2>/dev/null || kubectl logs failing-app --previous 2>/dev/null; } | grep -o 'ERROR_CODE_[0-9]\+' > \"\$HOME/k8s-fundamentals/crash-code.txt\" && test -s \"\$HOME/k8s-fundamentals/crash-code.txt\" && break || sleep 1; done" \
     --desc "Student extracts crash error code from failing pod logs" \
     --expect-exit 0
 
