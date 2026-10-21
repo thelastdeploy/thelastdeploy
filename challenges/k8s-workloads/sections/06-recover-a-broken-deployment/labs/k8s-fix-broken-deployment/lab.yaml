@@ -10,5 +10,5 @@ setup:
   resource_limits_mem: 1024
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-fix-broken-deployment &>/dev/null; do sleep 1; done'
-    - 'kubectl create deployment broken-deploy --image=nginx:1.161.badtypo --context=kind-tld-k8s-fix-broken-deployment'
+    - 'echo -e "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: broken-deploy\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: broken-deploy\n  template:\n    metadata:\n      labels:\n        app: broken-deploy\n    spec:\n      containers:\n      - name: broken-deploy\n        image: nginx:1.161.badtypo" | kubectl apply --context=kind-tld-k8s-fix-broken-deployment -f -'
 version: 2

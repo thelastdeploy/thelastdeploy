@@ -15,4 +15,6 @@ setup:
     - 'kubectl create deployment backend-app --image=nginx --replicas=1 --context=kind-tld-k8s-access-service'
     - 'kubectl expose deployment backend-app --name=backend-service --port=80 --target-port=80 --context=kind-tld-k8s-access-service'
     - 'kubectl run client-pod --image=curlimages/curl --context=kind-tld-k8s-access-service --command -- sleep 3600'
+    - 'kubectl rollout status deployment/backend-app --timeout=60s --context=kind-tld-k8s-access-service'
+    - 'kubectl wait --for=condition=Ready pod/client-pod --timeout=60s --context=kind-tld-k8s-access-service'
 version: 2

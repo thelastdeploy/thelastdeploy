@@ -10,7 +10,7 @@ set -euo pipefail
 LAB_ID="k8s-debug-crashloopbackoff"
 
 # Step 1: Student extracts crash code from pod logs and writes to file
-student_exec "kubectl logs crashing-app > ~/k8s-troubleshooting/crash-code.txt || true" \
+student_exec "for i in \$(seq 1 45); do if { kubectl logs crashing-app 2>/dev/null || kubectl logs crashing-app --previous 2>/dev/null; } | grep -q 'FATAL_ERROR_CODE_9876'; then { kubectl logs crashing-app 2>/dev/null || kubectl logs crashing-app --previous 2>/dev/null; } | grep -o 'FATAL_ERROR_CODE_[0-9]\\+' > ~/k8s-troubleshooting/crash-code.txt; break; fi; sleep 1; done" \
     --desc "Student saves crashing-app logs to file" \
     --expect-exit 0
 

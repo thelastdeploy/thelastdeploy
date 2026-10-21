@@ -11,4 +11,6 @@ setup:
   seed_commands:
     - "mkdir -p $HOME/k8s-troubleshooting"
     - "rm -f $HOME/k8s-troubleshooting/kube-system-pods.txt"
+    - 'until kubectl get serviceaccount default --context=kind-tld-k8s-investigate-resources &>/dev/null; do sleep 1; done'
+    - 'until kubectl get pods -n kube-system -l k8s-app=kube-dns --context=kind-tld-k8s-investigate-resources 2>/dev/null | grep -q coredns; do sleep 1; done'
 version: 2

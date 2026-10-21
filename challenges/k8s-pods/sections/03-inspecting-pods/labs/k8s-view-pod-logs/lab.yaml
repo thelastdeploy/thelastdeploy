@@ -13,4 +13,5 @@ setup:
     - "rm -f $HOME/k8s-pods/flag.txt"
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-view-pod-logs &>/dev/null; do sleep 1; done'
     - 'kubectl run logging-pod --image=alpine --context=kind-tld-k8s-view-pod-logs -- sh -c "echo FLAG_LOG_MESSAGE_9921 && sleep 3600"'
+    - 'kubectl wait --for=condition=Ready pod/logging-pod --timeout=60s --context=kind-tld-k8s-view-pod-logs'
 version: 2

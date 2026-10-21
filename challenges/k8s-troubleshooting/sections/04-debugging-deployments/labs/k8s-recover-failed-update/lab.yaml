@@ -10,5 +10,5 @@ setup:
   resource_limits_mem: 1024
   seed_commands:
     - 'until kubectl get serviceaccount default --context=kind-tld-k8s-recover-failed-update &>/dev/null; do sleep 1; done'
-    - 'kubectl create deployment rollout-app --image=nginx:1.161.typo --context=kind-tld-k8s-recover-failed-update'
+    - 'echo -e "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: rollout-app\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: rollout-app\n  template:\n    metadata:\n      labels:\n        app: rollout-app\n    spec:\n      containers:\n      - name: rollout-app\n        image: nginx:1.161.typo" | kubectl apply --context=kind-tld-k8s-recover-failed-update -f -'
 version: 2
