@@ -230,7 +230,7 @@ student_exec() {
 harness_stop_lab() {
     if [[ -n "$ACTIVE_CONTAINER_ID" ]]; then
         echo "[$(date '+%Y-%m-%d %H:%M:%S')] Cleaning up container: $ACTIVE_CONTAINER_ID" >> "$CURRENT_TEST_LOG" 2>&1
-        docker rm -f "$ACTIVE_CONTAINER_ID" >/dev/null 2>&1 || true
+        docker rm -v -f "$ACTIVE_CONTAINER_ID" >/dev/null 2>&1 || true
         ACTIVE_CONTAINER_ID=""
     fi
 

@@ -10,7 +10,7 @@ set -euo pipefail
 LAB_ID="k8s-pod-restarts"
 
 # Step 1: Student waits for restart count to reach at least 2 and extracts it
-student_exec "mkdir -p \"\$HOME/k8s-pods\" && until [ \$(kubectl get pod restart-pod -o jsonpath='{.status.containerStatuses[0].restartCount}' 2>/dev/null || echo 0) -ge 2 ]; do sleep 2; done && kubectl get pod restart-pod -o jsonpath='{.status.containerStatuses[0].restartCount}' > \"\$HOME/k8s-pods/restarts.txt\"" \
+student_exec "mkdir -p \"\$HOME/k8s-pods\" && for i in \$(seq 1 45); do if [ \$(kubectl get pod restart-pod -o jsonpath='{.status.containerStatuses[0].restartCount}' 2>/dev/null || echo 0) -ge 2 ]; then break; fi; sleep 2; done && kubectl get pod restart-pod -o jsonpath='{.status.containerStatuses[0].restartCount}' > \"\$HOME/k8s-pods/restarts.txt\"" \
     --desc "Student monitors and records pod restart count after at least 2 restarts" \
     --expect-exit 0
 
