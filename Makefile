@@ -56,7 +56,7 @@ verify: fmt vet test
 # Build
 # ==========================================================
 
-VERSION  ?= v1.4.1
+VERSION  ?= v1.5.0
 LDFLAGS  := -s -w -X github.com/thelastdeploy/agent/cmd.Version=$(VERSION)
 DEV_LDFLAGS := -s -w \
 	-X github.com/thelastdeploy/agent/cmd.Version=$(VERSION)-dev \
