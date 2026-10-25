@@ -50,8 +50,12 @@ func Start(lab *cache.Lab) error {
 	instanceSpec.EnvironmentVars["DEBIAN_FRONTEND"] = "noninteractive"
 
 	fmt.Printf("🐳 Checking lab environment image (%s)...\n", instanceSpec.Image)
-	if err := eng.Pull(ctx, instanceSpec.Image); err != nil {
-		fmt.Fprintf(os.Stderr, "  info: using local image: %v\n", err)
+	if exists, _ := eng.ImageExists(ctx, instanceSpec.Image); exists {
+		fmt.Printf("  ✓ Using local image %s\n", instanceSpec.Image)
+	} else {
+		if err := eng.Pull(ctx, instanceSpec.Image); err != nil {
+			fmt.Fprintf(os.Stderr, "  info: using local image: %v\n", err)
+		}
 	}
 
 	fmt.Printf("⚙  Provisioning disposable container environment (%s)...\n", instanceSpec.Image)
@@ -81,6 +85,19 @@ func Start(lab *cache.Lab) error {
 
 	// Ensure sudo wrapper exists for root container execution
 	_, _ = eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "echo '#!/bin/sh\nexec \"$@\"' > /usr/local/bin/sudo && chmod +x /usr/local/bin/sudo"})
+
+	// If running Kubernetes profile, wait for cluster readiness before proceeding
+	if strings.Contains(instanceSpec.Image, "kind") || (lab.Environment != nil && lab.Environment.Profile == "tld-kind") {
+		fmt.Println("  ⏳ Waiting for Kubernetes cluster readiness...")
+		for i := 0; i < 90; i++ {
+			time.Sleep(1 * time.Second)
+			res, err := eng.Exec(ctx, containerID, []string{"/bin/bash", "-c", "test -f /run/tld/k8s-ready || test -f /run/tld-k8s-ready || (kubectl get serviceaccount default &>/dev/null && kubectl get nodes 2>/dev/null | grep -q ' Ready')"})
+			if err == nil && res.ExitCode == 0 {
+				fmt.Println("  ✓ Kubernetes cluster is ready")
+				break
+			}
+		}
+	}
 
 	// Inject in-container tld binary, config, validator, and active session
 	injectInContainerTLD(ctx, eng, containerID, lab)

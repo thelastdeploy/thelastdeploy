@@ -74,3 +74,15 @@ for i in $(seq 1 60); do
     fi
     sleep 0.5
 done
+
+# Copy kubeconfig for non-root student user if present
+if [ -d /home/ubuntu ]; then
+    mkdir -p /home/ubuntu/.kube
+    cp -f /root/.kube/config /home/ubuntu/.kube/config
+    chown -R ubuntu:ubuntu /home/ubuntu/.kube 2>/dev/null || true
+    chmod 644 /home/ubuntu/.kube/config
+fi
+
+# Signal readiness to runner and test harness
+mkdir -p /run/tld
+touch /run/tld/k8s-ready /run/tld-k8s-ready

@@ -8,7 +8,7 @@ Type=notify
 EnvironmentFile=-/etc/default/%N
 EnvironmentFile=-/etc/sysconfig/%N
 EnvironmentFile=-/etc/systemd/system/%N.env
-ExecStart=/usr/local/bin/k3s server --disable=traefik --disable=servicelb --snapshotter=native --write-kubeconfig-mode=644 --service-cidr=10.96.0.0/12 --kubelet-arg=cgroup-driver=cgroupfs --kubelet-arg=eviction-hard=imagefs.available<1%,nodefs.available<1% --kubelet-arg=eviction-minimum-reclaim=imagefs.available=500Mi,nodefs.available=500Mi
+ExecStart=/usr/local/bin/k3s server --disable=traefik --disable=servicelb --disable=metrics-server --snapshotter=native --write-kubeconfig-mode=644 --service-cidr=10.96.0.0/12 --kubelet-arg=eviction-hard=imagefs.available<1%,nodefs.available<1% --kubelet-arg=eviction-minimum-reclaim=imagefs.available=500Mi,nodefs.available=500Mi
 KillMode=process
 Delegate=yes
 LimitNOFILE=1048576

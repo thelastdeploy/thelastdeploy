@@ -37,6 +37,14 @@ func (d *DockerEngine) Pull(ctx context.Context, image string) error {
 	return cmd.Run()
 }
 
+func (d *DockerEngine) ImageExists(ctx context.Context, image string) (bool, error) {
+	cmd := exec.CommandContext(ctx, "docker", "image", "inspect", image)
+	if err := cmd.Run(); err != nil {
+		return false, nil
+	}
+	return true, nil
+}
+
 func (d *DockerEngine) Create(ctx context.Context, spec *runtime.InstanceSpec) (string, error) {
 	if err := d.IsAvailable(ctx); err != nil {
 		return "", err
@@ -134,7 +142,7 @@ func (d *DockerEngine) Destroy(ctx context.Context, instanceID string) error {
 	if instanceID == "" {
 		return nil
 	}
-	cmd := exec.CommandContext(ctx, "docker", "rm", "-f", instanceID)
+	cmd := exec.CommandContext(ctx, "docker", "rm", "-v", "-f", instanceID)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		outStr := string(out)
