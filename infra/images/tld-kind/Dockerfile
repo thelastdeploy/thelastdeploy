@@ -12,7 +12,6 @@ RUN curl -sLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/
     && chmod +x /usr/local/bin/k3s
 
 COPY k3s.service /etc/systemd/system/k3s.service
-COPY config.toml.tmpl /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
 COPY tld-k8s-setup.sh /usr/local/bin/tld-k8s-setup.sh
 COPY tld-k8s-setup.service /etc/systemd/system/tld-k8s-setup.service
 
