@@ -22,8 +22,14 @@ After running import, write the matching `resource "local_file" "existing"` bloc
    ```bash
    tld start tf-import-resource
    ```
-2. Navigate to `~/terraform-state-challenge`.
-3. Complete the task requirements: Resource imported into state successfully.
+2. Navigate to `~/terraform-state-challenge`:
+   ```bash
+   cd ~/terraform-state-challenge
+   ```
+3. Import the existing file `/tmp/existing.txt` into the declared `local_file.existing` resource:
+   ```bash
+   terraform import local_file.existing /tmp/existing.txt
+   ```
 4. Verify the task:
    ```bash
    tld check

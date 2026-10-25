@@ -29,8 +29,14 @@ resource "local_file" "app" {
    ```bash
    tld start tf-list-state
    ```
-2. Navigate to `~/terraform-state-challenge`.
-3. Complete the task requirements: State listing verified.
+2. Navigate to `~/terraform-state-challenge`:
+   ```bash
+   cd ~/terraform-state-challenge
+   ```
+3. Inspect all managed resources in the current state:
+   ```bash
+   terraform state list
+   ```
 4. Verify the task:
    ```bash
    tld check
@@ -41,8 +47,14 @@ resource "local_file" "app" {
    ```bash
    tld start tf-show-state
    ```
-2. Navigate to `~/terraform-state-challenge`.
-3. Complete the task requirements: State inspection verified.
+2. Navigate to `~/terraform-state-challenge`:
+   ```bash
+   cd ~/terraform-state-challenge
+   ```
+3. Inspect detailed state attributes of the `local_file.secret` resource:
+   ```bash
+   terraform state show local_file.secret
+   ```
 4. Verify the task:
    ```bash
    tld check

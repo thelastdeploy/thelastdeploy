@@ -16,9 +16,22 @@ Always run `terraform init` after modifying module sources or paths.
    ```bash
    tld start tf-fix-module
    ```
-2. Navigate to `~/terraform-troubleshoot-challenge`.
-3. Complete the task requirements: Module invocation error resolved.
-4. Verify the task:
+2. Navigate to `~/terraform-troubleshoot-challenge`:
+   ```bash
+   cd ~/terraform-troubleshoot-challenge
+   ```
+3. Open `main.tf` and pass the required `val` argument to the `module "sub_call"` block:
+   ```hcl
+   module "sub_call" {
+     source = "./modules/sub"
+     val    = "hello"
+   }
+   ```
+4. Validate the configuration using `terraform validate`:
+   ```bash
+   terraform validate
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

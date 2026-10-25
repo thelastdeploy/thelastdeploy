@@ -22,9 +22,22 @@ If an output contains sensitive data (like passwords or API tokens), set `sensit
    ```bash
    tld start tf-create-output
    ```
-2. Navigate to `~/terraform-expr-challenge`.
-3. Complete the task requirements: Output value created and verified.
-4. Verify the task:
+2. Navigate to `~/terraform-expr-challenge`:
+   ```bash
+   cd ~/terraform-expr-challenge
+   ```
+3. Open `main.tf` and add an `output` block referencing the `local_file.out` resource:
+   ```hcl
+   output "file_content" {
+     value = local_file.out.content
+   }
+   ```
+4. Initialize the workspace and apply the configuration:
+   ```bash
+   terraform init
+   terraform apply -auto-approve
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

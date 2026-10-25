@@ -9,4 +9,4 @@ setup:
   seed_commands:
     - rm -rf $HOME/terraform-modules-challenge
     - mkdir -p $HOME/terraform-modules-challenge
-version: 1
+version: 2

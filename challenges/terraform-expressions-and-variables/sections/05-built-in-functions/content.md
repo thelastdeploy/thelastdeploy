@@ -19,8 +19,16 @@ Test built-in functions interactively by running `terraform console`.
    ```bash
    tld start tf-list-functions
    ```
-2. Navigate to `~/terraform-expr-challenge`.
-3. Complete the task requirements: Built-in collection function verified.
+2. Navigate to `~/terraform-expr-challenge`:
+   ```bash
+   cd ~/terraform-expr-challenge
+   ```
+3. Open `main.tf` and add an output block using a collection function (such as `length`):
+   ```hcl
+   output "user_count" {
+     value = length(var.users)
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check
@@ -31,8 +39,16 @@ Test built-in functions interactively by running `terraform console`.
    ```bash
    tld start tf-string-functions
    ```
-2. Navigate to `~/terraform-expr-challenge`.
-3. Complete the task requirements: Built-in string function verified.
+2. Navigate to `~/terraform-expr-challenge`:
+   ```bash
+   cd ~/terraform-expr-challenge
+   ```
+3. Open `main.tf` and add an output block using a string function (such as `trim` or `trimspace`):
+   ```hcl
+   output "clean_text" {
+     value = trimspace(var.raw_text)
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check

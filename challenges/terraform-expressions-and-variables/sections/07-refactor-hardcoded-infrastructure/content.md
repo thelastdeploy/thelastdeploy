@@ -13,9 +13,28 @@ In this section, you will identify hardcoded values in a legacy configuration an
    ```bash
    tld start tf-remove-hardcoding
    ```
-2. Navigate to `~/terraform-expr-challenge`.
-3. Complete the task requirements: Hardcoded configuration refactored and validated successfully.
-4. Verify the task:
+2. Navigate to `~/terraform-expr-challenge`:
+   ```bash
+   cd ~/terraform-expr-challenge
+   ```
+3. Open `main.tf` and refactor the hardcoded string `"hardcoded_value_123"` using a variable:
+   ```hcl
+   variable "file_content" {
+     type    = string
+     default = "dynamic_value_123"
+   }
+
+   resource "local_file" "f1" {
+     content  = var.file_content
+     filename = "/tmp/hardcoded.txt"
+   }
+   ```
+4. Initialize the workspace and validate the configuration:
+   ```bash
+   terraform init
+   terraform validate
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

@@ -15,8 +15,14 @@ Advanced state management commands allow refactoring code without destroying res
    ```bash
    tld start tf-state-move-resource
    ```
-2. Navigate to `~/terraform-state-challenge`.
-3. Complete the task requirements: State resource renamed successfully using state mv.
+2. Navigate to `~/terraform-state-challenge`:
+   ```bash
+   cd ~/terraform-state-challenge
+   ```
+3. Move the resource address in state from `local_file.old_name` to `local_file.new_name`:
+   ```bash
+   terraform state mv local_file.old_name local_file.new_name
+   ```
 4. Verify the task:
    ```bash
    tld check

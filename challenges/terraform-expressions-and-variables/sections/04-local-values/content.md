@@ -25,8 +25,21 @@ Locals are referenced using `local.local_name`.
    ```bash
    tld start tf-use-locals
    ```
-2. Navigate to `~/terraform-expr-challenge`.
-3. Complete the task requirements: Local values utilized successfully.
+2. Navigate to `~/terraform-expr-challenge`:
+   ```bash
+   cd ~/terraform-expr-challenge
+   ```
+3. Open `main.tf`, define a `locals` block, and update `local_file.f1` to reference `local.env`:
+   ```hcl
+   locals {
+     env = "production"
+   }
+
+   resource "local_file" "f1" {
+     content  = local.env
+     filename = "/tmp/prod_1.txt"
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check

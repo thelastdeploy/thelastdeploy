@@ -29,8 +29,17 @@ resource "local_file" "summary" {
    ```bash
    tld start tf-module-inputs
    ```
-2. Navigate to `~/terraform-modules-challenge`.
-3. Complete the task requirements: Module input arguments configured successfully.
+2. Navigate to `~/terraform-modules-challenge`:
+   ```bash
+   cd ~/terraform-modules-challenge
+   ```
+3. Open `main.tf` and pass the `text` input argument to the `module "writer"` block:
+   ```hcl
+   module "writer" {
+     source = "./modules/file_writer"
+     text   = "Hello from root module"
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check
@@ -41,8 +50,16 @@ resource "local_file" "summary" {
    ```bash
    tld start tf-module-outputs
    ```
-2. Navigate to `~/terraform-modules-challenge`.
-3. Complete the task requirements: Module output value accessed successfully.
+2. Navigate to `~/terraform-modules-challenge`:
+   ```bash
+   cd ~/terraform-modules-challenge
+   ```
+3. Open `main.tf` and add an output block referencing the module output `module.writer.file_path`:
+   ```hcl
+   output "written_file" {
+     value = module.writer.file_path
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check

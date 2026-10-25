@@ -24,4 +24,4 @@ sections:
 - id: 08-recover-from-state-drift
   order: 8
 verified: true
-version: 1
+version: 2

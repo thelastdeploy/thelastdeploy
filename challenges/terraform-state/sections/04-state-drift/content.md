@@ -15,8 +15,14 @@
    ```bash
    tld start tf-detect-drift
    ```
-2. Navigate to `~/terraform-state-challenge`.
-3. Complete the task requirements: State drift detection verified.
+2. Navigate to `~/terraform-state-challenge`:
+   ```bash
+   cd ~/terraform-state-challenge
+   ```
+3. Run `terraform plan` to refresh state and detect the out-of-band modification on `/tmp/drift.txt`:
+   ```bash
+   terraform plan
+   ```
 4. Verify the task:
    ```bash
    tld check

@@ -18,9 +18,24 @@ Run `terraform validate` after `terraform init` to catch schema errors before pl
    ```bash
    tld start tf-fix-validation-errors
    ```
-2. Navigate to `~/terraform-troubleshoot-challenge`.
-3. Complete the task requirements: Validation errors resolved.
-4. Verify the task:
+2. Navigate to `~/terraform-troubleshoot-challenge`:
+   ```bash
+   cd ~/terraform-troubleshoot-challenge
+   ```
+3. Open `main.tf` and replace `invalid_param = "test"` with the valid `content = "test"` attribute:
+   ```hcl
+   provider "local" {}
+
+   resource "local_file" "val_bug" {
+     content  = "test"
+     filename = "/tmp/val.txt"
+   }
+   ```
+4. Validate the configuration using `terraform validate`:
+   ```bash
+   terraform validate
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

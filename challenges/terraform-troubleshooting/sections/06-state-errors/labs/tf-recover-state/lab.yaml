@@ -12,4 +12,4 @@ setup:
     - echo 'resource "local_file" "app" { content = "data" \n filename = "/tmp/state_rec.txt" }' > $HOME/terraform-troubleshoot-challenge/main.tf
     - echo 'data' > /tmp/state_rec.txt
     - cd $HOME/terraform-troubleshoot-challenge && terraform init
-version: 1
+version: 2

@@ -18,9 +18,22 @@ Run `terraform fmt` to automatically highlight and format syntax structure.
    ```bash
    tld start tf-fix-syntax-errors
    ```
-2. Navigate to `~/terraform-troubleshoot-challenge`.
-3. Complete the task requirements: Syntax errors fixed successfully.
-4. Verify the task:
+2. Navigate to `~/terraform-troubleshoot-challenge`:
+   ```bash
+   cd ~/terraform-troubleshoot-challenge
+   ```
+3. Open `main.tf` and add the missing closing brace `}` to complete the `local_file.syntax_bug` resource block:
+   ```hcl
+   resource "local_file" "syntax_bug" {
+     content  = "broken syntax"
+     filename = "/tmp/syntax.txt"
+   }
+   ```
+4. Format the file using `terraform fmt`:
+   ```bash
+   terraform fmt
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

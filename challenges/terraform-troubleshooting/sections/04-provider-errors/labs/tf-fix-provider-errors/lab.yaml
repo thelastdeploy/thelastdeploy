@@ -10,4 +10,4 @@ setup:
     - rm -rf $HOME/terraform-troubleshoot-challenge
     - mkdir -p $HOME/terraform-troubleshoot-challenge
     - echo 'resource "random_id" "pid" { byte_length = 4 }' > $HOME/terraform-troubleshoot-challenge/main.tf
-version: 1
+version: 2

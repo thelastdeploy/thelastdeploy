@@ -15,9 +15,19 @@ Provider errors occur when provider plugins fail to download, initialize, or aut
    ```bash
    tld start tf-fix-provider-errors
    ```
-2. Navigate to `~/terraform-troubleshoot-challenge`.
-3. Complete the task requirements: Provider initialized and validated successfully.
-4. Verify the task:
+2. Navigate to `~/terraform-troubleshoot-challenge`:
+   ```bash
+   cd ~/terraform-troubleshoot-challenge
+   ```
+3. Initialize the directory to install the required provider plugin:
+   ```bash
+   terraform init
+   ```
+4. Validate the configuration using `terraform validate`:
+   ```bash
+   terraform validate
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

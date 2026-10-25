@@ -22,8 +22,14 @@ This guarantees that only the pre-approved plan is applied, avoiding unexpected 
    ```bash
    tld start tf-read-plan
    ```
-2. Navigate to `~/terraform-state-challenge`.
-3. Complete the task requirements: Execution plan generated and saved successfully.
+2. Navigate to `~/terraform-state-challenge`:
+   ```bash
+   cd ~/terraform-state-challenge
+   ```
+3. Generate and save an execution plan file named `tfplan`:
+   ```bash
+   terraform plan -out=tfplan
+   ```
 4. Verify the task:
    ```bash
    tld check

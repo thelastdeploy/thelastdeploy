@@ -171,8 +171,9 @@ async def seed():
 
                     lab_id = lab_data["id"]
 
-                    # Compute SHA-256 hash of validator script if it exists
+                    # Compute SHA-256 hash and read validator script if it exists
                     validator_hash = None
+                    validator_script = None
                     sh_path = os.path.join(lab_path, "validator.sh")
                     py_path = os.path.join(lab_path, "validator.py")
                     val_path = py_path if os.path.exists(py_path) else (sh_path if os.path.exists(sh_path) else None)
@@ -183,28 +184,62 @@ async def seed():
                         # Normalize CRLF to LF and strip trailing whitespaces/newlines
                         content_normalized = content.replace(b"\r\n", b"\n").rstrip()
                         validator_hash = hashlib.sha256(content_normalized).hexdigest()
+                        validator_script = content.decode("utf-8", errors="replace")
 
-                    # seed_commands is a list in YAML → store as JSON string
-                    seed_commands = lab_data.get("seed_commands", [])
+                    # Read cleanup script if it exists
+                    cleanup_script = None
+                    clean_path = os.path.join(lab_path, "cleanup.sh")
+                    if os.path.exists(clean_path):
+                        with open(clean_path, "r", encoding="utf-8", errors="replace") as f:
+                            cleanup_script = f.read()
+
+                    setup_obj = lab_data.get("setup") or {}
+                    if not isinstance(setup_obj, dict):
+                        setup_obj = {}
+
+                    setup_type = lab_data.get("setup_type") or setup_obj.get("type")
+
+                    seed_commands = (
+                        lab_data.get("seed_commands")
+                        or setup_obj.get("seed_commands")
+                        or []
+                    )
                     seed_commands_json = json.dumps(seed_commands) if seed_commands else None
 
-                    resource_limits = lab_data.get("resource_limits", {})
+                    res_limits = lab_data.get("resource_limits") or {}
+                    if not isinstance(res_limits, dict):
+                        res_limits = {}
+
+                    cpu_limit = (
+                        lab_data.get("resource_limits_cpu")
+                        or setup_obj.get("resource_limits_cpu")
+                        or res_limits.get("cpu")
+                    )
+                    mem_limit = (
+                        lab_data.get("resource_limits_mem")
+                        or setup_obj.get("resource_limits_mem")
+                        or res_limits.get("mem")
+                    )
 
                     result = await db.execute(select(Lab).where(Lab.id == lab_id))
                     existing_lab = result.scalar_one_or_none()
 
                     if existing_lab:
+                        existing_lab.module_id = module_id
+                        existing_lab.section_id = section_id
                         existing_lab.title = lab_data["title"]
                         existing_lab.order = lab_data.get("order", 0)
                         existing_lab.xp = lab_data.get("xp", 0)
                         existing_lab.estimated_minutes = lab_data.get("estimated_minutes")
-                        existing_lab.setup_type = lab_data.get("setup_type")
+                        existing_lab.setup_type = setup_type
                         existing_lab.seed_commands = seed_commands_json
-                        existing_lab.resource_limits_cpu = resource_limits.get("cpu")
-                        existing_lab.resource_limits_mem = resource_limits.get("mem")
+                        existing_lab.resource_limits_cpu = cpu_limit
+                        existing_lab.resource_limits_mem = mem_limit
                         existing_lab.yaml_content = raw_lab_yaml
                         existing_lab.version = lab_data.get("version", 1)
                         existing_lab.validator_hash = validator_hash
+                        existing_lab.validator_script = validator_script
+                        existing_lab.cleanup_script = cleanup_script
                         db.add(existing_lab)
                         print(f"      ↻ Updated lab: {lab_id} (hash: {validator_hash[:8] if validator_hash else 'none'})")
                     else:
@@ -216,13 +251,15 @@ async def seed():
                             order=lab_data.get("order", 0),
                             xp=lab_data.get("xp", 0),
                             estimated_minutes=lab_data.get("estimated_minutes"),
-                            setup_type=lab_data.get("setup_type"),
+                            setup_type=setup_type,
                             seed_commands=seed_commands_json,
-                            resource_limits_cpu=resource_limits.get("cpu"),
-                            resource_limits_mem=resource_limits.get("mem"),
+                            resource_limits_cpu=cpu_limit,
+                            resource_limits_mem=mem_limit,
                             yaml_content=raw_lab_yaml,
                             version=lab_data.get("version", 1),
                             validator_hash=validator_hash,
+                            validator_script=validator_script,
+                            cleanup_script=cleanup_script,
                         ))
                         print(f"      ✅ Seeded lab: {lab_id} (hash: {validator_hash[:8] if validator_hash else 'none'})")
 

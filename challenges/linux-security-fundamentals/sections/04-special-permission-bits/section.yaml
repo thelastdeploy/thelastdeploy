@@ -1,4 +1,4 @@
-id: 04-special-permissions
+id: 04-special-permission-bits
 title: "Special Permissions (SUID, SGID, Sticky Bit)"
 order: 4
 xp: 35

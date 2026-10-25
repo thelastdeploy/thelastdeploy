@@ -2,7 +2,7 @@
 # ==============================================================================
 # Positive Test Flow: Investigate Special SUID/SGID/Sticky Bit Permissions
 # Module: linux-security-fundamentals
-# Section: 04-special-permissions
+# Section: 04-special-permission-bits
 # Lab ID: lnx-investigate-special-permissions
 # ==============================================================================
 set -euo pipefail

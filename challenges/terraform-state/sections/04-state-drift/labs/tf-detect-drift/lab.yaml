@@ -12,4 +12,4 @@ setup:
     - echo 'resource "local_file" "drift" { content = "original_content" \n filename = "/tmp/drift.txt" }' > $HOME/terraform-state-challenge/main.tf
     - cd $HOME/terraform-state-challenge && terraform init && terraform apply -auto-approve
     - echo 'out_of_band_change' > /tmp/drift.txt
-version: 1
+version: 2

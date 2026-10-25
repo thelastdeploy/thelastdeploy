@@ -22,4 +22,4 @@ sections:
 - id: 07-refactor-hardcoded-infrastructure
   order: 7
 verified: true
-version: 1
+version: 2

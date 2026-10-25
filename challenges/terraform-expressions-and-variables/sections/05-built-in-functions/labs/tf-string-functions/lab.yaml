@@ -10,4 +10,4 @@ setup:
     - rm -rf $HOME/terraform-expr-challenge
     - mkdir -p $HOME/terraform-expr-challenge
     - echo 'variable "raw_text" { default = "  Hello World  " }' > $HOME/terraform-expr-challenge/main.tf
-version: 1
+version: 2

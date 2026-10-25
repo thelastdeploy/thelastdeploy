@@ -12,4 +12,4 @@ setup:
     - echo 'resource "local_file" "syntax_bug" {' > $HOME/terraform-troubleshoot-challenge/main.tf
     - echo '  content = "broken syntax"' >> $HOME/terraform-troubleshoot-challenge/main.tf
     - echo '  filename = "/tmp/syntax.txt"' >> $HOME/terraform-troubleshoot-challenge/main.tf
-version: 1
+version: 2

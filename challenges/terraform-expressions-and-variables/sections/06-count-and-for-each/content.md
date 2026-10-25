@@ -31,9 +31,24 @@ resource "local_file" "files" {
    ```bash
    tld start tf-repeat-resources
    ```
-2. Navigate to `~/terraform-expr-challenge`.
-3. Complete the task requirements: Resource repetition validated successfully.
-4. Verify the task:
+2. Navigate to `~/terraform-expr-challenge`:
+   ```bash
+   cd ~/terraform-expr-challenge
+   ```
+3. Create `main.tf` using the `count` meta-argument to provision multiple `local_file` instances:
+   ```hcl
+   resource "local_file" "servers" {
+     count    = 2
+     content  = "Server number ${count.index}"
+     filename = "/tmp/server_${count.index}.txt"
+   }
+   ```
+4. Initialize the workspace and apply the configuration:
+   ```bash
+   terraform init
+   terraform apply -auto-approve
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

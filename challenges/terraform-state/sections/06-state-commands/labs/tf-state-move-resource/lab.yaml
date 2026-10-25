@@ -12,4 +12,4 @@ setup:
     - echo 'resource "local_file" "old_name" { content = "data" \n filename = "/tmp/mv.txt" }' > $HOME/terraform-state-challenge/main.tf
     - cd $HOME/terraform-state-challenge && terraform init && terraform apply -auto-approve
     - echo 'resource "local_file" "new_name" { content = "data" \n filename = "/tmp/mv.txt" }' > $HOME/terraform-state-challenge/main.tf
-version: 1
+version: 2

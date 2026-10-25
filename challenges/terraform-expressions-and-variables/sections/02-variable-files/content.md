@@ -25,8 +25,17 @@ content  = "Hello World"
    ```bash
    tld start tf-default-values
    ```
-2. Navigate to `~/terraform-expr-challenge`.
-3. Complete the task requirements: Default value defined successfully.
+2. Navigate to `~/terraform-expr-challenge`:
+   ```bash
+   cd ~/terraform-expr-challenge
+   ```
+3. Open `main.tf` and add a `default` attribute to the `app_name` variable block:
+   ```hcl
+   variable "app_name" {
+     type    = string
+     default = "my-awesome-app"
+   }
+   ```
 4. Verify the task:
    ```bash
    tld check
@@ -37,9 +46,20 @@ content  = "Hello World"
    ```bash
    tld start tf-use-tfvars
    ```
-2. Navigate to `~/terraform-expr-challenge`.
-3. Complete the task requirements: terraform.tfvars configuration applied successfully.
-4. Verify the task:
+2. Navigate to `~/terraform-expr-challenge`:
+   ```bash
+   cd ~/terraform-expr-challenge
+   ```
+3. Create a `terraform.tfvars` file setting the `filename` variable:
+   ```hcl
+   filename = "/tmp/tfvars_output.txt"
+   ```
+4. Initialize the workspace and apply the configuration:
+   ```bash
+   terraform init
+   terraform apply -auto-approve
+   ```
+5. Verify the task:
    ```bash
    tld check
    ```

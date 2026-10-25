@@ -12,4 +12,4 @@ setup:
     - echo 'provider "local" {}' > $HOME/terraform-troubleshoot-challenge/main.tf
     - echo 'resource "local_file" "val_bug" {\n  invalid_param = "test"\n  filename = "/tmp/val.txt"\n}' >> $HOME/terraform-troubleshoot-challenge/main.tf
     - cd $HOME/terraform-troubleshoot-challenge && terraform init
-version: 1
+version: 2

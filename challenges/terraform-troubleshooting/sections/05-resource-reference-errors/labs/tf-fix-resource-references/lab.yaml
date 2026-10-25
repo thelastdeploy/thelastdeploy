@@ -12,4 +12,4 @@ setup:
     - echo 'resource "local_file" "target_file" { content = "target" \n filename = "/tmp/target.txt" }' > $HOME/terraform-troubleshoot-challenge/main.tf
     - echo 'resource "local_file" "reader" { content = local_file.wrong_name.filename \n filename = "/tmp/reader.txt" }' >> $HOME/terraform-troubleshoot-challenge/main.tf
     - cd $HOME/terraform-troubleshoot-challenge && terraform init
-version: 1
+version: 2

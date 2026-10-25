@@ -13,4 +13,4 @@ setup:
     - echo 'provider "local" {}' > $HOME/terraform-state-challenge/main.tf
     - echo 'resource "local_file" "existing" {\n  filename = "/tmp/existing.txt"\n}' >> $HOME/terraform-state-challenge/main.tf
     - cd $HOME/terraform-state-challenge && terraform init
-version: 1
+version: 2

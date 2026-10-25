@@ -15,8 +15,14 @@ State errors manifest as missing tracking, state lock failures, or corrupted `.t
    ```bash
    tld start tf-recover-state
    ```
-2. Navigate to `~/terraform-troubleshoot-challenge`.
-3. Complete the task requirements: State recovered and verified.
+2. Navigate to `~/terraform-troubleshoot-challenge`:
+   ```bash
+   cd ~/terraform-troubleshoot-challenge
+   ```
+3. Re-establish state tracking for `local_file.app` by applying the configuration:
+   ```bash
+   terraform apply -auto-approve
+   ```
 4. Verify the task:
    ```bash
    tld check
