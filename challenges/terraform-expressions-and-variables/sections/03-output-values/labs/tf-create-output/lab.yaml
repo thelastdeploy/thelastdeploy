@@ -9,5 +9,8 @@ setup:
   seed_commands:
     - rm -rf $HOME/terraform-expr-challenge
     - mkdir -p $HOME/terraform-expr-challenge
-    - echo 'resource "local_file" "out" { content = "Output content" \n filename = "/tmp/output_test.txt" }' > $HOME/terraform-expr-challenge/main.tf
+    - echo 'resource "local_file" "out" {' > $HOME/terraform-expr-challenge/main.tf
+    - echo '  content  = "Output content"' >> $HOME/terraform-expr-challenge/main.tf
+    - echo '  filename = "/tmp/output_test.txt"' >> $HOME/terraform-expr-challenge/main.tf
+    - echo '}' >> $HOME/terraform-expr-challenge/main.tf
 version: 2

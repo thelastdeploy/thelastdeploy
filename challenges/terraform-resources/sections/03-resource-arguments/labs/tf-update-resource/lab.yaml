@@ -9,6 +9,8 @@ setup:
   seed_commands:
     - rm -rf $HOME/terraform-resources-challenge
     - mkdir -p $HOME/terraform-resources-challenge
-    - "echo 'resource \"local_file\" \"app\" { content = \"v1\" \n filename = \"/tmp/app.txt\"\
-    \ }' > $HOME/terraform-resources-challenge/main.tf"
+    - echo 'resource "local_file" "app" {' > $HOME/terraform-resources-challenge/main.tf
+    - echo '  content = "v1"' >> $HOME/terraform-resources-challenge/main.tf
+    - echo '  filename = "/tmp/app.txt"' >> $HOME/terraform-resources-challenge/main.tf
+    - echo '}' >> $HOME/terraform-resources-challenge/main.tf
 version: 2

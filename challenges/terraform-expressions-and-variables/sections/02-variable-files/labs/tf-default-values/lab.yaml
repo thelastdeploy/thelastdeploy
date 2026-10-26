@@ -9,5 +9,7 @@ setup:
   seed_commands:
     - rm -rf $HOME/terraform-expr-challenge
     - mkdir -p $HOME/terraform-expr-challenge
-    - echo 'variable "app_name" {\n  type = string\n}' > $HOME/terraform-expr-challenge/main.tf
+    - echo 'variable "app_name" {' > $HOME/terraform-expr-challenge/main.tf
+    - echo '  type = string' >> $HOME/terraform-expr-challenge/main.tf
+    - echo '}' >> $HOME/terraform-expr-challenge/main.tf
 version: 2

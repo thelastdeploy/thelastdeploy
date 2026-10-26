@@ -181,6 +181,11 @@ student_exec() {
 
     local step_failed=0
 
+    # Strip ANSI escape sequences for robust assertion matching
+    local clean_stdout clean_stderr
+    clean_stdout="$(echo "$actual_stdout" | sed -r 's/\x1B\[[0-9;]*[a-zA-Z]//g')"
+    clean_stderr="$(echo "$actual_stderr" | sed -r 's/\x1B\[[0-9;]*[a-zA-Z]//g')"
+
     # Assertion 1: Exit Code
     if [[ $actual_exit -ne $expect_exit ]]; then
         ui_step_fail "Expected exit code $expect_exit, but got $actual_exit"
@@ -190,7 +195,7 @@ student_exec() {
 
     # Assertion 2: Expected Stdout substring
     if [[ $step_failed -eq 0 && -n "$expect_stdout" ]]; then
-        if [[ "$actual_stdout" != *"$expect_stdout"* ]]; then
+        if [[ "$actual_stdout" != *"$expect_stdout"* && "$clean_stdout" != *"$expect_stdout"* ]]; then
             ui_step_fail "Expected stdout to contain '$expect_stdout'"
             echo "ASSERTION FAILED: Missing stdout snippet: '$expect_stdout'" >> "$CURRENT_TEST_LOG"
             step_failed=1
@@ -199,7 +204,7 @@ student_exec() {
 
     # Assertion 3: Expected Stdout Regex
     if [[ $step_failed -eq 0 && -n "$expect_stdout_regex" ]]; then
-        if ! echo "$actual_stdout" | grep -Eq "$expect_stdout_regex"; then
+        if ! echo "$clean_stdout" | grep -Eq "$expect_stdout_regex" && ! echo "$actual_stdout" | grep -Eq "$expect_stdout_regex"; then
             ui_step_fail "Stdout did not match regex: '$expect_stdout_regex'"
             echo "ASSERTION FAILED: Regex match failed: '$expect_stdout_regex'" >> "$CURRENT_TEST_LOG"
             step_failed=1
@@ -208,7 +213,7 @@ student_exec() {
 
     # Assertion 4: Expected Stderr substring
     if [[ $step_failed -eq 0 && -n "$expect_stderr" ]]; then
-        if [[ "$actual_stderr" != *"$expect_stderr"* ]]; then
+        if [[ "$actual_stderr" != *"$expect_stderr"* && "$clean_stderr" != *"$expect_stderr"* ]]; then
             ui_step_fail "Expected stderr to contain '$expect_stderr'"
             echo "ASSERTION FAILED: Missing stderr snippet: '$expect_stderr'" >> "$CURRENT_TEST_LOG"
             step_failed=1

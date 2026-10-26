@@ -15,7 +15,13 @@ student_exec "which terraform || (curl -fsSL https://releases.hashicorp.com/terr
     --expect-exit 0
 
 # Step 2: Ensure seed setup is present
-student_exec "mkdir -p ~/terraform-troubleshoot-challenge/modules/sub && echo 'variable \"val\" { type = string }' > ~/terraform-troubleshoot-challenge/modules/sub/variables.tf && echo -e 'resource \"local_file\" \"m\" { content = var.val \n filename = \"/tmp/sub.txt\" }' > ~/terraform-troubleshoot-challenge/modules/sub/main.tf && cd ~/terraform-troubleshoot-challenge && ([ -d .terraform ] || terraform init)" \
+student_exec "mkdir -p ~/terraform-troubleshoot-challenge/modules/sub && echo 'variable \"val\" { type = string }' > ~/terraform-troubleshoot-challenge/modules/sub/variables.tf && cat << 'SUBEOF' > ~/terraform-troubleshoot-challenge/modules/sub/main.tf
+resource \"local_file\" \"m\" {
+  content  = var.val
+  filename = \"/tmp/sub.txt\"
+}
+SUBEOF
+cd ~/terraform-troubleshoot-challenge && ([ -d .terraform ] || terraform init)" \
     --desc "Student ensures workspace and module are initialized" \
     --expect-exit 0
 

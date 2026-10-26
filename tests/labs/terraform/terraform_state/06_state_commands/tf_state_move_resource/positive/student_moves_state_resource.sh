@@ -15,7 +15,7 @@ student_exec "which terraform || (curl -fsSL https://releases.hashicorp.com/terr
     --expect-exit 0
 
 # Step 2: Ensure seed setup is present
-student_exec "cd ~/terraform-state-challenge && ([ -f terraform.tfstate ] || (echo 'resource \"local_file\" \"old_name\" { content = \"data\" \n filename = \"/tmp/mv.txt\" }' > main.tf && terraform init && terraform apply -auto-approve && echo 'resource \"local_file\" \"new_name\" { content = \"data\" \n filename = \"/tmp/mv.txt\" }' > main.tf))" \
+student_exec "cd ~/terraform-state-challenge && ([ -f terraform.tfstate ] || (printf 'resource \"local_file\" \"old_name\" {\\n  content  = \"data\"\\n  filename = \"/tmp/mv.txt\"\\n}\\n' > main.tf && terraform init && terraform apply -auto-approve && printf 'resource \"local_file\" \"new_name\" {\\n  content  = \"data\"\\n  filename = \"/tmp/mv.txt\"\\n}\\n' > main.tf))" \
     --desc "Student ensures seed state and configuration are ready" \
     --expect-exit 0
 

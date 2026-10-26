@@ -15,13 +15,13 @@ student_exec "which terraform || (curl -fsSL https://releases.hashicorp.com/terr
     --expect-exit 0
 
 # Step 2: Ensure seed setup is present
-student_exec "echo 'existing file content' > /tmp/existing.txt && cd ~/terraform-state-challenge && ([ -d .terraform ] || terraform init)" \
-    --desc "Student ensures pre-existing resource and terraform initialization" \
+student_exec "cd ~/terraform-state-challenge && ([ -d .terraform ] || terraform init)" \
+    --desc "Student ensures terraform workspace initialization" \
     --expect-exit 0
 
-# Step 3: Student imports existing file resource into state
-student_exec "cd ~/terraform-state-challenge && terraform import local_file.existing /tmp/existing.txt" \
-    --desc "Student imports local_file.existing" \
+# Step 3: Student imports existing resource into state
+student_exec "cd ~/terraform-state-challenge && terraform import terraform_data.existing existing_id" \
+    --desc "Student imports terraform_data.existing" \
     --expect-exit 0 \
     --expect-stdout "Import successful!"
 
@@ -29,7 +29,7 @@ student_exec "cd ~/terraform-state-challenge && terraform import local_file.exis
 student_exec "cd ~/terraform-state-challenge && terraform state list" \
     --desc "Student verifies resource in state list" \
     --expect-exit 0 \
-    --expect-stdout "local_file.existing"
+    --expect-stdout "terraform_data.existing"
 
 # Step 5: Student runs tld check to validate lab completion
 student_exec "tld check" \

@@ -9,7 +9,13 @@ setup:
   seed_commands:
     - rm -rf $HOME/terraform-troubleshoot-challenge
     - mkdir -p $HOME/terraform-troubleshoot-challenge
-    - echo 'resource "local_file" "target_file" { content = "target" \n filename = "/tmp/target.txt" }' > $HOME/terraform-troubleshoot-challenge/main.tf
-    - echo 'resource "local_file" "reader" { content = local_file.wrong_name.filename \n filename = "/tmp/reader.txt" }' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo 'resource "local_file" "target_file" {' > $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '  content = "target"' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '  filename = "/tmp/target.txt"' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '}' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo 'resource "local_file" "reader" {' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '  content = local_file.wrong_name.filename' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '  filename = "/tmp/reader.txt"' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '}' >> $HOME/terraform-troubleshoot-challenge/main.tf
     - cd $HOME/terraform-troubleshoot-challenge && terraform init
 version: 2

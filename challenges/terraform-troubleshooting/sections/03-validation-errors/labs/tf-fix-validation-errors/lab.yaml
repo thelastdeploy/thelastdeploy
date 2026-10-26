@@ -10,6 +10,9 @@ setup:
     - rm -rf $HOME/terraform-troubleshoot-challenge
     - mkdir -p $HOME/terraform-troubleshoot-challenge
     - echo 'provider "local" {}' > $HOME/terraform-troubleshoot-challenge/main.tf
-    - echo 'resource "local_file" "val_bug" {\n  invalid_param = "test"\n  filename = "/tmp/val.txt"\n}' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo 'resource "local_file" "val_bug" {' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '  invalid_param = "test"' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '  filename = "/tmp/val.txt"' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '}' >> $HOME/terraform-troubleshoot-challenge/main.tf
     - cd $HOME/terraform-troubleshoot-challenge && terraform init
 version: 2

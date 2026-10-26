@@ -10,7 +10,12 @@ setup:
     - rm -rf $HOME/terraform-troubleshoot-challenge
     - mkdir -p $HOME/terraform-troubleshoot-challenge/modules/sub
     - echo 'variable "val" { type = string }' > $HOME/terraform-troubleshoot-challenge/modules/sub/variables.tf
-    - echo 'resource "local_file" "m" { content = var.val \n filename = "/tmp/sub.txt" }' > $HOME/terraform-troubleshoot-challenge/modules/sub/main.tf
-    - echo 'module "sub_call" {\n  source = "./modules/sub"\n}' > $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo 'resource "local_file" "m" {' > $HOME/terraform-troubleshoot-challenge/modules/sub/main.tf
+    - echo '  content = var.val' >> $HOME/terraform-troubleshoot-challenge/modules/sub/main.tf
+    - echo '  filename = "/tmp/sub.txt"' >> $HOME/terraform-troubleshoot-challenge/modules/sub/main.tf
+    - echo '}' >> $HOME/terraform-troubleshoot-challenge/modules/sub/main.tf
+    - echo 'module "sub_call" {' > $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '  source = "./modules/sub"' >> $HOME/terraform-troubleshoot-challenge/main.tf
+    - echo '}' >> $HOME/terraform-troubleshoot-challenge/main.tf
     - cd $HOME/terraform-troubleshoot-challenge && terraform init
 version: 2

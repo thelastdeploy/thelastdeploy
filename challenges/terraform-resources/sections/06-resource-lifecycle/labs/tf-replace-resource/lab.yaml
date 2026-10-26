@@ -9,6 +9,8 @@ setup:
   seed_commands:
     - rm -rf $HOME/terraform-resources-challenge
     - mkdir -p $HOME/terraform-resources-challenge
-    - "echo 'resource \"local_file\" \"example\" { content = \"Lifecycle test\" \n filename\
-    \ = \"/tmp/lifecycle.txt\" }' > $HOME/terraform-resources-challenge/main.tf"
+    - echo 'resource "local_file" "example" {' > $HOME/terraform-resources-challenge/main.tf
+    - echo '  content  = "Lifecycle test"' >> $HOME/terraform-resources-challenge/main.tf
+    - echo '  filename = "/tmp/lifecycle.txt"' >> $HOME/terraform-resources-challenge/main.tf
+    - echo '}' >> $HOME/terraform-resources-challenge/main.tf
 version: 2

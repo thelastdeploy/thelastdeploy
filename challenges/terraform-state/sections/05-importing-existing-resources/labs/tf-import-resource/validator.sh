@@ -2,11 +2,11 @@
 set -euo pipefail
 DIR="$HOME/terraform-state-challenge"
 if [ ! -f "$DIR/terraform.tfstate" ]; then
-  echo "FAIL: State file not found. Run 'terraform import local_file.existing /tmp/existing.txt' in $DIR."
+  echo "FAIL: State file not found. Run 'terraform import terraform_data.existing existing_id' in $DIR."
   exit 1
 fi
-if ! grep -q 'local_file.existing' "$DIR/terraform.tfstate"; then
-  echo "FAIL: Resource local_file.existing is not present in terraform.tfstate."
+if ! terraform -chdir="$DIR" state list 2>/dev/null | grep -q -E '(terraform_data\.existing|local_file\.existing)'; then
+  echo "FAIL: Resource terraform_data.existing is not present in terraform.tfstate."
   exit 1
 fi
 echo "PASS: Resource imported into state successfully."

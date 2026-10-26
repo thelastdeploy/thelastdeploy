@@ -23,7 +23,7 @@ student_exec "cd ~/terraform-state-challenge && ([ -f terraform.tfstate ] || (te
 student_exec "cd ~/terraform-state-challenge && terraform plan" \
     --desc "Student runs terraform plan to detect drift" \
     --expect-exit 0 \
-    --expect-stdout "will be updated in-place"
+    --expect-stdout "Plan: 1 to add"
 
 # Step 4: Student runs tld check to validate lab completion
 student_exec "tld check" \

@@ -9,9 +9,9 @@ terraform import <RESOURCE_TYPE>.<RESOURCE_NAME> <RESOURCE_ID>
 
 ### Example:
 ```bash
-terraform import local_file.existing /tmp/existing.txt
+terraform import terraform_data.existing existing_id
 ```
-After running import, write the matching `resource "local_file" "existing"` block in your code to complete adoption.
+After running import, write the matching `resource "terraform_data" "existing"` block in your code to complete adoption.
 
 ---
 
@@ -26,9 +26,9 @@ After running import, write the matching `resource "local_file" "existing"` bloc
    ```bash
    cd ~/terraform-state-challenge
    ```
-3. Import the existing file `/tmp/existing.txt` into the declared `local_file.existing` resource:
+3. Import the existing resource into the declared `terraform_data.existing` resource:
    ```bash
-   terraform import local_file.existing /tmp/existing.txt
+   terraform import terraform_data.existing existing_id
    ```
 4. Verify the task:
    ```bash

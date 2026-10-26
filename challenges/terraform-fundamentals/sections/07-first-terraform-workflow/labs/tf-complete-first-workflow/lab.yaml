@@ -7,8 +7,11 @@ environment:
 setup:
   type: shell
   seed_commands:
+    - "which terraform || (curl -fsSL https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip -o /tmp/tf.zip && unzip -qo /tmp/tf.zip -d /usr/local/bin && rm -f /tmp/tf.zip)"
     - rm -rf $HOME/terraform-challenge
     - mkdir -p $HOME/terraform-challenge
-    - "echo 'resource \"local_file\" \"pet\" { content = \"We love pets!\" \n filename\
-    \ = \"/tmp/pet.txt\" }' > $HOME/terraform-challenge/main.tf"
+    - echo 'resource "local_file" "pet" {' > $HOME/terraform-challenge/main.tf
+    - echo '  content  = "We love pets!"' >> $HOME/terraform-challenge/main.tf
+    - echo '  filename = "/tmp/pet.txt"' >> $HOME/terraform-challenge/main.tf
+    - echo '}' >> $HOME/terraform-challenge/main.tf
 version: 2
