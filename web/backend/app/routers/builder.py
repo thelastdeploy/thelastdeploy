@@ -246,7 +246,6 @@ async def publish_module_from_cli(
         "total_sections": 0,
         "author_id": current_user.id,
         "status": "published",
-        "is_official_verified": False,
         "submitted_at": datetime.now(timezone.utc),
     }
 
@@ -348,7 +347,8 @@ async def publish_module_from_cli(
     return BuilderModuleResponse(
         id=module.id,
         title=module.title,
-        is_official_verified=module.is_official_verified,
+        status=module.status,
+        is_official_verified=(module.status == "verified"),
         total_sections=module.total_sections,
         total_xp=module.total_xp,
         created_at=module.created_at,
@@ -376,7 +376,7 @@ async def list_my_modules(
             total_sections=m.total_sections,
             total_xp=m.total_xp,
             status=m.status,
-            is_official_verified=m.is_official_verified,
+            is_official_verified=(m.status == "verified"),
             created_at=m.created_at,
             submitted_at=m.submitted_at,
         )
@@ -403,7 +403,7 @@ async def delete_module(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
     # Only unverified modules can be deleted
-    if module.status == "verified" or module.is_official_verified:
+    if module.status == "verified":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cannot delete a verified module."

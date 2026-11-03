@@ -76,7 +76,7 @@ async def list_modules(
         Module.total_sections,
         Module.version,
         Module.author_id,
-        Module.is_official_verified,
+        Module.status,
         completed_sections_sub.label("completed_sections")
     ).where(Module.status != 'draft')
     result = await db.execute(stmt)
@@ -105,7 +105,8 @@ async def list_modules(
             completed_sections=row.completed_sections,
             version=row.version,
             author=_author_info(author),
-            is_official_verified=row.is_official_verified,
+            status=row.status,
+            is_official_verified=(row.status == "verified"),
         ))
 
     return ModuleListResponse(modules=items)
@@ -205,7 +206,8 @@ async def get_all_modules_full(
             sections=section_schemas,
             version=m.version,
             author=_author_info(m.author),
-            is_official_verified=m.is_official_verified,
+            status=m.status,
+            is_official_verified=(m.status == "verified"),
         ))
 
     return items
@@ -324,7 +326,8 @@ async def get_module_full(
         sections=section_schemas,
         version=module.version,
         author=_author_info(module.author),
-        is_official_verified=module.is_official_verified,
+        status=module.status,
+        is_official_verified=(module.status == "verified"),
     )
 
 
@@ -364,7 +367,8 @@ async def get_module_summary(
         total_sections=len(sections),
         version=module.version,
         author=_author_info(module.author),
-        is_official_verified=module.is_official_verified,
+        status=module.status,
+        is_official_verified=(module.status == "verified"),
     )
 
 
@@ -437,7 +441,6 @@ async def verify_module(
             )
 
     module.total_xp = total_xp
-    module.is_official_verified = True
     module.status = "verified"
     db.add(module)
     await db.flush()

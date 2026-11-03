@@ -259,7 +259,7 @@ $ tld publish ./my-module
                   <div className="flex items-start justify-between gap-4 mb-2">
                     <h3 className="font-black text-lg text-foreground leading-snug">{m.title}</h3>
                     <div className="flex items-center gap-1.5">
-                      {m.is_official_verified || m.status === "verified" ? (
+                      {m.status === "verified" ? (
                         <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
                           <CheckCircle className="h-2.5 w-2.5" /> Verified
                         </span>
@@ -293,7 +293,7 @@ $ tld publish ./my-module
                   >
                     View Module Page <ExternalLink className="h-3 w-3" />
                   </Link>
-                  {!(m.is_official_verified || m.status === "verified") ? (
+                  {m.status !== "verified" ? (
                     <button
                       onClick={() => handleDelete(m.id)}
                       className="p-2 rounded-xl border border-red-500/20 hover:border-red-500/50 hover:bg-red-500/5 text-red-400 hover:text-red-300 transition-all cursor-pointer shrink-0"

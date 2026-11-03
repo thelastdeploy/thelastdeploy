@@ -56,7 +56,6 @@ class Module(Base):
     shared_seed: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
     # NULL  → official module ("The Last Deploy"); set to user.id for community modules
     author_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
-    is_official_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
     status: Mapped[str] = mapped_column(String(20), default="draft", server_default="draft", nullable=False)
     submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

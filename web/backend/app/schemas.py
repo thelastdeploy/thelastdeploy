@@ -131,6 +131,7 @@ class ModuleListItem(BaseModel):
     completed_sections: int = 0
     version: int = 1
     author: AuthorInfo
+    status: str = "verified"
     is_official_verified: bool = False
 
 class ModuleListResponse(BaseModel):
@@ -149,6 +150,7 @@ class ModuleDetail(BaseModel):
     sections: list[SectionSchema]
     version: int = 1
     author: AuthorInfo
+    status: str = "verified"
     is_official_verified: bool = False
 
 class ModuleSummary(BaseModel):
@@ -164,6 +166,7 @@ class ModuleSummary(BaseModel):
     total_sections: int
     version: int = 1
     author: AuthorInfo
+    status: str = "verified"
     is_official_verified: bool = False
 
 
@@ -240,7 +243,7 @@ class BuilderDraftListItem(BaseModel):
     total_sections: int
     total_xp: int
     status: str                     # 'draft' | 'published' | 'verified'
-    is_official_verified: bool
+    is_official_verified: bool = False
     created_at: datetime
     submitted_at: datetime | None
 
@@ -258,7 +261,8 @@ class BuilderModuleDetail(BaseModel):
 class BuilderModuleResponse(BaseModel):
     id: str
     title: str
-    is_official_verified: bool
+    status: str = "published"
+    is_official_verified: bool = False
     total_sections: int
     total_xp: int
     created_at: datetime

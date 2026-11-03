@@ -60,7 +60,7 @@ export function ModuleCard({ module }: { module: Module }) {
               {module.author.name}
             </span>
             {/* Verified badge */}
-            {module.is_official_verified && (
+            {(module.status === "verified" || module.is_official_verified) && (
               <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
                 <ShieldCheck className="h-2.5 w-2.5" />
                 Verified

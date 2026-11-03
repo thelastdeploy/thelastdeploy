@@ -73,7 +73,7 @@ export default function MaintainerDashboard() {
     setLoading(true);
     try {
       const res = await api.getModules();
-      const unverified = res.modules.filter((m: any) => !m.is_official_verified);
+      const unverified = res.modules.filter((m: any) => m.status !== "verified");
       setUnverifiedModules(unverified);
     } catch (err: any) {
       setError(err.message || "Failed to load unverified modules");

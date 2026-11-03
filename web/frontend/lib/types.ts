@@ -42,7 +42,8 @@ export interface Module {
   total_sections: number;
   completed_sections: number;
   author: AuthorInfo;
-  is_official_verified: boolean;
+  status?: ModuleStatus;
+  is_official_verified?: boolean;
 }
 
 export interface ModuleDetail extends Module {
@@ -100,7 +101,7 @@ export interface BuilderDraftListItem {
   total_sections: number;
   total_xp: number;
   status: ModuleStatus;
-  is_official_verified: boolean;
+  is_official_verified?: boolean;
   created_at: string;
   submitted_at: string | null;
 }

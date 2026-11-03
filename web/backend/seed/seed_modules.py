@@ -85,7 +85,7 @@ async def seed():
             # ── Upsert Module ──────────────────────────────────────────
             result = await db.execute(select(Module).where(Module.id == module_id))
             existing_module = result.scalar_one_or_none()
-            shared_seed = module_data.get("shared_seed", [])
+            shared_seed = module_data.get("shared_seed") or None
 
             if existing_module:
                 if existing_module.author_id is not None:
@@ -102,7 +102,6 @@ async def seed():
                 existing_module.shared_seed = shared_seed
                 # Official seeded modules are always authored by The Last Deploy (NULL) and verified
                 existing_module.author_id = None
-                existing_module.is_official_verified = True
                 existing_module.status = 'verified'
                 db.add(existing_module)
                 print(f"  ↻ Updated module: {module_id} (total_xp: {total_xp}, total_sections: {total_sections})")
@@ -119,7 +118,6 @@ async def seed():
                     total_sections=total_sections,
                     shared_seed=shared_seed,
                     author_id=None,          # official module
-                    is_official_verified=True,
                     status='verified',
                 ))
                 print(f"  ✅ Seeded module: {module_id} (total_xp: {total_xp}, total_sections: {total_sections})")
