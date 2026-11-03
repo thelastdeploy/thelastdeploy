@@ -348,6 +348,11 @@ jobs:
             RAW_URL="${RAW_URL#\"}"
             RAW_URL="${RAW_URL%'}"
             RAW_URL="${RAW_URL#'}"
+            if [[ "$RAW_URL" == postgres://* ]]; then
+              RAW_URL="postgresql+asyncpg://${RAW_URL#postgres://}"
+            elif [[ "$RAW_URL" == postgresql://* && "$RAW_URL" != postgresql+* ]]; then
+              RAW_URL="postgresql+asyncpg://${RAW_URL#postgresql://}"
+            fi
             export DATABASE_URL="$RAW_URL"
           fi
 
