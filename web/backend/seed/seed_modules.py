@@ -3,6 +3,7 @@
 import asyncio
 import json
 import os
+import subprocess
 import sys
 import yaml
 
@@ -20,7 +21,26 @@ CHALLENGES_DIR = os.getenv(
 )
 
 
+def run_migrations():
+    """Ensure database schema is up-to-date with Alembic migrations before seeding."""
+    backend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    try:
+        res = subprocess.run(
+            ["alembic", "upgrade", "head"],
+            cwd=backend_dir,
+            capture_output=True,
+            text=True,
+        )
+        if res.returncode == 0:
+            print("🚀 Alembic schema migrations ensured.")
+        else:
+            print(f"⚠️ Alembic notice: {res.stdout.strip()} {res.stderr.strip()}")
+    except Exception as e:
+        print(f"⚠️ Alembic execution notice: {e}")
+
+
 async def seed():
+    run_migrations()
     print(f"🌱 Seeding challenge modules from: {CHALLENGES_DIR}")
     async with AsyncSessionLocal() as db:
         for module_dir in sorted(os.listdir(CHALLENGES_DIR)):

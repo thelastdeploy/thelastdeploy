@@ -361,4 +361,8 @@ jobs:
             export SECRET_KEY="$RAW_KEY"
           fi
 
+          echo "🚀 Running Alembic schema migrations..."
+          alembic upgrade head
+
+          echo "🌱 Running challenges seeder..."
           python seed/seed_modules.py
