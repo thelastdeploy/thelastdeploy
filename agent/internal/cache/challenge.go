@@ -66,13 +66,13 @@ type moduleJSONFile struct {
 }
 
 type labJSONFile struct {
-	ID            string                        `json:"id"`
-	Title         string                        `json:"title"`
-	SeedCommands  []string                      `json:"seed_commands"`
-	Environment   *environment.EnvironmentSpec  `json:"environment,omitempty"`
-	XP            int                           `json:"xp"`
-	EstimatedMins int                           `json:"estimated_minutes"`
-	Version       int                           `json:"version"`
+	ID            string                       `json:"id"`
+	Title         string                       `json:"title"`
+	SeedCommands  []string                     `json:"seed_commands"`
+	Environment   *environment.EnvironmentSpec `json:"environment,omitempty"`
+	XP            int                          `json:"xp"`
+	EstimatedMins int                          `json:"estimated_minutes"`
+	Version       int                          `json:"version"`
 }
 
 func LoadModule(baseDir, moduleID string) (*Module, error) {
