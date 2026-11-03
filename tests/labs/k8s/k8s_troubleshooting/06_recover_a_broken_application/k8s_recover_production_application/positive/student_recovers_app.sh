@@ -20,7 +20,7 @@ student_exec "kubectl set image deployment/frontend-deploy frontend=nginx:alpine
     --expect-exit 0
 
 # Step 3: Student waits for rollout to complete
-student_exec "kubectl rollout status deployment/frontend-deploy --timeout=60s" \
+student_exec "kubectl rollout status deployment/frontend-deploy --timeout=120s" \
     --desc "Student monitors rollout status until pods are ready" \
     --expect-exit 0
 

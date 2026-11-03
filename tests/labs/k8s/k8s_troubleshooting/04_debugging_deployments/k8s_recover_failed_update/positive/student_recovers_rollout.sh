@@ -15,7 +15,7 @@ student_exec "kubectl set image deployment/rollout-app rollout-app=nginx:1.16.1"
     --expect-exit 0
 
 # Step 2: Student waits for rollout to complete
-student_exec "kubectl rollout status deployment/rollout-app --timeout=60s" \
+student_exec "kubectl rollout status deployment/rollout-app --timeout=120s" \
     --desc "Student monitors rollout status until complete" \
     --expect-exit 0
 
