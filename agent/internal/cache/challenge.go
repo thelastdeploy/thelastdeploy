@@ -66,12 +66,13 @@ type moduleJSONFile struct {
 }
 
 type labJSONFile struct {
-	ID            string   `json:"id"`
-	Title         string   `json:"title"`
-	SeedCommands  []string `json:"seed_commands"`
-	XP            int      `json:"xp"`
-	EstimatedMins int      `json:"estimated_minutes"`
-	Version       int      `json:"version"`
+	ID            string                        `json:"id"`
+	Title         string                        `json:"title"`
+	SeedCommands  []string                      `json:"seed_commands"`
+	Environment   *environment.EnvironmentSpec  `json:"environment,omitempty"`
+	XP            int                           `json:"xp"`
+	EstimatedMins int                           `json:"estimated_minutes"`
+	Version       int                           `json:"version"`
 }
 
 func LoadModule(baseDir, moduleID string) (*Module, error) {
@@ -289,10 +290,15 @@ func parseLabJSON(path string) (*Lab, error) {
 	if err := json.Unmarshal(data, &jf); err != nil {
 		return nil, fmt.Errorf("parse %s: %w", path, err)
 	}
+	env := jf.Environment
+	if env == nil {
+		env = &environment.EnvironmentSpec{}
+	}
 	return &Lab{
 		ID:            jf.ID,
 		Title:         jf.Title,
 		SeedCommands:  jf.SeedCommands,
+		Environment:   env,
 		XP:            jf.XP,
 		EstimatedMins: jf.EstimatedMins,
 		Version:       jf.Version,
@@ -400,19 +406,6 @@ func parseLabYAML(path string) (*Lab, error) {
 			lab.EstimatedMins, _ = strconv.Atoi(val)
 		case indent == 0 && key == "version":
 			lab.Version, _ = strconv.Atoi(val)
-		case indent == 0 && key == "setup":
-			inSetup = true
-		case (indent == 0 || (inSetup && indent >= 2)) && key == "seed_commands":
-			inSeedCmds = true
-		case inSeedCmds && indent >= 2 && strings.HasPrefix(trimmed, "- "):
-			lab.SeedCommands = append(lab.SeedCommands, unquote(strings.TrimPrefix(trimmed, "- ")))
-		case inSeedCmds && indent > 2 && !strings.HasPrefix(trimmed, "- ") && (key == "" || !strings.Contains(trimmed, ":") || strings.HasPrefix(trimmed, ">")):
-			if len(lab.SeedCommands) > 0 {
-				lastIdx := len(lab.SeedCommands) - 1
-				lab.SeedCommands[lastIdx] = unquote(lab.SeedCommands[lastIdx] + " " + trimmed)
-			}
-		case (inSetup || indent == 0) && !strings.HasPrefix(trimmed, "- ") && key != "seed_commands":
-			inSeedCmds = false
 		case indent == 0 && key == "environment":
 			inEnv = true
 			if lab.Environment == nil {
@@ -450,6 +443,19 @@ func parseLabYAML(path string) (*Lab, error) {
 				lab.Environment = &environment.EnvironmentSpec{}
 			}
 			lab.Environment.Ports = append(lab.Environment.Ports, unquote(strings.TrimPrefix(trimmed, "- ")))
+		case indent == 0 && key == "setup":
+			inSetup = true
+		case (indent == 0 || (inSetup && indent >= 2)) && key == "seed_commands":
+			inSeedCmds = true
+		case inSeedCmds && indent >= 2 && strings.HasPrefix(trimmed, "- "):
+			lab.SeedCommands = append(lab.SeedCommands, unquote(strings.TrimPrefix(trimmed, "- ")))
+		case inSeedCmds && indent > 2 && !strings.HasPrefix(trimmed, "- ") && (key == "" || !strings.Contains(trimmed, ":") || strings.HasPrefix(trimmed, ">")):
+			if len(lab.SeedCommands) > 0 {
+				lastIdx := len(lab.SeedCommands) - 1
+				lab.SeedCommands[lastIdx] = unquote(lab.SeedCommands[lastIdx] + " " + trimmed)
+			}
+		case inSetup && indent >= 2 && !strings.HasPrefix(trimmed, "- ") && key != "seed_commands":
+			inSeedCmds = false
 		}
 	}
 	if lab.ID == "" {

@@ -44,8 +44,9 @@ shared_seed:
 func TestParseLabYAML(t *testing.T) {
 	yamlContent := `id: test-lab
 title: "Test Lab"
+environment:
+  profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "echo 'ready'"
 `
@@ -62,6 +63,10 @@ setup:
 
 	if lab.ID != "test-lab" {
 		t.Errorf("expected lab ID 'test-lab', got %q", lab.ID)
+	}
+
+	if lab.Environment == nil || lab.Environment.Profile != "tld-dind" {
+		t.Errorf("expected environment profile 'tld-dind', got %v", lab.Environment)
 	}
 
 	if len(lab.SeedCommands) != 1 || lab.SeedCommands[0] != "echo 'ready'" {

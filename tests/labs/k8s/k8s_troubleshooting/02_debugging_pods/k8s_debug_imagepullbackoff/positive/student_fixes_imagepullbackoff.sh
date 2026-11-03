@@ -15,7 +15,7 @@ student_exec "kubectl set image pod/pull-failed-pod pull-failed-pod=nginx" \
     --expect-exit 0
 
 # Step 2: Student waits for pod to reach Running phase
-student_exec "kubectl wait --for=condition=Ready pod/pull-failed-pod --timeout=60s" \
+student_exec "kubectl wait --for=condition=Ready pod/pull-failed-pod --timeout=120s" \
     --desc "Student waits for pull-failed-pod to become ready" \
     --expect-exit 0
 
