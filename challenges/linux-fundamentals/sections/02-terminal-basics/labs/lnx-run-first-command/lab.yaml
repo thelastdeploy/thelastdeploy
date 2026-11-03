@@ -1,11 +1,11 @@
 id: lnx-run-first-command
 title: "Run your first command"
+order: 2
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "rm -f $HOME/first_command.txt"
 version: 1

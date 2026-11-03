@@ -1,11 +1,11 @@
 id: tf-init-validate-format
 title: Initialize, Validate, and Format
+order: 1
 xp: 25
 estimated_minutes: 8
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which terraform || (curl -fsSL https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip -o /tmp/tf.zip && unzip -qo /tmp/tf.zip -d /usr/local/bin && rm -f /tmp/tf.zip)"
     - rm -rf $HOME/terraform-challenge

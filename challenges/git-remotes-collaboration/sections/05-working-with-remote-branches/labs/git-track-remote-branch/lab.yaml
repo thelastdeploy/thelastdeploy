@@ -1,11 +1,11 @@
 id: git-track-remote-branch
 title: Track a Remote Branch
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - rm -rf $HOME/git-challenge $HOME/git-remote-server.git $HOME/temp-git-repo
     - git init -b main --bare $HOME/git-remote-server.git

@@ -1,5 +1,6 @@
 id: lnx-inspect-file-metadata
 title: Inspect file metadata and size
+order: 1
 xp: 15
 environment:
   profile: tld-ubuntu

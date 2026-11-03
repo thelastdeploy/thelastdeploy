@@ -1,11 +1,11 @@
 id: lnx-resume-suspended-job
 title: "Resume a suspended process"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "pkill -f suspended_jo[b] || true"
     - "nohup bash -c 'exec -a suspended_job sleep 3600' >/dev/null 2>&1 &"

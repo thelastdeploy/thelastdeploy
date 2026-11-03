@@ -1,11 +1,11 @@
 id: lnx-ping-host
 title: "Check loopback response with ping"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/network-test"
     - "rm -f $HOME/network-test/ping_cmd.txt"

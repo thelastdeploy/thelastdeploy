@@ -1,11 +1,11 @@
 id: lnx-sticky-bit-lab
 title: "Protect a directory with the Sticky Bit"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/special-test/sticky-dir"
     - "chmod 777 $HOME/special-test/sticky-dir"

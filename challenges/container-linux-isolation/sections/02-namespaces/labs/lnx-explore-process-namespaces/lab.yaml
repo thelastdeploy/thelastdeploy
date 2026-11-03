@@ -1,5 +1,6 @@
 id: lnx-explore-process-namespaces
 title: Explore Linux Namespace Types
+order: 3
 xp: 35
 environment:
   profile: tld-ubuntu

@@ -1,11 +1,11 @@
 id: lnx-create-env-var
 title: "Declare a local shell variable"
+order: 1
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/env-test"
     - "rm -f $HOME/env-test/local_var.txt"

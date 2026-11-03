@@ -1,11 +1,11 @@
 id: lnx-secure-secret-file
 title: "Secure private credentials"
+order: 3
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/chmod-test"
     - "touch $HOME/chmod-test/secret.txt"

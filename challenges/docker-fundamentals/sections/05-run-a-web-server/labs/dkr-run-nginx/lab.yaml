@@ -1,11 +1,11 @@
 id: dkr-run-nginx
 title: "Run an Nginx container"
+order: 2
 xp: 35
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f my-nginx-server || true"
 version: 2

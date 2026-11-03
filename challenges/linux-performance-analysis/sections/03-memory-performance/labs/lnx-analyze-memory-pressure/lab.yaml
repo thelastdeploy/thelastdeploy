@@ -1,5 +1,6 @@
 id: lnx-analyze-memory-pressure
 title: Analyze Memory Pressure and Page Cache
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

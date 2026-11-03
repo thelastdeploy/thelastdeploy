@@ -1,5 +1,6 @@
 id: lnx-build-interactive-script
 title: Build an Interactive Shell Script
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

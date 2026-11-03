@@ -76,10 +76,8 @@ class LabSchema(BaseModel):
     order: int
     xp: int
     estimated_minutes: int | None = None
-    setup_type: str | None = None
+    environment_profile: str = "tld-ubuntu"
     seed_commands: str | None = None
-    resource_limits_cpu: int | None = None
-    resource_limits_mem: int | None = None
     completed: bool = False
     xp_awarded: int = 0
     version: int = 1
@@ -128,7 +126,6 @@ class ModuleListItem(BaseModel):
     topic: str | None
     difficulty: str | None
     estimated_minutes: int | None
-    tags: list[str] = []
     total_xp: int = 0
     total_sections: int = 0
     completed_sections: int = 0
@@ -146,7 +143,7 @@ class ModuleDetail(BaseModel):
     topic: str | None
     difficulty: str | None
     estimated_minutes: int | None
-    tags: list[str] = []
+    shared_seed: list[str] = []
     total_xp: int
     total_sections: int
     sections: list[SectionSchema]
@@ -162,7 +159,7 @@ class ModuleSummary(BaseModel):
     topic: str | None
     difficulty: str | None
     estimated_minutes: int | None
-    tags: list[str] = []
+    shared_seed: list[str] = []
     total_xp: int
     total_sections: int
     version: int = 1
@@ -201,7 +198,6 @@ class MeResponse(BaseModel):
     email: str
     xp: int
     unverified_xp: int = 0
-    streak_days: int
     is_maintainer: bool = False
     completed_labs: list[str]       # lab IDs (from lab_progress)
     completed_sections: list[str]   # section IDs (from section_progress — reading/questions)
@@ -215,10 +211,9 @@ class BuilderLabInput(BaseModel):
     order: int
     xp: int = 30
     estimated_minutes: int | None = None
-    setup_type: str | None = "shell"
+    environment_profile: str = "tld-ubuntu"
     seed_commands: list[str] = []
     validator_script: str | None = None  # None allowed in drafts, verified in publish gate
-    cleanup_script: str | None = None    # Optional cleanup/restore script
 
 class BuilderSectionInput(BaseModel):
     id: str
@@ -235,7 +230,6 @@ class BuilderModuleInput(BaseModel):
     topic: str
     difficulty: str
     estimated_minutes: int | None = None
-    tags: list[str] = []
     sections: list[BuilderSectionInput] = []
 
 class BuilderDraftListItem(BaseModel):
@@ -257,7 +251,6 @@ class BuilderModuleDetail(BaseModel):
     topic: str | None
     difficulty: str | None
     estimated_minutes: int | None
-    tags: list[str] = []
     status: str
     sections: list[BuilderSectionInput]
 

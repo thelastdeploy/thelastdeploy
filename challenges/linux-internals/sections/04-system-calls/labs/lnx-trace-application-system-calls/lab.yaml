@@ -1,5 +1,6 @@
 id: lnx-trace-application-system-calls
 title: Trace Application System Calls with strace
+order: 2
 xp: 45
 environment:
   profile: tld-ubuntu

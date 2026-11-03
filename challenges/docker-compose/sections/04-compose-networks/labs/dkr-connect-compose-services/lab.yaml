@@ -1,11 +1,11 @@
 id: dkr-connect-compose-services
 title: "Connect services via custom networks"
+order: 1
 xp: 40
 estimated_minutes: 10
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-compose/networks"
     - "rm -f $HOME/docker-compose/networks/docker-compose.yml"

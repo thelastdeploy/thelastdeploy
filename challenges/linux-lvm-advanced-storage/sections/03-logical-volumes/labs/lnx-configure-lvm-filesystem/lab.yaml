@@ -1,5 +1,6 @@
 id: lnx-configure-lvm-filesystem
 title: Configure Filesystem on Logical Volume
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

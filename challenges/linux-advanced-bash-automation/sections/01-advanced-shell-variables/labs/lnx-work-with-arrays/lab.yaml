@@ -1,5 +1,6 @@
 id: lnx-work-with-arrays
 title: Work with Arrays in Bash
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

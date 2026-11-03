@@ -1,5 +1,6 @@
 id: lnx-debug-multi-route-network
 title: Debug Multi-Route Network Configuration
+order: 2
 xp: 50
 environment:
   profile: tld-ubuntu

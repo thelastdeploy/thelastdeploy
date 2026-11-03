@@ -1,5 +1,6 @@
 id: lnx-manage-volume-group
 title: Manage Volume Groups
+order: 2
 xp: 35
 environment:
   profile: tld-ubuntu

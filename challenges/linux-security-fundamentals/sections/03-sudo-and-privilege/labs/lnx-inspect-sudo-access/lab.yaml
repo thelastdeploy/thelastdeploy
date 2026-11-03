@@ -1,5 +1,6 @@
 id: lnx-inspect-sudo-access
 title: Inspect Sudo Privileges with Sudo List
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

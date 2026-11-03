@@ -1,11 +1,11 @@
 id: dkr-pull-nginx
 title: "Pull Nginx image"
+order: 1
 xp: 15
 estimated_minutes: 3
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rmi -f nginx nginx:latest || true"
 version: 2

@@ -1,5 +1,6 @@
 id: lnx-configure-network-filtering
 title: Configure Network Traffic Filtering
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

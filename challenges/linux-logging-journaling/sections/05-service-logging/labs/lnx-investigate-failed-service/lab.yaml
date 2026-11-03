@@ -1,5 +1,6 @@
 id: lnx-investigate-failed-service
 title: Investigate Failed Service Crash Logs
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

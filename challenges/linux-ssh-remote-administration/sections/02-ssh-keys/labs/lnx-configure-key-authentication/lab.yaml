@@ -1,5 +1,6 @@
 id: lnx-configure-key-authentication
 title: Configure Authorized Keys and Permissions
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

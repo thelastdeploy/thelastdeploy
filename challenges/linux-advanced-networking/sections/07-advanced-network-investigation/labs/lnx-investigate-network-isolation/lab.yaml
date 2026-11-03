@@ -1,5 +1,6 @@
 id: lnx-investigate-network-isolation
 title: Investigate Network Isolation Issues
+order: 1
 xp: 55
 environment:
   profile: tld-ubuntu

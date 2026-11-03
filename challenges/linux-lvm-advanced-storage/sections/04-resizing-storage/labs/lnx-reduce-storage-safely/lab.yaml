@@ -1,5 +1,6 @@
 id: lnx-reduce-storage-safely
 title: Reduce Storage Capacity Safely
+order: 2
 xp: 50
 environment:
   profile: tld-ubuntu

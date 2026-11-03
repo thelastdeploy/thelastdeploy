@@ -1,5 +1,6 @@
 id: lnx-disable-unnecessary-services
 title: Disable Unnecessary Services and Daemons
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

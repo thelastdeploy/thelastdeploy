@@ -1,5 +1,6 @@
 id: lnx-discover-command-location
 title: Discover executable binary locations
+order: 1
 xp: 15
 environment:
   profile: tld-ubuntu

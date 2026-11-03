@@ -1,5 +1,6 @@
 id: lnx-investigate-file-properties
 title: Investigate unknown file properties and types
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

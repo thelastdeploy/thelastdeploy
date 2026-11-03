@@ -1,11 +1,11 @@
 id: dkr-find-container-config
 title: "Find container IP address"
+order: 1
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f config-target || true"
     - "docker run -d --name config-target alpine sleep 1000"

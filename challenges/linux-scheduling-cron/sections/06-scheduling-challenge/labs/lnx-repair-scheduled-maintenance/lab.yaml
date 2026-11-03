@@ -1,5 +1,6 @@
 id: lnx-repair-scheduled-maintenance
 title: Repair Scheduled System Maintenance Setup
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

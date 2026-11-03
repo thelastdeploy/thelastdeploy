@@ -1,5 +1,6 @@
 id: lnx-trace-network-connection
 title: Trace Network Connection Flow
+order: 2
 xp: 50
 environment:
   profile: tld-ubuntu

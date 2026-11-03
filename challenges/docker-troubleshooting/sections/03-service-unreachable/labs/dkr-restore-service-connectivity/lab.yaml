@@ -6,7 +6,6 @@ order: 1
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-troubleshooting/connectivity"
     - "echo -e 'version: \"3.8\"\nservices:\n  web:\n    image: nginx:alpine\n    ports:\n      - 8085:80\n    networks:\n      - web-net\n  db:\n    image: postgres:15-alpine\n    environment:\n      - POSTGRES_PASSWORD=secret\n    networks:\n      - db-net\nnetworks:\n  web-net:\n  db-net:' > $HOME/docker-troubleshooting/connectivity/docker-compose.yml"

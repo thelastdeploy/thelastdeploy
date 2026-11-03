@@ -1,7 +1,7 @@
 # web/backend/app/models.py
 
 from datetime import datetime
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, JSON, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
@@ -15,14 +15,12 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     xp: Mapped[int] = mapped_column(Integer, default=0)
     unverified_xp: Mapped[int] = mapped_column(Integer, default=0, server_default="0", nullable=False)
-    streak_days: Mapped[int] = mapped_column(Integer, default=0)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
     is_maintainer: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
     device_key: Mapped[str | None] = mapped_column(String(64), unique=True, nullable=True)
     verification_token: Mapped[str | None] = mapped_column(String(64), unique=True, nullable=True)
     reset_token: Mapped[str | None] = mapped_column(String(64), unique=True, nullable=True)
     reset_token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    last_active: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     lab_progress: Mapped[list["LabProgress"]] = relationship("LabProgress", back_populates="user")
@@ -52,11 +50,10 @@ class Module(Base):
     topic: Mapped[str | None] = mapped_column(String(50), nullable=True)
     difficulty: Mapped[str | None] = mapped_column(String(20), nullable=True)
     estimated_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    tags: Mapped[str | None] = mapped_column(Text, nullable=True)
-    yaml_content: Mapped[str] = mapped_column(Text, nullable=False)
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     total_xp: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     total_sections: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    shared_seed: Mapped[list[str] | None] = mapped_column(JSON, nullable=True)
     # NULL  → official module ("The Last Deploy"); set to user.id for community modules
     author_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     is_official_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
@@ -97,15 +94,11 @@ class Lab(Base):
     order: Mapped[int] = mapped_column(Integer, default=0)
     xp: Mapped[int] = mapped_column(Integer, default=0)
     estimated_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    setup_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    environment_profile: Mapped[str] = mapped_column(String(50), default="tld-ubuntu", server_default="tld-ubuntu", nullable=False)
     seed_commands: Mapped[str | None] = mapped_column(Text, nullable=True)
-    resource_limits_cpu: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    resource_limits_mem: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    yaml_content: Mapped[str | None] = mapped_column(Text, nullable=True)
     version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     validator_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
     validator_script: Mapped[str | None] = mapped_column(Text, nullable=True)
-    cleanup_script: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     section: Mapped["Section"] = relationship("Section", back_populates="labs")

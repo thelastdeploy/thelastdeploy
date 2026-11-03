@@ -1,5 +1,6 @@
 id: lnx-investigate-log-rotation
 title: Investigate Log Rotation Archives
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

@@ -1,11 +1,11 @@
 id: git-recover-deleted-history
 title: Recover Deleted History
+order: 1
 xp: 30
 estimated_minutes: 10
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - rm -rf $HOME/git-challenge
     - mkdir -p $HOME/git-challenge

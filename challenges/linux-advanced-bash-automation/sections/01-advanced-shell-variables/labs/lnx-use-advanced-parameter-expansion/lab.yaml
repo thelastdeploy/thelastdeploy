@@ -1,5 +1,6 @@
 id: lnx-use-advanced-parameter-expansion
 title: Use Advanced Parameter Expansion
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-extract-patterned-data
 title: Extract HTTP error codes using regex patterns
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

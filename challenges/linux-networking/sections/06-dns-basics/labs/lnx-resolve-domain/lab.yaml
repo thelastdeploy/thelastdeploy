@@ -1,11 +1,11 @@
 id: lnx-resolve-domain
 title: "Resolve a domain name local mapping"
+order: 1
 xp: 15
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/network-test"
     - "rm -f $HOME/network-test/resolved_dns.txt"

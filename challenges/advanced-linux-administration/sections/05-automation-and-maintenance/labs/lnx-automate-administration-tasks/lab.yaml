@@ -1,5 +1,6 @@
 id: lnx-automate-administration-tasks
 title: "Automate Administration Tasks"
+order: 1
 xp: 45
 description: "Author automated Bash administration scripts for log rotation, disk cleanup, and health reporting."
 environment:

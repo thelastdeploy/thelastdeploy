@@ -1,11 +1,11 @@
 id: lnx-check-owner
 title: "Identify file owner and group"
+order: 1
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/ownership-test"
     - "rm -f $HOME/ownership-test/owner_info.txt"

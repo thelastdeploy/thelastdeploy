@@ -1,5 +1,6 @@
 id: lnx-create-symbolic-link
 title: Create a symbolic link to a configuration file
+order: 1
 xp: 20
 environment:
   profile: tld-ubuntu

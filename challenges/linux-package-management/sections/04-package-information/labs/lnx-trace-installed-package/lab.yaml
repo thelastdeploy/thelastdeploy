@@ -1,5 +1,6 @@
 id: lnx-trace-installed-package
 title: Trace package owning target binary
+order: 2
 xp: 30
 environment:
   profile: tld-ubuntu

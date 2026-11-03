@@ -1,11 +1,11 @@
 id: dkr-find-volume-usage
 title: "Find volume usage"
+order: 1
 xp: 15
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f analytics-app || true"
     - "docker volume rm analytics-vol || true"

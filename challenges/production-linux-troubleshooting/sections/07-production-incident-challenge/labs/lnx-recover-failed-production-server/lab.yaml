@@ -1,5 +1,6 @@
 id: lnx-recover-failed-production-server
 title: Recover Failed Production Server Capstone
+order: 1
 xp: 100
 environment:
   profile: tld-ubuntu

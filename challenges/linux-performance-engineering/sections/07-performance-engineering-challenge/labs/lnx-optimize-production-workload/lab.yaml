@@ -1,5 +1,6 @@
 id: lnx-optimize-production-workload
 title: Optimize Production Workload Capstone
+order: 1
 xp: 110
 environment:
   profile: tld-ubuntu

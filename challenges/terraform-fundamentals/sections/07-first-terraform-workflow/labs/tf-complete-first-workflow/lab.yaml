@@ -1,11 +1,11 @@
 id: tf-complete-first-workflow
 title: Complete the First Terraform Workflow
+order: 1
 xp: 30
 estimated_minutes: 10
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which terraform || (curl -fsSL https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip -o /tmp/tf.zip && unzip -qo /tmp/tf.zip -d /usr/local/bin && rm -f /tmp/tf.zip)"
     - rm -rf $HOME/terraform-challenge

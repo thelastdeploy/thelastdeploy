@@ -1,5 +1,6 @@
 id: lnx-query-system-journal
 title: Query Systemd Journal by Unit and Time
+order: 2
 xp: 20
 environment:
   profile: tld-ubuntu

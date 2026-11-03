@@ -42,7 +42,6 @@ async def get_me(
         email=current_user.email,
         xp=current_user.xp,
         unverified_xp=current_user.unverified_xp,
-        streak_days=current_user.streak_days,
         is_maintainer=current_user.is_maintainer,
         completed_labs=completed_labs,
         completed_sections=completed_sections,

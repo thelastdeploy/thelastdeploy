@@ -1,5 +1,6 @@
 id: lnx-build-idempotent-script
 title: Build an Idempotent Automation Script
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

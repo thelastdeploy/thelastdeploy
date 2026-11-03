@@ -1,5 +1,6 @@
 id: lnx-analyze-structured-logs
 title: Analyze Structured JSON Log Entries
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-validate-system-state
 title: Validate System State and File Properties
+order: 2
 xp: 30
 environment:
   profile: tld-ubuntu

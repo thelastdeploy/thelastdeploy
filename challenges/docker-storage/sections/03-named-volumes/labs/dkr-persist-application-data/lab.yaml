@@ -1,11 +1,11 @@
 id: dkr-persist-application-data
 title: "Persist application data"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f db-container db-container-new || true"
     - "docker volume rm db-storage-vol || true"

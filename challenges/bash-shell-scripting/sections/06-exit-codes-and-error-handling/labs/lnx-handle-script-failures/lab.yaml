@@ -1,5 +1,6 @@
 id: lnx-handle-script-failures
 title: Handle Script Failures with Exit Codes and Traps
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

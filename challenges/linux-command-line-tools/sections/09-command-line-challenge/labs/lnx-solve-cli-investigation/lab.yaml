@@ -1,5 +1,6 @@
 id: lnx-solve-cli-investigation
 title: Solve complex outage investigation using CLI pipeline
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

@@ -1,11 +1,11 @@
 id: lnx-help-flags
 title: "Explore commands using help flags"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/help-test"
     - "rm -f $HOME/help-test/size_flag.txt"

@@ -1,5 +1,6 @@
 id: lnx-complete-linux-mastery
 title: "Complete Linux Mastery Grand Capstone"
+order: 1
 xp: 150
 description: "Execute the comprehensive Diagnose -> Repair -> Harden -> Verify workflow across a complex, multi-subsystem degraded Linux production environment."
 environment:

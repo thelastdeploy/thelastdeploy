@@ -1,5 +1,6 @@
 id: lnx-handle-script-signals
 title: Handle Script Traps and Signals
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

@@ -1,11 +1,11 @@
 id: dkr-restore-application-data
 title: "Restore application data"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker volume rm -f restored-db-vol || true"
     - "docker volume create restored-db-vol"

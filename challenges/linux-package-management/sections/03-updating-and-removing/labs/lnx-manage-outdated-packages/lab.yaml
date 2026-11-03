@@ -1,5 +1,6 @@
 id: lnx-manage-outdated-packages
 title: Identify upgradable outdated packages
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-establish-administration-baseline
 title: "Establish Administration Baseline"
+order: 2
 xp: 45
 description: "Define operational baseline metrics, resource usage targets, and system configuration benchmarks."
 environment:

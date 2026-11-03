@@ -1,11 +1,11 @@
 id: lnx-move-files
 title: "Move or rename files"
+order: 4
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/files-test"
     - "echo 'moved' > $HOME/files-test/move-me.txt"

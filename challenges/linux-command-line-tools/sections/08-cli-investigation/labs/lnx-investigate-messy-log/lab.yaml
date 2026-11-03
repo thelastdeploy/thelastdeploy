@@ -1,5 +1,6 @@
 id: lnx-investigate-messy-log
 title: Investigate unstructured messy log dumps
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

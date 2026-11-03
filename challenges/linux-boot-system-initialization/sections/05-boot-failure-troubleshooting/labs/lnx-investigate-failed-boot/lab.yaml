@@ -1,5 +1,6 @@
 id: lnx-investigate-failed-boot
 title: Investigate Failed Boot Configuration
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

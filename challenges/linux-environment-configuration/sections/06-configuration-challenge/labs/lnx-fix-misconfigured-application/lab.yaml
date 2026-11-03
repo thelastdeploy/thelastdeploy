@@ -1,5 +1,6 @@
 id: lnx-fix-misconfigured-application
 title: Fix Misconfigured Application and Environment
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

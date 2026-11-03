@@ -1,11 +1,11 @@
 id: dkr-stop-running-container
 title: "Stop a running container"
+order: 3
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f runaway-container || true"
     - "docker run -d --name runaway-container alpine sleep 1000"

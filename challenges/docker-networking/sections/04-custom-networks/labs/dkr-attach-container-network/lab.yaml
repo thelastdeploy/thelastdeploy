@@ -1,11 +1,11 @@
 id: dkr-attach-container-network
 title: "Attach container to network"
+order: 1
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f isolated-app || true"
     - "docker run -d --name isolated-app alpine sleep 1000"

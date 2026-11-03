@@ -1,5 +1,6 @@
 id: lnx-work-with-script-variables
 title: Work with Script Variables and Arguments
+order: 2
 xp: 20
 environment:
   profile: tld-ubuntu

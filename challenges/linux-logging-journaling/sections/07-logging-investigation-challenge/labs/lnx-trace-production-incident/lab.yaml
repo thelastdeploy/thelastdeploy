@@ -1,5 +1,6 @@
 id: lnx-trace-production-incident
 title: Trace Production Incident via Log Correlation
+order: 1
 xp: 55
 environment:
   profile: tld-ubuntu

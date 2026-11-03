@@ -1,5 +1,6 @@
 id: lnx-harden-network-services
 title: Harden Network Services and SSH
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

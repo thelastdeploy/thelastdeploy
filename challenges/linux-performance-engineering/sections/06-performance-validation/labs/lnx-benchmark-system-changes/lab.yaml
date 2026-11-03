@@ -1,5 +1,6 @@
 id: lnx-benchmark-system-changes
 title: Benchmark and Validate System Tuning Changes
+order: 1
 xp: 55
 environment:
   profile: tld-ubuntu

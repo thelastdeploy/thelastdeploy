@@ -1,5 +1,6 @@
 id: lnx-operate-production-linux-server
 title: "Operate Production Linux Server Capstone"
+order: 1
 xp: 125
 description: "Transform an inherited, misconfigured Linux server into a secure, maintainable, observable, and reliable production system."
 environment:

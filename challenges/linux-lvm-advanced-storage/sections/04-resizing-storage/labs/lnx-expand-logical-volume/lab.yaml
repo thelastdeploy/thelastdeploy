@@ -1,5 +1,6 @@
 id: lnx-expand-logical-volume
 title: Expand Logical Volume and Filesystem
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

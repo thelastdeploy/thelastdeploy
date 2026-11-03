@@ -1,11 +1,11 @@
 id: nginx-limit-requests
 title: "Limit Request Rate"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which nginx || (sudo apt-get update -y && sudo apt-get install -y nginx)"
     - "sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak || true"

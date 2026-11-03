@@ -1,5 +1,6 @@
 id: lnx-explore-filesystem
 title: Explore the filesystem hierarchy
+order: 1
 xp: 15
 environment:
   profile: tld-ubuntu

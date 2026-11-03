@@ -1,5 +1,6 @@
 id: lnx-recover-unbootable-system
 title: Recover Unbootable Linux Server Capstone
+order: 1
 xp: 75
 environment:
   profile: tld-ubuntu

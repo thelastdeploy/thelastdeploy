@@ -1,5 +1,6 @@
 id: lnx-manage-environment-variables
 title: Export Environment Variables for Child Processes
+order: 2
 xp: 20
 environment:
   profile: tld-ubuntu

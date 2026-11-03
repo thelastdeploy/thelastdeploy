@@ -1,5 +1,6 @@
 id: lnx-observe-system-calls
 title: Observe System Call Boundary
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

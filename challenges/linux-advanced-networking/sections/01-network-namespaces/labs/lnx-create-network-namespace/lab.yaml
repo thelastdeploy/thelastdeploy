@@ -1,5 +1,6 @@
 id: lnx-create-network-namespace
 title: Create and Inspect Network Namespace
+order: 2
 xp: 30
 environment:
   profile: tld-ubuntu

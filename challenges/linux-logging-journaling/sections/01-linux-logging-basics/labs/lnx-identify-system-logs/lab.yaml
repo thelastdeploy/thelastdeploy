@@ -1,5 +1,6 @@
 id: lnx-identify-system-logs
 title: Identify System Log File Locations
+order: 1
 xp: 20
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-process-command-output
 title: Process Command Output with Head and Redirection
+order: 2
 xp: 15
 environment:
   profile: tld-ubuntu

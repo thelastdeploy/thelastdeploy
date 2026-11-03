@@ -1,5 +1,6 @@
 id: lnx-explore-container-filesystem
 title: Explore Container Filesystem Abstractions
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

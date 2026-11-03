@@ -1,5 +1,6 @@
 id: lnx-identify-root-cause
 title: Identify Root Cause of Production Outage
+order: 2
 xp: 70
 environment:
   profile: tld-ubuntu

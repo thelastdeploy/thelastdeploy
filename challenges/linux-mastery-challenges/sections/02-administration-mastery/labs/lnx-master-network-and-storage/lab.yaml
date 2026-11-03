@@ -1,5 +1,6 @@
 id: lnx-master-network-and-storage
 title: "Master Network and Storage"
+order: 2
 xp: 75
 description: "Orchestrate LVM storage expansion and complex multi-homed network interface routing."
 environment:

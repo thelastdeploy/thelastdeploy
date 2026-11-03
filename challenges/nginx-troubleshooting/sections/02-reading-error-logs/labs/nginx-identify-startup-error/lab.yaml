@@ -1,11 +1,11 @@
 id: nginx-identify-startup-error
 title: "Identify Startup Error"
+order: 1
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which nginx || (sudo apt-get update -y && sudo apt-get install -y nginx)"
     - "rm -f /tmp/failed_port.txt"

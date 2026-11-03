@@ -1,5 +1,6 @@
 id: lnx-investigate-linux-production-incident
 title: "Investigate Production Incident"
+order: 1
 xp: 100
 description: "Conduct end-to-end incident investigation, evidence preservation, and timeline correlation for a production breach."
 environment:

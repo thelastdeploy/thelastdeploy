@@ -1,5 +1,6 @@
 id: lnx-inspect-remote-server
 title: Inspect Remote Server Health and Generate Reports
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

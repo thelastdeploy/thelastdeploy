@@ -1,5 +1,6 @@
 id: lnx-model-system-workload
 title: Model System Workload Profile
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

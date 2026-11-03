@@ -1,5 +1,6 @@
 id: lnx-process-structured-output
 title: Process structured CSV output using field delimiters
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

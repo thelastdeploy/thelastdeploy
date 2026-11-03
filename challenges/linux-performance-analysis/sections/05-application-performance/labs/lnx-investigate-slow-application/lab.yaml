@@ -1,5 +1,6 @@
 id: lnx-investigate-slow-application
 title: Investigate Slow Application Response
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

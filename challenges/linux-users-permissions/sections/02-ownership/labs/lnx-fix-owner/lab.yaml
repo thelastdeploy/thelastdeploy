@@ -1,11 +1,11 @@
 id: lnx-fix-owner
 title: "Change file ownership"
+order: 2
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/ownership-test"
     - "touch $HOME/ownership-test/admin-file.txt"

@@ -1,5 +1,6 @@
 id: lnx-identify-lvm-components
 title: Identify LVM Components and Layer Hierarchy
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

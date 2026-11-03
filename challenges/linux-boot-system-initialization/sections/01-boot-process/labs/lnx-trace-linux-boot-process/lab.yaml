@@ -1,5 +1,6 @@
 id: lnx-trace-linux-boot-process
 title: Trace Linux Boot Process Stages
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

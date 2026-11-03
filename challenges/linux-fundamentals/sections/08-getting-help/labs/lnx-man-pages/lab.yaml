@@ -1,11 +1,11 @@
 id: lnx-man-pages
 title: "Look up options in man pages"
+order: 2
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/help-test"
     - "rm -f $HOME/help-test/parents_flag.txt"

@@ -1,5 +1,6 @@
 id: lnx-recover-resource-exhausted-server
 title: "Recover Resource-Exhausted Server"
+order: 2
 xp: 55
 description: "Triage an out-of-memory production server, identify memory-leaking processes, and apply cgroup resource limits."
 environment:

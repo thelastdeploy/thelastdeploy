@@ -1,11 +1,11 @@
 id: dkr-expose-web-service
 title: "Expose web service"
+order: 1
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f web-service || true"
 version: 2

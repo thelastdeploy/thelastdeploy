@@ -1,5 +1,6 @@
 id: lnx-trace-process-lifecycle
 title: Trace Process Execution Lifecycle
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

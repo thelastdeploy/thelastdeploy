@@ -1,5 +1,6 @@
 id: lnx-analyze-memory-behavior
 title: Analyze Kernel Memory Allocator Behavior
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

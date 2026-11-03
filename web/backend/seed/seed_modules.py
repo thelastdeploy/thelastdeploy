@@ -65,7 +65,7 @@ async def seed():
             # ── Upsert Module ──────────────────────────────────────────
             result = await db.execute(select(Module).where(Module.id == module_id))
             existing_module = result.scalar_one_or_none()
-            tags = ",".join(module_data.get("tags", []))
+            shared_seed = module_data.get("shared_seed", [])
 
             if existing_module:
                 if existing_module.author_id is not None:
@@ -76,11 +76,10 @@ async def seed():
                 existing_module.topic = module_data.get("topic")
                 existing_module.difficulty = module_data.get("difficulty")
                 existing_module.estimated_minutes = module_data.get("estimated_minutes")
-                existing_module.tags = tags
-                existing_module.yaml_content = raw_yaml
                 existing_module.version = module_data.get("version", 1)
                 existing_module.total_xp = total_xp
                 existing_module.total_sections = total_sections
+                existing_module.shared_seed = shared_seed
                 # Official seeded modules are always authored by The Last Deploy (NULL) and verified
                 existing_module.author_id = None
                 existing_module.is_official_verified = True
@@ -95,11 +94,10 @@ async def seed():
                     topic=module_data.get("topic"),
                     difficulty=module_data.get("difficulty"),
                     estimated_minutes=module_data.get("estimated_minutes"),
-                    tags=tags,
-                    yaml_content=raw_yaml,
                     version=module_data.get("version", 1),
                     total_xp=total_xp,
                     total_sections=total_sections,
+                    shared_seed=shared_seed,
                     author_id=None,          # official module
                     is_official_verified=True,
                     status='verified',
@@ -158,7 +156,7 @@ async def seed():
                 if not os.path.isdir(labs_dir):
                     continue
 
-                for lab_dir in sorted(os.listdir(labs_dir)):
+                for lab_idx, lab_dir in enumerate(sorted(os.listdir(labs_dir))):
                     lab_path = os.path.join(labs_dir, lab_dir)
                     lab_yaml_path = os.path.join(lab_path, "lab.yaml")
 
@@ -170,6 +168,7 @@ async def seed():
                         lab_data = yaml.safe_load(raw_lab_yaml)
 
                     lab_id = lab_data["id"]
+                    lab_order = lab_data.get("order") or (lab_idx + 1)
 
                     # Compute SHA-256 hash and read validator script if it exists
                     validator_hash = None
@@ -186,18 +185,9 @@ async def seed():
                         validator_hash = hashlib.sha256(content_normalized).hexdigest()
                         validator_script = content.decode("utf-8", errors="replace")
 
-                    # Read cleanup script if it exists
-                    cleanup_script = None
-                    clean_path = os.path.join(lab_path, "cleanup.sh")
-                    if os.path.exists(clean_path):
-                        with open(clean_path, "r", encoding="utf-8", errors="replace") as f:
-                            cleanup_script = f.read()
-
                     setup_obj = lab_data.get("setup") or {}
                     if not isinstance(setup_obj, dict):
                         setup_obj = {}
-
-                    setup_type = lab_data.get("setup_type") or setup_obj.get("type")
 
                     seed_commands = (
                         lab_data.get("seed_commands")
@@ -206,20 +196,8 @@ async def seed():
                     )
                     seed_commands_json = json.dumps(seed_commands) if seed_commands else None
 
-                    res_limits = lab_data.get("resource_limits") or {}
-                    if not isinstance(res_limits, dict):
-                        res_limits = {}
-
-                    cpu_limit = (
-                        lab_data.get("resource_limits_cpu")
-                        or setup_obj.get("resource_limits_cpu")
-                        or res_limits.get("cpu")
-                    )
-                    mem_limit = (
-                        lab_data.get("resource_limits_mem")
-                        or setup_obj.get("resource_limits_mem")
-                        or res_limits.get("mem")
-                    )
+                    env_obj = lab_data.get("environment") or {}
+                    env_profile = env_obj.get("profile", "tld-ubuntu") if isinstance(env_obj, dict) else "tld-ubuntu"
 
                     result = await db.execute(select(Lab).where(Lab.id == lab_id))
                     existing_lab = result.scalar_one_or_none()
@@ -228,40 +206,32 @@ async def seed():
                         existing_lab.module_id = module_id
                         existing_lab.section_id = section_id
                         existing_lab.title = lab_data["title"]
-                        existing_lab.order = lab_data.get("order", 0)
+                        existing_lab.order = lab_order
                         existing_lab.xp = lab_data.get("xp", 0)
                         existing_lab.estimated_minutes = lab_data.get("estimated_minutes")
-                        existing_lab.setup_type = setup_type
+                        existing_lab.environment_profile = env_profile
                         existing_lab.seed_commands = seed_commands_json
-                        existing_lab.resource_limits_cpu = cpu_limit
-                        existing_lab.resource_limits_mem = mem_limit
-                        existing_lab.yaml_content = raw_lab_yaml
                         existing_lab.version = lab_data.get("version", 1)
                         existing_lab.validator_hash = validator_hash
                         existing_lab.validator_script = validator_script
-                        existing_lab.cleanup_script = cleanup_script
                         db.add(existing_lab)
-                        print(f"      ↻ Updated lab: {lab_id} (hash: {validator_hash[:8] if validator_hash else 'none'})")
+                        print(f"      ↻ Updated lab: {lab_id} (hash: {validator_hash[:8] if validator_hash else 'none'}, order: {lab_order})")
                     else:
                         db.add(Lab(
                             id=lab_id,
                             module_id=module_id,
                             section_id=section_id,
                             title=lab_data["title"],
-                            order=lab_data.get("order", 0),
+                            order=lab_order,
                             xp=lab_data.get("xp", 0),
                             estimated_minutes=lab_data.get("estimated_minutes"),
-                            setup_type=setup_type,
+                            environment_profile=env_profile,
                             seed_commands=seed_commands_json,
-                            resource_limits_cpu=cpu_limit,
-                            resource_limits_mem=mem_limit,
-                            yaml_content=raw_lab_yaml,
                             version=lab_data.get("version", 1),
                             validator_hash=validator_hash,
                             validator_script=validator_script,
-                            cleanup_script=cleanup_script,
                         ))
-                        print(f"      ✅ Seeded lab: {lab_id} (hash: {validator_hash[:8] if validator_hash else 'none'})")
+                        print(f"      ✅ Seeded lab: {lab_id} (hash: {validator_hash[:8] if validator_hash else 'none'}, order: {lab_order})")
 
         await db.commit()
         print("\nDone.")

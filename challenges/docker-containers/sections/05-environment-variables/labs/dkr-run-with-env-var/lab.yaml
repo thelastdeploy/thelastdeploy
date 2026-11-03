@@ -1,11 +1,11 @@
 id: dkr-run-with-env-var
 title: "Run with environment variables"
+order: 2
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f env-app || true"
 version: 2

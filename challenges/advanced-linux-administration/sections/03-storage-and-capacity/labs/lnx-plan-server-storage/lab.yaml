@@ -1,5 +1,6 @@
 id: lnx-plan-server-storage
 title: "Plan Server Storage"
+order: 2
 xp: 45
 description: "Design storage partitioning, LVM volume allocation, and filesystem layout for high-availability servers."
 environment:

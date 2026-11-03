@@ -1,5 +1,6 @@
 id: lnx-inspect-disk-partitions
 title: Inspect Disk Partition Tables
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

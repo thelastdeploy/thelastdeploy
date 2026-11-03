@@ -1,5 +1,6 @@
 id: lnx-optimize-storage-performance
 title: Optimize Storage I/O Performance
+order: 2
 xp: 60
 environment:
   profile: tld-ubuntu

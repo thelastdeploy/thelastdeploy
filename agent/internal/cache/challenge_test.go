@@ -41,10 +41,9 @@ shared_seed:
 	}
 }
 
-func TestParseLabYAMLInstallTarget(t *testing.T) {
-	yamlContent := `id: test-install-lab
-title: "Install Test Lab"
-install_target: nginx
+func TestParseLabYAML(t *testing.T) {
+	yamlContent := `id: test-lab
+title: "Test Lab"
 setup:
   type: shell
   seed_commands:
@@ -61,8 +60,8 @@ setup:
 		t.Fatalf("parseLabYAML failed: %v", err)
 	}
 
-	if lab.InstallTarget != "nginx" {
-		t.Errorf("expected install_target 'nginx', got %q", lab.InstallTarget)
+	if lab.ID != "test-lab" {
+		t.Errorf("expected lab ID 'test-lab', got %q", lab.ID)
 	}
 
 	if len(lab.SeedCommands) != 1 || lab.SeedCommands[0] != "echo 'ready'" {

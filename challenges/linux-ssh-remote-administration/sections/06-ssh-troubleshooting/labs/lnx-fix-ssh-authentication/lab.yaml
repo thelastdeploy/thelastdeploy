@@ -1,5 +1,6 @@
 id: lnx-fix-ssh-authentication
 title: Fix OpenSSH Permissions and Key Authentication
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

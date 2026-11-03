@@ -1,11 +1,11 @@
 id: dkr-connect-two-containers
 title: "Connect two containers"
+order: 1
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f server-target client-source || true"
     - "docker network rm lab-net || true"

@@ -1,5 +1,6 @@
 id: lnx-control-service-startup
 title: Control Service Boot Startup
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

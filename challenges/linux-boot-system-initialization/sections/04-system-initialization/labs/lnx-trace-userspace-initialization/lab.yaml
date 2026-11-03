@@ -1,5 +1,6 @@
 id: lnx-trace-userspace-initialization
 title: Trace Userspace Initialization Sequence
+order: 2
 xp: 35
 environment:
   profile: tld-ubuntu

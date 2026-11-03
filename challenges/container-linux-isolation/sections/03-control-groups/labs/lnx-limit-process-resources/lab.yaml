@@ -1,5 +1,6 @@
 id: lnx-limit-process-resources
 title: Limit Process Resources with cgroups
+order: 2
 xp: 50
 environment:
   profile: tld-ubuntu

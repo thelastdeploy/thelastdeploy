@@ -1,5 +1,6 @@
 id: lnx-recover-broken-network-service
 title: Recover Broken Network Service
+order: 2
 xp: 55
 environment:
   profile: tld-ubuntu

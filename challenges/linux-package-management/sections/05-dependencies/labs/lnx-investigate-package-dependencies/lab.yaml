@@ -1,5 +1,6 @@
 id: lnx-investigate-package-dependencies
 title: Investigate package dependency requirements
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

@@ -1,11 +1,11 @@
 id: lnx-public-readonly-file
 title: "Setup a public read-only file"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/chmod-test"
     - "touch $HOME/chmod-test/readme.txt"

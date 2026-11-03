@@ -1,5 +1,6 @@
 id: lnx-modify-application-configuration
 title: Modify Configuration Settings and Preserve Backups
+order: 3
 xp: 30
 environment:
   profile: tld-ubuntu

@@ -140,14 +140,19 @@ func Start(lab *cache.Lab) error {
 		fmt.Println()
 	}
 
+	envProfile := "tld-ubuntu"
+	if lab.Environment != nil && lab.Environment.Profile != "" {
+		envProfile = lab.Environment.Profile
+	}
+
 	session := &Session{
-		LabID:         lab.ID,
-		ModuleID:      lab.ModuleID,
-		SectionID:     lab.SectionID,
-		StartedAt:     time.Now(),
-		ValidatorPath: lab.ValidatorPath,
-		SetupType:     lab.SetupType,
-		ContainerID:   containerID,
+		LabID:              lab.ID,
+		ModuleID:           lab.ModuleID,
+		SectionID:          lab.SectionID,
+		StartedAt:          time.Now(),
+		ValidatorPath:      lab.ValidatorPath,
+		EnvironmentProfile: envProfile,
+		ContainerID:        containerID,
 	}
 
 	if err := WriteSession(session); err != nil {
@@ -223,14 +228,18 @@ func injectInContainerTLD(ctx context.Context, eng *docker.DockerEngine, contain
 	}
 
 	// 5. In-container active session
+	envProfile := "tld-ubuntu"
+	if l.Environment != nil && l.Environment.Profile != "" {
+		envProfile = l.Environment.Profile
+	}
 	containerSession := &Session{
-		LabID:         l.ID,
-		ModuleID:      l.ModuleID,
-		SectionID:     l.SectionID,
-		StartedAt:     time.Now(),
-		ValidatorPath: targetScript,
-		SetupType:     l.SetupType,
-		ContainerID:   containerID,
+		LabID:              l.ID,
+		ModuleID:           l.ModuleID,
+		SectionID:          l.SectionID,
+		StartedAt:          time.Now(),
+		ValidatorPath:      targetScript,
+		EnvironmentProfile: envProfile,
+		ContainerID:        containerID,
 	}
 	if tmpSessData, err := json.MarshalIndent(containerSession, "", "  "); err == nil {
 		if tmpSessFile, err := os.CreateTemp("", "tld-sess-*.json"); err == nil {

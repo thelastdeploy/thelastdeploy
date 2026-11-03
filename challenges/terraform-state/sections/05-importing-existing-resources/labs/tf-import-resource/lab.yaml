@@ -1,11 +1,11 @@
 id: tf-import-resource
 title: Import an Existing Resource into State
+order: 1
 xp: 25
 estimated_minutes: 6
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - rm -rf $HOME/terraform-state-challenge
     - mkdir -p $HOME/terraform-state-challenge

@@ -1,5 +1,6 @@
 id: lnx-build-incident-timeline
 title: Build Chronological Incident Timeline
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

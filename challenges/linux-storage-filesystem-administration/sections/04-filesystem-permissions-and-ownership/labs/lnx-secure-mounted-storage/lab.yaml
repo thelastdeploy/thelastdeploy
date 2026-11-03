@@ -1,5 +1,6 @@
 id: lnx-secure-mounted-storage
 title: Secure Mounted Storage Permissions
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

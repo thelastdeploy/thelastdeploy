@@ -1,11 +1,11 @@
 id: lnx-find-target-directory
 title: "Find a deeply nested directory path"
+order: 2
 xp: 35
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/search-zone/sub1/sub2/sub3/target"
     - "rm -f $HOME/found_path.txt"

@@ -1,11 +1,11 @@
 id: tf-install-cli
 title: Install Terraform CLI
+order: 2
 xp: 15
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - echo 'Please install Terraform on your system.'
 version: 2

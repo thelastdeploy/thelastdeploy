@@ -1,11 +1,11 @@
 id: git-sync-local-and-remote
 title: Sync Local and Remote Project
+order: 1
 xp: 30
 estimated_minutes: 10
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - rm -rf $HOME/git-challenge $HOME/git-remote-server.git $HOME/temp-git-repo
     - git init -b main --bare $HOME/git-remote-server.git

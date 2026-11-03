@@ -1,11 +1,11 @@
 id: nginx-verify-installation
 title: "Verify Nginx Installation"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "echo 'Verifying default Nginx configuration file presence'"
 version: 2

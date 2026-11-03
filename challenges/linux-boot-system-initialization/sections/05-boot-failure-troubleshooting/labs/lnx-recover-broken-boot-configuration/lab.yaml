@@ -1,5 +1,6 @@
 id: lnx-recover-broken-boot-configuration
 title: Recover Broken Boot Configuration
+order: 2
 xp: 55
 environment:
   profile: tld-ubuntu

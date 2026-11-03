@@ -1,5 +1,6 @@
 id: lnx-manage-command-substitution
 title: Manage Advanced Process Substitution
+order: 2
 xp: 30
 environment:
   profile: tld-ubuntu

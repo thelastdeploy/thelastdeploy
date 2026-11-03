@@ -1,5 +1,6 @@
 id: lnx-investigate-hidden-system-activity
 title: Investigate Hidden System and File Activity
+order: 1
 xp: 55
 environment:
   profile: tld-ubuntu

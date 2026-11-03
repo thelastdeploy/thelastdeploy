@@ -1,11 +1,11 @@
 id: nginx-include-config
 title: "Include Config"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "sudo mkdir -p /etc/nginx/snippets /etc/nginx/sites-available"
     - "echo 'add_header X-Custom-Header \"TheLastDeploy\";' | sudo tee /etc/nginx/snippets/custom-headers.conf > /dev/null"

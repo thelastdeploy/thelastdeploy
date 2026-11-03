@@ -1,5 +1,6 @@
 id: lnx-identify-package-manager
 title: Identify active system package manager
+order: 1
 xp: 15
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-investigate-isolated-processes
 title: Investigate Isolated Process States
+order: 2
 xp: 45
 environment:
   profile: tld-ubuntu

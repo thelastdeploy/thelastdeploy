@@ -1,5 +1,6 @@
 id: lnx-restore-broken-configuration
 title: Restore Corrupted Configuration from Backup
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

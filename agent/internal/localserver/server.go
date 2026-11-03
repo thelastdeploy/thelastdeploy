@@ -112,13 +112,13 @@ func (s *Server) handleStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]interface{}{
-		"active":     true,
-		"lab_id":     session.LabID,
-		"module_id":  session.ModuleID,
-		"section_id": session.SectionID,
-		"started_at": session.StartedAt,
-		"elapsed":    time.Since(session.StartedAt).Round(time.Second).String(),
-		"setup_type": session.SetupType,
+		"active":              true,
+		"lab_id":              session.LabID,
+		"module_id":           session.ModuleID,
+		"section_id":          session.SectionID,
+		"started_at":          session.StartedAt,
+		"elapsed":             time.Since(session.StartedAt).Round(time.Second).String(),
+		"environment_profile": session.EnvironmentProfile,
 	})
 }
 

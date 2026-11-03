@@ -1,11 +1,11 @@
 id: lnx-start-service
 title: "Start a user-level service"
+order: 3
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/.config/systemd/user"
     - "echo '[Unit]' > $HOME/.config/systemd/user/thelastdeploy-user.service"

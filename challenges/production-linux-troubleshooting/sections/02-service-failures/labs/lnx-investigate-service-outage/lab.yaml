@@ -1,5 +1,6 @@
 id: lnx-investigate-service-outage
 title: Investigate Production Service Outage
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

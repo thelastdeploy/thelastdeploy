@@ -1,5 +1,6 @@
 id: lnx-create-reusable-functions
 title: Create Reusable Functions
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

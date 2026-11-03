@@ -1,11 +1,11 @@
 id: nginx-find-config-error
 title: "Find Config Error"
+order: 2
 xp: 30
 estimated_minutes: 10
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which nginx || (apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx)"
     # Backup, then break a directive by removing a semicolon

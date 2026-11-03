@@ -1,5 +1,6 @@
 id: lnx-audit-file-permissions
 title: Audit File Permissions and Octal Masks
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

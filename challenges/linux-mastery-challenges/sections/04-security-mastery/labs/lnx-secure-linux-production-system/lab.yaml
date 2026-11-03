@@ -1,5 +1,6 @@
 id: lnx-secure-linux-production-system
 title: "Secure Linux Production System"
+order: 1
 xp: 80
 description: "Execute complete security hardening of an enterprise Linux production server."
 environment:

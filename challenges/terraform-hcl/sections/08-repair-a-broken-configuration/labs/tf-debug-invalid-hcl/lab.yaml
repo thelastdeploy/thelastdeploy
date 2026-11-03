@@ -1,11 +1,11 @@
 id: tf-debug-invalid-hcl
 title: Debug Invalid HCL Configuration
+order: 1
 xp: 30
 estimated_minutes: 8
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - rm -rf $HOME/terraform-hcl-challenge
     - mkdir -p $HOME/terraform-hcl-challenge

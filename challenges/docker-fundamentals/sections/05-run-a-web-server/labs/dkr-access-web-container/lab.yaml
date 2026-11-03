@@ -1,11 +1,11 @@
 id: dkr-access-web-container
 title: "Access web container"
+order: 1
 xp: 35
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f secret-web || true"
     - "docker run -d --name secret-web -p 8082:80 nginx:alpine"

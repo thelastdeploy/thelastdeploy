@@ -1,5 +1,6 @@
 id: lnx-diagnose-broken-package
 title: Diagnose half-installed broken package status
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-run-parallel-automation
 title: Run Parallel Automation Tasks
+order: 2
 xp: 45
 environment:
   profile: tld-ubuntu

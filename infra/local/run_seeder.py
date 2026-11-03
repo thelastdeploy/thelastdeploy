@@ -57,7 +57,6 @@ async def seed_dummy_users():
                 is_verified=True,
                 is_maintainer=True,
                 xp=500,
-                streak_days=3,
             )
             db.add(dev_user)
             await db.commit()

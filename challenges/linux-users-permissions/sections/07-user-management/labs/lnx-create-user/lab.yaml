@@ -1,11 +1,11 @@
 id: lnx-create-user
 title: "Create a new system user"
+order: 3
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "userdel -r dev-intern || true"
 version: 1

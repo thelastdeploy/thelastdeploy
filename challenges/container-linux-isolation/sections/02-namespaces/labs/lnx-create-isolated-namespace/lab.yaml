@@ -1,5 +1,6 @@
 id: lnx-create-isolated-namespace
 title: Create Isolated Namespace Environment
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

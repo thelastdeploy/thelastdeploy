@@ -1,5 +1,6 @@
 id: lnx-correlate-multi-layer-system-failure
 title: "Correlate Multi-Layer System Failure"
+order: 1
 xp: 90
 description: "Trace and systematically recover from a cascading multi-subsystem outage spanning storage, database, and web proxy tiers."
 environment:

@@ -1,5 +1,6 @@
 id: lnx-analyze-repeated-data
 title: Analyze Repeated Data with Sort and Uniq
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

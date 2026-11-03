@@ -1,11 +1,11 @@
 id: lnx-check-http-status
 title: "Retrieve HTTP status code"
+order: 1
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/network-test"
     - "rm -f $HOME/network-test/http_status.txt"

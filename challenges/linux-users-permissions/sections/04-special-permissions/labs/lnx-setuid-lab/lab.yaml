@@ -1,11 +1,11 @@
 id: lnx-setuid-lab
 title: "Configure SUID on a helper utility"
+order: 1
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/special-test"
     - "touch $HOME/special-test/suid-helper"

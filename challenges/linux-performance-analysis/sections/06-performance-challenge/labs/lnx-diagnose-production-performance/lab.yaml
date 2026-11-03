@@ -1,5 +1,6 @@
 id: lnx-diagnose-production-performance
 title: Diagnose Production Performance Degradation Capstone
+order: 1
 xp: 75
 environment:
   profile: tld-ubuntu

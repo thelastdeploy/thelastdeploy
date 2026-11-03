@@ -1,5 +1,6 @@
 id: lnx-investigate-production-connectivity
 title: Investigate Production Network Connectivity Failure
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

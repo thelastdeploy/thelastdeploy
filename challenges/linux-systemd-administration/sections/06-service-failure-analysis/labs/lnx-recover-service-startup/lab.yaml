@@ -1,5 +1,6 @@
 id: lnx-recover-service-startup
 title: Recover Service Startup
+order: 2
 xp: 50
 environment:
   profile: tld-ubuntu

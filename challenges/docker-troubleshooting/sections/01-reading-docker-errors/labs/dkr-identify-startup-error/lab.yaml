@@ -6,7 +6,6 @@ order: 1
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-troubleshooting/errors"
     - "docker rm -f crashing-app || true"

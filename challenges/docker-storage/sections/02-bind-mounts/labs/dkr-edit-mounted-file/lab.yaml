@@ -1,11 +1,11 @@
 id: dkr-edit-mounted-file
 title: "Edit a mounted file"
+order: 1
 xp: 15
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-mount-test"
     - "echo 'Initial Note' > $HOME/docker-mount-test/notes.txt"

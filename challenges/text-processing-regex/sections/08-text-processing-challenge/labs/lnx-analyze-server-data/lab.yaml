@@ -1,5 +1,6 @@
 id: lnx-analyze-server-data
 title: Analyze Server Data and Build Metric Report
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

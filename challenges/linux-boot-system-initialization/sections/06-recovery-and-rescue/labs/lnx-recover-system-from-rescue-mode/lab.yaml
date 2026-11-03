@@ -1,5 +1,6 @@
 id: lnx-recover-system-from-rescue-mode
 title: Recover System from Rescue Target
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

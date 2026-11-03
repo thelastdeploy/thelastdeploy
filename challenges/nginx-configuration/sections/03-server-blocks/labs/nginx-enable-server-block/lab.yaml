@@ -1,11 +1,11 @@
 id: nginx-enable-server-block
 title: "Enable Server Block"
+order: 2
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     # Ensure sites-available/mysite exists so the user can symlink it.
     - "sudo mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled"

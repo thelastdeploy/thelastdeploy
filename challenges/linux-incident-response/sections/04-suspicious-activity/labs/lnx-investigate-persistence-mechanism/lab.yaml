@@ -1,5 +1,6 @@
 id: lnx-investigate-persistence-mechanism
 title: Investigate Malicious Persistence Mechanisms
+order: 1
 xp: 60
 environment:
   profile: tld-ubuntu

@@ -1,11 +1,11 @@
 id: lnx-create-group
 title: "Create a system group"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "groupdel dev-team || true"
 version: 1

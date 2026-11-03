@@ -82,7 +82,9 @@ func runStatus(args []string) error {
 		fmt.Printf("  Section:   %s\n", session.SectionID)
 		fmt.Printf("  Started:   %s\n", session.StartedAt.Format("15:04:05"))
 		fmt.Printf("  Elapsed:   %s\n", elapsed)
-		fmt.Printf("  Type:      %s\n", session.SetupType)
+		if session.EnvironmentProfile != "" {
+			fmt.Printf("  Profile:   %s\n", session.EnvironmentProfile)
+		}
 		if session.ContainerID != "" {
 			fmt.Printf("  Container: %s\n", session.ContainerID[:12])
 		}

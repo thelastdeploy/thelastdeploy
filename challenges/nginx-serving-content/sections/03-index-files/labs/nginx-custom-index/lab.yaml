@@ -1,11 +1,11 @@
 id: nginx-custom-index
 title: "Configure Custom Index"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which nginx || (apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx)"
     - "sudo mkdir -p /var/www/html"

@@ -1,5 +1,6 @@
 id: lnx-schedule-recurring-task
 title: Schedule Recurring Tasks with Redirection
+order: 2
 xp: 30
 environment:
   profile: tld-ubuntu

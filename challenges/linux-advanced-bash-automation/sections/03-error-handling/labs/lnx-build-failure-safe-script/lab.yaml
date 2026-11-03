@@ -1,5 +1,6 @@
 id: lnx-build-failure-safe-script
 title: Build a Failure-Safe Script with strict mode
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

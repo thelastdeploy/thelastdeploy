@@ -1,5 +1,6 @@
 id: lnx-search-by-file-properties
 title: Search files by size and properties
+order: 2
 xp: 20
 environment:
   profile: tld-ubuntu

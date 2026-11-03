@@ -1,11 +1,11 @@
 id: dkr-debug-connection-failure
 title: "Debug connection failure"
+order: 2
 xp: 35
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f backend-service client-app || true"
     - "docker network rm debug-net || true"

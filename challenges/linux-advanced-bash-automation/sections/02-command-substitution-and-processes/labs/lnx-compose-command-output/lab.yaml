@@ -1,5 +1,6 @@
 id: lnx-compose-command-output
 title: Compose Command Output in Scripts
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

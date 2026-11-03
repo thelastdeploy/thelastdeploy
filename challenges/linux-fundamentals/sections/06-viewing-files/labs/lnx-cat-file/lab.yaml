@@ -1,11 +1,11 @@
 id: lnx-cat-file
 title: "View files using cat"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/view-test"
     - "echo 'LINUX_RULES' > $HOME/view-test/short.txt"

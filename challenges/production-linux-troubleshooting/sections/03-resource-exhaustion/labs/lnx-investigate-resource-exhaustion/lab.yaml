@@ -1,5 +1,6 @@
 id: lnx-investigate-resource-exhaustion
 title: Investigate Severe Resource Exhaustion
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

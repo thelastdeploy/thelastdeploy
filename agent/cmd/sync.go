@@ -34,7 +34,7 @@ type moduleJSON struct {
 	Topic              string   `json:"topic"`
 	Difficulty         string   `json:"difficulty"`
 	EstimatedMinutes   int      `json:"estimated_minutes"`
-	Tags               []string `json:"tags"`
+	SharedSeed         []string `json:"shared_seed"`
 	TotalXP            int      `json:"total_xp"`
 	TotalSections      int      `json:"total_sections"`
 	IsOfficialVerified bool     `json:"is_official_verified"`

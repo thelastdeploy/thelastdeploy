@@ -1,5 +1,6 @@
 id: lnx-find-errors-in-logs
 title: Extract Errors and Fatal Exceptions from Logs
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

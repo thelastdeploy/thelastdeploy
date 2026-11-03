@@ -1,11 +1,11 @@
 id: dkr-build-custom-nginx-site
 title: "Build custom Nginx site"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-build/nginx-custom"
     - "echo '<h1>Hello from Nginx</h1>' > $HOME/docker-build/nginx-custom/index.html"

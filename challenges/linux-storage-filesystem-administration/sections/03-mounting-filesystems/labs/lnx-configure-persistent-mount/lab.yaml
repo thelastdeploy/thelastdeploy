@@ -1,5 +1,6 @@
 id: lnx-configure-persistent-mount
 title: Configure Persistent Mounts in Fstab
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

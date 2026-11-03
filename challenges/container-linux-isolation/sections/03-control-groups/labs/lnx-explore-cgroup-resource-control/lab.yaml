@@ -1,5 +1,6 @@
 id: lnx-explore-cgroup-resource-control
 title: Explore cgroup Resource Control Hierarchy
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

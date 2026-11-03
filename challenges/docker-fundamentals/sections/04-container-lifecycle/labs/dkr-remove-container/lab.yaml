@@ -1,11 +1,11 @@
 id: dkr-remove-container
 title: "Remove a container"
+order: 1
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f old-trash-container || true"
     - "docker create --name old-trash-container alpine echo 'exited'"

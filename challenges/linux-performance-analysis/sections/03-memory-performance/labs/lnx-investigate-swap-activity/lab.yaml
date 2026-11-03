@@ -1,5 +1,6 @@
 id: lnx-investigate-swap-activity
 title: Investigate Swap Activity and Page Faults
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

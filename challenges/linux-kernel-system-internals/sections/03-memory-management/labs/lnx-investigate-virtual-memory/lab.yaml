@@ -1,5 +1,6 @@
 id: lnx-investigate-virtual-memory
 title: "Investigate Virtual Memory Mappings"
+order: 1
 xp: 45
 description: "Inspect process virtual memory address spaces, memory-mapped files, and stack/heap VMAs."
 environment:

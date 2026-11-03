@@ -1,11 +1,11 @@
 id: lnx-ssh-login
 title: "Generate an SSH key pair"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "rm -rf $HOME/.ssh"
 version: 1

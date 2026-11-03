@@ -1,5 +1,6 @@
 id: lnx-analyze-service-dependencies
 title: Analyze Service Dependencies
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

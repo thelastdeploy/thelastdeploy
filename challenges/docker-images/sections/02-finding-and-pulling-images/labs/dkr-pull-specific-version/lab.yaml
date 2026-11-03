@@ -1,11 +1,11 @@
 id: dkr-pull-specific-version
 title: "Pull specific version"
+order: 2
 xp: 15
 estimated_minutes: 3
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rmi -f nginx:1.21.6 || true"
 version: 2

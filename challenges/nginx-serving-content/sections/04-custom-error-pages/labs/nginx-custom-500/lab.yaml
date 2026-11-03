@@ -1,11 +1,11 @@
 id: nginx-custom-500
 title: "Configure Custom 500 Page"
+order: 2
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which nginx || (apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx)"
     - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"

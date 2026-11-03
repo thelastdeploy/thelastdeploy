@@ -1,5 +1,6 @@
 id: lnx-investigate-proc-and-sys
 title: "Investigate procfs and sysfs"
+order: 2
 xp: 50
 description: "Compare procfs process entries and sysfs bus/device attributes from userspace."
 environment:

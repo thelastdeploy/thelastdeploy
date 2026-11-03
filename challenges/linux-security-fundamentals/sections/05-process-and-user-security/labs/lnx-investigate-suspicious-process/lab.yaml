@@ -1,5 +1,6 @@
 id: lnx-investigate-suspicious-process
 title: Investigate Suspicious Processes and Backdoors
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

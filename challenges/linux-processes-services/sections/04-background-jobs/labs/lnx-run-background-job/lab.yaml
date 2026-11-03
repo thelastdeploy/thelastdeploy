@@ -1,11 +1,11 @@
 id: lnx-run-background-job
 title: "Start a job in the background"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/jobs-test"
     - "rm -f $HOME/jobs-test/bg_pid.txt"

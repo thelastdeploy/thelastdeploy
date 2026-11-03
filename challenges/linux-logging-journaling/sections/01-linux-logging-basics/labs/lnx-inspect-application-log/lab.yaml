@@ -1,5 +1,6 @@
 id: lnx-inspect-application-log
 title: Inspect Application Log Streams
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

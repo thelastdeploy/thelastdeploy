@@ -1,5 +1,6 @@
 id: lnx-harden-system-services
 title: Harden systemd Services with Sandboxing
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

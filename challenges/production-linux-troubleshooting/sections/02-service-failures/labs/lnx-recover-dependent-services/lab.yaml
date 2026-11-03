@@ -1,5 +1,6 @@
 id: lnx-recover-dependent-services
 title: Recover Dependent Service Stack
+order: 2
 xp: 50
 environment:
   profile: tld-ubuntu

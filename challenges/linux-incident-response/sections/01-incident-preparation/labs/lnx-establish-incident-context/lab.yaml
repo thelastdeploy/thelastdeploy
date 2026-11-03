@@ -1,5 +1,6 @@
 id: lnx-establish-incident-context
 title: Establish Incident Context and Initial Observation
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

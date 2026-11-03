@@ -6,7 +6,6 @@ order: 2
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-compose/multi-service"
     - 'echo -e "version: \"3.8\"\nservices:\n  web:\n    image: nginx:alpine\n    ports:\n      - \"80\"\n  db:\n    image: postgres:15-alpine\n    environment:\n      - POSTGRES_PASSWORD=secret" > $HOME/docker-compose/multi-service/docker-compose.yml'

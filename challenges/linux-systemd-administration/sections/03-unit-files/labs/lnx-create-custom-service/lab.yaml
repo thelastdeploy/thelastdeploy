@@ -1,5 +1,6 @@
 id: lnx-create-custom-service
 title: Create Custom systemd Service
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

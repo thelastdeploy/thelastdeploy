@@ -1,5 +1,6 @@
 id: lnx-debug-advanced-network-service
 title: Debug Advanced Network Service Binding
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

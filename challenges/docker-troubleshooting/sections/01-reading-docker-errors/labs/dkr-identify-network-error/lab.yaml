@@ -6,7 +6,6 @@ order: 2
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-troubleshooting/errors"
     - "docker rm -f api-client || true"

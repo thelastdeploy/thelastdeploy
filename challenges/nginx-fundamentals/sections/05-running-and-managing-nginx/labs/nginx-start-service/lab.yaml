@@ -1,11 +1,11 @@
 id: nginx-start-service
 title: "Start Nginx Service"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "sudo systemctl stop nginx || true"
 version: 2

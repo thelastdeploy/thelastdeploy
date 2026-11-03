@@ -22,10 +22,8 @@ type BuilderLabInput struct {
 	Order            int      `json:"order"`
 	XP               int      `json:"xp"`
 	EstimatedMinutes *int     `json:"estimated_minutes"`
-	SetupType        *string  `json:"setup_type"`
 	SeedCommands     []string `json:"seed_commands"`
 	ValidatorScript  *string  `json:"validator_script"`
-	CleanupScript    *string  `json:"cleanup_script"`
 }
 
 type BuilderSectionInput struct {
@@ -44,7 +42,6 @@ type BuilderModuleInput struct {
 	Topic            string                `json:"topic"`
 	Difficulty       string                `json:"difficulty"`
 	EstimatedMinutes *int                  `json:"estimated_minutes"`
-	Tags             []string              `json:"tags"`
 	Sections         []BuilderSectionInput `json:"sections"`
 }
 
@@ -251,15 +248,11 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 					}
 
 					// Setup commands parsing from raw file (we read it key value or line by line for seed_commands)
-					setupType := "none"
 					seedCmds := []string{}
 
 					labRawBytes, err := os.ReadFile(labYamlPath)
 					if err == nil {
 						rawYaml := string(labRawBytes)
-						if strings.Contains(rawYaml, "type: shell") {
-							setupType = "shell"
-						}
 						// simple list parser for seed_commands
 						lines := strings.Split(rawYaml, "\n")
 						inSeedCmds := false
@@ -296,24 +289,14 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 						valScript = &vStr
 					}
 
-					// Read cleanup script
-					var cleanScript *string
-					cleanPath := filepath.Join(labFolder, "cleanup.sh")
-					if cleanBytes, err := os.ReadFile(cleanPath); err == nil {
-						cStr := string(cleanBytes)
-						cleanScript = &cStr
-					}
-
 					labs = append(labs, BuilderLabInput{
 						ID:               labID,
 						Title:            labTitle,
 						Order:            orderLab,
 						XP:               0,
 						EstimatedMinutes: labEstMin,
-						SetupType:        &setupType,
 						SeedCommands:     seedCmds,
 						ValidatorScript:  valScript,
-						CleanupScript:    cleanScript,
 					})
 					orderLab++
 				}
@@ -338,7 +321,6 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 		Topic:            topic,
 		Difficulty:       difficulty,
 		EstimatedMinutes: estMin,
-		Tags:             tags,
 		Sections:         sections,
 	}, nil
 }

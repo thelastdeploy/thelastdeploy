@@ -1,5 +1,6 @@
 id: lnx-investigate-linux-from-kernel-up
 title: "Investigate Linux From Kernel Up"
+order: 1
 xp: 110
 description: "Perform deep kernel-level analysis of process state transitions, page fault counters, VFS dentry caches, and tracefs events."
 environment:

@@ -1,5 +1,6 @@
 id: lnx-inspect-filesystem-health
 title: Inspect Superblock Metadata and Filesystem Health
+order: 2
 xp: 30
 environment:
   profile: tld-ubuntu

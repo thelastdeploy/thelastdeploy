@@ -1,11 +1,11 @@
 id: lnx-recover-broken-web-service
 title: "Fix a failing user service"
+order: 1
 xp: 30
 estimated_minutes: 10
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/.config/systemd/user"
     - "echo '[Unit]' > $HOME/.config/systemd/user/thelastdeploy-broken.service"

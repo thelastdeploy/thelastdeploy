@@ -124,8 +124,8 @@ def build_github_challenge_files(
     topic: str,
     difficulty: str,
     estimated_minutes: int | None,
-    tags: list[str],
-    sections: list[dict],
+    tags: list[str] = [],
+    sections: list[dict] = [],
     is_verified: bool = False,
     version: int = 1,
 ) -> dict[str, str]:
@@ -139,7 +139,6 @@ def build_github_challenge_files(
         "topic": topic,
         "difficulty": difficulty,
         "estimated_minutes": estimated_minutes,
-        "tags": tags,
         "version": version,
     }
     if is_verified:
@@ -175,14 +174,18 @@ def build_github_challenge_files(
             lab_yaml_data = {
                 "id": lab["id"],
                 "title": lab["title"],
+                "order": lab.get("order", 1),
                 "xp": lab["xp"],
                 "estimated_minutes": lab.get("estimated_minutes"),
-                "setup": {
-                    "type": lab.get("setup_type") or "shell",
-                    "seed_commands": seed_cmds,
+                "environment": {
+                    "profile": lab.get("environment_profile") or "tld-ubuntu",
                 },
                 "version": lab.get("version", 1),
             }
+            if seed_cmds:
+                lab_yaml_data["setup"] = {
+                    "seed_commands": seed_cmds,
+                }
             github_files[f"{lab_base}/lab.yaml"] = yaml.safe_dump(lab_yaml_data, sort_keys=False)
 
             val_script = lab.get("validator_script")
@@ -191,10 +194,6 @@ def build_github_challenge_files(
                 if "import " in val_script or "def " in val_script:
                     val_ext = "py"
                 github_files[f"{lab_base}/validator.{val_ext}"] = val_script
-
-            clean_script = lab.get("cleanup_script")
-            if clean_script:
-                github_files[f"{lab_base}/cleanup.sh"] = clean_script
 
     return github_files
 
@@ -235,7 +234,6 @@ async def publish_module_from_cli(
         db.expunge(existing_module)
 
     # 2. Setup/overwrite Module row
-    tags_str = ",".join(body.tags)
     module_data = {
         "id": body.id,
         "title": body.title,
@@ -243,8 +241,6 @@ async def publish_module_from_cli(
         "topic": body.topic,
         "difficulty": body.difficulty,
         "estimated_minutes": body.estimated_minutes,
-        "tags": tags_str,
-        "yaml_content": "",
         "version": 1,
         "total_xp": 0,  # Unverified modules have 0 XP
         "total_sections": 0,
@@ -292,13 +288,10 @@ async def publish_module_from_cli(
                 order=l_input.order,
                 xp=0,  # Force lab XP to 0 for unverified
                 estimated_minutes=l_input.estimated_minutes,
-                setup_type=l_input.setup_type,
                 seed_commands=seed_cmds_json,
-                yaml_content="",
                 version=1,
                 validator_hash=val_hash,
                 validator_script=l_input.validator_script,
-                cleanup_script=l_input.cleanup_script,
             )
             db.add(new_lab)
 
@@ -322,10 +315,8 @@ async def publish_module_from_cli(
                     "title": l.title,
                     "xp": 0,
                     "estimated_minutes": l.estimated_minutes,
-                    "setup_type": l.setup_type,
                     "seed_commands": l.seed_commands,
                     "validator_script": l.validator_script,
-                    "cleanup_script": l.cleanup_script,
                     "version": 1,
                 }
                 for l in s.labs
@@ -340,7 +331,7 @@ async def publish_module_from_cli(
         topic=body.topic,
         difficulty=body.difficulty,
         estimated_minutes=body.estimated_minutes,
-        tags=body.tags,
+        tags=[],
         sections=sections_data,
         is_verified=False,
         version=1,

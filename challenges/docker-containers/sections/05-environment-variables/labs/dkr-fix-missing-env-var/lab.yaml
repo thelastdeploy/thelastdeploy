@@ -1,11 +1,11 @@
 id: dkr-fix-missing-env-var
 title: "Fix missing environment variable"
+order: 1
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f db-connector || true"
 version: 2

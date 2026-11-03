@@ -1,5 +1,6 @@
 id: lnx-collect-system-evidence
 title: Collect System File & Environment Evidence
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

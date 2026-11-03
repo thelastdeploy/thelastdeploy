@@ -1,5 +1,6 @@
 id: lnx-investigate-kernel-level-failure
 title: "Investigate Kernel-Level Failure"
+order: 1
 xp: 120
 description: "Perform deep investigation of a complex system hang using kernel proc/sys interfaces, task kernel stacks, and dmesg evidence."
 environment:

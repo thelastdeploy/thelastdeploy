@@ -1,5 +1,6 @@
 id: lnx-create-virtual-network-interface
 title: Create Virtual Network Interfaces
+order: 2
 xp: 35
 environment:
   profile: tld-ubuntu

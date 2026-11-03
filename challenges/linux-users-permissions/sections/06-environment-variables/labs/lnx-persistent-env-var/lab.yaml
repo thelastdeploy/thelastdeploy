@@ -1,11 +1,11 @@
 id: lnx-persistent-env-var
 title: "Make an environment variable persistent"
+order: 3
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     # Cleanup any previous entries we added to bashrc
     - "sed -i '/PLATFORM_NAME/d' $HOME/.bashrc || true"

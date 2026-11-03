@@ -1,5 +1,6 @@
 id: lnx-investigate-unexplained-load
 title: "Investigate Unexplained High Load Average"
+order: 1
 xp: 65
 description: "Diagnose high system load average caused by disk I/O bottlenecks and processes stuck in uninterruptible kernel sleep."
 environment:

@@ -1,5 +1,6 @@
 id: lnx-investigate-overlay-filesystem
 title: Investigate OverlayFS Storage Layers
+order: 2
 xp: 50
 environment:
   profile: tld-ubuntu

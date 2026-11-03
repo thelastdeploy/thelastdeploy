@@ -1,5 +1,6 @@
 id: lnx-inspect-configuration-settings
 title: Inspect Active Configuration Settings
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

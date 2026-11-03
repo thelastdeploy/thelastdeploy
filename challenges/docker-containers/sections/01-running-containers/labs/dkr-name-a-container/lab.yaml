@@ -1,11 +1,11 @@
 id: dkr-name-a-container
 title: "Name a container"
+order: 1
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f custom-app || true"
 version: 2

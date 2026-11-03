@@ -43,14 +43,10 @@ type Lab struct {
 	SectionID        string
 	ModuleID         string
 	LabDir           string
-	SetupType        string
 	SeedCommands     []string
 	ModuleSharedSeed []string
-	InstallTarget    string
 	XP               int
 	EstimatedMins    int
-	ResourcesCPU     int
-	ResourcesMem     int
 	ValidatorPath    string
 	Version          int
 	Environment      *environment.EnvironmentSpec
@@ -63,7 +59,6 @@ type moduleJSONFile struct {
 	Topic            string   `json:"topic"`
 	Difficulty       string   `json:"difficulty"`
 	EstimatedMinutes int      `json:"estimated_minutes"`
-	Tags             []string `json:"tags"`
 	TotalXP          int      `json:"total_xp"`
 	TotalSections    int      `json:"total_sections"`
 	SharedSeed       []string `json:"shared_seed"`
@@ -73,13 +68,9 @@ type moduleJSONFile struct {
 type labJSONFile struct {
 	ID            string   `json:"id"`
 	Title         string   `json:"title"`
-	SetupType     string   `json:"setup_type"`
 	SeedCommands  []string `json:"seed_commands"`
-	InstallTarget string   `json:"install_target"`
 	XP            int      `json:"xp"`
 	EstimatedMins int      `json:"estimated_minutes"`
-	ResourcesCPU  int      `json:"resource_limits_cpu"`
-	ResourcesMem  int      `json:"resource_limits_mem"`
 	Version       int      `json:"version"`
 }
 
@@ -231,15 +222,6 @@ func loadLab(baseDir, moduleID, sectionID, labID string) (*Lab, error) {
 	if parentMod, err := LoadModule(baseDir, moduleID); err == nil && parentMod != nil {
 		lab.ModuleSharedSeed = parentMod.SharedSeed
 	}
-	if lab.SetupType == "" {
-		lab.SetupType = "shell"
-	}
-	if lab.ResourcesCPU == 0 {
-		lab.ResourcesCPU = 1
-	}
-	if lab.ResourcesMem == 0 {
-		lab.ResourcesMem = 512
-	}
 	shPath := filepath.Join(labDir, "validator.sh")
 	pyPath := filepath.Join(labDir, "validator.py")
 	if _, err := os.Stat(pyPath); err == nil {
@@ -310,13 +292,9 @@ func parseLabJSON(path string) (*Lab, error) {
 	return &Lab{
 		ID:            jf.ID,
 		Title:         jf.Title,
-		SetupType:     jf.SetupType,
 		SeedCommands:  jf.SeedCommands,
-		InstallTarget: jf.InstallTarget,
 		XP:            jf.XP,
 		EstimatedMins: jf.EstimatedMins,
-		ResourcesCPU:  jf.ResourcesCPU,
-		ResourcesMem:  jf.ResourcesMem,
 		Version:       jf.Version,
 	}, nil
 }
@@ -422,17 +400,9 @@ func parseLabYAML(path string) (*Lab, error) {
 			lab.EstimatedMins, _ = strconv.Atoi(val)
 		case indent == 0 && key == "version":
 			lab.Version, _ = strconv.Atoi(val)
-		case indent == 0 && key == "install_target":
-			lab.InstallTarget = unquote(val)
 		case indent == 0 && key == "setup":
 			inSetup = true
-		case inSetup && indent == 2 && key == "type":
-			lab.SetupType = val
-		case inSetup && indent == 2 && key == "resource_limits_cpu":
-			lab.ResourcesCPU, _ = strconv.Atoi(val)
-		case inSetup && indent == 2 && key == "resource_limits_mem":
-			lab.ResourcesMem, _ = strconv.Atoi(val)
-		case inSetup && indent >= 2 && key == "seed_commands":
+		case (indent == 0 || (inSetup && indent >= 2)) && key == "seed_commands":
 			inSeedCmds = true
 		case inSeedCmds && indent >= 2 && strings.HasPrefix(trimmed, "- "):
 			lab.SeedCommands = append(lab.SeedCommands, unquote(strings.TrimPrefix(trimmed, "- ")))
@@ -441,7 +411,7 @@ func parseLabYAML(path string) (*Lab, error) {
 				lastIdx := len(lab.SeedCommands) - 1
 				lab.SeedCommands[lastIdx] = unquote(lab.SeedCommands[lastIdx] + " " + trimmed)
 			}
-		case inSetup && indent >= 2 && !strings.HasPrefix(trimmed, "- ") && key != "seed_commands":
+		case (inSetup || indent == 0) && !strings.HasPrefix(trimmed, "- ") && key != "seed_commands":
 			inSeedCmds = false
 		case indent == 0 && key == "environment":
 			inEnv = true

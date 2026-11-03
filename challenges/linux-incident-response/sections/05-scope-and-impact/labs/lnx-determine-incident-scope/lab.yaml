@@ -1,5 +1,6 @@
 id: lnx-determine-incident-scope
 title: Determine Incident Scope and Lateral Movement
+order: 1
 xp: 60
 environment:
   profile: tld-ubuntu

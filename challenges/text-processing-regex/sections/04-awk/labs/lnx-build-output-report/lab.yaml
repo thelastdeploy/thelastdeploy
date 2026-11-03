@@ -1,5 +1,6 @@
 id: lnx-build-output-report
 title: Build Output Report with AWK Aggregation
+order: 2
 xp: 35
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-control-network-traffic
 title: Control Network Traffic Shaping with tc
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

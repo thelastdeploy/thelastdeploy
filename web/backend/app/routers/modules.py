@@ -72,7 +72,6 @@ async def list_modules(
         Module.topic,
         Module.difficulty,
         Module.estimated_minutes,
-        Module.tags,
         Module.total_xp,
         Module.total_sections,
         Module.version,
@@ -93,7 +92,6 @@ async def list_modules(
     # 4. Build ModuleListItem list
     items = []
     for row in rows:
-        tags = [t.strip() for t in (row.tags or "").split(",") if t.strip()]
         author = author_map.get(row.author_id) if row.author_id else None
         items.append(ModuleListItem(
             id=row.id,
@@ -102,7 +100,6 @@ async def list_modules(
             topic=row.topic,
             difficulty=row.difficulty,
             estimated_minutes=row.estimated_minutes,
-            tags=tags,
             total_xp=row.total_xp,
             total_sections=row.total_sections,
             completed_sections=row.completed_sections,
@@ -175,10 +172,8 @@ async def get_all_modules_full(
                     order=lab.order,
                     xp=lab.xp,
                     estimated_minutes=lab.estimated_minutes,
-                    setup_type=lab.setup_type,
+                    environment_profile=lab.environment_profile,
                     seed_commands=lab.seed_commands,
-                    resource_limits_cpu=lab.resource_limits_cpu,
-                    resource_limits_mem=lab.resource_limits_mem,
                     completed=lab_progress_map[lab.id].completed if lab.id in lab_progress_map else False,
                     xp_awarded=lab_progress_map[lab.id].xp_awarded if lab.id in lab_progress_map else 0,
                     version=lab.version,
@@ -204,7 +199,7 @@ async def get_all_modules_full(
             topic=m.topic,
             difficulty=m.difficulty,
             estimated_minutes=m.estimated_minutes,
-            tags=[t.strip() for t in (m.tags or "").split(",") if t.strip()],
+            shared_seed=m.shared_seed or [],
             total_xp=_total_xp(m.sections, all_labs),
             total_sections=len(m.sections),
             sections=section_schemas,
@@ -283,10 +278,8 @@ async def get_module_full(
                 order=lab.order,
                 xp=lab.xp,
                 estimated_minutes=lab.estimated_minutes,
-                setup_type=lab.setup_type,
+                environment_profile=lab.environment_profile,
                 seed_commands=lab.seed_commands,
-                resource_limits_cpu=lab.resource_limits_cpu,
-                resource_limits_mem=lab.resource_limits_mem,
                 completed=lab_progress_map[lab.id].completed if lab.id in lab_progress_map else False,
                 xp_awarded=lab_progress_map[lab.id].xp_awarded if lab.id in lab_progress_map else 0,
                 version=lab.version,
@@ -325,7 +318,7 @@ async def get_module_full(
         topic=module.topic,
         difficulty=module.difficulty,
         estimated_minutes=module.estimated_minutes,
-        tags=[t.strip() for t in (module.tags or "").split(",") if t.strip()],
+        shared_seed=module.shared_seed or [],
         total_xp=_total_xp(sections, all_labs),
         total_sections=len(sections),
         sections=section_schemas,
@@ -366,7 +359,7 @@ async def get_module_summary(
         topic=module.topic,
         difficulty=module.difficulty,
         estimated_minutes=module.estimated_minutes,
-        tags=[t.strip() for t in (module.tags or "").split(",") if t.strip()],
+        shared_seed=module.shared_seed or [],
         total_xp=_total_xp(sections, labs),
         total_sections=len(sections),
         version=module.version,
@@ -504,10 +497,8 @@ async def verify_module(
                     "title": lab.title,
                     "xp": lab.xp,
                     "estimated_minutes": lab.estimated_minutes,
-                    "setup_type": lab.setup_type,
                     "seed_commands": lab.seed_commands,
                     "validator_script": lab.validator_script,
-                    "cleanup_script": lab.cleanup_script,
                     "version": lab.version or 1,
                 }
                 for lab in sorted(sec.labs, key=lambda l: l.order)
@@ -515,7 +506,6 @@ async def verify_module(
         }
         for sec in sorted_sections
     ]
-    tags_list = [t.strip() for t in module.tags.split(",") if t.strip()] if module.tags else []
     github_files = build_github_challenge_files(
         module_id=module.id,
         title=module.title,
@@ -523,7 +513,7 @@ async def verify_module(
         topic=module.topic,
         difficulty=module.difficulty,
         estimated_minutes=module.estimated_minutes,
-        tags=tags_list,
+        tags=[],
         sections=sections_data,
         is_verified=True,
         version=module.version or 1,
@@ -669,10 +659,8 @@ async def get_lab(
             order=lab.order,
             xp=lab.xp,
             estimated_minutes=lab.estimated_minutes,
-            setup_type=lab.setup_type,
+            environment_profile=lab.environment_profile,
             seed_commands=lab.seed_commands,
-            resource_limits_cpu=lab.resource_limits_cpu,
-            resource_limits_mem=lab.resource_limits_mem,
             version=lab.version,
         ),
     )

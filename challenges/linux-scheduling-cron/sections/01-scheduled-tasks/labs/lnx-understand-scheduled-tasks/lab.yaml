@@ -1,5 +1,6 @@
 id: lnx-understand-scheduled-tasks
 title: Understand Scheduled Task Expressions
+order: 2
 xp: 15
 environment:
   profile: tld-ubuntu

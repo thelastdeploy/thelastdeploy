@@ -1,11 +1,11 @@
 id: tf-build-local-project
 title: Build local infrastructure project
+order: 1
 xp: 30
 estimated_minutes: 10
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - rm -rf $HOME/terraform-resources-challenge
     - mkdir -p $HOME/terraform-resources-challenge

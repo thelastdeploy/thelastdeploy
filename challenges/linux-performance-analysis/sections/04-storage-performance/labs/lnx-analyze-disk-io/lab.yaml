@@ -1,5 +1,6 @@
 id: lnx-analyze-disk-io
 title: Analyze Disk I/O Utilization and Latency
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

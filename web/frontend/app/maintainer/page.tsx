@@ -453,7 +453,6 @@ export default function MaintainerDashboard() {
                               <div className="flex-1 min-w-0">
                                 <h5 className="font-bold text-xs text-foreground truncate">{lab.title}</h5>
                                 <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground mt-1">
-                                  <span className="px-1.5 py-0.5 rounded bg-muted font-mono">{lab.setup_type || "shell"}</span>
                                   {lab.estimated_minutes && (
                                     <span className="flex items-center gap-0.5"><Clock className="h-3 w-3" /> {lab.estimated_minutes}m</span>
                                   )}

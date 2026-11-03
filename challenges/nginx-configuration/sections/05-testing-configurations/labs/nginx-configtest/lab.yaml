@@ -1,11 +1,11 @@
 id: nginx-configtest
 title: "Nginx Config Test"
+order: 1
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "rm -f /tmp/config_test_result.txt"
 version: 2

@@ -1,5 +1,6 @@
 id: lnx-recover-remote-server
 title: Recover Remote Server SSH Access and Client Config
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

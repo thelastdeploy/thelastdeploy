@@ -1,5 +1,6 @@
 id: lnx-investigate-compromised-server
 title: Investigate Compromised Server Forensic Capstone
+order: 1
 xp: 100
 environment:
   profile: tld-ubuntu

@@ -1,11 +1,11 @@
 id: nginx-create-server-block
 title: "Create Server Block"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "sudo rm -f /etc/nginx/sites-available/mysite /etc/nginx/sites-available/mysite.conf"
     - "sudo rm -f /etc/nginx/sites-enabled/mysite /etc/nginx/sites-enabled/mysite.conf"

@@ -1,5 +1,6 @@
 id: lnx-configure-ssh-client
 title: Configure SSH Client Connection Aliases
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

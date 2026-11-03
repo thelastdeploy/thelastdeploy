@@ -1,5 +1,6 @@
 id: lnx-inspect-command-options
 title: Inspect shell builtins vs binary commands
+order: 2
 xp: 20
 environment:
   profile: tld-ubuntu

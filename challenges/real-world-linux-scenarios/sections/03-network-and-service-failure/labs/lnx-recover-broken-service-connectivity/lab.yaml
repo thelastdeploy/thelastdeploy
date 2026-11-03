@@ -1,5 +1,6 @@
 id: lnx-recover-broken-service-connectivity
 title: "Recover Broken Service Connectivity"
+order: 1
 xp: 60
 description: "Triage and fix broken network communication between microservices caused by DNS and firewall rule blocking."
 environment:

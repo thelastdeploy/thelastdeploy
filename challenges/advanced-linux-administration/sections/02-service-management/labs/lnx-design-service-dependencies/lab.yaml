@@ -1,5 +1,6 @@
 id: lnx-design-service-dependencies
 title: "Design Service Dependencies"
+order: 1
 xp: 45
 description: "Configure multi-tier systemd service unit dependencies and startup ordering."
 environment:

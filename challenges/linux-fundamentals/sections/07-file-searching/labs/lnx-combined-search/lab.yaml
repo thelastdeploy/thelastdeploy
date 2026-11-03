@@ -1,11 +1,11 @@
 id: lnx-combined-search
 title: "Combined find and grep operations"
+order: 1
 xp: 35
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/search-test/logs"
     - "echo 'INFO: boot system' > $HOME/search-test/logs/error-log-1.txt"

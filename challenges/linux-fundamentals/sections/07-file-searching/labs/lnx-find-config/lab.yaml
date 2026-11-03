@@ -1,11 +1,11 @@
 id: lnx-find-config
 title: "Locate configuration files using find"
+order: 2
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/search-test/configs/prod"
     - "echo 'database_port=5432' > $HOME/search-test/configs/prod/app.conf"

@@ -1,5 +1,6 @@
 id: lnx-analyze-boot-service-order
 title: Analyze Boot Service Startup Order
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

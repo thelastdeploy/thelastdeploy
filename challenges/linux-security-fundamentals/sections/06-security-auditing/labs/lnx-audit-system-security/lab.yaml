@@ -1,5 +1,6 @@
 id: lnx-audit-system-security
 title: Perform System Security Baseline Audit
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-identify-security-weaknesses
 title: Identify System Security Weaknesses
+order: 2
 xp: 35
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-repair-package-state
 title: Resolve stale package manager lock files
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

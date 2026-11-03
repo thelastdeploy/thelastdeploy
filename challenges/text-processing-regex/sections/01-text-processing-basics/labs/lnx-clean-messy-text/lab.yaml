@@ -1,5 +1,6 @@
 id: lnx-clean-messy-text
 title: Clean Messy Text Using Stream Translation
+order: 1
 xp: 20
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-investigate-system-from-internals
 title: Investigate System Behavior using Linux Internals Capstone
+order: 1
 xp: 80
 environment:
   profile: tld-ubuntu

@@ -1,11 +1,11 @@
 id: dkr-create-first-dockerfile
 title: "Create first Dockerfile"
+order: 1
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-build/first-dockerfile"
     - "rm -f $HOME/docker-build/first-dockerfile/Dockerfile"

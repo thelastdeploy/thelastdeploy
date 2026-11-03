@@ -6,7 +6,6 @@ order: 1
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f host-port-occupier nginx-service || true"
     - "docker run -d --name host-port-occupier -p 8084:80 nginx:alpine"

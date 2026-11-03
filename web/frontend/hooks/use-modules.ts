@@ -45,7 +45,6 @@ export function updateModuleInMemoryCache(updated: ModuleDetail | Module): void 
         topic: updated.topic,
         difficulty: updated.difficulty,
         estimated_minutes: updated.estimated_minutes,
-        tags: updated.tags,
         total_xp: updated.total_xp,
         total_sections: updated.total_sections,
         completed_sections: completedSections,

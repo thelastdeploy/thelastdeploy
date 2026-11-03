@@ -9,10 +9,8 @@ export interface Lab {
   order: number;
   xp: number;
   estimated_minutes: number | null;
-  setup_type: string | null;
+  environment_profile?: string;
   seed_commands: string | null;
-  resource_limits_cpu: number | null;
-  resource_limits_mem: number | null;
   completed: boolean;
   xp_awarded: number;
 }
@@ -39,7 +37,7 @@ export interface Module {
   topic: Topic;
   difficulty: Difficulty;
   estimated_minutes: number | null;
-  tags: string[];
+  shared_seed?: string[];
   total_xp: number;
   total_sections: number;
   completed_sections: number;
@@ -57,7 +55,6 @@ export interface User {
   email: string;
   xp: number;
   unverified_xp: number;
-  streak_days: number;
   is_maintainer: boolean;
   completed_labs: string[];      // lab IDs (tld check)
   completed_sections: string[];  // section IDs (reading / future: questions)
@@ -71,10 +68,9 @@ export interface BuilderLabInput {
   order: number;
   xp: number;
   estimated_minutes: number | null;
-  setup_type: string | null;
+  environment_profile?: string;
   seed_commands: string[];
   validator_script: string;
-  cleanup_script: string;
 }
 
 export interface BuilderSectionInput {
@@ -93,7 +89,6 @@ export interface BuilderModuleInput {
   topic: string;
   difficulty: string;
   estimated_minutes: number | null;
-  tags: string[];
   sections: BuilderSectionInput[];
 }
 

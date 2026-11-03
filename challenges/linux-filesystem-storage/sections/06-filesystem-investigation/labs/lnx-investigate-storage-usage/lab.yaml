@@ -1,5 +1,6 @@
 id: lnx-investigate-storage-usage
 title: Investigate hidden large files consuming storage
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

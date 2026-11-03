@@ -1,11 +1,11 @@
 id: dkr-fix-broken-container-network
 title: "Fix broken container network"
+order: 1
 xp: 35
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f broken-web || true"
     - "docker network rm web-net || true"

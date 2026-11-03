@@ -1,5 +1,6 @@
 id: lnx-transform-configuration-data
 title: Transform Configuration Data using SED
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

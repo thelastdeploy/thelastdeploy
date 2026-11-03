@@ -1,5 +1,6 @@
 id: lnx-inspect-kernel-device-interface
 title: Inspect Kernel and Device Interfaces in sysfs and procfs
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

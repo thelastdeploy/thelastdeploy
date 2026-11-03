@@ -1,5 +1,6 @@
 id: lnx-automate-system-maintenance
 title: Automate System Maintenance and Logging
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

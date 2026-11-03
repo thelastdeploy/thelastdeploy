@@ -1,5 +1,6 @@
 id: lnx-secure-executable-permissions
 title: Secure SUID/SGID Executable Permissions
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

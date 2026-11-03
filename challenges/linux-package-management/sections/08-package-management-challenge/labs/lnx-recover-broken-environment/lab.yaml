@@ -1,5 +1,6 @@
 id: lnx-recover-broken-environment
 title: Recover broken package management environment
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

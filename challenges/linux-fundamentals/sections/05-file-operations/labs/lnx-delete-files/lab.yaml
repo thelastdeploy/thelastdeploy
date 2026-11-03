@@ -1,11 +1,11 @@
 id: lnx-delete-files
 title: "Delete files using rm"
+order: 3
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/files-test"
     - "echo 'delete-me' > $HOME/files-test/delete-me.txt"

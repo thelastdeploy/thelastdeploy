@@ -1,5 +1,6 @@
 id: lnx-trace-system-event
 title: Trace System Event Timelines across Logs
+order: 2
 xp: 35
 environment:
   profile: tld-ubuntu

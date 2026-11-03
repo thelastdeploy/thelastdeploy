@@ -1,5 +1,6 @@
 id: lnx-analyze-io-workload
 title: Analyze Storage I/O Workload Patterns
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

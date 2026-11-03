@@ -1,5 +1,6 @@
 id: lnx-create-first-script
 title: Create Your First Shell Script
+order: 1
 xp: 15
 environment:
   profile: tld-ubuntu

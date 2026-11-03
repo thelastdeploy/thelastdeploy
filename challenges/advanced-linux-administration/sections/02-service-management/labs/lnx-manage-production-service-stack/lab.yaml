@@ -1,5 +1,6 @@
 id: lnx-manage-production-service-stack
 title: "Manage Production Service Stack"
+order: 2
 xp: 55
 description: "Deploy, supervise, and secure a multi-container/multi-service application stack using systemd target units."
 environment:

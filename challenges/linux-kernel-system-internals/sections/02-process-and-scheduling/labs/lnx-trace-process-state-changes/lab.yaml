@@ -1,5 +1,6 @@
 id: lnx-trace-process-state-changes
 title: "Trace Process State Changes"
+order: 2
 xp: 55
 description: "Trace process state transitions between runnable, sleeping, and uninterruptible I/O wait."
 environment:

@@ -1,5 +1,6 @@
 id: lnx-correlate-system-performance
 title: Correlate System Performance Metrics
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

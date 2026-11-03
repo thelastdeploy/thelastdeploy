@@ -14,7 +14,7 @@ CLI_DEV  := $(BIN_DIR)/tld-dev
 	build build-dev dist install install-dev clean \
 	fmt vet test verify \
 	sync start stop check status login logout doctor publish \
-	dev-up dev-down dev-logs dev-seed images
+	dev-up dev-down dev-clean dev-migrate dev-logs dev-seed images
 
 # ==========================================================
 # Verification
@@ -172,6 +172,14 @@ dev-up:
 dev-down:
 	@echo "==> Stopping local development containers..."
 	docker compose -f $(COMPOSE_FILE) down
+
+dev-clean:
+	@echo "==> Stopping local development containers and wiping database volumes..."
+	docker compose -f $(COMPOSE_FILE) down -v
+
+dev-migrate:
+	@echo "==> Running Alembic migrations in local development..."
+	docker compose -f $(COMPOSE_FILE) run --rm --build db-seeder alembic upgrade head
 
 dev-logs:
 	docker compose -f $(COMPOSE_FILE) logs -f

@@ -1,5 +1,6 @@
 id: lnx-inspect-unit-configuration
 title: Inspect Unit Configuration
+order: 2
 xp: 30
 environment:
   profile: tld-ubuntu

@@ -1,11 +1,11 @@
 id: lnx-investigate-permission-issue
 title: Investigate Permission Issue
+order: 1
 xp: 35
 estimated_minutes: 10
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "sudo rm -f /var/log/app-server.log"
     - "sudo touch /var/log/app-server.log"

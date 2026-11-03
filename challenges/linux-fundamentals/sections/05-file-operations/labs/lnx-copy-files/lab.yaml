@@ -1,11 +1,11 @@
 id: lnx-copy-files
 title: "Copy files in a directory"
+order: 1
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/files-test"
     - "echo 'copy-me' > $HOME/files-test/source.txt"

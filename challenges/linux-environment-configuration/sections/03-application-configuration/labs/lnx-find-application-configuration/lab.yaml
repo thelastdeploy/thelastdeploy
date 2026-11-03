@@ -1,5 +1,6 @@
 id: lnx-find-application-configuration
 title: Locate System Configuration Files
+order: 1
 xp: 20
 environment:
   profile: tld-ubuntu

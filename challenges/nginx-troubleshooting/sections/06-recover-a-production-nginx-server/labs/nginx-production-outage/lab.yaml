@@ -1,11 +1,11 @@
 id: nginx-production-outage
 title: "Recover Production Outage"
+order: 1
 xp: 30
 estimated_minutes: 10
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which nginx || (sudo apt-get update -y && sudo apt-get install -y nginx)"
     - "sudo systemctl stop nginx || true"

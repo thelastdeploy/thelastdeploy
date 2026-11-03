@@ -1,5 +1,6 @@
 id: lnx-analyze-cpu-contention
 title: Analyze CPU Scheduler Contention
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

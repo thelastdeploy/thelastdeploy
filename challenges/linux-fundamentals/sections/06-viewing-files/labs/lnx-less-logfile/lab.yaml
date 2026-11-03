@@ -1,11 +1,11 @@
 id: lnx-less-logfile
 title: "Search logs using less"
+order: 3
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/view-test"
     - "echo '2026-06-10T11:59:00Z INFO System boot complete' > $HOME/view-test/system.log"

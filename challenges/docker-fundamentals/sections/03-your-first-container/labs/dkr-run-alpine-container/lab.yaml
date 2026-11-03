@@ -1,11 +1,11 @@
 id: dkr-run-alpine-container
 title: "Run alpine container"
+order: 1
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f my-alpine-run || true"
 version: 2

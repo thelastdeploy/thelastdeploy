@@ -1,11 +1,11 @@
 id: dkr-fix-broken-dockerfile
 title: "Fix broken Dockerfile"
+order: 2
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/docker-build/broken-dockerfile"
     - "echo 'FROM alpine:3.18' > $HOME/docker-build/broken-dockerfile/Dockerfile"

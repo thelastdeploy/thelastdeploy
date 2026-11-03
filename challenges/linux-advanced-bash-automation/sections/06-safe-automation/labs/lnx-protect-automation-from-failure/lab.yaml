@@ -1,5 +1,6 @@
 id: lnx-protect-automation-from-failure
 title: Protect Automation with Lock Files and Atomic Swaps
+order: 2
 xp: 45
 environment:
   profile: tld-ubuntu

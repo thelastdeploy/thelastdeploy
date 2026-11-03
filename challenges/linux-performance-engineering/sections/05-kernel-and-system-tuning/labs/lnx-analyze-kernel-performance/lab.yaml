@@ -1,5 +1,6 @@
 id: lnx-analyze-kernel-performance
 title: Analyze Kernel Subsystem Tuneables
+order: 1
 xp: 45
 environment:
   profile: tld-ubuntu

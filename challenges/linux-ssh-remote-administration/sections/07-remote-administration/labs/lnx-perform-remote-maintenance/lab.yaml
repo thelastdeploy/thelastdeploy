@@ -1,5 +1,6 @@
 id: lnx-perform-remote-maintenance
 title: Perform Automated Remote Maintenance
+order: 1
 xp: 40
 environment:
   profile: tld-ubuntu

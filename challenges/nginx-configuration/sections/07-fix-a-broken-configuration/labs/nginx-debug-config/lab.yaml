@@ -1,11 +1,11 @@
 id: nginx-debug-config
 title: "Debug Config Conflict"
+order: 1
 xp: 50
 estimated_minutes: 15
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which nginx || (apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx)"
     - "sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak || true"

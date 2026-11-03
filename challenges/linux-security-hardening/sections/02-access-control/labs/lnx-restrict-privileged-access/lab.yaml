@@ -1,5 +1,6 @@
 id: lnx-restrict-privileged-access
 title: Restrict Privileged Access with sudo
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

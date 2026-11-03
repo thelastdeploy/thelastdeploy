@@ -1,5 +1,6 @@
 id: lnx-automate-production-maintenance
 title: Automate System Maintenance Task
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

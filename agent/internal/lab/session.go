@@ -13,13 +13,13 @@ import (
 
 // Session represents an active lab session written to ~/.tld/session.json
 type Session struct {
-	LabID         string    `json:"lab_id"`
-	ModuleID      string    `json:"module_id"`
-	SectionID     string    `json:"section_id"`
-	StartedAt     time.Time `json:"started_at"`
-	ValidatorPath string    `json:"validator_path"`
-	SetupType     string    `json:"setup_type"`
-	ContainerID   string    `json:"container_id,omitempty"`
+	LabID              string    `json:"lab_id"`
+	ModuleID           string    `json:"module_id"`
+	SectionID          string    `json:"section_id"`
+	StartedAt          time.Time `json:"started_at"`
+	ValidatorPath      string    `json:"validator_path"`
+	EnvironmentProfile string    `json:"environment_profile,omitempty"`
+	ContainerID        string    `json:"container_id,omitempty"`
 }
 
 func sessionPath() (string, error) {

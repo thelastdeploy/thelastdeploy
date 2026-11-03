@@ -1,5 +1,6 @@
 id: lnx-collect-process-and-network-evidence
 title: Collect Volatile Process and Network Evidence
+order: 1
 xp: 50
 environment:
   profile: tld-ubuntu

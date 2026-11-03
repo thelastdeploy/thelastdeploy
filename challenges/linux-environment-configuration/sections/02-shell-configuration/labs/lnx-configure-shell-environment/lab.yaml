@@ -1,5 +1,6 @@
 id: lnx-configure-shell-environment
 title: Configure Shell Environment in Bashrc
+order: 1
 xp: 20
 environment:
   profile: tld-ubuntu

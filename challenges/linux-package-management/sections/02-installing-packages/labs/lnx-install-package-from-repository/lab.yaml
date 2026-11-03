@@ -1,5 +1,6 @@
 id: lnx-install-package-from-repository
 title: Install package from repository
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

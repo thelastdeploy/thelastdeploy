@@ -1,11 +1,11 @@
 id: dkr-limit-container-memory
 title: "Limit container memory"
+order: 1
 xp: 30
 estimated_minutes: 5
 environment:
   profile: tld-dind
 setup:
-  type: shell
   seed_commands:
     - "docker rm -f memory-capped || true"
 version: 2

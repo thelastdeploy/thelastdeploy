@@ -1,11 +1,11 @@
 id: tf-show-state
 title: Show Details of a State Resource
+order: 2
 xp: 15
 estimated_minutes: 4
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - rm -rf $HOME/terraform-state-challenge
     - mkdir -p $HOME/terraform-state-challenge

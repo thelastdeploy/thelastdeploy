@@ -1,5 +1,6 @@
 id: lnx-understand-effective-permissions
 title: Understand Effective Permission Evaluation
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

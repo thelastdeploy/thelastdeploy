@@ -1,5 +1,6 @@
 id: lnx-inspect-systemd-units
 title: Inspect systemd Units
+order: 2
 xp: 25
 environment:
   profile: tld-ubuntu

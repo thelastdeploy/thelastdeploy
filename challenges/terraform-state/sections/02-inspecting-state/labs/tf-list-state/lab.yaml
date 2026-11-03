@@ -1,11 +1,11 @@
 id: tf-list-state
 title: List Resources in State
+order: 1
 xp: 15
 estimated_minutes: 4
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - rm -rf $HOME/terraform-state-challenge
     - mkdir -p $HOME/terraform-state-challenge

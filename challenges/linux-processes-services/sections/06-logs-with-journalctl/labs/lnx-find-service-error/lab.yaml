@@ -1,11 +1,11 @@
 id: lnx-find-service-error
 title: "Retrieve a secret logged by a service"
+order: 1
 xp: 20
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "mkdir -p $HOME/logs-test"
     - "rm -f $HOME/logs-test/secret_key.txt"

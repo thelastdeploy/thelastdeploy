@@ -1,5 +1,6 @@
 id: lnx-find-relevant-files
 title: Locate relevant audit files using find predicates
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

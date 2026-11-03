@@ -1,5 +1,6 @@
 id: lnx-locate-system-data
 title: Locate configuration files using hierarchy principles
+order: 2
 xp: 20
 environment:
   profile: tld-ubuntu

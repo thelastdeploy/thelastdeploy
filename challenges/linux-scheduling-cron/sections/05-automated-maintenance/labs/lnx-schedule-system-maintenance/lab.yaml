@@ -1,5 +1,6 @@
 id: lnx-schedule-system-maintenance
 title: Configure System-Wide Crontab Maintenance
+order: 2
 xp: 40
 environment:
   profile: tld-ubuntu

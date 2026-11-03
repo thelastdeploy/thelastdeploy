@@ -1,5 +1,6 @@
 id: lnx-install-required-package
 title: Verify required package installation
+order: 2
 xp: 20
 environment:
   profile: tld-ubuntu

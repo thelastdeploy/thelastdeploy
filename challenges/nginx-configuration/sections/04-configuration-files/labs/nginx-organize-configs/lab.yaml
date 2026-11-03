@@ -1,11 +1,11 @@
 id: nginx-organize-configs
 title: "Organize Configs"
+order: 2
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "sudo mkdir -p /etc/nginx/conf.d"
     - "sudo rm -f /etc/nginx/conf.d/upstream.conf"

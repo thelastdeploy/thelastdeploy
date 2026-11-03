@@ -1,11 +1,11 @@
 id: nginx-root-directive
 title: "Configure Root Directive"
+order: 2
 xp: 25
 estimated_minutes: 5
 environment:
   profile: tld-ubuntu
 setup:
-  type: shell
   seed_commands:
     - "which nginx || (apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y nginx)"
     # Ensure test directories and files exist

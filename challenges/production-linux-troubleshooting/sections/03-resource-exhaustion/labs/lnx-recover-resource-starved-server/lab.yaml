@@ -1,5 +1,6 @@
 id: lnx-recover-resource-starved-server
 title: Recover Resource-Starved Production Server
+order: 2
 xp: 55
 environment:
   profile: tld-ubuntu

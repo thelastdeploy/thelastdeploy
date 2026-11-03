@@ -1,5 +1,6 @@
 id: lnx-build-reusable-shell-library
 title: Build a Reusable Shell Library
+order: 1
 xp: 35
 environment:
   profile: tld-ubuntu

@@ -1,5 +1,6 @@
 id: lnx-filter-journal-events
 title: Filter Journal Events by Priority and Format
+order: 1
 xp: 30
 environment:
   profile: tld-ubuntu

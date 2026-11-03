@@ -1,5 +1,6 @@
 id: lnx-analyze-structured-output
 title: Analyze Structured Output with AWK
+order: 1
 xp: 25
 environment:
   profile: tld-ubuntu

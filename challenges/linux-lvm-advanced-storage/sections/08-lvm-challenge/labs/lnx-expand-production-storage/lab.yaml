@@ -1,5 +1,6 @@
 id: lnx-expand-production-storage
 title: Expand Production Application Storage Capstone
+order: 1
 xp: 75
 environment:
   profile: tld-ubuntu

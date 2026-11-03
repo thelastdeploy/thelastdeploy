@@ -1,5 +1,6 @@
 id: lnx-investigate-privilege-access
 title: Investigate Permissive Sudoers Rules
+order: 2
 xp: 35
 environment:
   profile: tld-ubuntu
