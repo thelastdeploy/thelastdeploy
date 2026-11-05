@@ -53,8 +53,8 @@ erDiagram
         int id PK
         int user_id FK
         string lab_id FK
-        boolean completed
         int xp_awarded
+        datetime created_at
     }
 ```
 
@@ -84,5 +84,5 @@ erDiagram
 * **`labs`**: `id` (String 100, PK, e.g. `"lnx-file-permissions"`), `module_id` (FK), `section_id` (FK), `title`, `xp`, `validator_script`.
 
 ### 4. `lab_progress` & `section_progress`
-* **`lab_progress`**: Tracks lab completion via `tld check`. Foreign keys to `users.id` and `labs.id`, storing `completed` boolean, `xp_awarded`, and `completed_at` timestamp.
-* **`section_progress`**: Tracks reading section completion triggered by reading scroll position.
+* **`lab_progress`**: Tracks lab completion via `tld check`. Foreign keys to `users.id` and `labs.id`, storing `xp_awarded` and `created_at` timestamp.
+* **`section_progress`**: Tracks reading section completion triggered by reading scroll position. Foreign keys to `users.id` and `sections.id`, storing `xp_awarded` and `created_at` timestamp.

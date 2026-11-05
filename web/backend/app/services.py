@@ -20,7 +20,6 @@ async def recalculate_and_update_user_xp(user: User, db: AsyncSession) -> tuple[
         .join(Module, Module.id == Lab.module_id)
         .where(
             LabProgress.user_id == user.id,
-            LabProgress.completed == True,
             Module.status == 'verified'
         )
     ) or 0
@@ -31,7 +30,6 @@ async def recalculate_and_update_user_xp(user: User, db: AsyncSession) -> tuple[
         .join(Module, Module.id == Section.module_id)
         .where(
             SectionProgress.user_id == user.id,
-            SectionProgress.completed == True,
             Module.status == 'verified'
         )
     ) or 0
@@ -43,7 +41,6 @@ async def recalculate_and_update_user_xp(user: User, db: AsyncSession) -> tuple[
         .join(Module, Module.id == Lab.module_id)
         .where(
             LabProgress.user_id == user.id,
-            LabProgress.completed == True,
             Module.status != 'verified'
         )
     ) or 0
@@ -54,7 +51,6 @@ async def recalculate_and_update_user_xp(user: User, db: AsyncSession) -> tuple[
         .join(Module, Module.id == Section.module_id)
         .where(
             SectionProgress.user_id == user.id,
-            SectionProgress.completed == True,
             Module.status != 'verified'
         )
     ) or 0
@@ -88,7 +84,6 @@ async def check_and_track_module_completion(user_id: int, module_id: str, db: As
         select(func.count(SectionProgress.id)).where(
             SectionProgress.user_id == user_id,
             SectionProgress.module_id == module_id,
-            SectionProgress.completed == True,
         )
     ) or 0
 
@@ -96,7 +91,6 @@ async def check_and_track_module_completion(user_id: int, module_id: str, db: As
         select(func.count(LabProgress.id)).where(
             LabProgress.user_id == user_id,
             LabProgress.module_id == module_id,
-            LabProgress.completed == True,
         )
     ) or 0
 

@@ -98,25 +98,17 @@ async def submit_result(
     )
     existing = prog_result.scalar_one_or_none()
 
-    if existing and existing.completed:
+    if existing:
         return ResultResponse(xp_awarded=0)
 
     # 6. First completion — award XP
-    if existing:
-        existing.completed = True
-        existing.xp_awarded = lab.xp
-        existing.completed_at = datetime.now(timezone.utc)
-        db.add(existing)
-    else:
-        db.add(LabProgress(
-            user_id=current_user.id,
-            lab_id=body.lab_id,
-            section_id=lab.section_id,
-            module_id=lab.module_id,
-            completed=True,
-            xp_awarded=lab.xp,
-            completed_at=datetime.now(timezone.utc),
-        ))
+    db.add(LabProgress(
+        user_id=current_user.id,
+        lab_id=body.lab_id,
+        section_id=lab.section_id,
+        module_id=lab.module_id,
+        xp_awarded=lab.xp,
+    ))
 
     await db.flush()
 

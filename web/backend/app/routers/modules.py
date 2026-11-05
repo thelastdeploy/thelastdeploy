@@ -59,7 +59,6 @@ async def list_modules(
         .where(
             SectionProgress.module_id == Module.id,
             SectionProgress.user_id == current_user.id,
-            SectionProgress.completed == True
         )
         .scalar_subquery()
     ) if current_user else select(0).scalar_subquery()
@@ -156,7 +155,6 @@ async def get_all_modules_full(
         sp_result = await db.execute(
             select(SectionProgress.section_id).where(
                 SectionProgress.user_id == current_user.id,
-                SectionProgress.completed == True,
             )
         )
         completed_section_ids = {row[0] for row in sp_result.fetchall()}
@@ -175,7 +173,7 @@ async def get_all_modules_full(
                     estimated_minutes=lab.estimated_minutes,
                     environment_profile=lab.environment_profile,
                     seed_commands=lab.seed_commands,
-                    completed=lab_progress_map[lab.id].completed if lab.id in lab_progress_map else False,
+                    completed=lab.id in lab_progress_map,
                     xp_awarded=lab_progress_map[lab.id].xp_awarded if lab.id in lab_progress_map else 0,
                     version=lab.version,
                 )
@@ -260,7 +258,6 @@ async def get_module_full(
         sp_stmt = select(SectionProgress.section_id).where(
             SectionProgress.user_id == current_user.id,
             SectionProgress.module_id == module_id,
-            SectionProgress.completed == True,
         )
         lp_result, sp_result = await asyncio.gather(
             db.execute(lp_stmt),
@@ -282,7 +279,7 @@ async def get_module_full(
                 estimated_minutes=lab.estimated_minutes,
                 environment_profile=lab.environment_profile,
                 seed_commands=lab.seed_commands,
-                completed=lab_progress_map[lab.id].completed if lab.id in lab_progress_map else False,
+                completed=lab.id in lab_progress_map,
                 xp_awarded=lab_progress_map[lab.id].xp_awarded if lab.id in lab_progress_map else 0,
                 version=lab.version,
             )
@@ -461,7 +458,6 @@ async def verify_module(
         lp_result = await db.execute(
             select(LabProgress.user_id).where(
                 LabProgress.lab_id.in_(lab_ids),
-                LabProgress.completed == True
             )
         )
         user_ids.update(lp_result.scalars().all())
@@ -470,7 +466,6 @@ async def verify_module(
         sp_result = await db.execute(
             select(SectionProgress.user_id).where(
                 SectionProgress.section_id.in_(section_ids),
-                SectionProgress.completed == True
             )
         )
         user_ids.update(sp_result.scalars().all())
@@ -566,7 +561,6 @@ async def complete_reading_section(
             select(LabProgress.lab_id).where(
                 LabProgress.user_id == current_user.id,
                 LabProgress.section_id == section_id,
-                LabProgress.completed == True,
             )
         )
         completed_lab_ids = {row[0] for row in completed_labs.fetchall()}
@@ -585,25 +579,17 @@ async def complete_reading_section(
     )
     existing = prog_result.scalar_one_or_none()
 
-    if existing and existing.completed:
+    if existing:
         return CompleteSectionResponse(xp_awarded=0, total_xp=current_user.xp)
 
     xp = section.xp  # reading XP from section.yaml (labs XP already awarded separately)
 
-    if existing:
-        existing.completed = True
-        existing.xp_awarded = xp
-        existing.completed_at = datetime.now(timezone.utc)
-        db.add(existing)
-    else:
-        db.add(SectionProgress(
-            user_id=current_user.id,
-            module_id=module_id,
-            section_id=section_id,
-            completed=True,
-            xp_awarded=xp,
-            completed_at=datetime.now(timezone.utc),
-        ))
+    db.add(SectionProgress(
+        user_id=current_user.id,
+        module_id=module_id,
+        section_id=section_id,
+        xp_awarded=xp,
+    ))
 
     await db.flush()
 

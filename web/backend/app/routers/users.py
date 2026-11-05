@@ -18,21 +18,19 @@ async def get_me(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    # 1. Fetch lab progress in a single query, ordered by completion date descending
+    # 1. Fetch lab progress in a single query, ordered by creation date descending
     lab_progress_list = (await db.execute(
         select(LabProgress).where(
             LabProgress.user_id == current_user.id,
-            LabProgress.completed == True,
-        ).order_by(LabProgress.completed_at.desc())
+        ).order_by(LabProgress.created_at.desc())
     )).scalars().all()
     completed_labs = [p.lab_id for p in lab_progress_list]
 
-    # 2. Fetch section progress in a single query, ordered by completion date descending
+    # 2. Fetch section progress in a single query, ordered by creation date descending
     section_progress_list = (await db.execute(
         select(SectionProgress).where(
             SectionProgress.user_id == current_user.id,
-            SectionProgress.completed == True,
-        ).order_by(SectionProgress.completed_at.desc())
+        ).order_by(SectionProgress.created_at.desc())
     )).scalars().all()
     completed_sections = [p.section_id for p in section_progress_list]
 
