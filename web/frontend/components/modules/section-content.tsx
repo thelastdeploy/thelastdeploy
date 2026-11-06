@@ -109,9 +109,17 @@ export function SectionContent({
       </div>
 
       {/* Markdown — uses the same shared renderer as the builder live preview */}
-      {section.content && (
+      {section.content ? (
         <div className="mb-10">
           <MarkdownRenderer content={section.content} />
+        </div>
+      ) : (
+        <div className="space-y-4 mb-10 animate-pulse">
+          <div className="h-4 bg-muted rounded w-3/4" />
+          <div className="h-4 bg-muted rounded w-full" />
+          <div className="h-4 bg-muted rounded w-5/6" />
+          <div className="h-28 bg-muted/40 rounded-xl my-4" />
+          <div className="h-4 bg-muted rounded w-2/3" />
         </div>
       )}
 
