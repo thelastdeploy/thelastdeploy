@@ -1,6 +1,7 @@
 # web/backend/app/schemas.py
 
 from datetime import datetime
+from typing import Any
 from pydantic import BaseModel, EmailStr
 
 
@@ -35,6 +36,17 @@ class ResendVerificationRequest(BaseModel):
 
 class MessageResponse(BaseModel):
     detail: str
+
+
+class SessionResponse(BaseModel):
+    id: int
+    client_type: str
+    user_agent: str | None = None
+    ip_address: str | None = None
+    created_at: datetime
+    expires_at: datetime
+    last_used_at: datetime | None = None
+    is_current: bool = False
 
 class CLIDeviceCodeResponse(BaseModel):
     device_code: str
@@ -73,7 +85,7 @@ class PasswordUpdateRequest(BaseModel):
 class LabSchema(BaseModel):
     id: str
     title: str
-    order: int
+    order: int = 0
     xp: int
     estimated_minutes: int | None = None
     environment_profile: str = "tld-ubuntu"
@@ -89,8 +101,8 @@ class LabSchema(BaseModel):
 class LabDetail(BaseModel):
     """Response for GET /labs/:id — includes location metadata for agent sync."""
     id: str
-    module_id: str
-    section_id: str
+    module_id: str = ""
+    section_id: str = ""
     data: LabSchema
 
 
@@ -99,7 +111,7 @@ class LabDetail(BaseModel):
 class SectionSchema(BaseModel):
     id: str
     title: str
-    order: int
+    order: int = 0
     xp: int = 10                    # reading XP from section.yaml
     content: str | None = None
     labs: list[LabSchema] = []
@@ -202,6 +214,7 @@ class MeResponse(BaseModel):
     xp: int
     unverified_xp: int = 0
     is_maintainer: bool = False
+    is_admin: bool = False
     completed_labs: list[str]       # lab IDs (from lab_progress)
     completed_sections: list[str]   # section IDs (from section_progress — reading/questions)
 
@@ -266,5 +279,112 @@ class BuilderModuleResponse(BaseModel):
     total_sections: int
     total_xp: int
     created_at: datetime
+
+
+# --- Module B: Organizations & Workspaces ---
+
+class OrganizationResponse(BaseModel):
+    id: int
+    name: str
+    slug: str
+    type: str
+    is_platform: bool
+    status: str
+    domains: list[str] = []
+    roles: list[str] = []
+    total_xp: int = 0
+    unverified_xp: int = 0
+    joined_at: datetime | None = None
+
+
+class OrganizationCreateRequest(BaseModel):
+    name: str
+    slug: str
+    type: str = "university"  # 'university', 'company', 'other'
+    domains: list[str] = []
+
+
+class OrganizationMemberResponse(BaseModel):
+    membership_id: int
+    user_id: int
+    username: str
+    email: str
+    status: str
+    roles: list[str] = []
+    total_xp: int = 0
+    unverified_xp: int = 0
+    joined_at: datetime
+
+
+class CohortCreateRequest(BaseModel):
+    name: str
+    description: str | None = None
+    learning_paths: list[int] = []
+    starts_at: datetime
+    ends_at: datetime
+
+
+class CohortResponse(BaseModel):
+    id: int
+    organization_id: int
+    name: str
+    description: str | None = None
+    status: str
+    learning_paths: list[int] = []
+    starts_at: datetime
+    ends_at: datetime
+    created_at: datetime
+
+
+class LearningPathCreateRequest(BaseModel):
+    name: str
+    slug: str
+    description: str | None = None
+    visibility: str = "public"  # 'public' or 'private'
+    modules: list[str] = []
+
+
+class LearningPathResponse(BaseModel):
+    id: int
+    organization_id: int
+    name: str
+    slug: str
+    description: str | None = None
+    visibility: str
+    status: str
+    modules: list[str] = []
+    module_count: int = 0
+    created_at: datetime
+
+
+# --- Module E: Organization Settings & Configuration ---
+
+class OrgSettingItemResponse(BaseModel):
+    key: str
+    value: Any
+    category: str
+    description: str
+    data_type: str
+    updated_at: datetime | None = None
+
+
+class OrgSettingAdminItemResponse(BaseModel):
+    key: str
+    is_enabled: bool
+    value: Any | None = None
+    default: Any
+    category: str
+    description: str
+    data_type: str
+    updated_at: datetime | None = None
+
+
+class OrgSettingUpdateRequest(BaseModel):
+    value: Any
+
+
+class OrgSettingEnableRequest(BaseModel):
+    initial_value: Any | None = None
+
 
 

@@ -9,8 +9,12 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from app.dependencies import get_db, get_current_user
-from app.models import User, Module, Section, Lab, LabProgress, SectionProgress
+from app.dependencies import get_db, get_current_user, get_current_organization
+from app.models import (
+    User, Module, Section, Lab, LabProgress, SectionProgress,
+    Organization, OrganizationMembership
+)
+from app.services import log_audit_event
 from app.schemas import (
     BuilderModuleInput,
     BuilderModuleResponse,
@@ -207,35 +211,37 @@ async def publish_module_from_cli(
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
 ):
-    # 1. Check if module ID (slug) already exists
-    stmt = select(Module).where(Module.id == body.id)
+    organization, membership = org_and_mem
+
+    # 1. Resolve module in current organization
+    module_id = body.id if organization.is_platform else f"{organization.slug}-{body.id}"
+
+    stmt = select(Module).where(
+        Module.owner_organization_id == organization.id,
+        Module.id == module_id,
+    )
     result = await db.execute(stmt)
     existing_module = result.scalar_one_or_none()
 
     if existing_module:
-        # If it exists, only the author can overwrite it, and only if it's not verified yet
-        if existing_module.author_id != current_user.id:
+        # If it exists, only the author or org admin can overwrite it, and only if it's not verified yet
+        if existing_module.author_id is not None and existing_module.author_id != current_user.id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Module ID is already taken by another author"
+                detail="Module ID is already taken by another author in this organization",
             )
         if existing_module.status == "verified":
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Cannot modify or overwrite a verified module."
+                detail="Cannot modify or overwrite an officially verified module.",
             )
-        # Delete referencing progress rows first to avoid foreign key violations
-        await db.execute(delete(LabProgress).where(LabProgress.module_id == body.id))
-        await db.execute(delete(SectionProgress).where(SectionProgress.module_id == body.id))
-        # Now delete existing sections and labs to perform clean upsert/overwrite
-        await db.execute(delete(Lab).where(Lab.module_id == body.id))
-        await db.execute(delete(Section).where(Section.module_id == body.id))
-        db.expunge(existing_module)
 
     # 2. Setup/overwrite Module row
     module_data = {
-        "id": body.id,
+        "id": module_id,
+        "owner_organization_id": organization.id,
         "title": body.title,
         "description": body.description,
         "topic": body.topic,
@@ -243,62 +249,96 @@ async def publish_module_from_cli(
         "estimated_minutes": body.estimated_minutes,
         "version": 1,
         "total_xp": 0,  # Unverified modules have 0 XP
-        "total_sections": 0,
         "author_id": current_user.id,
+        "updated_by": current_user.id,
         "status": "published",
         "submitted_at": datetime.now(timezone.utc),
     }
 
     if existing_module:
-        stmt_update_module = select(Module).where(Module.id == body.id)
+        stmt_update_module = select(Module).where(Module.id == module_id)
         module = (await db.execute(stmt_update_module)).scalar_one()
         for key, val in module_data.items():
             setattr(module, key, val)
     else:
         module = Module(**module_data)
         db.add(module)
+        await db.flush()
 
-    # 3. Process Sections and Labs (Force XP to 0)
-    total_sections = 0
-
+    # 3. Process Sections and Labs
+    section_ids = []
     for s_input in body.sections:
-        total_sections += 1
+        sec_id = s_input.id if organization.is_platform else f"{organization.slug}-{s_input.id}"
+        section_ids.append(sec_id)
 
-        new_section = Section(
-            id=s_input.id,
-            module_id=body.id,
-            title=s_input.title,
-            order=s_input.order,
-            xp=0,  # Force section XP to 0 for unverified
-            content=s_input.content,
-            version=1,
-        )
-        db.add(new_section)
-
+        lab_ids = []
         for l_input in s_input.labs:
+            lab_id = l_input.id if organization.is_platform else f"{organization.slug}-{l_input.id}"
+            lab_ids.append(lab_id)
             seed_cmds_json = json.dumps(l_input.seed_commands) if l_input.seed_commands else None
             val_hash = _calculate_validator_hash(l_input.validator_script)
 
-            new_lab = Lab(
-                id=l_input.id,
-                module_id=body.id,
-                section_id=s_input.id,
-                title=l_input.title,
-                order=l_input.order,
-                xp=0,  # Force lab XP to 0 for unverified
-                estimated_minutes=l_input.estimated_minutes,
-                seed_commands=seed_cmds_json,
-                version=1,
-                validator_hash=val_hash,
-                validator_script=l_input.validator_script,
-            )
-            db.add(new_lab)
+            l_res = await db.execute(select(Lab).where(Lab.id == lab_id))
+            lab = l_res.scalar_one_or_none()
+            if not lab:
+                lab = Lab(
+                    id=lab_id,
+                    owner_organization_id=organization.id,
+                    title=l_input.title,
+                    xp=0,
+                    estimated_minutes=l_input.estimated_minutes,
+                    seed_commands=seed_cmds_json,
+                    version=1,
+                    validator_hash=val_hash,
+                    validator_script=l_input.validator_script,
+                    created_by=current_user.id,
+                )
+                db.add(lab)
+            else:
+                lab.title = l_input.title
+                lab.seed_commands = seed_cmds_json
+                lab.validator_hash = val_hash
+                lab.validator_script = l_input.validator_script
+                db.add(lab)
+            await db.flush()
 
-    module.total_sections = total_sections
+        # Upsert section
+        s_res = await db.execute(select(Section).where(Section.id == sec_id))
+        section = s_res.scalar_one_or_none()
+        if not section:
+            section = Section(
+                id=sec_id,
+                owner_organization_id=organization.id,
+                title=s_input.title,
+                xp=0,
+                content=s_input.content,
+                labs=lab_ids,
+                version=1,
+                created_by=current_user.id,
+            )
+            db.add(section)
+        else:
+            section.title = s_input.title
+            section.content = s_input.content
+            section.labs = lab_ids
+            db.add(section)
+        await db.flush()
+
+    module.sections = section_ids
     module.total_xp = 0
 
     await db.commit()
     await db.refresh(module)
+
+    await log_audit_event(
+        db,
+        action="module.submitted",
+        entity_type="module",
+        entity_id=module.id,
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"id": module.id, "sections_count": len(section_ids)},
+    )
 
     # 4. Generate the YAML payload and trigger GitHub push in the background
     sections_data = [
@@ -410,10 +450,16 @@ async def delete_module(
         )
 
     # CASCADE delete Sections & Labs
-    await db.execute(delete(LabProgress).where(LabProgress.module_id == module_id))
-    await db.execute(delete(SectionProgress).where(SectionProgress.module_id == module_id))
-    await db.execute(delete(Lab).where(Lab.module_id == module_id))
-    await db.execute(delete(Section).where(Section.module_id == module_id))
+    sec_ids = module.sections or []
+    if sec_ids:
+        sec_rows = (await db.execute(select(Section).where(Section.id.in_(sec_ids)))).scalars().all()
+        lab_ids = [lid for s in sec_rows for lid in (s.labs or [])]
+        if lab_ids:
+            await db.execute(delete(LabProgress).where(LabProgress.lab_id.in_(lab_ids)))
+            await db.execute(delete(Lab).where(Lab.id.in_(lab_ids)))
+        await db.execute(delete(SectionProgress).where(SectionProgress.section_id.in_(sec_ids)))
+        await db.execute(delete(Section).where(Section.id.in_(sec_ids)))
+
     await db.execute(delete(Module).where(Module.id == module_id))
 
     await db.commit()

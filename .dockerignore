@@ -1,0 +1,10 @@
+.next
+node_modules
+.git
+.agents
+.gemini
+__pycache__
+*.pyc
+dummy_logins.md
+local_dev_logins.md
+

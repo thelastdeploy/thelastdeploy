@@ -55,7 +55,7 @@ export default function MaintainerDashboard() {
       return;
     }
 
-    if (user.id !== 2 && !user.is_maintainer) {
+    if (!user.is_maintainer && !user.is_admin) {
       setLoading(false);
       return;
     }
@@ -64,7 +64,7 @@ export default function MaintainerDashboard() {
   }, [user, authLoading, router]);
 
   useEffect(() => {
-    if (user && user.id === 2 && activeTab === "maintainers") {
+    if (user && user.is_admin && activeTab === "maintainers") {
       loadMaintainers();
     }
   }, [user, activeTab]);
@@ -184,7 +184,7 @@ export default function MaintainerDashboard() {
   }
 
   // Admin / Maintainer protection view
-  if (!user || (user.id !== 2 && !user.is_maintainer)) {
+  if (!user || (!user.is_maintainer && !user.is_admin)) {
     return (
       <div className="max-w-md mx-auto px-6 py-24 text-center">
         <div className="p-4 rounded-full bg-red-500/10 text-red-400 inline-block mb-6">
@@ -218,7 +218,7 @@ export default function MaintainerDashboard() {
       </div>
 
       {/* Tabs (Super Admin only) */}
-      {user && user.id === 2 && (
+      {user && user.is_admin && (
         <div className="flex gap-6 border-b border-border/60 mb-8 pb-px">
           <button
             onClick={() => setActiveTab("verify")}
@@ -239,7 +239,7 @@ export default function MaintainerDashboard() {
         </div>
       )}
 
-      {activeTab === "maintainers" && user.id === 2 ? (
+      {activeTab === "maintainers" && user.is_admin ? (
         <div className="rounded-2xl border border-border bg-card p-6 shadow-sm space-y-6">
           <div>
             <h2 className="text-xl font-black text-foreground mb-1">Manage Team Maintainers</h2>

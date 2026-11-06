@@ -80,3 +80,8 @@ coverage.xml
 *.bak
 *.tmp
 *.orig
+
+# Local dev credentials (NEVER commit)
+dummy_logins.md
+local_dev_logins.md
+pre_v2_migration.dump

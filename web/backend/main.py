@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.analytics import analytics
-from app.routers import auth, modules, results, users, builder, analytics as analytics_router
+from app.routers import auth, modules, results, users, builder, analytics as analytics_router, organizations, settings as settings_router
 
 
 @asynccontextmanager
@@ -58,6 +58,9 @@ app.include_router(results.router, tags=["results"])
 app.include_router(users.router, tags=["users"])
 app.include_router(builder.router, tags=["builder"])
 app.include_router(analytics_router.router, tags=["analytics"])
+app.include_router(organizations.router)
+app.include_router(settings_router.router)
+app.include_router(settings_router.admin_router)
 
 
 @app.get("/")

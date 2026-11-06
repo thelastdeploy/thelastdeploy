@@ -10,7 +10,14 @@ from alembic import context
 
 from app.config import settings
 from app.database import Base, db_url
-from app.models import User, Module, Section, Lab, LabProgress, CLIDeviceAuth, SectionProgress  # noqa: F401 — registers models
+from app.models import (  # noqa: F401 — registers models
+    User, UserSession, CLIDeviceAuth, Module, Section, Lab, LabProgress, SectionProgress,
+    Organization, OrganizationMembership, Permission, Role,
+    RolePermission, OrganizationRoleAvailability, MembershipRole, PlatformRole,
+    PlatformPermission, PlatformRolePermission, PlatformUserRole, Cohort,
+    CohortMembership, CohortInvite, LearningPath, AuditLog,
+    OrganizationSettingAvailability, OrganizationSetting
+)
 
 config = context.config
 config.set_main_option("sqlalchemy.url", db_url)

@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from app.config import settings
 from app.database import AsyncSessionLocal
-from app.models import User
+from app.models import User, Organization, OrganizationMembership, Role, MembershipRole, PlatformRole, PlatformUserRole
 from app.auth import hash_password
 from seed.seed_modules import seed as seed_modules
 
@@ -56,9 +56,29 @@ async def seed_dummy_users():
                 password_hash=hash_password("password123"),
                 is_verified=True,
                 is_maintainer=True,
-                xp=500,
             )
             db.add(dev_user)
+            await db.flush()
+
+            platform_org = (await db.execute(select(Organization).where(Organization.is_platform == True))).scalar_one_or_none()
+            if platform_org:
+                mem = OrganizationMembership(
+                    organization_id=platform_org.id,
+                    user_id=dev_user.id,
+                    total_xp=500,
+                    unverified_xp=0,
+                )
+                db.add(mem)
+                await db.flush()
+
+                admin_role = (await db.execute(select(Role).where(Role.slug == "admin"))).scalar_one_or_none()
+                if admin_role:
+                    db.add(MembershipRole(membership_id=mem.id, role_id=admin_role.id))
+
+                plat_role = (await db.execute(select(PlatformRole).where(PlatformRole.slug == "platform_admin"))).scalar_one_or_none()
+                if plat_role:
+                    db.add(PlatformUserRole(user_id=dev_user.id, platform_role_id=plat_role.id))
+
             await db.commit()
             print("  ✅ Created dev user: dev@example.com (password: password123)")
         else:

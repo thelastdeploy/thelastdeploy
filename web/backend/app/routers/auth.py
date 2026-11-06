@@ -4,14 +4,14 @@ import secrets
 import string
 import httpx
 from datetime import datetime, timedelta, timezone
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_, update
 from app.config import settings
-from app.dependencies import get_db, get_current_user
-from app.models import User, CLIDeviceAuth
-from app.auth import hash_password, verify_password, create_access_token, ensure_utc
+from app.dependencies import get_db, get_current_user, get_optional_session
+from app.models import User, CLIDeviceAuth, UserSession
+from app.auth import hash_password, verify_password, create_access_token, ensure_utc, hash_token
 from app.schemas import (
     RegisterRequest,
     LoginRequest,
@@ -26,6 +26,7 @@ from app.schemas import (
     CLITokenRequest,
     GitHubLoginRequest,
     GoogleLoginRequest,
+    SessionResponse,
 )
 from app.email import send_verification_email, send_reset_password_email
 from app.analytics import analytics, AnalyticsEvent
@@ -33,11 +34,45 @@ from app.analytics import analytics, AnalyticsEvent
 router = APIRouter()
 
 
-def _ensure_device_key(user: User) -> str:
-    """Generate and assign a device_key if the user doesn't have one yet."""
-    if not user.device_key:
-        user.device_key = secrets.token_hex(32)  # 64 char hex
-    return user.device_key
+async def _create_session(
+    db: AsyncSession,
+    user: User,
+    client_type: str = "web",
+    request: Request | None = None,
+    device_key: str | None = None,
+) -> tuple[UserSession, str]:
+    raw_token = secrets.token_urlsafe(32)
+    token_hash = hash_token(raw_token)
+    user_agent = request.headers.get("user-agent") if request else None
+    ip_address = None
+    if request:
+        forwarded = request.headers.get("x-forwarded-for")
+        if forwarded:
+            ip_address = forwarded.split(",")[0].strip()
+        elif request.headers.get("x-real-ip"):
+            ip_address = request.headers.get("x-real-ip").strip()
+        elif request.client:
+            ip_address = request.client.host
+    expires_at = datetime.now(timezone.utc) + timedelta(days=settings.ACCESS_TOKEN_EXPIRE_DAYS)
+
+    session = UserSession(
+        user_id=user.id,
+        session_token_hash=token_hash,
+        device_key=device_key or secrets.token_hex(32),
+        client_type=client_type,
+        user_agent=user_agent,
+        ip_address=ip_address,
+        expires_at=expires_at,
+        last_used_at=datetime.now(timezone.utc),
+    )
+    user.last_login_at = datetime.now(timezone.utc)
+    db.add(session)
+    db.add(user)
+    await db.commit()
+    await db.refresh(session)
+
+    jwt_token = create_access_token(user.id, session_id=session.id)
+    return session, jwt_token
 
 
 @router.post("/register", response_model=MessageResponse, status_code=status.HTTP_201_CREATED)
@@ -62,7 +97,6 @@ async def register(
         email=body.email,
         username=body.username,
         password_hash=hash_password(body.password),
-        device_key=secrets.token_hex(32),  # assign at registration
         is_verified=True if is_dev else False,
         verification_token=verification_token,
     )
@@ -98,7 +132,7 @@ async def check_username(username: str, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenResponse)
-async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
+async def login(body: LoginRequest, request: Request, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == body.email))
     user = result.scalar_one_or_none()
 
@@ -119,13 +153,8 @@ async def login(body: LoginRequest, db: AsyncSession = Depends(get_db)):
                 detail="Please verify your email address before logging in.",
             )
 
-    # Ensure device_key exists (handles existing users who registered before this change)
-    _ensure_device_key(user)
-    db.add(user)
-    await db.commit()
-
-    token = create_access_token(user.id)
-    return TokenResponse(access_token=token, device_key=user.device_key)
+    session, token = await _create_session(db, user, client_type="web", request=request)
+    return TokenResponse(access_token=token, device_key=session.device_key)
 
 
 @router.post("/verify-email", response_model=MessageResponse)
@@ -239,9 +268,11 @@ async def cli_device_code(db: AsyncSession = Depends(get_db)):
     user_code = f"{code[:4]}-{code[4:]}"
     
     expires_at = datetime.now(timezone.utc) + timedelta(minutes=5)
-    
+    device_code_hash = hash_token(device_code)
+
     device_auth = CLIDeviceAuth(
         device_code=device_code,
+        device_code_hash=device_code_hash,
         user_code=user_code,
         expires_at=expires_at,
         status="pending",
@@ -308,9 +339,15 @@ async def cli_authorize(
 
 
 @router.post("/cli/token")
-async def cli_token(body: CLITokenRequest, db: AsyncSession = Depends(get_db)):
+async def cli_token(body: CLITokenRequest, request: Request, db: AsyncSession = Depends(get_db)):
+    dev_hash = hash_token(body.device_code)
     result = await db.execute(
-        select(CLIDeviceAuth).where(CLIDeviceAuth.device_code == body.device_code)
+        select(CLIDeviceAuth).where(
+            or_(
+                CLIDeviceAuth.device_code_hash == dev_hash,
+                CLIDeviceAuth.device_code == body.device_code,
+            )
+        )
     )
     device_auth = result.scalar_one_or_none()
     
@@ -360,24 +397,100 @@ async def cli_token(body: CLITokenRequest, db: AsyncSession = Depends(get_db)):
                 content={"error": "invalid_grant", "error_description": "User not found."}
             )
             
-        _ensure_device_key(user)
-        
+        session, token = await _create_session(db, user, client_type="cli", request=request)
         device_auth.status = "completed"
         db.add(device_auth)
         await db.commit()
         
         analytics.track("anonymous", AnalyticsEvent.CLI_LOGIN)
 
-        token = create_access_token(user.id)
         return {
             "access_token": token,
             "token_type": "bearer",
-            "device_key": user.device_key,
+            "device_key": session.device_key,
         }
 
 
+# --- User Session Management Endpoints ---
+
+@router.get("/sessions", response_model=list[SessionResponse])
+async def list_sessions(
+    current_user: User = Depends(get_current_user),
+    current_session: UserSession | None = Depends(get_optional_session),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(UserSession)
+        .where(UserSession.user_id == current_user.id, UserSession.revoked_at.is_(None))
+        .order_by(UserSession.created_at.desc())
+    )
+    sessions = result.scalars().all()
+    current_sid = current_session.id if current_session else None
+    return [
+        SessionResponse(
+            id=s.id,
+            client_type=s.client_type,
+            user_agent=s.user_agent,
+            ip_address=s.ip_address,
+            created_at=s.created_at,
+            expires_at=s.expires_at,
+            last_used_at=s.last_used_at,
+            is_current=(s.id == current_sid),
+        )
+        for s in sessions
+    ]
+
+
+@router.delete("/sessions/{session_id}", response_model=MessageResponse)
+async def revoke_session(
+    session_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(UserSession).where(
+            UserSession.id == session_id,
+            UserSession.user_id == current_user.id,
+        )
+    )
+    session = result.scalar_one_or_none()
+    if not session:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    session.revoked_at = datetime.now(timezone.utc)
+    db.add(session)
+    await db.commit()
+    return MessageResponse(detail="Session revoked successfully.")
+
+
+@router.post("/logout", response_model=MessageResponse)
+async def logout(
+    current_session: UserSession | None = Depends(get_optional_session),
+    db: AsyncSession = Depends(get_db),
+):
+    if current_session:
+        current_session.revoked_at = datetime.now(timezone.utc)
+        db.add(current_session)
+        await db.commit()
+    return MessageResponse(detail="Logged out successfully.")
+
+
+@router.post("/logout-all", response_model=MessageResponse)
+async def logout_all(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    await db.execute(
+        update(UserSession)
+        .where(UserSession.user_id == current_user.id, UserSession.revoked_at.is_(None))
+        .values(revoked_at=datetime.now(timezone.utc))
+    )
+    await db.commit()
+    return MessageResponse(detail="All active sessions have been revoked.")
+
+
 @router.post("/github", response_model=TokenResponse)
-async def github_auth(body: GitHubLoginRequest, db: AsyncSession = Depends(get_db)):
+async def github_auth(body: GitHubLoginRequest, request: Request, db: AsyncSession = Depends(get_db)):
     if settings.ENVIRONMENT.lower() == "development":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -478,7 +591,6 @@ async def github_auth(body: GitHubLoginRequest, db: AsyncSession = Depends(get_d
             username=github_username,
             password_hash=hash_password(secrets.token_urlsafe(32)),  # secure placeholder
             is_verified=True,  # GitHub verified accounts are trusted
-            device_key=secrets.token_hex(32)
         )
         db.add(user)
         await db.commit()
@@ -508,17 +620,12 @@ async def github_auth(body: GitHubLoginRequest, db: AsyncSession = Depends(get_d
                 {"auth_provider": "github"},
             )
 
-    # Ensure device key exists
-    _ensure_device_key(user)
-    db.add(user)
-    await db.commit()
-
-    token = create_access_token(user.id)
-    return TokenResponse(access_token=token, device_key=user.device_key)
+    session, token = await _create_session(db, user, client_type="web", request=request)
+    return TokenResponse(access_token=token, device_key=session.device_key)
 
 
 @router.post("/google", response_model=TokenResponse)
-async def google_auth(body: GoogleLoginRequest, db: AsyncSession = Depends(get_db)):
+async def google_auth(body: GoogleLoginRequest, request: Request, db: AsyncSession = Depends(get_db)):
     if settings.ENVIRONMENT.lower() == "development":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -589,7 +696,6 @@ async def google_auth(body: GoogleLoginRequest, db: AsyncSession = Depends(get_d
             username=final_username,
             password_hash=hash_password(secrets.token_urlsafe(32)),  # secure placeholder
             is_verified=True,  # Google-verified accounts are trusted
-            device_key=secrets.token_hex(32),
         )
         db.add(user)
         await db.commit()
@@ -619,10 +725,5 @@ async def google_auth(body: GoogleLoginRequest, db: AsyncSession = Depends(get_d
                 {"auth_provider": "google"},
             )
 
-    # Ensure device key exists
-    _ensure_device_key(user)
-    db.add(user)
-    await db.commit()
-
-    token = create_access_token(user.id)
-    return TokenResponse(access_token=token, device_key=user.device_key)
+    session, token = await _create_session(db, user, client_type="web", request=request)
+    return TokenResponse(access_token=token, device_key=session.device_key)

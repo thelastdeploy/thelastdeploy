@@ -7,8 +7,8 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from app.dependencies import get_db, get_optional_user
-from app.models import Lab, LabProgress, User, SectionProgress, Module, Section
+from app.dependencies import get_db, get_optional_user, get_optional_session
+from app.models import Lab, LabProgress, User, UserSession, SectionProgress, Module, Section
 from app.schemas import ResultRequest, ResultResponse
 from app.services import recalculate_and_update_user_xp, check_and_track_module_completion
 from app.analytics import analytics, AnalyticsEvent
@@ -46,6 +46,7 @@ async def submit_result(
     body: ResultRequest,
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
+    current_session: UserSession | None = Depends(get_optional_session),
 ):
     # 1. Look up lab by globally unique lab_id
     result = await db.execute(
@@ -70,12 +71,27 @@ async def submit_result(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Authentication required to submit signed results",
             )
-        if not current_user.device_key:
+        signing_key = current_session.device_key if current_session and current_session.device_key else None
+        if not signing_key and current_user:
+            s_stmt = (
+                select(UserSession.device_key)
+                .where(
+                    UserSession.user_id == current_user.id,
+                    UserSession.revoked_at.is_(None),
+                    UserSession.device_key.isnot(None),
+                )
+                .order_by(UserSession.created_at.desc())
+                .limit(1)
+            )
+            s_res = await db.execute(s_stmt)
+            signing_key = s_res.scalar_one_or_none()
+
+        if not signing_key:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="No device key found — please log in again with tld login",
             )
-        if not _verify_signature(body, current_user.device_key):
+        if not _verify_signature(body, signing_key):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid signature",
@@ -101,19 +117,25 @@ async def submit_result(
     if existing:
         return ResultResponse(xp_awarded=0)
 
+    # Resolve containing section and module for progress logging
+    sec = (await db.execute(select(Section).where(Section.labs.contains([body.lab_id])))).scalars().first()
+    sec_id = sec.id if sec else None
+    mod = (await db.execute(select(Module).where(Module.sections.contains([sec_id])))).scalars().first() if sec_id else None
+    mod_id = mod.id if mod else None
+
     # 6. First completion — award XP
     db.add(LabProgress(
         user_id=current_user.id,
         lab_id=body.lab_id,
-        section_id=lab.section_id,
-        module_id=lab.module_id,
+        section_id=sec_id,
+        module_id=mod_id,
         xp_awarded=lab.xp,
     ))
 
     await db.flush()
 
-    # Recalculate true total XP by summing database entries to prevent and heal drift
-    await recalculate_and_update_user_xp(current_user, db)
+    # Recalculate true total XP by summing database entries for the lab's owner organization
+    await recalculate_and_update_user_xp(current_user, db, organization_id=lab.owner_organization_id)
 
     await db.commit()
     logger.info("Lab completed: user=%s lab=%s xp=%d", current_user.id, body.lab_id, lab.xp)

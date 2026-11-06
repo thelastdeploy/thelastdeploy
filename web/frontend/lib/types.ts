@@ -57,8 +57,22 @@ export interface User {
   xp: number;
   unverified_xp: number;
   is_maintainer: boolean;
+  is_admin?: boolean;
   completed_labs: string[];      // lab IDs (tld check)
   completed_sections: string[];  // section IDs (reading / future: questions)
+}
+
+export interface OrganizationMembershipInfo {
+  id: number;
+  name: string;
+  slug: string;
+  type: string;
+  is_platform: boolean;
+  status: string;
+  roles: string[];
+  total_xp: number;
+  unverified_xp: number;
+  joined_at: string;
 }
 
 export type ModuleStatus = 'draft' | 'published' | 'verified';

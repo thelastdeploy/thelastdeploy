@@ -1,11 +1,11 @@
 # web/backend/app/routers/users.py
 
 import secrets
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
-from app.dependencies import get_db, get_current_user
-from app.models import User, LabProgress, SectionProgress, Lab, Section, Module
+from sqlalchemy import select, func, delete
+from app.dependencies import get_db, get_current_user, is_user_maintainer, is_user_platform_admin
+from app.models import User, LabProgress, SectionProgress, Lab, Section, Module, PlatformRole, PlatformUserRole, Organization, OrganizationMembership
 from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse
 from app.auth import verify_password, hash_password
 from app.email import send_verification_email
@@ -15,6 +15,7 @@ router = APIRouter()
 
 @router.get("/me", response_model=MeResponse)
 async def get_me(
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -34,13 +35,40 @@ async def get_me(
     )).scalars().all()
     completed_sections = [p.section_id for p in section_progress_list]
 
+    maintainer_status = await is_user_maintainer(current_user, db)
+    admin_status = await is_user_platform_admin(current_user, db)
+
+    # Resolve active workspace organization membership to return workspace-scoped XP
+    org_slug = request.headers.get("x-organization-slug") or request.headers.get("x-organization")
+    org_id_hdr = request.headers.get("x-organization-id")
+
+    mem_stmt = select(OrganizationMembership).join(Organization)
+    if org_slug:
+        mem_stmt = mem_stmt.where(Organization.slug == org_slug.strip(), OrganizationMembership.user_id == current_user.id)
+    elif org_id_hdr:
+        try:
+            mem_stmt = mem_stmt.where(Organization.id == int(org_id_hdr), OrganizationMembership.user_id == current_user.id)
+        except (ValueError, TypeError):
+            pass
+    else:
+        # Default to TLD platform organization membership or first active membership
+        mem_stmt = mem_stmt.where(
+            OrganizationMembership.user_id == current_user.id,
+            OrganizationMembership.status != "removed",
+        ).order_by(Organization.is_platform.desc(), OrganizationMembership.created_at.asc())
+
+    active_membership = (await db.execute(mem_stmt)).scalars().first()
+    active_xp = int(active_membership.total_xp) if active_membership else 0
+    active_unverified_xp = int(active_membership.unverified_xp) if active_membership else 0
+
     return MeResponse(
         id=current_user.id,
         username=current_user.username,
         email=current_user.email,
-        xp=current_user.xp,
-        unverified_xp=current_user.unverified_xp,
-        is_maintainer=current_user.is_maintainer,
+        xp=active_xp,
+        unverified_xp=active_unverified_xp,
+        is_maintainer=maintainer_status,
+        is_admin=admin_status,
         completed_labs=completed_labs,
         completed_sections=completed_sections,
     )
@@ -121,10 +149,10 @@ async def list_maintainers(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.id != 2:
+    if not (await is_user_platform_admin(current_user, db)):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only Super Admin (ID 2) can manage maintainers",
+            detail="Only Platform Administrators can manage maintainers",
         )
     result = await db.execute(select(User).where(User.is_maintainer == True).order_by(User.username))
     maintainers = result.scalars().all()
@@ -137,10 +165,10 @@ async def add_maintainer(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.id != 2:
+    if not (await is_user_platform_admin(current_user, db)):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only Super Admin (ID 2) can manage maintainers",
+            detail="Only Platform Administrators can manage maintainers",
         )
     
     # Try finding user by username or email
@@ -154,6 +182,19 @@ async def add_maintainer(
         
     user.is_maintainer = True
     db.add(user)
+
+    # Synchronize platform staff role
+    admin_role = (await db.execute(select(PlatformRole).where(PlatformRole.slug == 'platform_admin'))).scalar_one_or_none()
+    if admin_role:
+        existing_pur = (await db.execute(
+            select(PlatformUserRole).where(
+                PlatformUserRole.user_id == user.id,
+                PlatformUserRole.platform_role_id == admin_role.id
+            )
+        )).scalar_one_or_none()
+        if not existing_pur:
+            db.add(PlatformUserRole(user_id=user.id, platform_role_id=admin_role.id, assigned_by=current_user.id))
+
     await db.commit()
     return {"detail": f"User '{user.username}' is now a maintainer."}
 
@@ -164,10 +205,10 @@ async def remove_maintainer(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    if current_user.id != 2:
+    if not (await is_user_platform_admin(current_user, db)):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only Super Admin (ID 2) can manage maintainers",
+            detail="Only Platform Administrators can manage maintainers",
         )
     
     user_res = await db.execute(select(User).where(User.id == user_id))
@@ -177,6 +218,7 @@ async def remove_maintainer(
         
     user.is_maintainer = False
     db.add(user)
+    await db.execute(delete(PlatformUserRole).where(PlatformUserRole.user_id == user.id))
     await db.commit()
     return {"detail": f"User '{user.username}' is no longer a maintainer."}
 

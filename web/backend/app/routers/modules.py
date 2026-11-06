@@ -2,12 +2,12 @@
 
 import asyncio
 from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from app.dependencies import get_db, get_current_user, get_optional_user
-from app.models import Lab, LabProgress, Module, Section, SectionProgress, User
+from app.dependencies import get_db, get_current_user, get_optional_user, is_user_maintainer
+from app.models import Lab, LabProgress, Module, Section, SectionProgress, User, Organization, OrganizationMembership
 from app.schemas import (
     AuthorInfo,
     CompleteSectionResponse,
@@ -37,12 +37,57 @@ def _total_xp(sections: list[Section], labs: list[Lab]) -> int:
     return sum(s.xp for s in sections) + sum(l.xp for l in labs)
 
 
+async def _get_visible_org_ids(request: Request, db: AsyncSession, current_user: User | None) -> list[int]:
+    """
+    Returns the organization IDs whose content is visible in the current request.
+    Strictly scoped to the active workspace organization!
+    1. If X-Organization-Slug / X-Organization is passed, return ONLY that organization's ID.
+    2. If X-Organization-Id is passed, return ONLY that organization's ID.
+    3. If neither header is passed and current_user is authenticated:
+       Resolve the user's primary/active organization membership.
+    4. If anonymous / unauthenticated with no header:
+       Default to the platform organization (TLD).
+    """
+    org_slug = request.headers.get("x-organization-slug") or request.headers.get("x-organization")
+    org_id_hdr = request.headers.get("x-organization-id")
+
+    if org_slug:
+        matched_id = await db.scalar(select(Organization.id).where(Organization.slug == org_slug.strip()))
+        if matched_id:
+            return [matched_id]
+
+    if org_id_hdr:
+        try:
+            target_id = int(org_id_hdr)
+            exists = await db.scalar(select(Organization.id).where(Organization.id == target_id))
+            if exists:
+                return [target_id]
+        except (ValueError, TypeError):
+            pass
+
+    if current_user:
+        primary_membership = (await db.execute(
+            select(OrganizationMembership.organization_id)
+            .where(
+                OrganizationMembership.user_id == current_user.id,
+                OrganizationMembership.status == "active",
+            )
+            .order_by(OrganizationMembership.created_at.asc())
+        )).scalars().first()
+        if primary_membership:
+            return [primary_membership]
+
+    platform_org_id = await db.scalar(select(Organization.id).where(Organization.is_platform == True))
+    return [platform_org_id] if platform_org_id else [1]
+
+
 # ---------------------------------------------------------------------------
 # GET /modules
 # ---------------------------------------------------------------------------
 
 @router.get("/modules", response_model=ModuleListResponse)
 async def list_modules(
+    request: Request,
     response: Response,
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
@@ -52,6 +97,8 @@ async def list_modules(
         response.headers["Cache-Control"] = "private, max-age=0, must-revalidate"
     else:
         response.headers["Cache-Control"] = "public, max-age=30, stale-while-revalidate=120"
+
+    visible_org_ids = await _get_visible_org_ids(request, db, current_user)
 
     # 1. Scalar subquery for completed sections for the current user
     completed_sections_sub = (
@@ -72,12 +119,15 @@ async def list_modules(
         Module.difficulty,
         Module.estimated_minutes,
         Module.total_xp,
-        Module.total_sections,
+        Module.sections,
         Module.version,
         Module.author_id,
         Module.status,
         completed_sections_sub.label("completed_sections")
-    ).where(Module.status != 'draft')
+    ).where(
+        Module.status != 'draft',
+        Module.owner_organization_id.in_(visible_org_ids),
+    )
     result = await db.execute(stmt)
     rows = result.all()
 
@@ -100,7 +150,7 @@ async def list_modules(
             difficulty=row.difficulty,
             estimated_minutes=row.estimated_minutes,
             total_xp=row.total_xp,
-            total_sections=row.total_sections,
+            total_sections=len(row.sections or []),
             completed_sections=row.completed_sections,
             version=row.version,
             author=_author_info(author),
@@ -118,6 +168,7 @@ async def list_modules(
 
 @router.get("/modules/all/full", response_model=list[ModuleDetail])
 async def get_all_modules_full(
+    request: Request,
     response: Response,
     exclude_content: bool = True,
     db: AsyncSession = Depends(get_db),
@@ -130,18 +181,35 @@ async def get_all_modules_full(
 
     from sqlalchemy.orm import selectinload
 
-    # 1. Eagerly load all modules, sections, labs, and author in 3 database queries
+    visible_org_ids = await _get_visible_org_ids(request, db, current_user)
+
+    # 1. Eagerly load all visible modules
     result = await db.execute(
         select(Module)
-        .where(Module.status != 'draft')
+        .where(
+            Module.status != 'draft',
+            Module.owner_organization_id.in_(visible_org_ids),
+        )
         .options(
-            selectinload(Module.sections).selectinload(Section.labs),
             selectinload(Module.author),
         )
     )
     modules = result.scalars().all()
 
-    # 2. Retrieve user's lab and section progress globally
+    # 2. Batch load all referenced sections and labs
+    all_sec_ids = [sid for m in modules for sid in (m.sections or [])]
+    sec_map: dict[str, Section] = {}
+    if all_sec_ids:
+        sec_rows = (await db.execute(select(Section).where(Section.id.in_(all_sec_ids)))).scalars().all()
+        sec_map = {s.id: s for s in sec_rows}
+
+    all_lab_ids = [lid for s in sec_map.values() for lid in (s.labs or [])]
+    lab_map: dict[str, Lab] = {}
+    if all_lab_ids:
+        lab_rows = (await db.execute(select(Lab).where(Lab.id.in_(all_lab_ids)))).scalars().all()
+        lab_map = {l.id: l for l in lab_rows}
+
+    # 3. Retrieve user's lab and section progress globally
     lab_progress_map = {}
     completed_section_ids = set()
 
@@ -159,16 +227,20 @@ async def get_all_modules_full(
         )
         completed_section_ids = {row[0] for row in sp_result.fetchall()}
 
-    # 3. Build ModuleDetail list
+    # 4. Build ModuleDetail list
     items = []
     for m in modules:
+        sec_ids = m.sections or []
+        sections_for_mod = [sec_map[sid] for sid in sec_ids if sid in sec_map]
         section_schemas = []
-        for s in m.sections:
+        for s_idx, s in enumerate(sections_for_mod):
+            lab_ids = s.labs or []
+            labs_for_sec = [lab_map[lid] for lid in lab_ids if lid in lab_map]
             lab_schemas = [
                 LabSchema(
                     id=lab.id,
                     title=lab.title,
-                    order=lab.order,
+                    order=l_idx + 1,
                     xp=lab.xp,
                     estimated_minutes=lab.estimated_minutes,
                     environment_profile=lab.environment_profile,
@@ -177,12 +249,12 @@ async def get_all_modules_full(
                     xp_awarded=lab_progress_map[lab.id].xp_awarded if lab.id in lab_progress_map else 0,
                     version=lab.version,
                 )
-                for lab in s.labs
+                for l_idx, lab in enumerate(labs_for_sec)
             ]
             section_schemas.append(SectionSchema(
                 id=s.id,
                 title=s.title,
-                order=s.order,
+                order=s_idx + 1,
                 xp=s.xp,
                 content=None if exclude_content else s.content,
                 labs=lab_schemas,
@@ -190,7 +262,7 @@ async def get_all_modules_full(
                 version=s.version,
             ))
 
-        all_labs = [lab for s in m.sections for lab in s.labs]
+        all_labs = [lab_map[lid] for s in sections_for_mod for lid in (s.labs or []) if lid in lab_map]
         items.append(ModuleDetail(
             id=m.id,
             title=m.title,
@@ -199,8 +271,8 @@ async def get_all_modules_full(
             difficulty=m.difficulty,
             estimated_minutes=m.estimated_minutes,
             shared_seed=m.shared_seed or [],
-            total_xp=_total_xp(m.sections, all_labs),
-            total_sections=len(m.sections),
+            total_xp=_total_xp(sections_for_mod, all_labs),
+            total_sections=len(sec_ids),
             sections=section_schemas,
             version=m.version,
             author=_author_info(m.author),
@@ -217,34 +289,41 @@ async def get_all_modules_full(
 
 @router.get("/modules/{module_id}/full", response_model=ModuleDetail)
 async def get_module_full(
+    request: Request,
     module_id: str,
     background_tasks: BackgroundTasks,
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
 ):
     from sqlalchemy.orm import selectinload
+
+    visible_org_ids = await _get_visible_org_ids(request, db, current_user)
+
     result = await db.execute(
         select(Module)
         .options(selectinload(Module.author))
-        .where(Module.id == module_id)
+        .where(
+            Module.id == module_id,
+            Module.owner_organization_id.in_(visible_org_ids),
+        )
     )
     module = result.scalar_one_or_none()
     if not module:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
 
-    # Fetch sections and labs in parallel
-    sec_stmt = select(Section).where(Section.module_id == module_id).order_by(Section.order)
-    lab_stmt = select(Lab).where(Lab.module_id == module_id).order_by(Lab.order)
-    sec_result, lab_result = await asyncio.gather(
-        db.execute(sec_stmt),
-        db.execute(lab_stmt),
-    )
-    sections = sec_result.scalars().all()
-    all_labs = lab_result.scalars().all()
+    sec_ids = module.sections or []
+    sec_map: dict[str, Section] = {}
+    sections: list[Section] = []
+    if sec_ids:
+        sec_rows = (await db.execute(select(Section).where(Section.id.in_(sec_ids)))).scalars().all()
+        sec_map = {s.id: s for s in sec_rows}
+        sections = [sec_map[sid] for sid in sec_ids if sid in sec_map]
 
-    labs_by_section: dict[str, list[Lab]] = {}
-    for lab in all_labs:
-        labs_by_section.setdefault(lab.section_id, []).append(lab)
+    all_lab_ids = [lid for s in sections for lid in (s.labs or [])]
+    lab_map: dict[str, Lab] = {}
+    if all_lab_ids:
+        lab_rows = (await db.execute(select(Lab).where(Lab.id.in_(all_lab_ids)))).scalars().all()
+        lab_map = {l.id: l for l in lab_rows}
 
     lab_progress_map: dict[str, LabProgress] = {}
     completed_section_ids: set[str] = set()
@@ -268,13 +347,14 @@ async def get_module_full(
         completed_section_ids = {row[0] for row in sp_result.fetchall()}
 
     section_schemas = []
-    for s in sections:
-        section_labs = labs_by_section.get(s.id, [])
+    for s_idx, s in enumerate(sections):
+        lab_ids = s.labs or []
+        section_labs = [lab_map[lid] for lid in lab_ids if lid in lab_map]
         lab_schemas = [
             LabSchema(
                 id=lab.id,
                 title=lab.title,
-                order=lab.order,
+                order=l_idx + 1,
                 xp=lab.xp,
                 estimated_minutes=lab.estimated_minutes,
                 environment_profile=lab.environment_profile,
@@ -283,18 +363,20 @@ async def get_module_full(
                 xp_awarded=lab_progress_map[lab.id].xp_awarded if lab.id in lab_progress_map else 0,
                 version=lab.version,
             )
-            for lab in section_labs
+            for l_idx, lab in enumerate(section_labs)
         ]
         section_schemas.append(SectionSchema(
             id=s.id,
             title=s.title,
-            order=s.order,
+            order=s_idx + 1,
             xp=s.xp,
             content=s.content,
             labs=lab_schemas,
             section_completed=s.id in completed_section_ids,
             version=s.version,
         ))
+
+    all_labs = [lab_map[lid] for s in sections for lid in (s.labs or []) if lid in lab_map]
 
     # Fire analytics in background — never blocks the response
     background_tasks.add_task(
@@ -347,10 +429,17 @@ async def get_module_summary(
     if not module:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
 
-    sec_result = await db.execute(select(Section).where(Section.module_id == module_id))
-    sections = sec_result.scalars().all()
-    lab_result = await db.execute(select(Lab).where(Lab.module_id == module_id))
-    labs = lab_result.scalars().all()
+    sec_ids = module.sections or []
+    sections: list[Section] = []
+    if sec_ids:
+        sec_rows = (await db.execute(select(Section).where(Section.id.in_(sec_ids)))).scalars().all()
+        sec_map = {s.id: s for s in sec_rows}
+        sections = [sec_map[sid] for sid in sec_ids if sid in sec_map]
+
+    all_lab_ids = [lid for s in sections for lid in (s.labs or [])]
+    labs: list[Lab] = []
+    if all_lab_ids:
+        labs = (await db.execute(select(Lab).where(Lab.id.in_(all_lab_ids)))).scalars().all()
 
     return ModuleSummary(
         id=module.id,
@@ -392,8 +481,9 @@ async def verify_module(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    # Admin (User ID 2) or maintainers may verify modules
-    if current_user.id != 2 and not current_user.is_maintainer:
+    # Admin or platform staff maintainers may verify modules
+    can_verify = await is_user_maintainer(current_user, db)
+    if not can_verify:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only administrators and maintainers can verify modules",
@@ -412,7 +502,7 @@ async def verify_module(
         # Update section XP
         await db.execute(
             update(Section)
-            .where(Section.id == s_input.id, Section.module_id == module_id)
+            .where(Section.id == s_input.id)
             .values(xp=s_input.xp)
         )
         # Update section progress awarded XP
@@ -427,7 +517,7 @@ async def verify_module(
             # Update lab XP
             await db.execute(
                 update(Lab)
-                .where(Lab.id == l_input.id, Lab.module_id == module_id)
+                .where(Lab.id == l_input.id)
                 .values(xp=l_input.xp)
             )
             # Update lab progress awarded XP
@@ -443,29 +533,32 @@ async def verify_module(
     await db.flush()
 
     # Move unverified XP to verified XP for all users who completed sections/labs in this module
-    from sqlalchemy.orm import selectinload
-    sec_result = await db.execute(
-        select(Section)
-        .where(Section.module_id == module_id)
-        .options(selectinload(Section.labs))
-    )
-    sections = sec_result.scalars().all()
-    section_ids = [s.id for s in sections]
-    lab_ids = [lab.id for sec in sections for lab in sec.labs]
+    sec_ids = module.sections or []
+    sections: list[Section] = []
+    if sec_ids:
+        sec_rows = (await db.execute(select(Section).where(Section.id.in_(sec_ids)))).scalars().all()
+        sec_map = {s.id: s for s in sec_rows}
+        sections = [sec_map[sid] for sid in sec_ids if sid in sec_map]
+
+    all_lab_ids = [lid for s in sections for lid in (s.labs or [])]
+    labs: list[Lab] = []
+    if all_lab_ids:
+        labs = (await db.execute(select(Lab).where(Lab.id.in_(all_lab_ids)))).scalars().all()
+    lab_map = {l.id: l for l in labs}
 
     user_ids = set()
-    if lab_ids:
+    if all_lab_ids:
         lp_result = await db.execute(
             select(LabProgress.user_id).where(
-                LabProgress.lab_id.in_(lab_ids),
+                LabProgress.lab_id.in_(all_lab_ids),
             )
         )
         user_ids.update(lp_result.scalars().all())
 
-    if section_ids:
+    if sec_ids:
         sp_result = await db.execute(
             select(SectionProgress.user_id).where(
-                SectionProgress.section_id.in_(section_ids),
+                SectionProgress.section_id.in_(sec_ids),
             )
         )
         user_ids.update(sp_result.scalars().all())
@@ -474,19 +567,18 @@ async def verify_module(
         user_res = await db.execute(select(User).where(User.id == u_id))
         target_user = user_res.scalar_one_or_none()
         if target_user:
-            await recalculate_and_update_user_xp(target_user, db)
+            await recalculate_and_update_user_xp(target_user, db, organization_id=module.owner_organization_id)
 
     await db.commit()
 
     # 2. Serialize and push the newly assigned XP grading and verified files to GitHub
     from app.routers.builder import push_to_github_task, build_github_challenge_files
 
-    sorted_sections = sorted(sections, key=lambda s: s.order)
     sections_data = [
         {
             "id": sec.id,
             "title": sec.title,
-            "order": sec.order,
+            "order": s_idx + 1,
             "xp": sec.xp,
             "content": sec.content,
             "labs": [
@@ -499,10 +591,10 @@ async def verify_module(
                     "validator_script": lab.validator_script,
                     "version": lab.version or 1,
                 }
-                for lab in sorted(sec.labs, key=lambda l: l.order)
+                for lab in [lab_map[lid] for lid in (sec.labs or []) if lid in lab_map]
             ],
         }
-        for sec in sorted_sections
+        for s_idx, sec in enumerate(sections)
     ]
     github_files = build_github_challenge_files(
         module_id=module.id,
@@ -542,30 +634,28 @@ async def complete_reading_section(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    sec_result = await db.execute(
-        select(Section).where(
-            Section.id == section_id,
-            Section.module_id == module_id,
-        )
-    )
+    result = await db.execute(select(Module).where(Module.id == module_id))
+    module = result.scalar_one_or_none()
+    if not module:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
+
+    sec_result = await db.execute(select(Section).where(Section.id == section_id))
     section = sec_result.scalar_one_or_none()
     if not section:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Section not found")
 
     # For lab sections — verify all labs are actually completed before awarding
-    lab_check = await db.execute(select(Lab).where(Lab.section_id == section_id))
-    labs = lab_check.scalars().all()
-    if labs:
+    lab_ids = section.labs or []
+    if lab_ids:
         # Check all labs are completed for this user
         completed_labs = await db.execute(
             select(LabProgress.lab_id).where(
                 LabProgress.user_id == current_user.id,
-                LabProgress.section_id == section_id,
+                LabProgress.lab_id.in_(lab_ids),
             )
         )
         completed_lab_ids = {row[0] for row in completed_labs.fetchall()}
-        all_lab_ids = {l.id for l in labs}
-        if not all_lab_ids.issubset(completed_lab_ids):
+        if not set(lab_ids).issubset(completed_lab_ids):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Complete all labs in this section first",
@@ -579,8 +669,16 @@ async def complete_reading_section(
     )
     existing = prog_result.scalar_one_or_none()
 
+    mem_xp = await db.scalar(
+        select(OrganizationMembership.total_xp).where(
+            OrganizationMembership.user_id == current_user.id,
+            OrganizationMembership.organization_id == module.owner_organization_id,
+        )
+    )
+    current_mem_xp = int(mem_xp) if mem_xp else 0
+
     if existing:
-        return CompleteSectionResponse(xp_awarded=0, total_xp=current_user.xp)
+        return CompleteSectionResponse(xp_awarded=0, total_xp=current_mem_xp)
 
     xp = section.xp  # reading XP from section.yaml (labs XP already awarded separately)
 
@@ -593,8 +691,8 @@ async def complete_reading_section(
 
     await db.flush()
 
-    # Recalculate true total XP by summing database entries to prevent and heal drift
-    await recalculate_and_update_user_xp(current_user, db)
+    # Recalculate true total XP by summing database entries for the module's owner organization
+    tot_xp, _ = await recalculate_and_update_user_xp(current_user, db, organization_id=module.owner_organization_id)
 
     await db.commit()
 
@@ -609,7 +707,7 @@ async def complete_reading_section(
     )
     await check_and_track_module_completion(current_user.id, module_id, db)
 
-    return CompleteSectionResponse(xp_awarded=xp, total_xp=current_user.xp)
+    return CompleteSectionResponse(xp_awarded=xp, total_xp=tot_xp)
 
 
 # ---------------------------------------------------------------------------
@@ -627,25 +725,30 @@ async def get_lab(
     if not lab:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lab not found")
 
+    sec = (await db.execute(select(Section).where(Section.labs.contains([lab.id])))).scalars().first()
+    sec_id = sec.id if sec else ""
+    mod = (await db.execute(select(Module).where(Module.sections.contains([sec_id])))).scalars().first() if sec_id else None
+    mod_id = mod.id if mod else ""
+
     analytics.track(
         "anonymous",
         AnalyticsEvent.LAB_STARTED,
         {
             "lab_id": lab.id,
-            "module_id": lab.module_id,
-            "section_id": lab.section_id,
+            "module_id": mod_id,
+            "section_id": sec_id,
             "title": lab.title,
         },
     )
 
     return LabDetail(
         id=lab.id,
-        module_id=lab.module_id,
-        section_id=lab.section_id,
+        module_id=mod_id,
+        section_id=sec_id,
         data=LabSchema(
             id=lab.id,
             title=lab.title,
-            order=lab.order,
+            order=1,
             xp=lab.xp,
             estimated_minutes=lab.estimated_minutes,
             environment_profile=lab.environment_profile,

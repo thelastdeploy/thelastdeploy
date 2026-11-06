@@ -2,63 +2,140 @@
 
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models import User, LabProgress, SectionProgress, Lab, Section, Module
+from app.models import User, LabProgress, SectionProgress, Lab, Section, Module, OrganizationMembership, Organization, AuditLog
 
 
 from app.analytics import analytics, AnalyticsEvent
 
 
-async def recalculate_and_update_user_xp(user: User, db: AsyncSession) -> tuple[int, int]:
+async def recalculate_and_update_user_xp(
+    user: User, 
+    db: AsyncSession, 
+    organization_id: int | None = None
+) -> tuple[int, int]:
     """
-    Recalculate verified and unverified XP for a user based on DB records
-    and update user object in DB session. Returns (verified_xp, unverified_xp).
+    Recalculate verified total_xp and unverified_xp for a user within an organization
+    based on the owner_organization_id of the completed modules.
+    Returns (total_xp, unverified_xp) for the target organization.
     """
-    # 1. Verified XP (sum for modules with status == 'verified')
-    lab_verified = await db.scalar(
-        select(func.sum(LabProgress.xp_awarded))
-        .join(Lab, Lab.id == LabProgress.lab_id)
-        .join(Module, Module.id == Lab.module_id)
-        .where(
-            LabProgress.user_id == user.id,
-            Module.status == 'verified'
-        )
-    ) or 0
+    # 1. Determine target organization(s)
+    if organization_id is not None:
+        target_org_ids = [organization_id]
+    else:
+        # Update all organizations the user has active memberships in
+        target_org_ids = (await db.scalars(
+            select(OrganizationMembership.organization_id)
+            .where(OrganizationMembership.user_id == user.id, OrganizationMembership.status != "removed")
+        )).all()
+        if not target_org_ids:
+            # Fallback to platform org
+            plat_id = await db.scalar(select(Organization.id).where(Organization.is_platform == True))
+            target_org_ids = [plat_id] if plat_id else [1]
 
-    sec_verified = await db.scalar(
-        select(func.sum(SectionProgress.xp_awarded))
-        .join(Section, Section.id == SectionProgress.section_id)
-        .join(Module, Module.id == Section.module_id)
-        .where(
-            SectionProgress.user_id == user.id,
-            Module.status == 'verified'
-        )
-    ) or 0
+    primary_verified = 0
+    primary_unverified = 0
 
-    # 2. Unverified XP (sum for modules with status != 'verified')
-    lab_unverified = await db.scalar(
-        select(func.sum(LabProgress.xp_awarded))
-        .join(Lab, Lab.id == LabProgress.lab_id)
-        .join(Module, Module.id == Lab.module_id)
-        .where(
-            LabProgress.user_id == user.id,
-            Module.status != 'verified'
-        )
-    ) or 0
+    for oid in target_org_ids:
+        # Verified XP within this organization's modules
+        lab_verified = await db.scalar(
+            select(func.sum(LabProgress.xp_awarded))
+            .join(Lab, Lab.id == LabProgress.lab_id)
+            .join(Module, Module.id == Lab.module_id)
+            .where(
+                LabProgress.user_id == user.id,
+                Module.status == 'verified',
+                Module.owner_organization_id == oid,
+            )
+        ) or 0
 
-    sec_unverified = await db.scalar(
-        select(func.sum(SectionProgress.xp_awarded))
-        .join(Section, Section.id == SectionProgress.section_id)
-        .join(Module, Module.id == Section.module_id)
-        .where(
-            SectionProgress.user_id == user.id,
-            Module.status != 'verified'
-        )
-    ) or 0
+        sec_verified = await db.scalar(
+            select(func.sum(SectionProgress.xp_awarded))
+            .join(Section, Section.id == SectionProgress.section_id)
+            .join(Module, Module.id == Section.module_id)
+            .where(
+                SectionProgress.user_id == user.id,
+                Module.status == 'verified',
+                Module.owner_organization_id == oid,
+            )
+        ) or 0
 
-    user.xp = lab_verified + sec_verified
-    user.unverified_xp = lab_unverified + sec_unverified
-    db.add(user)
-    return user.xp, user.unverified_xp
+        # Unverified XP within this organization's modules
+        lab_unverified = await db.scalar(
+            select(func.sum(LabProgress.xp_awarded))
+            .join(Lab, Lab.id == LabProgress.lab_id)
+            .join(Module, Module.id == Lab.module_id)
+            .where(
+                LabProgress.user_id == user.id,
+                Module.status != 'verified',
+                Module.owner_organization_id == oid,
+            )
+        ) or 0
+
+        sec_unverified = await db.scalar(
+            select(func.sum(SectionProgress.xp_awarded))
+            .join(Section, Section.id == SectionProgress.section_id)
+            .join(Module, Module.id == Section.module_id)
+            .where(
+                SectionProgress.user_id == user.id,
+                Module.status != 'verified',
+                Module.owner_organization_id == oid,
+            )
+        ) or 0
+
+        tot_xp = lab_verified + sec_verified
+        unv_xp = lab_unverified + sec_unverified
+
+        # Update or create the membership
+        mem = await db.scalar(
+            select(OrganizationMembership).where(
+                OrganizationMembership.user_id == user.id,
+                OrganizationMembership.organization_id == oid,
+                OrganizationMembership.status != "removed",
+            )
+        )
+        if mem:
+            mem.total_xp = tot_xp
+            mem.unverified_xp = unv_xp
+            db.add(mem)
+        else:
+            mem = OrganizationMembership(
+                organization_id=oid,
+                user_id=user.id,
+                status="active",
+                total_xp=tot_xp,
+                unverified_xp=unv_xp,
+            )
+            db.add(mem)
+
+        if oid == organization_id or (primary_verified == 0 and primary_unverified == 0):
+            primary_verified = tot_xp
+            primary_unverified = unv_xp
+
+    await db.commit()
+    return primary_verified, primary_unverified
+
+
+async def log_audit_event(
+    db: AsyncSession,
+    action: str,
+    entity_type: str,
+    entity_id: str | None = None,
+    actor_user_id: int | None = None,
+    organization_id: int | None = None,
+    metadata: dict | None = None,
+) -> AuditLog:
+    """Helper to record append-oriented security and organization audit events."""
+    entry = AuditLog(
+        organization_id=organization_id,
+        actor_user_id=actor_user_id,
+        action=action,
+        entity_type=entity_type,
+        entity_id=str(entity_id) if entity_id is not None else None,
+        metadata_=metadata or {},
+    )
+    db.add(entry)
+    await db.commit()
+    return entry
 
 
 async def check_and_track_module_completion(user_id: int, module_id: str, db: AsyncSession) -> bool:

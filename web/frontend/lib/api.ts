@@ -1,6 +1,6 @@
 // web/frontend/lib/api.ts
 
-import { Module, ModuleDetail, User, BuilderDraftListItem, BuilderModuleInput } from "./types";
+import { Module, ModuleDetail, User, BuilderDraftListItem, BuilderModuleInput, OrganizationMembershipInfo } from "./types";
 import { writeCache, clearDashboardCache } from "./dashboard/use-dashboard-cache";
 import { clearModulesMemoryCache } from "@/hooks/use-modules";
 
@@ -25,13 +25,23 @@ function getToken(): string | null {
   return localStorage.getItem("token");
 }
 
+function getSelectedOrg(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("selected_org");
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
+  const selectedOrg = getSelectedOrg();
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options.headers as Record<string, string>),
   };
   if (token) headers["Authorization"] = `Bearer ${token}`;
+  if (selectedOrg) {
+    headers["X-Organization-Slug"] = selectedOrg;
+    headers["X-Organization"] = selectedOrg;
+  }
 
   const baseUrl = getApiBaseUrl();
   const res = await fetch(`${baseUrl}${path}`, { ...options, headers });
@@ -151,6 +161,24 @@ export const api = {
     clearModulesMemoryCache();
     localStorage.removeItem("token");
     localStorage.removeItem("device_key");
+    localStorage.removeItem("selected_org");
+  },
+
+  // Organizations
+  getOrganizations: () =>
+    request<OrganizationMembershipInfo[]>("/organizations"),
+
+  setSelectedOrg: (slug: string) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selected_org", slug);
+      clearDashboardCache();
+      clearModulesMemoryCache();
+      window.dispatchEvent(new Event("tld:workspace-changed"));
+    }
+  },
+
+  getSelectedOrg: (): string | null => {
+    return getSelectedOrg();
   },
 
   // Modules

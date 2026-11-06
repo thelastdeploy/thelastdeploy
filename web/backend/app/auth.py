@@ -1,5 +1,6 @@
 # web/backend/app/auth.py
 
+import hashlib
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -18,20 +19,35 @@ def verify_password(plain: str, hashed: str) -> bool:
     return pwd_context.verify(plain, hashed)
 
 
-def create_access_token(user_id: int) -> str:
+def hash_token(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
+
+
+def create_access_token(user_id: int, session_id: int | None = None) -> str:
     expire = datetime.now(timezone.utc) + timedelta(days=settings.ACCESS_TOKEN_EXPIRE_DAYS)
     payload = {"sub": str(user_id), "exp": expire}
+    if session_id is not None:
+        payload["sid"] = session_id
     return jwt.encode(payload, settings.SECRET_KEY, algorithm=ALGORITHM)
 
 
-def decode_access_token(token: str) -> int | None:
+def decode_token_payload(token: str) -> dict | None:
     try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
-        user_id = payload.get("sub")
-        if user_id is None:
-            return None
-        return int(user_id)
+        return jwt.decode(token, settings.SECRET_KEY, algorithms=[ALGORITHM])
     except JWTError:
+        return None
+
+
+def decode_access_token(token: str) -> int | None:
+    payload = decode_token_payload(token)
+    if not payload:
+        return None
+    user_id = payload.get("sub")
+    if user_id is None:
+        return None
+    try:
+        return int(user_id)
+    except (ValueError, TypeError):
         return None
 
 
