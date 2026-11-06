@@ -20,7 +20,6 @@ class User(Base):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
-    is_maintainer: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
     verification_token: Mapped[str | None] = mapped_column(String(64), unique=True, nullable=True)
     reset_token: Mapped[str | None] = mapped_column(String(64), unique=True, nullable=True)
     reset_token_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -166,7 +166,13 @@ async def list_maintainers(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Only Platform Administrators can manage maintainers",
         )
-    result = await db.execute(select(User).where(User.is_maintainer == True).order_by(User.username))
+    stmt = (
+        select(User)
+        .join(PlatformUserRole, PlatformUserRole.user_id == User.id)
+        .distinct()
+        .order_by(User.username)
+    )
+    result = await db.execute(stmt)
     maintainers = result.scalars().all()
     return [{"id": u.id, "username": u.username, "email": u.email} for u in maintainers]
 
@@ -191,11 +197,8 @@ async def add_maintainer(
     user = result.scalar_one_or_none()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-        
-    user.is_maintainer = True
-    db.add(user)
 
-    # Synchronize platform staff role
+    # Assign platform staff role
     admin_role = (await db.execute(select(PlatformRole).where(PlatformRole.slug == 'platform_admin'))).scalar_one_or_none()
     if admin_role:
         existing_pur = (await db.execute(
@@ -228,8 +231,6 @@ async def remove_maintainer(
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         
-    user.is_maintainer = False
-    db.add(user)
     await db.execute(delete(PlatformUserRole).where(PlatformUserRole.user_id == user.id))
     await db.commit()
     return {"detail": f"User '{user.username}' is no longer a maintainer."}

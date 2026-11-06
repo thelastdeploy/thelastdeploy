@@ -240,12 +240,10 @@ def require_platform_permission(permission_key: str):
         )
         result = await db.execute(stmt)
         if result.scalar_one_or_none() is None:
-            # Fallback to legacy is_maintainer flag during transition
-            if not current_user.is_maintainer:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail=f"Requires platform staff permission: '{permission_key}'",
-                )
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Requires platform staff permission: '{permission_key}'",
+            )
         return current_user
 
     return _dependency
@@ -253,8 +251,6 @@ def require_platform_permission(permission_key: str):
 
 async def is_user_maintainer(user: User, db: AsyncSession) -> bool:
     """Helper to check if a user has platform staff rights."""
-    if user.is_maintainer:
-        return True
     stmt = (
         select(PlatformUserRole.id)
         .where(PlatformUserRole.user_id == user.id)
