@@ -16,7 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter, usePathname } from "next/navigation";
-import { Sun, Moon, Hammer, Shield, Building2 } from "lucide-react";
+import { Sun, Moon, Hammer, Shield, Building2, GraduationCap } from "lucide-react";
+import { OrganizationMembershipInfo } from "@/lib/types";
 
 export function Navbar() {
   const { user, loading, logout } = useAuth();
@@ -24,12 +25,21 @@ export function Navbar() {
   const pathname = usePathname();
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [activeOrg, setActiveOrg] = useState<string | null>(null);
+  const [orgs, setOrgs] = useState<OrganizationMembershipInfo[]>([]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const isDark = document.documentElement.classList.contains("dark");
       setTheme(isDark ? "dark" : "light");
       setActiveOrg(api.getSelectedOrg());
+
+      if (user) {
+        api.getOrganizations()
+          .then((data) => setOrgs(data))
+          .catch(() => {});
+      } else {
+        setOrgs([]);
+      }
 
       const handleWorkspaceChange = () => {
         setActiveOrg(api.getSelectedOrg());
@@ -93,16 +103,29 @@ export function Navbar() {
             />
             <span className="font-black text-lg tracking-tight text-foreground group-hover:text-[var(--accent-primary)] transition-colors">The Last Deploy</span>
           </Link>
-          {user && activeOrg && (
-            <Link
-              href="/select-org"
-              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground border border-border/60 transition-colors"
-              title="Click to switch workspace"
-            >
-              <Building2 className="h-3 w-3 text-[var(--accent-primary)]" />
-              <span>{activeOrg === "apex-univ" ? "Apex University" : activeOrg === "cloudscale" ? "CloudScale" : "TLD Platform"}</span>
-            </Link>
-          )}
+          {(() => {
+            const currentOrg = orgs.find((o) => o.slug === activeOrg);
+            const isPlatformOrg = !activeOrg || activeOrg === "tld" || currentOrg?.type === "platform" || currentOrg?.is_platform;
+            if (!user || isPlatformOrg || !activeOrg || activeOrg === "tld") return null;
+
+            const orgDisplayName = currentOrg?.name || (activeOrg === "apex-univ" ? "Apex University" : activeOrg === "cloudscale" ? "CloudScale" : activeOrg);
+            const isUniversity = currentOrg?.type === "university";
+
+            return (
+              <Link
+                href="/select-org"
+                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground border border-border/60 transition-colors"
+                title="Click to switch workspace"
+              >
+                {isUniversity ? (
+                  <GraduationCap className="h-3 w-3 text-[var(--accent-primary)]" />
+                ) : (
+                  <Building2 className="h-3 w-3 text-[var(--accent-primary)]" />
+                )}
+                <span>{orgDisplayName}</span>
+              </Link>
+            );
+          })()}
         </div>
 
         {/* Nav links */}

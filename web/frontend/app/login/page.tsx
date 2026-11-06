@@ -328,7 +328,7 @@ function LoginContent() {
                   <div className="h-12 w-12 rounded-xl bg-muted/60 flex items-center justify-center font-black group-hover:bg-[var(--accent-primary)]/10 group-hover:text-[var(--accent-primary)] transition-colors">
                     {org.type === "university" ? (
                       <GraduationCap className="h-6 w-6" />
-                    ) : org.is_platform ? (
+                    ) : (org.type === "platform" || org.is_platform) ? (
                       <Globe className="h-6 w-6" />
                     ) : (
                       <Building2 className="h-6 w-6" />
@@ -339,7 +339,7 @@ function LoginContent() {
                       <h3 className="font-bold text-foreground group-hover:text-[var(--accent-primary)] transition-colors">
                         {org.name}
                       </h3>
-                      {org.is_platform && (
+                      {(org.type === "platform" || org.is_platform) && (
                         <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold">
                           Default
                         </span>

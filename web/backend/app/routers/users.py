@@ -67,7 +67,7 @@ async def get_me(
         mem_stmt = mem_stmt.where(
             OrganizationMembership.user_id == current_user.id,
             OrganizationMembership.status != "removed",
-        ).order_by(Organization.is_platform.desc(), OrganizationMembership.created_at.asc())
+        ).order_by((Organization.type == "platform").desc(), OrganizationMembership.created_at.asc())
 
     active_membership = (await db.execute(mem_stmt)).scalars().first()
     active_xp = int(active_membership.total_xp) if active_membership else 0

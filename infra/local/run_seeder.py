@@ -60,7 +60,7 @@ async def seed_dummy_users():
             db.add(dev_user)
             await db.flush()
 
-            platform_org = (await db.execute(select(Organization).where(Organization.is_platform == True))).scalar_one_or_none()
+            platform_org = (await db.execute(select(Organization).where(Organization.type == "platform"))).scalar_one_or_none()
             if platform_org:
                 mem = OrganizationMembership(
                     organization_id=platform_org.id,

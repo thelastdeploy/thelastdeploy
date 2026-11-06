@@ -77,7 +77,7 @@ async def _get_visible_org_ids(request: Request, db: AsyncSession, current_user:
         if primary_membership:
             return [primary_membership]
 
-    platform_org_id = await db.scalar(select(Organization.id).where(Organization.is_platform == True))
+    platform_org_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
     return [platform_org_id] if platform_org_id else [1]
 
 
@@ -681,7 +681,7 @@ async def complete_reading_section(
         )
     )).all()
     if not memberships:
-        plat_org = await db.scalar(select(Organization).where(Organization.is_platform == True))
+        plat_org = await db.scalar(select(Organization).where(Organization.type == "platform"))
         plat_org_id = plat_org.id if plat_org else 1
         default_mem = OrganizationMembership(
             organization_id=plat_org_id,

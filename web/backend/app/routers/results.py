@@ -114,7 +114,7 @@ async def submit_result(
     )).all()
 
     if not memberships:
-        plat_org = await db.scalar(select(Organization).where(Organization.is_platform == True))
+        plat_org = await db.scalar(select(Organization).where(Organization.type == "platform"))
         plat_org_id = plat_org.id if plat_org else 1
         default_mem = OrganizationMembership(
             organization_id=plat_org_id,

@@ -195,9 +195,9 @@ class Organization(Base):
     __table_args__ = (
         Index(
             "uq_single_platform_org",
-            "is_platform",
+            "type",
             unique=True,
-            postgresql_where=text("is_platform = true"),
+            postgresql_where=text("type = 'platform'"),
         ),
         Index("idx_organizations_domains", "domains", postgresql_using="gin"),
     )
@@ -206,11 +206,14 @@ class Organization(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     slug: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     type: Mapped[str] = mapped_column(String(50), nullable=False)  # 'platform', 'university', 'company', 'other'
-    is_platform: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
     status: Mapped[str] = mapped_column(String(50), default="active", server_default="active", nullable=False)
     domains: Mapped[list[str]] = mapped_column(JSONB, default=list, server_default=text("'[]'::jsonb"), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    @property
+    def is_platform(self) -> bool:
+        return self.type == "platform"
 
     memberships: Mapped[list["OrganizationMembership"]] = relationship("OrganizationMembership", back_populates="organization", cascade="all, delete-orphan")
     cohorts: Mapped[list["Cohort"]] = relationship("Cohort", back_populates="organization", cascade="all, delete-orphan")

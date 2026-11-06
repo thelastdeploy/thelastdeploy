@@ -45,7 +45,7 @@ async def seed():
     print(f"🌱 Seeding challenge modules from: {CHALLENGES_DIR}")
     async with AsyncSessionLocal() as db:
         # Resolve platform organization (The Last Deploy)
-        plat_res = await db.execute(select(Organization).where(Organization.is_platform == True))
+        plat_res = await db.execute(select(Organization).where(Organization.type == "platform"))
         platform_org = plat_res.scalar_one_or_none()
         platform_org_id = platform_org.id if platform_org else 1
 

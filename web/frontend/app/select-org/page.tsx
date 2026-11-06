@@ -74,7 +74,8 @@ export default function SelectOrgPage() {
 
         <div className="space-y-3">
           {orgs.map((org) => {
-            const isCurrent = selectedSlug === org.slug || (!selectedSlug && org.is_platform);
+            const isPlatform = org.type === "platform" || org.is_platform;
+            const isCurrent = selectedSlug === org.slug || (!selectedSlug && isPlatform);
             return (
               <button
                 key={org.slug}
@@ -93,7 +94,7 @@ export default function SelectOrgPage() {
                   }`}>
                     {org.type === "university" ? (
                       <GraduationCap className="h-6 w-6" />
-                    ) : org.is_platform ? (
+                    ) : isPlatform ? (
                       <Globe className="h-6 w-6" />
                     ) : (
                       <Building2 className="h-6 w-6" />
@@ -104,7 +105,7 @@ export default function SelectOrgPage() {
                       <h3 className="font-bold text-foreground group-hover:text-[var(--accent-primary)] transition-colors">
                         {org.name}
                       </h3>
-                      {org.is_platform && (
+                      {isPlatform && (
                         <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold">
                           Default
                         </span>

@@ -146,12 +146,12 @@ async def get_current_organization(
             .join(Organization, Organization.id == OrganizationMembership.organization_id)
             .where(
                 OrganizationMembership.user_id == current_user.id,
-                Organization.is_platform == True,
+                Organization.type == "platform",
                 OrganizationMembership.status == "active",
             )
         )
         if user_platform_mem:
-            org_stmt = select(Organization).where(Organization.is_platform == True)
+            org_stmt = select(Organization).where(Organization.type == "platform")
         else:
             first_mem_org = await db.scalar(
                 select(OrganizationMembership.organization_id)
@@ -164,7 +164,7 @@ async def get_current_organization(
             if first_mem_org:
                 org_stmt = select(Organization).where(Organization.id == first_mem_org)
             else:
-                org_stmt = select(Organization).where(Organization.is_platform == True)
+                org_stmt = select(Organization).where(Organization.type == "platform")
 
     org_result = await db.execute(org_stmt)
     organization = org_result.scalar_one_or_none()

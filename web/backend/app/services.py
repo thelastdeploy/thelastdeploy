@@ -29,7 +29,7 @@ async def recalculate_and_update_user_xp(
         )).all()
         if not target_org_ids:
             # Fallback to platform org
-            plat_id = await db.scalar(select(Organization.id).where(Organization.is_platform == True))
+            plat_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
             target_org_ids = [plat_id] if plat_id else [1]
 
     primary_verified = 0

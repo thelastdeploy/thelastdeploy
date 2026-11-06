@@ -364,7 +364,6 @@ async def provision_organization(
         slug=body.slug.strip(),
         type=body.type,
         domains=clean_domains,
-        is_platform=False,
         status="active",
     )
     db.add(org)
