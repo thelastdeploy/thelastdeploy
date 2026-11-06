@@ -36,56 +36,7 @@ async def recalculate_and_update_user_xp(
     primary_unverified = 0
 
     for oid in target_org_ids:
-        # Verified XP within this organization's modules
-        lab_verified = await db.scalar(
-            select(func.sum(LabProgress.xp_awarded))
-            .join(Lab, Lab.id == LabProgress.lab_id)
-            .join(Module, Module.id == Lab.module_id)
-            .where(
-                LabProgress.user_id == user.id,
-                Module.status == 'verified',
-                Module.owner_organization_id == oid,
-            )
-        ) or 0
-
-        sec_verified = await db.scalar(
-            select(func.sum(SectionProgress.xp_awarded))
-            .join(Section, Section.id == SectionProgress.section_id)
-            .join(Module, Module.id == Section.module_id)
-            .where(
-                SectionProgress.user_id == user.id,
-                Module.status == 'verified',
-                Module.owner_organization_id == oid,
-            )
-        ) or 0
-
-        # Unverified XP within this organization's modules
-        lab_unverified = await db.scalar(
-            select(func.sum(LabProgress.xp_awarded))
-            .join(Lab, Lab.id == LabProgress.lab_id)
-            .join(Module, Module.id == Lab.module_id)
-            .where(
-                LabProgress.user_id == user.id,
-                Module.status != 'verified',
-                Module.owner_organization_id == oid,
-            )
-        ) or 0
-
-        sec_unverified = await db.scalar(
-            select(func.sum(SectionProgress.xp_awarded))
-            .join(Section, Section.id == SectionProgress.section_id)
-            .join(Module, Module.id == Section.module_id)
-            .where(
-                SectionProgress.user_id == user.id,
-                Module.status != 'verified',
-                Module.owner_organization_id == oid,
-            )
-        ) or 0
-
-        tot_xp = lab_verified + sec_verified
-        unv_xp = lab_unverified + sec_unverified
-
-        # Update or create the membership
+        # Get membership for this org
         mem = await db.scalar(
             select(OrganizationMembership).where(
                 OrganizationMembership.user_id == user.id,
@@ -93,19 +44,53 @@ async def recalculate_and_update_user_xp(
                 OrganizationMembership.status != "removed",
             )
         )
-        if mem:
-            mem.total_xp = tot_xp
-            mem.unverified_xp = unv_xp
-            db.add(mem)
-        else:
-            mem = OrganizationMembership(
-                organization_id=oid,
-                user_id=user.id,
-                status="active",
-                total_xp=tot_xp,
-                unverified_xp=unv_xp,
+        if not mem:
+            continue
+
+        # Verified XP: content owned by this organization
+        lab_verified = await db.scalar(
+            select(func.sum(LabProgress.xp_awarded))
+            .join(Lab, Lab.id == LabProgress.lab_id)
+            .where(
+                LabProgress.organization_membership_id == mem.id,
+                Lab.owner_organization_id == oid,
             )
-            db.add(mem)
+        ) or 0
+
+        sec_verified = await db.scalar(
+            select(func.sum(SectionProgress.xp_awarded))
+            .join(Section, Section.id == SectionProgress.section_id)
+            .where(
+                SectionProgress.organization_membership_id == mem.id,
+                Section.owner_organization_id == oid,
+            )
+        ) or 0
+
+        # Unverified XP: content owned outside this organization
+        lab_unverified = await db.scalar(
+            select(func.sum(LabProgress.xp_awarded))
+            .join(Lab, Lab.id == LabProgress.lab_id)
+            .where(
+                LabProgress.organization_membership_id == mem.id,
+                Lab.owner_organization_id != oid,
+            )
+        ) or 0
+
+        sec_unverified = await db.scalar(
+            select(func.sum(SectionProgress.xp_awarded))
+            .join(Section, Section.id == SectionProgress.section_id)
+            .where(
+                SectionProgress.organization_membership_id == mem.id,
+                Section.owner_organization_id != oid,
+            )
+        ) or 0
+
+        tot_xp = int(lab_verified + sec_verified)
+        unv_xp = int(lab_unverified + sec_unverified)
+
+        mem.total_xp = tot_xp
+        mem.unverified_xp = unv_xp
+        db.add(mem)
 
         if oid == organization_id or (primary_verified == 0 and primary_unverified == 0):
             primary_verified = tot_xp

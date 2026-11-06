@@ -8,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
 from app.dependencies import get_db, get_optional_user, get_optional_session
-from app.models import Lab, LabProgress, User, UserSession, SectionProgress, Module, Section
+from app.models import Lab, LabProgress, User, UserSession, SectionProgress, Module, Section, OrganizationMembership, Organization
 from app.schemas import ResultRequest, ResultResponse
 from app.services import recalculate_and_update_user_xp, check_and_track_module_completion
 from app.analytics import analytics, AnalyticsEvent
@@ -105,32 +105,45 @@ async def submit_result(
     if not current_user:
         return ResultResponse(xp_awarded=lab.xp)
 
-    # 5. Check if already completed
-    prog_result = await db.execute(
-        select(LabProgress).where(
-            LabProgress.user_id == current_user.id,
+    # 5. Determine user's active membership(s)
+    memberships = (await db.scalars(
+        select(OrganizationMembership).where(
+            OrganizationMembership.user_id == current_user.id,
+            OrganizationMembership.status != "removed",
+        )
+    )).all()
+
+    if not memberships:
+        plat_org = await db.scalar(select(Organization).where(Organization.is_platform == True))
+        plat_org_id = plat_org.id if plat_org else 1
+        default_mem = OrganizationMembership(
+            organization_id=plat_org_id,
+            user_id=current_user.id,
+            status="active",
+        )
+        db.add(default_mem)
+        await db.flush()
+        memberships = [default_mem]
+
+    # Check if already completed in any of the user's active memberships
+    mem_ids = [m.id for m in memberships]
+    existing = await db.scalar(
+        select(LabProgress.id).where(
+            LabProgress.organization_membership_id.in_(mem_ids),
             LabProgress.lab_id == body.lab_id,
         )
     )
-    existing = prog_result.scalar_one_or_none()
 
     if existing:
         return ResultResponse(xp_awarded=0)
 
-    # Resolve containing section and module for progress logging
-    sec = (await db.execute(select(Section).where(Section.labs.contains([body.lab_id])))).scalars().first()
-    sec_id = sec.id if sec else None
-    mod = (await db.execute(select(Module).where(Module.sections.contains([sec_id])))).scalars().first() if sec_id else None
-    mod_id = mod.id if mod else None
-
-    # 6. First completion — award XP
-    db.add(LabProgress(
-        user_id=current_user.id,
-        lab_id=body.lab_id,
-        section_id=sec_id,
-        module_id=mod_id,
-        xp_awarded=lab.xp,
-    ))
+    # 6. First completion — award progress to all memberships
+    for m in memberships:
+        db.add(LabProgress(
+            organization_membership_id=m.id,
+            lab_id=body.lab_id,
+            xp_awarded=lab.xp,
+        ))
 
     await db.flush()
 
@@ -145,11 +158,8 @@ async def submit_result(
         AnalyticsEvent.LAB_COMPLETED,
         {
             "lab_id": body.lab_id,
-            "module_id": lab.module_id,
-            "section_id": lab.section_id,
             "xp": lab.xp,
         },
     )
-    await check_and_track_module_completion(current_user.id, lab.module_id, db)
 
     return ResultResponse(xp_awarded=lab.xp)

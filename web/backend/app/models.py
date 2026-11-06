@@ -32,8 +32,6 @@ class User(Base):
     sessions: Mapped[list["UserSession"]] = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
     memberships: Mapped[list["OrganizationMembership"]] = relationship("OrganizationMembership", back_populates="user", cascade="all, delete-orphan")
     platform_roles: Mapped[list["PlatformUserRole"]] = relationship("PlatformUserRole", back_populates="user", cascade="all, delete-orphan", foreign_keys="PlatformUserRole.user_id")
-    lab_progress: Mapped[list["LabProgress"]] = relationship("LabProgress", back_populates="user")
-    section_progress: Mapped[list["SectionProgress"]] = relationship("SectionProgress", back_populates="user")
 
 
 class UserSession(Base):
@@ -156,39 +154,36 @@ class Lab(Base):
 
 
 class LabProgress(Base):
-    """Tracks completion of individual labs (via tld check)."""
+    """Tracks completion of individual labs per organization membership."""
     __tablename__ = "lab_progress"
+    __table_args__ = (
+        UniqueConstraint("organization_membership_id", "lab_id", name="uq_lab_progress_membership_lab"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), index=True, nullable=False)
-    lab_id: Mapped[str] = mapped_column(String(100), ForeignKey("labs.id"), index=True, nullable=False)
-    section_id: Mapped[str] = mapped_column(String(100), ForeignKey("sections.id"), index=True, nullable=False)
-    module_id: Mapped[str] = mapped_column(String(100), ForeignKey("modules.id"), index=True, nullable=False)
-    xp_awarded: Mapped[int] = mapped_column(Integer, default=0)
+    organization_membership_id: Mapped[int] = mapped_column(Integer, ForeignKey("organization_memberships.id", ondelete="CASCADE"), index=True, nullable=False)
+    lab_id: Mapped[str] = mapped_column(String(100), ForeignKey("labs.id", ondelete="CASCADE"), index=True, nullable=False)
+    xp_awarded: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    user: Mapped["User"] = relationship("User", back_populates="lab_progress")
+    membership: Mapped["OrganizationMembership"] = relationship("OrganizationMembership", back_populates="lab_progress")
     lab: Mapped["Lab"] = relationship("Lab", back_populates="progress")
 
 
 class SectionProgress(Base):
-    """
-    Tracks completion of sections.
-    A section is complete when:
-      - Reading: user scrolled to end (frontend triggers POST)
-      - Future: all questions answered correctly
-    A section with labs is considered complete via lab_progress (not here).
-    """
+    """Tracks completion of sections per organization membership."""
     __tablename__ = "section_progress"
+    __table_args__ = (
+        UniqueConstraint("organization_membership_id", "section_id", name="uq_section_progress_membership_section"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), index=True, nullable=False)
-    module_id: Mapped[str] = mapped_column(String(100), ForeignKey("modules.id"), index=True, nullable=False)
-    section_id: Mapped[str] = mapped_column(String(100), ForeignKey("sections.id"), index=True, nullable=False)
-    xp_awarded: Mapped[int] = mapped_column(Integer, default=0)
+    organization_membership_id: Mapped[int] = mapped_column(Integer, ForeignKey("organization_memberships.id", ondelete="CASCADE"), index=True, nullable=False)
+    section_id: Mapped[str] = mapped_column(String(100), ForeignKey("sections.id", ondelete="CASCADE"), index=True, nullable=False)
+    xp_awarded: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    user: Mapped["User"] = relationship("User", back_populates="section_progress")
+    membership: Mapped["OrganizationMembership"] = relationship("OrganizationMembership", back_populates="section_progress")
     section: Mapped["Section"] = relationship("Section", back_populates="progress")
 
 
@@ -252,6 +247,8 @@ class OrganizationMembership(Base):
     user: Mapped["User"] = relationship("User", back_populates="memberships")
     roles: Mapped[list["MembershipRole"]] = relationship("MembershipRole", back_populates="membership", cascade="all, delete-orphan")
     cohort_memberships: Mapped[list["CohortMembership"]] = relationship("CohortMembership", back_populates="membership", cascade="all, delete-orphan", overlaps="cohort,memberships")
+    lab_progress: Mapped[list["LabProgress"]] = relationship("LabProgress", back_populates="membership", cascade="all, delete-orphan")
+    section_progress: Mapped[list["SectionProgress"]] = relationship("SectionProgress", back_populates="membership", cascade="all, delete-orphan")
 
 
 class Permission(Base):

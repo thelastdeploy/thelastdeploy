@@ -19,21 +19,33 @@ async def get_me(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    # 1. Fetch lab progress in a single query, ordered by creation date descending
-    lab_progress_list = (await db.execute(
-        select(LabProgress).where(
-            LabProgress.user_id == current_user.id,
-        ).order_by(LabProgress.created_at.desc())
-    )).scalars().all()
-    completed_labs = [p.lab_id for p in lab_progress_list]
+    # 1. Fetch user memberships
+    user_mems = (await db.scalars(
+        select(OrganizationMembership.id).where(
+            OrganizationMembership.user_id == current_user.id,
+            OrganizationMembership.status != "removed",
+        )
+    )).all()
 
-    # 2. Fetch section progress in a single query, ordered by creation date descending
-    section_progress_list = (await db.execute(
-        select(SectionProgress).where(
-            SectionProgress.user_id == current_user.id,
-        ).order_by(SectionProgress.created_at.desc())
-    )).scalars().all()
-    completed_sections = [p.section_id for p in section_progress_list]
+    completed_labs = []
+    completed_sections = []
+
+    if user_mems:
+        # Fetch lab progress ordered by creation date descending
+        lab_progress_list = (await db.execute(
+            select(LabProgress).where(
+                LabProgress.organization_membership_id.in_(user_mems),
+            ).order_by(LabProgress.created_at.desc())
+        )).scalars().all()
+        completed_labs = list(dict.fromkeys([p.lab_id for p in lab_progress_list]))
+
+        # Fetch section progress ordered by creation date descending
+        section_progress_list = (await db.execute(
+            select(SectionProgress).where(
+                SectionProgress.organization_membership_id.in_(user_mems),
+            ).order_by(SectionProgress.created_at.desc())
+        )).scalars().all()
+        completed_sections = list(dict.fromkeys([p.section_id for p in section_progress_list]))
 
     maintainer_status = await is_user_maintainer(current_user, db)
     admin_status = await is_user_platform_admin(current_user, db)

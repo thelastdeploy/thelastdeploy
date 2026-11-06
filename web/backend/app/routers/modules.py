@@ -214,18 +214,27 @@ async def get_all_modules_full(
     completed_section_ids = set()
 
     if current_user:
-        lp_result = await db.execute(
-            select(LabProgress).where(LabProgress.user_id == current_user.id)
-        )
-        for p in lp_result.scalars().all():
-            lab_progress_map[p.lab_id] = p
-
-        sp_result = await db.execute(
-            select(SectionProgress.section_id).where(
-                SectionProgress.user_id == current_user.id,
+        # Get all memberships for the current user
+        user_mems = (await db.scalars(
+            select(OrganizationMembership.id).where(
+                OrganizationMembership.user_id == current_user.id,
+                OrganizationMembership.status != "removed",
             )
-        )
-        completed_section_ids = {row[0] for row in sp_result.fetchall()}
+        )).all()
+
+        if user_mems:
+            lp_result = await db.execute(
+                select(LabProgress).where(LabProgress.organization_membership_id.in_(user_mems))
+            )
+            for p in lp_result.scalars().all():
+                lab_progress_map[p.lab_id] = p
+
+            sp_result = await db.execute(
+                select(SectionProgress.section_id).where(
+                    SectionProgress.organization_membership_id.in_(user_mems)
+                )
+            )
+            completed_section_ids = {row[0] for row in sp_result.fetchall()}
 
     # 4. Build ModuleDetail list
     items = []
@@ -329,22 +338,30 @@ async def get_module_full(
     completed_section_ids: set[str] = set()
 
     if current_user:
-        # Fetch lab and section progress in parallel
-        lp_stmt = select(LabProgress).where(
-            LabProgress.user_id == current_user.id,
-            LabProgress.module_id == module_id,
-        )
-        sp_stmt = select(SectionProgress.section_id).where(
-            SectionProgress.user_id == current_user.id,
-            SectionProgress.module_id == module_id,
-        )
-        lp_result, sp_result = await asyncio.gather(
-            db.execute(lp_stmt),
-            db.execute(sp_stmt),
-        )
-        for p in lp_result.scalars().all():
-            lab_progress_map[p.lab_id] = p
-        completed_section_ids = {row[0] for row in sp_result.fetchall()}
+        # Get all memberships for the current user
+        user_mems = (await db.scalars(
+            select(OrganizationMembership.id).where(
+                OrganizationMembership.user_id == current_user.id,
+                OrganizationMembership.status != "removed",
+            )
+        )).all()
+
+        if user_mems:
+            lp_stmt = select(LabProgress).where(
+                LabProgress.organization_membership_id.in_(user_mems),
+                LabProgress.lab_id.in_(all_lab_ids) if all_lab_ids else True,
+            )
+            sp_stmt = select(SectionProgress.section_id).where(
+                SectionProgress.organization_membership_id.in_(user_mems),
+                SectionProgress.section_id.in_(sec_ids) if sec_ids else True,
+            )
+            lp_result, sp_result = await asyncio.gather(
+                db.execute(lp_stmt),
+                db.execute(sp_stmt),
+            )
+            for p in lp_result.scalars().all():
+                lab_progress_map[p.lab_id] = p
+            completed_section_ids = {row[0] for row in sp_result.fetchall()}
 
     section_schemas = []
     for s_idx, s in enumerate(sections):
@@ -644,13 +661,34 @@ async def complete_reading_section(
     if not section:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Section not found")
 
+    # Get all active memberships for user
+    memberships = (await db.scalars(
+        select(OrganizationMembership).where(
+            OrganizationMembership.user_id == current_user.id,
+            OrganizationMembership.status != "removed",
+        )
+    )).all()
+    if not memberships:
+        plat_org = await db.scalar(select(Organization).where(Organization.is_platform == True))
+        plat_org_id = plat_org.id if plat_org else 1
+        default_mem = OrganizationMembership(
+            organization_id=plat_org_id,
+            user_id=current_user.id,
+            status="active",
+        )
+        db.add(default_mem)
+        await db.flush()
+        memberships = [default_mem]
+
+    mem_ids = [m.id for m in memberships]
+
     # For lab sections — verify all labs are actually completed before awarding
     lab_ids = section.labs or []
     if lab_ids:
-        # Check all labs are completed for this user
+        # Check all labs are completed in any of the user's memberships
         completed_labs = await db.execute(
             select(LabProgress.lab_id).where(
-                LabProgress.user_id == current_user.id,
+                LabProgress.organization_membership_id.in_(mem_ids),
                 LabProgress.lab_id.in_(lab_ids),
             )
         )
@@ -661,13 +699,12 @@ async def complete_reading_section(
                 detail="Complete all labs in this section first",
             )
 
-    prog_result = await db.execute(
-        select(SectionProgress).where(
-            SectionProgress.user_id == current_user.id,
+    existing = await db.scalar(
+        select(SectionProgress.id).where(
+            SectionProgress.organization_membership_id.in_(mem_ids),
             SectionProgress.section_id == section_id,
         )
     )
-    existing = prog_result.scalar_one_or_none()
 
     mem_xp = await db.scalar(
         select(OrganizationMembership.total_xp).where(
@@ -682,12 +719,12 @@ async def complete_reading_section(
 
     xp = section.xp  # reading XP from section.yaml (labs XP already awarded separately)
 
-    db.add(SectionProgress(
-        user_id=current_user.id,
-        module_id=module_id,
-        section_id=section_id,
-        xp_awarded=xp,
-    ))
+    for m in memberships:
+        db.add(SectionProgress(
+            organization_membership_id=m.id,
+            section_id=section_id,
+            xp_awarded=xp,
+        ))
 
     await db.flush()
 
