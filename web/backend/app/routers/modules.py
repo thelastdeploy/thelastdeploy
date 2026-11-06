@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select, func, distinct
 from app.dependencies import get_db, get_current_user, get_optional_user, is_user_maintainer
 from app.models import Lab, LabProgress, Module, Section, SectionProgress, User, Organization, OrganizationMembership
 from app.schemas import (
@@ -100,17 +100,24 @@ async def list_modules(
 
     visible_org_ids = await _get_visible_org_ids(request, db, current_user)
 
-    # 1. Scalar subquery for completed sections for the current user
-    completed_sections_sub = (
-        select(func.count(SectionProgress.id))
-        .where(
-            SectionProgress.module_id == Module.id,
-            SectionProgress.user_id == current_user.id,
-        )
-        .scalar_subquery()
-    ) if current_user else select(0).scalar_subquery()
+    # 1. Retrieve completed section IDs for the current user
+    completed_section_ids: set[str] = set()
+    if current_user:
+        user_mems = (await db.scalars(
+            select(OrganizationMembership.id).where(
+                OrganizationMembership.user_id == current_user.id,
+                OrganizationMembership.status != "removed",
+            )
+        )).all()
+        if user_mems:
+            sp_result = await db.scalars(
+                select(SectionProgress.section_id).where(
+                    SectionProgress.organization_membership_id.in_(user_mems)
+                )
+            )
+            completed_section_ids = set(sp_result.all())
 
-    # 2. Query only Module table columns + the progress subquery
+    # 2. Query Module table columns
     stmt = select(
         Module.id,
         Module.title,
@@ -123,7 +130,6 @@ async def list_modules(
         Module.version,
         Module.author_id,
         Module.status,
-        completed_sections_sub.label("completed_sections")
     ).where(
         Module.status != 'draft',
         Module.owner_organization_id.in_(visible_org_ids),
@@ -142,6 +148,8 @@ async def list_modules(
     items = []
     for row in rows:
         author = author_map.get(row.author_id) if row.author_id else None
+        sections_list = row.sections or []
+        completed_count = len([sid for sid in sections_list if sid in completed_section_ids])
         items.append(ModuleListItem(
             id=row.id,
             title=row.title,
@@ -150,8 +158,8 @@ async def list_modules(
             difficulty=row.difficulty,
             estimated_minutes=row.estimated_minutes,
             total_xp=row.total_xp,
-            total_sections=len(row.sections or []),
-            completed_sections=row.completed_sections,
+            total_sections=len(sections_list),
+            completed_sections=completed_count,
             version=row.version,
             author=_author_info(author),
             status=row.status,
@@ -566,7 +574,9 @@ async def verify_module(
     user_ids = set()
     if all_lab_ids:
         lp_result = await db.execute(
-            select(LabProgress.user_id).where(
+            select(OrganizationMembership.user_id)
+            .join(LabProgress, LabProgress.organization_membership_id == OrganizationMembership.id)
+            .where(
                 LabProgress.lab_id.in_(all_lab_ids),
             )
         )
@@ -574,7 +584,9 @@ async def verify_module(
 
     if sec_ids:
         sp_result = await db.execute(
-            select(SectionProgress.user_id).where(
+            select(OrganizationMembership.user_id)
+            .join(SectionProgress, SectionProgress.organization_membership_id == OrganizationMembership.id)
+            .where(
                 SectionProgress.section_id.in_(sec_ids),
             )
         )

@@ -1,6 +1,6 @@
 # web/backend/app/services.py
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import User, LabProgress, SectionProgress, Lab, Section, Module, OrganizationMembership, Organization, AuditLog
 
@@ -131,42 +131,57 @@ async def check_and_track_module_completion(user_id: int, module_id: str, db: As
     if not user_id or not module_id:
         return False
 
-    sections_count = await db.scalar(
-        select(func.count(Section.id)).where(Section.module_id == module_id)
-    ) or 0
-
-    labs_count = await db.scalar(
-        select(func.count(Lab.id)).where(Lab.module_id == module_id)
-    ) or 0
-
-    if sections_count == 0 and labs_count == 0:
+    module = await db.scalar(select(Module).where(Module.id == module_id))
+    if not module:
         return False
 
-    completed_sections_count = await db.scalar(
-        select(func.count(SectionProgress.id)).where(
-            SectionProgress.user_id == user_id,
-            SectionProgress.module_id == module_id,
-        )
-    ) or 0
+    section_ids = module.sections or []
+    if not section_ids:
+        return False
 
-    completed_labs_count = await db.scalar(
-        select(func.count(LabProgress.id)).where(
-            LabProgress.user_id == user_id,
-            LabProgress.module_id == module_id,
-        )
-    ) or 0
+    # Get all labs across all sections of this module
+    sec_rows = (await db.execute(select(Section).where(Section.id.in_(section_ids)))).scalars().all()
+    all_lab_ids = [lid for s in sec_rows for lid in (s.labs or [])]
 
-    if completed_sections_count >= sections_count and completed_labs_count >= labs_count:
-        analytics.track(
-            "anonymous",
-            AnalyticsEvent.MODULE_COMPLETED,
-            {
-                "module_id": module_id,
-                "total_sections": sections_count,
-                "total_labs": labs_count,
-            },
+    user_mems = (await db.scalars(
+        select(OrganizationMembership.id).where(
+            OrganizationMembership.user_id == user_id,
+            OrganizationMembership.status != "removed",
         )
-        return True
+    )).all()
+    if not user_mems:
+        return False
 
-    return False
+    # Check completed sections
+    completed_sec_count = (await db.scalar(
+        select(func.count(distinct(SectionProgress.section_id))).where(
+            SectionProgress.organization_membership_id.in_(user_mems),
+            SectionProgress.section_id.in_(section_ids),
+        )
+    )) or 0
+
+    if completed_sec_count < len(section_ids):
+        return False
+
+    # Check completed labs
+    if all_lab_ids:
+        completed_lab_count = (await db.scalar(
+            select(func.count(distinct(LabProgress.lab_id))).where(
+                LabProgress.organization_membership_id.in_(user_mems),
+                LabProgress.lab_id.in_(all_lab_ids),
+            )
+        )) or 0
+        if completed_lab_count < len(all_lab_ids):
+            return False
+
+    analytics.track(
+        "anonymous",
+        AnalyticsEvent.MODULE_COMPLETED,
+        {
+            "module_id": module_id,
+            "total_sections": len(section_ids),
+            "total_labs": len(all_lab_ids),
+        },
+    )
+    return True
 
