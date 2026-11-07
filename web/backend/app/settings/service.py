@@ -9,7 +9,6 @@ from sqlalchemy import select, and_
 from app.models import OrganizationSettingAvailability, OrganizationSetting
 from app.settings.registry import (
     get_setting_definition,
-    is_registered_setting,
     get_all_setting_definitions,
     get_tier_eligible_settings,
     SettingDefinition,

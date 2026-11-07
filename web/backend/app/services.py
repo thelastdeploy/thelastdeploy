@@ -2,7 +2,10 @@
 
 from sqlalchemy import select, func, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models import User, LabProgress, SectionProgress, Lab, Section, Module, OrganizationMembership, Organization, AuditLog
+from app.models import (
+    User, LabProgress, SectionProgress, Lab, Section, Module,
+    OrganizationMembership, Organization, AuditLog, Role, MembershipRole
+)
 
 
 from app.analytics import analytics, AnalyticsEvent
@@ -29,8 +32,12 @@ async def recalculate_and_update_user_xp(
         )).all()
         if not target_org_ids:
             # Fallback to platform org
-            plat_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
-            target_org_ids = [plat_id] if plat_id else [1]
+            plat_id = await db.scalar(
+                select(Organization.id).where(
+                    (Organization.type == "platform") | (Organization.slug == "tld")
+                )
+            )
+            target_org_ids = [plat_id] if plat_id else []
 
     primary_verified = 0
     primary_unverified = 0
@@ -184,4 +191,50 @@ async def check_and_track_module_completion(user_id: int, module_id: str, db: As
         },
     )
     return True
+
+
+async def get_or_create_platform_membership(
+    user_id: int,
+    db: AsyncSession,
+    role_slug: str = "learner",
+) -> OrganizationMembership:
+    """
+    Ensure the user has an active membership in the platform organization ('The Last Deploy').
+    Creates one with the specified role if it does not already exist.
+    """
+    plat_org = await db.scalar(
+        select(Organization).where(
+            (Organization.type == "platform") | (Organization.slug == "tld")
+        )
+    )
+    if not plat_org:
+        raise RuntimeError("Platform organization not found in database.")
+
+    mem = await db.scalar(
+        select(OrganizationMembership).where(
+            OrganizationMembership.user_id == user_id,
+            OrganizationMembership.organization_id == plat_org.id,
+            OrganizationMembership.status != "removed",
+        )
+    )
+    if mem:
+        return mem
+
+    mem = OrganizationMembership(
+        organization_id=plat_org.id,
+        user_id=user_id,
+        status="active",
+        total_xp=0,
+        unverified_xp=0,
+    )
+    db.add(mem)
+    await db.flush()
+
+    role = await db.scalar(select(Role).where(Role.slug == role_slug))
+    if role:
+        db.add(MembershipRole(membership_id=mem.id, role_id=role.id))
+        await db.flush()
+
+    return mem
+
 

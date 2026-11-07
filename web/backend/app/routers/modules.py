@@ -1,11 +1,10 @@
 # web/backend/app/routers/modules.py
 
 import asyncio
-from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, distinct
+from sqlalchemy import select
 from app.dependencies import get_db, get_current_user, get_optional_user, is_user_maintainer
 from app.models import Lab, LabProgress, Module, Section, SectionProgress, User, Organization, OrganizationMembership
 from app.schemas import (
@@ -15,8 +14,9 @@ from app.schemas import (
     ModuleListResponse, ModuleListItem,
     ModuleDetail, ModuleSummary,
     SectionSchema,
+    VerifyModulePayload, VerifySectionXP, VerifyLabXP,
 )
-from app.services import recalculate_and_update_user_xp, check_and_track_module_completion
+from app.services import recalculate_and_update_user_xp, check_and_track_module_completion, get_or_create_platform_membership
 from app.analytics import analytics, AnalyticsEvent
 
 router = APIRouter()
@@ -77,8 +77,12 @@ async def _get_visible_org_ids(request: Request, db: AsyncSession, current_user:
         if primary_membership:
             return [primary_membership]
 
-    platform_org_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
-    return [platform_org_id] if platform_org_id else [1]
+    platform_org_id = await db.scalar(
+        select(Organization.id).where(
+            (Organization.type == "platform") | (Organization.slug == "tld")
+        )
+    )
+    return [platform_org_id] if platform_org_id else []
 
 
 # ---------------------------------------------------------------------------
@@ -483,21 +487,6 @@ async def get_module_summary(
     )
 
 
-from pydantic import BaseModel
-
-class VerifyLabXP(BaseModel):
-    id: str
-    xp: int
-
-class VerifySectionXP(BaseModel):
-    id: str
-    xp: int
-    labs: list[VerifyLabXP] = []
-
-class VerifyModulePayload(BaseModel):
-    sections: list[VerifySectionXP] = []
-
-
 @router.patch("/modules/{module_id}/verify", response_model=dict)
 async def verify_module(
     module_id: str,
@@ -681,14 +670,7 @@ async def complete_reading_section(
         )
     )).all()
     if not memberships:
-        plat_org = await db.scalar(select(Organization).where(Organization.type == "platform"))
-        plat_org_id = plat_org.id if plat_org else 1
-        default_mem = OrganizationMembership(
-            organization_id=plat_org_id,
-            user_id=current_user.id,
-            status="active",
-        )
-        db.add(default_mem)
+        default_mem = await get_or_create_platform_membership(current_user.id, db)
         await db.flush()
         memberships = [default_mem]
 

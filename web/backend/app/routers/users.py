@@ -3,10 +3,10 @@
 import secrets
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func, delete
+from sqlalchemy import select, delete
 from app.dependencies import get_db, get_current_user, is_user_maintainer, is_user_platform_admin
-from app.models import User, LabProgress, SectionProgress, Lab, Section, Module, PlatformRole, PlatformUserRole, Organization, OrganizationMembership
-from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse
+from app.models import User, LabProgress, SectionProgress, PlatformRole, PlatformUserRole, Organization, OrganizationMembership
+from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse, MaintainerAddRequest
 from app.auth import verify_password, hash_password
 from app.email import send_verification_email
 
@@ -148,12 +148,6 @@ async def update_password(
     await db.commit()
 
     return MessageResponse(detail="Password updated successfully.")
-
-
-from pydantic import BaseModel
-
-class MaintainerAddRequest(BaseModel):
-    identity: str
 
 
 @router.get("/admin/maintainers", response_model=list[dict])

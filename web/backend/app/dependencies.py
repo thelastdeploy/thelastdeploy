@@ -180,10 +180,15 @@ async def get_current_organization(
     mem_result = await db.execute(mem_stmt)
     membership = mem_result.scalar_one_or_none()
     if not membership:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"You do not have an active membership in organization '{organization.slug}'",
-        )
+        if organization.type == "platform" or organization.slug == "tld":
+            from app.services import get_or_create_platform_membership
+            membership = await get_or_create_platform_membership(current_user.id, db)
+            await db.commit()
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"You do not have an active membership in organization '{organization.slug}'",
+            )
 
     return organization, membership
 

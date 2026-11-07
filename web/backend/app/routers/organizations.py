@@ -1,9 +1,8 @@
 # web/backend/app/routers/organizations.py
 
-from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
+from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.dependencies import (
@@ -12,7 +11,6 @@ from app.dependencies import (
     get_current_organization,
     require_permission,
     require_platform_permission,
-    is_user_maintainer,
 )
 from app.models import (
     User,
@@ -21,7 +19,6 @@ from app.models import (
     MembershipRole,
     Role,
     Cohort,
-    CohortMembership,
     LearningPath,
     OrganizationRoleAvailability,
 )
@@ -33,7 +30,6 @@ from app.schemas import (
     CohortResponse,
     LearningPathCreateRequest,
     LearningPathResponse,
-    MessageResponse,
 )
 from app.services import log_audit_event
 

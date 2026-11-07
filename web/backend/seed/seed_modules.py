@@ -45,9 +45,15 @@ async def seed():
     print(f"🌱 Seeding challenge modules from: {CHALLENGES_DIR}")
     async with AsyncSessionLocal() as db:
         # Resolve platform organization (The Last Deploy)
-        plat_res = await db.execute(select(Organization).where(Organization.type == "platform"))
+        plat_res = await db.execute(
+            select(Organization).where(
+                (Organization.type == "platform") | (Organization.slug == "tld")
+            )
+        )
         platform_org = plat_res.scalar_one_or_none()
-        platform_org_id = platform_org.id if platform_org else 1
+        if not platform_org:
+            raise RuntimeError("Platform organization ('tld') not found. Run database migrations first.")
+        platform_org_id = platform_org.id
 
         for module_dir in sorted(os.listdir(CHALLENGES_DIR)):
             module_path = os.path.join(CHALLENGES_DIR, module_dir)

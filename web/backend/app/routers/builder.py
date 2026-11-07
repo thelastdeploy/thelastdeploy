@@ -1,7 +1,7 @@
 # web/backend/app/routers/builder.py
 
 import json
-import base64
+import logging
 import httpx
 import yaml
 import hashlib
@@ -23,6 +23,7 @@ from app.schemas import (
 from app.config import settings
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 def _calculate_validator_hash(script: str | None) -> str | None:
@@ -35,7 +36,7 @@ def _calculate_validator_hash(script: str | None) -> str | None:
 async def push_to_github_task(module_id: str, files: dict, commit_message: str):
     """Background task to commit multiple files atomically using Git Data API."""
     if not settings.GITHUB_TOKEN:
-        print("[GitHub Integration] GITHUB_TOKEN not configured. Skipping GitHub push.")
+        logger.warning("[GitHub Integration] GITHUB_TOKEN not configured. Skipping GitHub push.")
         return
 
     headers = {
@@ -52,7 +53,7 @@ async def push_to_github_task(module_id: str, files: dict, commit_message: str):
             ref_url = f"https://api.github.com/repos/{repo}/git/ref/heads/{branch}"
             ref_resp = await client.get(ref_url, headers=headers)
             if ref_resp.status_code != 200:
-                print(f"[GitHub Integration] Failed to get branch reference: {ref_resp.text}")
+                logger.error("[GitHub Integration] Failed to get branch reference: %s", ref_resp.text)
                 return
             
             ref_data = ref_resp.json()
@@ -62,7 +63,7 @@ async def push_to_github_task(module_id: str, files: dict, commit_message: str):
             commit_url = f"https://api.github.com/repos/{repo}/git/commits/{base_commit_sha}"
             commit_resp = await client.get(commit_url, headers=headers)
             if commit_resp.status_code != 200:
-                print(f"[GitHub Integration] Failed to get base commit details: {commit_resp.text}")
+                logger.error("[GitHub Integration] Failed to get base commit details: %s", commit_resp.text)
                 return
             
             commit_data = commit_resp.json()
@@ -85,7 +86,7 @@ async def push_to_github_task(module_id: str, files: dict, commit_message: str):
             }
             tree_resp = await client.post(tree_url, headers=headers, json=tree_payload)
             if tree_resp.status_code not in (200, 201):
-                print(f"[GitHub Integration] Failed to create git tree: {tree_resp.text}")
+                logger.error("[GitHub Integration] Failed to create git tree: %s", tree_resp.text)
                 return
             
             new_tree_sha = tree_resp.json()["sha"]
@@ -99,7 +100,7 @@ async def push_to_github_task(module_id: str, files: dict, commit_message: str):
             }
             new_commit_resp = await client.post(commits_url, headers=headers, json=commit_payload)
             if new_commit_resp.status_code not in (200, 201):
-                print(f"[GitHub Integration] Failed to create commit: {new_commit_resp.text}")
+                logger.error("[GitHub Integration] Failed to create commit: %s", new_commit_resp.text)
                 return
             
             new_commit_sha = new_commit_resp.json()["sha"]
@@ -112,13 +113,13 @@ async def push_to_github_task(module_id: str, files: dict, commit_message: str):
             }
             patch_resp = await client.patch(update_ref_url, headers=headers, json=update_ref_payload)
             if patch_resp.status_code != 200:
-                print(f"[GitHub Integration] Failed to update reference: {patch_resp.text}")
+                logger.error("[GitHub Integration] Failed to update reference: %s", patch_resp.text)
                 return
 
-            print(f"[GitHub Integration] Successfully committed {len(files)} files to branch {branch} in 1 single atomic commit! (Commit SHA: {new_commit_sha})")
+            logger.info("[GitHub Integration] Successfully committed %d files to branch %s in 1 single atomic commit! (Commit SHA: %s)", len(files), branch, new_commit_sha)
 
         except Exception as e:
-            print(f"[GitHub Integration] Error performing atomic GitHub commit: {e}")
+            logger.error("[GitHub Integration] Error performing atomic GitHub commit: %s", e)
 
 
 def build_github_challenge_files(

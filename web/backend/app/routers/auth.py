@@ -30,6 +30,7 @@ from app.schemas import (
 )
 from app.email import send_verification_email, send_reset_password_email
 from app.analytics import analytics, AnalyticsEvent
+from app.services import get_or_create_platform_membership
 
 router = APIRouter()
 
@@ -101,6 +102,8 @@ async def register(
         verification_token=verification_token,
     )
     db.add(user)
+    await db.flush()
+    await get_or_create_platform_membership(user.id, db)
     await db.commit()
     await db.refresh(user)
 
@@ -152,6 +155,9 @@ async def login(body: LoginRequest, request: Request, db: AsyncSession = Depends
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Please verify your email address before logging in.",
             )
+
+    await get_or_create_platform_membership(user.id, db)
+    await db.commit()
 
     session, token = await _create_session(db, user, client_type="web", request=request)
     return TokenResponse(access_token=token, device_key=session.device_key)
@@ -620,6 +626,9 @@ async def github_auth(body: GitHubLoginRequest, request: Request, db: AsyncSessi
                 {"auth_provider": "github"},
             )
 
+    await get_or_create_platform_membership(user.id, db)
+    await db.commit()
+
     session, token = await _create_session(db, user, client_type="web", request=request)
     return TokenResponse(access_token=token, device_key=session.device_key)
 
@@ -724,6 +733,9 @@ async def google_auth(body: GoogleLoginRequest, request: Request, db: AsyncSessi
                 AnalyticsEvent.USER_VERIFIED,
                 {"auth_provider": "google"},
             )
+
+    await get_or_create_platform_membership(user.id, db)
+    await db.commit()
 
     session, token = await _create_session(db, user, client_type="web", request=request)
     return TokenResponse(access_token=token, device_key=session.device_key)

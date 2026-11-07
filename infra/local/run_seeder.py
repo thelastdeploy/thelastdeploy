@@ -55,7 +55,6 @@ async def seed_dummy_users():
                 email=dev_email,
                 password_hash=hash_password("password123"),
                 is_verified=True,
-                is_maintainer=True,
             )
             db.add(dev_user)
             await db.flush()

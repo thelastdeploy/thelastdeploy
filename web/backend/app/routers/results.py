@@ -3,14 +3,14 @@
 import hashlib
 import hmac
 import logging
-from datetime import datetime, timezone
+from datetime import timezone
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, func
+from sqlalchemy import select
 from app.dependencies import get_db, get_optional_user, get_optional_session
-from app.models import Lab, LabProgress, User, UserSession, SectionProgress, Module, Section, OrganizationMembership, Organization
+from app.models import Lab, LabProgress, User, UserSession, OrganizationMembership
 from app.schemas import ResultRequest, ResultResponse
-from app.services import recalculate_and_update_user_xp, check_and_track_module_completion
+from app.services import recalculate_and_update_user_xp, get_or_create_platform_membership
 from app.analytics import analytics, AnalyticsEvent
 
 router = APIRouter()
@@ -114,14 +114,7 @@ async def submit_result(
     )).all()
 
     if not memberships:
-        plat_org = await db.scalar(select(Organization).where(Organization.type == "platform"))
-        plat_org_id = plat_org.id if plat_org else 1
-        default_mem = OrganizationMembership(
-            organization_id=plat_org_id,
-            user_id=current_user.id,
-            status="active",
-        )
-        db.add(default_mem)
+        default_mem = await get_or_create_platform_membership(current_user.id, db)
         await db.flush()
         memberships = [default_mem]
 

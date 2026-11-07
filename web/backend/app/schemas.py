@@ -181,6 +181,18 @@ class ModuleSummary(BaseModel):
     status: str = "verified"
     is_official_verified: bool = False
 
+class VerifyLabXP(BaseModel):
+    id: str
+    xp: int
+
+class VerifySectionXP(BaseModel):
+    id: str
+    xp: int
+    labs: list[VerifyLabXP] = []
+
+class VerifyModulePayload(BaseModel):
+    sections: list[VerifySectionXP] = []
+
 
 # --- Progress ---
 
@@ -206,6 +218,9 @@ class ResultResponse(BaseModel):
 
 
 # --- Users ---
+
+class MaintainerAddRequest(BaseModel):
+    identity: str
 
 class MeResponse(BaseModel):
     id: int
