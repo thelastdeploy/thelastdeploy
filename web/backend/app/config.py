@@ -29,9 +29,7 @@ class Settings(BaseSettings):
     CHALLENGES_REPO: str = "thelastdeploy/thelastdeploy"
     CHALLENGES_BRANCH: str = "main"
 
-    # Analytics / PostHog Settings
-    POSTHOG_API_KEY: str | None = None
-    POSTHOG_HOST: str = "https://us.i.posthog.com"
+    # Analytics Settings
     ANALYTICS_ENABLED: bool = False
 
     @field_validator("DATABASE_URL", mode="before")

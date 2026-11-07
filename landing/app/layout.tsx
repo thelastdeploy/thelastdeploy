@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -39,7 +38,6 @@ export default function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('tld-theme');if(t==='light'||(!t&&window.matchMedia('(prefers-color-scheme: light)').matches)){document.documentElement.classList.add('light');document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');document.documentElement.classList.remove('light');}}catch(e){}})()`,
           }}
         />
-        <AnalyticsTracker />
         {children}
       </body>
     </html>

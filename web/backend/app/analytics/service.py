@@ -3,9 +3,7 @@
 import logging
 from typing import Any
 from app.analytics.events import AnalyticsEvent
-from app.analytics.posthog_provider import PostHogAnalyticsProvider
 from app.analytics.provider import BaseAnalyticsProvider, NoOpAnalyticsProvider
-from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -33,24 +31,10 @@ DISALLOWED_PROPERTY_KEYS = {
 
 
 class AnalyticsService:
-    """Central analytics service managing providers and privacy guarantees."""
+    """Central analytics service managing anonymous events (no-op; external trackers removed)."""
 
     def __init__(self) -> None:
         self._provider: BaseAnalyticsProvider = NoOpAnalyticsProvider()
-        self._initialize_provider()
-
-    def _initialize_provider(self) -> None:
-        try:
-            if settings.ANALYTICS_ENABLED and settings.POSTHOG_API_KEY:
-                self._provider = PostHogAnalyticsProvider(
-                    api_key=settings.POSTHOG_API_KEY,
-                    host=settings.POSTHOG_HOST,
-                )
-            else:
-                self._provider = NoOpAnalyticsProvider()
-        except Exception as e:
-            logger.error("Failed to initialize analytics provider, falling back to NoOp: %s", e)
-            self._provider = NoOpAnalyticsProvider()
 
     def _sanitize_properties(self, properties: dict[str, Any] | None) -> dict[str, Any]:
         if not properties:
@@ -67,26 +51,9 @@ class AnalyticsService:
         event: AnalyticsEvent | str = "",
         properties: dict[str, Any] | None = None,
     ) -> None:
-        """
-        Track an analytics event safely and anonymously.
-        Enforces 100% anonymous tracking — never forwards user IDs or PII.
-        Never raises exceptions to caller code.
-        """
-        try:
-            # Enforce 100% anonymous distinct_id for all backend events
-            anonymous_distinct_id = "anonymous"
-            event_name = event.value if isinstance(event, AnalyticsEvent) else str(event)
-            clean_properties = self._sanitize_properties(properties)
-            self._provider.track(
-                distinct_id=anonymous_distinct_id,
-                event=event_name,
-                properties=clean_properties,
-            )
-        except Exception as e:
-            logger.error("Unexpected error in AnalyticsService.track: %s", e)
+        """Track an analytics event safely and anonymously (no-op)."""
+        pass
 
     def shutdown(self) -> None:
-        try:
-            self._provider.shutdown()
-        except Exception as e:
-            logger.error("Unexpected error during AnalyticsService shutdown: %s", e)
+        """Clean up resources on application shutdown."""
+        pass
