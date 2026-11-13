@@ -57,6 +57,18 @@ class SettingsService:
         return val_record
 
     @staticmethod
+    async def get_effective_setting_value(db: AsyncSession, organization_id: int, setting_key: str) -> Any:
+        """
+        Get the effective setting value for an organization, falling back to the registry default
+        if not explicitly customized.
+        """
+        val = await SettingsService.get_effective_setting(db, organization_id, setting_key)
+        if val is not None:
+            return val
+        definition = get_setting_definition(setting_key)
+        return definition.default if definition else None
+
+    @staticmethod
     async def list_settings_for_org_admin(db: AsyncSession, organization_id: int) -> list[dict[str, Any]]:
         """
         List settings for Organization Admins.

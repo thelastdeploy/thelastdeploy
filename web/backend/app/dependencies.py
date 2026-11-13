@@ -118,13 +118,53 @@ async def get_optional_user(
 # Organization Context & RBAC Dependencies
 # =============================================================================
 
+from app.onboarding.service import extract_subdomain_org_slug
+
+
+async def get_request_organization(
+    request: Request,
+    db: AsyncSession = Depends(get_db),
+) -> Organization:
+    """
+    Publicly resolves the organization context from:
+    1. Header 'X-Organization-Id' or 'X-Organization-Slug'
+    2. Subdomain ({slug}.org.thelastdeploy.com)
+    3. Default platform organization ('The Last Deploy', type='platform')
+    Does not require authentication.
+    """
+    org_id_header = request.headers.get("x-organization-id")
+    org_slug_header = request.headers.get("x-organization-slug") or request.headers.get("x-organization")
+
+    if org_id_header:
+        try:
+            target_id = int(org_id_header)
+            org_stmt = select(Organization).where(Organization.id == target_id)
+        except ValueError:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid X-Organization-Id header")
+    elif org_slug_header:
+        org_stmt = select(Organization).where(Organization.slug == org_slug_header.strip())
+    else:
+        host = request.headers.get("x-forwarded-host") or request.headers.get("host")
+        subdomain_slug = extract_subdomain_org_slug(host)
+        if subdomain_slug:
+            org_stmt = select(Organization).where(Organization.slug == subdomain_slug)
+        else:
+            org_stmt = select(Organization).where(Organization.type == "platform")
+
+    org = (await db.execute(org_stmt)).scalar_one_or_none()
+    if not org:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found")
+    return org
+
+
 async def get_current_organization(
     request: Request,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> tuple[Organization, OrganizationMembership]:
     """
-    Resolves the organization context from header 'X-Organization-Id' or 'X-Organization-Slug'.
+    Resolves the organization context from header 'X-Organization-Id' or 'X-Organization-Slug'
+    or from host subdomain.
     Defaults to the platform organization ('The Last Deploy') if unprovided.
     Validates that the user has an active membership in that organization.
     """
@@ -140,31 +180,36 @@ async def get_current_organization(
     elif org_slug_header:
         org_stmt = select(Organization).where(Organization.slug == org_slug_header.strip())
     else:
-        # Default to platform organization if member, otherwise user's first active organization
-        user_platform_mem = await db.scalar(
-            select(OrganizationMembership.id)
-            .join(Organization, Organization.id == OrganizationMembership.organization_id)
-            .where(
-                OrganizationMembership.user_id == current_user.id,
-                Organization.type == "platform",
-                OrganizationMembership.status == "active",
-            )
-        )
-        if user_platform_mem:
-            org_stmt = select(Organization).where(Organization.type == "platform")
+        host = request.headers.get("x-forwarded-host") or request.headers.get("host")
+        subdomain_slug = extract_subdomain_org_slug(host)
+        if subdomain_slug:
+            org_stmt = select(Organization).where(Organization.slug == subdomain_slug)
         else:
-            first_mem_org = await db.scalar(
-                select(OrganizationMembership.organization_id)
+            # Default to platform organization if member, otherwise user's first active organization
+            user_platform_mem = await db.scalar(
+                select(OrganizationMembership.id)
+                .join(Organization, Organization.id == OrganizationMembership.organization_id)
                 .where(
                     OrganizationMembership.user_id == current_user.id,
+                    Organization.type == "platform",
                     OrganizationMembership.status == "active",
                 )
-                .order_by(OrganizationMembership.joined_at.asc())
             )
-            if first_mem_org:
-                org_stmt = select(Organization).where(Organization.id == first_mem_org)
-            else:
+            if user_platform_mem:
                 org_stmt = select(Organization).where(Organization.type == "platform")
+            else:
+                first_mem_org = await db.scalar(
+                    select(OrganizationMembership.organization_id)
+                    .where(
+                        OrganizationMembership.user_id == current_user.id,
+                        OrganizationMembership.status == "active",
+                    )
+                    .order_by(OrganizationMembership.joined_at.asc())
+                )
+                if first_mem_org:
+                    org_stmt = select(Organization).where(Organization.id == first_mem_org)
+                else:
+                    org_stmt = select(Organization).where(Organization.type == "platform")
 
     org_result = await db.execute(org_stmt)
     organization = org_result.scalar_one_or_none()

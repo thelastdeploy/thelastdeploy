@@ -512,3 +512,65 @@ class OrganizationSetting(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     organization: Mapped["Organization"] = relationship("Organization")
+
+
+class OrganizationInvitation(Base):
+    __tablename__ = "organization_invitations"
+    __table_args__ = (
+        Index("idx_org_invitations_org_status", "organization_id", "status"),
+        Index("idx_org_invitations_email_status", "email", "status"),
+        Index("idx_org_invitations_token_hash", "token_hash", unique=True),
+        Index("idx_org_invitations_code", "invitation_code", unique=True),
+        Index("idx_org_invitations_expires", "expires_at"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
+    cohort_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=True)
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    invitation_code: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="pending", server_default="pending", nullable=False)  # pending, accepted, expired, revoked
+    created_by_user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    redeemed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    redeemed_by_user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    revoked_by_user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+
+    organization: Mapped["Organization"] = relationship("Organization")
+    cohort: Mapped["Cohort | None"] = relationship("Cohort")
+    creator: Mapped["User | None"] = relationship("User", foreign_keys=[created_by_user_id])
+    redeemer: Mapped["User | None"] = relationship("User", foreign_keys=[redeemed_by_user_id])
+    revoker: Mapped["User | None"] = relationship("User", foreign_keys=[revoked_by_user_id])
+
+
+class OrganizationAccessRequest(Base):
+    __tablename__ = "organization_access_requests"
+    __table_args__ = (
+        Index("idx_org_access_requests_org_status", "organization_id", "status"),
+        Index("idx_org_access_requests_email", "email"),
+        Index(
+            "uq_org_access_req_pending",
+            "organization_id",
+            "email",
+            unique=True,
+            postgresql_where=text("status = 'pending'"),
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(String(20), default="pending", server_default="pending", nullable=False)  # pending, approved, rejected
+    requested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    reviewed_by_user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    rejection_reason: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    issued_invitation_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("organization_invitations.id", ondelete="SET NULL"), nullable=True)
+
+    organization: Mapped["Organization"] = relationship("Organization")
+    reviewer: Mapped["User | None"] = relationship("User", foreign_keys=[reviewed_by_user_id])
+    issued_invitation: Mapped["OrganizationInvitation | None"] = relationship("OrganizationInvitation")
+

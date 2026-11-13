@@ -196,3 +196,64 @@ def send_reset_password_email(email: str, token: str, background_tasks: Backgrou
 
     if settings.RESEND_API_KEY:
         background_tasks.add_task(send_email_via_resend, email, subject, html_content)
+
+
+def send_invitation_email(
+    email: str,
+    org_name: str,
+    invite_url: str,
+    invite_code: str | None,
+    cohort_name: str | None,
+    expires_at: datetime,
+    background_tasks: BackgroundTasks,
+):
+    """Sends an invitation email with secure link and optional invitation code."""
+    subject = f"You're invited to join {org_name} on The Last Deploy"
+    if cohort_name:
+        subject = f"You're invited to join {cohort_name} at {org_name} on The Last Deploy"
+
+    cohort_text = f"<p style='margin: 0 0 16px 0; font-size: 15px; color: #475569;'>Cohort: <strong>{cohort_name}</strong></p>" if cohort_name else ""
+    code_text = f"""
+    <div style="background-color: #f1f5f9; border-radius: 8px; padding: 16px; margin: 20px 0; text-align: center;">
+        <span style="font-size: 13px; color: #64748b; display: block; margin-bottom: 6px;">Your Invitation Code:</span>
+        <strong style="font-size: 20px; font-family: monospace; letter-spacing: 2px; color: #0f172a;">{invite_code}</strong>
+    </div>
+    """ if invite_code else ""
+
+    expiry_str = expires_at.strftime("%B %d, %Y at %H:%M UTC")
+
+    body_html = f"""
+    <h2 style="margin-top: 0; margin-bottom: 16px; font-size: 22px; font-weight: 700; color: #0f172a; line-height: 1.3;">You've Been Invited!</h2>
+    <p style="margin: 0 0 16px 0; font-size: 15px; line-height: 1.6; color: #475569;">
+        You have been invited to join <strong>{org_name}</strong> on The Last Deploy.
+    </p>
+    {cohort_text}
+    <p style="margin: 0 0 24px 0; text-align: center;">
+        <a href="{invite_url}" style="display: inline-block; background-color: #10b981; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);">
+            Accept Invitation
+        </a>
+    </p>
+    {code_text}
+    <p style="margin: 0 0 12px 0; font-size: 13px; color: #64748b;">
+        ⏳ This invitation expires on <strong>{expiry_str}</strong>.
+    </p>
+    <p style="margin: 0 0 8px 0; font-size: 13px; color: #64748b;">
+        If the button above does not work, copy and paste this link into your browser:
+    </p>
+    <p style="margin: 0 0 24px 0; font-size: 13px; word-break: break-all;">
+        <a href="{invite_url}" style="color: #10b981; text-decoration: underline;">{invite_url}</a>
+    </p>
+    <p style="margin: 0; font-size: 15px; color: #475569; line-height: 1.6;">
+        Welcome aboard,<br>
+        <strong>The Last Deploy Team</strong>
+    </p>
+    """
+
+    html_content = _wrap_email_template(subject, body_html)
+
+    if settings.ENVIRONMENT == "development":
+        _log_email_to_console(email, subject, html_content)
+
+    if settings.RESEND_API_KEY:
+        background_tasks.add_task(send_email_via_resend, email, subject, html_content)
+

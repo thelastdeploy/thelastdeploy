@@ -10,8 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_, update
 from app.config import settings
 from app.dependencies import get_db, get_current_user, get_optional_session
-from app.models import User, CLIDeviceAuth, UserSession
+from app.models import User, CLIDeviceAuth, UserSession, Organization, OrganizationMembership, Role, MembershipRole
 from app.auth import hash_password, verify_password, create_access_token, ensure_utc, hash_token
+from app.onboarding.service import extract_subdomain_org_slug
 from app.schemas import (
     RegisterRequest,
     LoginRequest,
@@ -80,6 +81,7 @@ async def _create_session(
 async def register(
     body: RegisterRequest,
     background_tasks: BackgroundTasks,
+    request: Request,
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(
@@ -103,7 +105,58 @@ async def register(
     )
     db.add(user)
     await db.flush()
-    await get_or_create_platform_membership(user.id, db)
+
+    # Resolve organization context for registration
+    org_id_header = request.headers.get("x-organization-id")
+    org_slug_header = request.headers.get("x-organization-slug") or request.headers.get("x-organization")
+    host = request.headers.get("x-forwarded-host") or request.headers.get("host")
+    subdomain_slug = extract_subdomain_org_slug(host)
+
+    target_org = None
+    if org_id_header:
+        try:
+            target_org = await db.scalar(select(Organization).where(Organization.id == int(org_id_header)))
+        except ValueError:
+            pass
+    elif org_slug_header:
+        target_org = await db.scalar(select(Organization).where(Organization.slug == org_slug_header.strip()))
+    elif subdomain_slug:
+        target_org = await db.scalar(select(Organization).where(Organization.slug == subdomain_slug))
+
+    if not target_org or target_org.type == "platform":
+        # Root / Platform Registration (thelastdeploy.com)
+        await get_or_create_platform_membership(user.id, db)
+    else:
+        # Institutional Registration: Enforce domain check if setting is enabled
+        from app.settings.service import SettingsService
+        settings_service = SettingsService()
+        enforce_domain = await settings_service.get_effective_setting_value(
+            db, target_org.id, "security.enforce_domain_match"
+        )
+        if enforce_domain and target_org.domains:
+            email_domain = body.email.split("@")[-1].lower()
+            valid_domains = [d.lower().strip() for d in target_org.domains]
+            if email_domain not in valid_domains:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Registration in {target_org.name} requires an authorized email domain: {valid_domains}",
+                )
+
+        # Create membership in institutional org ONLY (no default platform org membership)
+        mem = OrganizationMembership(
+            organization_id=target_org.id,
+            user_id=user.id,
+            status="active",
+            total_xp=0,
+            unverified_xp=0,
+        )
+        db.add(mem)
+        await db.flush()
+
+        learner_role = await db.scalar(select(Role).where(Role.slug == "learner"))
+        if learner_role:
+            db.add(MembershipRole(membership_id=mem.id, role_id=learner_role.id))
+
     await db.commit()
     await db.refresh(user)
 

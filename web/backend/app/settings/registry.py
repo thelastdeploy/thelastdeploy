@@ -100,6 +100,27 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         category="Analytics",
         description="Allow organization administrators to export learner lab completion records and audit reports.",
     ),
+    "invitations.expiry_days": SettingDefinition(
+        key="invitations.expiry_days",
+        data_type=SettingType.INTEGER,
+        default=7,
+        category="Onboarding",
+        description="Number of days before newly issued invitations expire (snapshot on creation).",
+    ),
+    "onboarding.access_approval_mode": SettingDefinition(
+        key="onboarding.access_approval_mode",
+        data_type=SettingType.STRING,
+        default="automatic",
+        category="Onboarding",
+        description="Approval mode for domain-based access requests ('automatic' or 'manual').",
+    ),
+    "cohorts.invitations_enabled": SettingDefinition(
+        key="cohorts.invitations_enabled",
+        data_type=SettingType.BOOLEAN,
+        default=True,
+        category="Cohorts",
+        description="Whether direct cohort invitations are permitted in this organization.",
+    ),
 }
 
 
@@ -124,12 +145,18 @@ TIER_DEFAULT_SETTINGS: dict[str, set[str]] = {
         "content.show_unverified",
         "security.enforce_domain_match",
         "cohorts.max_active_cohorts",
+        "invitations.expiry_days",
+        "onboarding.access_approval_mode",
+        "cohorts.invitations_enabled",
     },
     "starter": {
         "content.show_unverified",
         "content.allow_custom_modules",
         "security.enforce_domain_match",
         "cohorts.max_active_cohorts",
+        "invitations.expiry_days",
+        "onboarding.access_approval_mode",
+        "cohorts.invitations_enabled",
     },
     "enterprise": {
         "content.show_unverified",
@@ -137,6 +164,9 @@ TIER_DEFAULT_SETTINGS: dict[str, set[str]] = {
         "security.enforce_domain_match",
         "cohorts.max_active_cohorts",
         "analytics.export_enabled",
+        "invitations.expiry_days",
+        "onboarding.access_approval_mode",
+        "cohorts.invitations_enabled",
     },
 }
 

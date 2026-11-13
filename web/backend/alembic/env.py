@@ -16,7 +16,8 @@ from app.models import (  # noqa: F401 — registers models
     RolePermission, OrganizationRoleAvailability, MembershipRole, PlatformRole,
     PlatformPermission, PlatformRolePermission, PlatformUserRole, Cohort,
     CohortMembership, CohortInvite, LearningPath, AuditLog,
-    OrganizationSettingAvailability, OrganizationSetting
+    OrganizationSettingAvailability, OrganizationSetting,
+    OrganizationInvitation, OrganizationAccessRequest
 )
 
 config = context.config

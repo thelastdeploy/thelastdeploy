@@ -402,4 +402,95 @@ class OrgSettingEnableRequest(BaseModel):
     initial_value: Any | None = None
 
 
+# --- Module F: Invitations & Organization Onboarding ---
+
+class OrganizationPublicInfoResponse(BaseModel):
+    id: int
+    name: str
+    slug: str
+    type: str
+    domains: list[str] = []
+    approval_mode: str = "automatic"
+
+class AccessRequestCreate(BaseModel):
+    email: EmailStr
+
+class AccessRequestResponse(BaseModel):
+    id: int
+    organization_id: int
+    email: str
+    status: str
+    requested_at: datetime
+    reviewed_at: datetime | None = None
+    rejection_reason: str | None = None
+    issued_invitation_id: int | None = None
+
+class AccessRequestRejectPayload(BaseModel):
+    reason: str | None = None
+
+class InvitationCreateRequest(BaseModel):
+    email: EmailStr
+    cohort_id: int | None = None
+
+class BulkInvitationResultItem(BaseModel):
+    email: str
+    status: str  # created, skipped_duplicate, invalid_format, error
+    detail: str | None = None
+
+class BulkInvitationResponse(BaseModel):
+    total_processed: int
+    created_count: int
+    skipped_count: int
+    results: list[BulkInvitationResultItem]
+
+class InvitationResponse(BaseModel):
+    id: int
+    organization_id: int
+    cohort_id: int | None = None
+    email: str
+    invitation_code: str | None = None
+    status: str
+    created_at: datetime
+    expires_at: datetime
+    redeemed_at: datetime | None = None
+    revoked_at: datetime | None = None
+    created_by_user_id: int | None = None
+
+class InvitationDetailResponse(InvitationResponse):
+    organization_name: str
+    organization_slug: str
+    cohort_name: str | None = None
+
+class InvitationVerifyRequest(BaseModel):
+    token: str | None = None
+    code: str | None = None
+
+class InvitationVerifyResponse(BaseModel):
+    valid: bool
+    email: str
+    organization_name: str
+    organization_slug: str
+    cohort_name: str | None = None
+    is_existing_user: bool
+    requires_password_setup: bool
+
+class InvitationRedeemRequest(BaseModel):
+    token: str | None = None
+    code: str | None = None
+
+class OnboardingCompleteSetupRequest(BaseModel):
+    onboarding_token: str
+    username: str
+    password: str
+
+class InvitationStatsResponse(BaseModel):
+    total_invitations: int
+    pending_invitations: int
+    accepted_invitations: int
+    expired_invitations: int
+    revoked_invitations: int
+    pending_access_requests: int
+
+
+
 
