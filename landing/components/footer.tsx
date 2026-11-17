@@ -3,12 +3,12 @@
 import { SOCIAL_LINKS, APP_URL, DOCS_URL } from "@/lib/constants";
 
 const footerLinks = [
-  { label: "App", href: APP_URL },
+  { label: "Dashboard", href: APP_URL },
+  { label: "Sign Up", href: `${APP_URL}/register` },
+  { label: "Log In", href: `${APP_URL}/login` },
   { label: "Docs", href: DOCS_URL },
   { label: "GitHub", href: SOCIAL_LINKS.github },
   { label: "Discord", href: SOCIAL_LINKS.discord },
-  { label: "LinkedIn", href: SOCIAL_LINKS.linkedin },
-  { label: "Blog", href: SOCIAL_LINKS.blog },
 ];
 
 export default function Footer() {
@@ -49,7 +49,7 @@ export default function Footer() {
               fontWeight: 700,
             }}>
               <span style={{ color: "#22c55e" }}>~/</span>
-              <span style={{ color: "#f0f0ff" }}>tld</span>
+              <span style={{ color: "var(--color-landing-heading, #f0f0ff)" }}>tld</span>
             </span>
           </a>
 
@@ -63,12 +63,12 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 style={{
                   fontSize: "13px",
-                  color: "#4a4a6a",
+                  color: "var(--color-landing-subtext, #4a4a6a)",
                   textDecoration: "none",
                   transition: "color 0.2s ease",
                 }}
-                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "#a0a0cc"; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "#4a4a6a"; }}
+                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = "var(--color-landing-heading, #a0a0cc)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = "var(--color-landing-subtext, #4a4a6a)"; }}
               >
                 {link.label}
               </a>
@@ -76,8 +76,13 @@ export default function Footer() {
           </nav>
 
           {/* Copyright */}
-          <p style={{ fontSize: "12px", color: "#3a3a5a" }}>
-            © {new Date().getFullYear()} The Last Deploy · Open Source · Built with ❤️
+          <p style={{ fontSize: "12px", color: "var(--color-landing-subtext, #3a3a5a)", display: "inline-flex", alignItems: "center", gap: "5px" }}>
+            <span>© {new Date().getFullYear()} The Last Deploy · Open Source</span>
+            <span style={{ color: "#22c55e", display: "inline-flex", alignItems: "center" }}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            </span>
           </p>
         </div>
       </div>

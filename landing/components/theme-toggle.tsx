@@ -6,9 +6,21 @@ export default function ThemeToggle() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   useEffect(() => {
-    // Read current initial theme set by inline layout script or default to dark
-    const isLight = document.documentElement.classList.contains("light");
-    setTheme(isLight ? "light" : "dark");
+    try {
+      const saved = localStorage.getItem("tld-theme");
+      if (saved === "light" || (!saved && window.matchMedia("(prefers-color-scheme: light)").matches)) {
+        document.documentElement.classList.add("light");
+        document.documentElement.classList.remove("dark");
+        setTheme("light");
+      } else {
+        document.documentElement.classList.add("dark");
+        document.documentElement.classList.remove("light");
+        setTheme("dark");
+      }
+    } catch {
+      // fallback to dark
+      setTheme("dark");
+    }
   }, []);
 
   const toggleTheme = () => {

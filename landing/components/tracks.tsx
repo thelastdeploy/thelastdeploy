@@ -83,6 +83,7 @@ const TRACK_ACCENT: Record<string, { icon: string; glow: string; text: string; b
 export default function Tracks() {
   return (
     <section
+      id="tracks"
       className="section-divider"
       style={{ padding: "96px 24px", position: "relative", overflow: "hidden" }}
     >
@@ -110,11 +111,12 @@ export default function Tracks() {
             letterSpacing: "-0.03em",
             lineHeight: 1.1,
             marginBottom: "16px",
+            color: "var(--color-landing-heading, #f0f0ff)",
           }}>
             From kernel to{" "}
             <span className="text-gradient">cluster</span>
           </h2>
-          <p style={{ fontSize: "18px", color: "#8888aa", maxWidth: "460px", margin: "0 auto", lineHeight: 1.6 }}>
+          <p style={{ fontSize: "18px", color: "var(--color-landing-subtext, #8888aa)", maxWidth: "460px", margin: "0 auto", lineHeight: 1.6 }}>
             Hands-on labs across the full DevOps stack. Each track builds on the last.
           </p>
         </div>
@@ -130,22 +132,20 @@ export default function Tracks() {
             return (
               <div
                 key={track.name}
+                className="card-glass card-glass-hover"
                 style={{
                   borderRadius: "16px",
                   padding: "28px",
-                  background: "rgba(13,13,31,0.7)",
-                  backdropFilter: "blur(12px)",
                   border: `1px solid ${accent.border}`,
                   cursor: "default",
-                  transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
                   position: "relative",
                   overflow: "hidden",
                 }}
                 onMouseEnter={e => {
                   const el = e.currentTarget as HTMLElement;
                   el.style.transform = "translateY(-3px)";
-                  el.style.boxShadow = `0 0 30px ${accent.glow}, 0 20px 40px rgba(0,0,0,0.3)`;
-                  el.style.borderColor = accent.icon + "40";
+                  el.style.boxShadow = `0 0 30px ${accent.glow}, 0 20px 40px rgba(0,0,0,0.15)`;
+                  el.style.borderColor = accent.icon + "60";
                 }}
                 onMouseLeave={e => {
                   const el = e.currentTarget as HTMLElement;
@@ -186,13 +186,13 @@ export default function Tracks() {
                       alignItems: "center",
                       padding: "3px 10px",
                       borderRadius: "999px",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid var(--color-border, rgba(255,255,255,0.08))",
+                      background: "var(--color-muted, rgba(255,255,255,0.04))",
                       fontSize: "10px",
                       fontWeight: 600,
                       letterSpacing: "0.06em",
                       textTransform: "uppercase",
-                      color: "#6a6a8a",
+                      color: "var(--color-landing-subtext, #6a6a8a)",
                     }}>
                       Coming Soon
                     </span>
@@ -227,7 +227,7 @@ export default function Tracks() {
                 <h3 style={{
                   fontSize: "17px",
                   fontWeight: 700,
-                  color: accent.text,
+                  color: "var(--color-landing-heading, #f0f0ff)",
                   marginBottom: "8px",
                   letterSpacing: "-0.01em",
                 }}>
@@ -235,7 +235,7 @@ export default function Tracks() {
                 </h3>
                 <p style={{
                   fontSize: "13px",
-                  color: "#6a6a8a",
+                  color: "var(--color-landing-subtext, #6a6a8a)",
                   lineHeight: 1.65,
                 }}>
                   {track.description}

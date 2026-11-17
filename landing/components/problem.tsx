@@ -3,27 +3,47 @@
 export default function Problem() {
   const pains = [
     {
-      icon: "▶",
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <polygon points="5 3 19 12 5 21 5 3" />
+        </svg>
+      ),
       title: "Watch hours of video tutorials",
       description: "Passive consumption that feels like progress but isn't. You finish a 10-hour course and still can't debug a real incident.",
       color: "#ef4444",
     },
     {
-      icon: "/>",
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <polyline points="4 17 10 11 4 5" />
+          <line x1="12" y1="19" x2="20" y2="19" />
+        </svg>
+      ),
       title: "Copy commands without understanding",
-      description: "Follow along, paste, move on — nothing sticks. You're memorizing keystrokes, not building intuition.",
+      description: "Follow along, paste, move on — nothing sticks. You're memorizing keystrokes, not building production intuition.",
       color: "#f97316",
     },
     {
-      icon: "✓?",
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      ),
       title: "Finish courses, still unprepared",
       description: "Real incidents don't follow a script. Multiple-choice quizzes can't simulate a broken production system at 2am.",
       color: "#eab308",
     },
     {
-      icon: "$$$",
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="12" y1="1" x2="12" y2="23" />
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+        </svg>
+      ),
       title: "Expensive cloud environments",
-      description: "Pay per hour for browser-based terminals you can't customize, can't keep, and can't use offline.",
+      description: "Pay per month for locked cloud VMs you can't customize, inspect offline, or practice with on your own hardware.",
       color: "#ec4899",
     },
   ];
@@ -63,6 +83,7 @@ export default function Problem() {
             letterSpacing: "-0.03em",
             lineHeight: 1.1,
             marginBottom: "16px",
+            color: "var(--color-landing-heading, #f0f0ff)",
           }}>
             DevOps education is{" "}
             <span style={{
@@ -76,7 +97,7 @@ export default function Problem() {
           </h2>
           <p style={{
             fontSize: "18px",
-            color: "#8888aa",
+            color: "var(--color-landing-subtext, #8888aa)",
             maxWidth: "500px",
             margin: "0 auto",
             lineHeight: 1.6,
@@ -122,7 +143,7 @@ export default function Problem() {
               <h3 style={{
                 fontSize: "15px",
                 fontWeight: 600,
-                color: "#f0f0ff",
+                color: "var(--color-landing-heading, #f0f0ff)",
                 marginBottom: "8px",
                 lineHeight: 1.3,
               }}>
@@ -130,7 +151,7 @@ export default function Problem() {
               </h3>
               <p style={{
                 fontSize: "13px",
-                color: "#7a7a9a",
+                color: "var(--color-landing-subtext, #7a7a9a)",
                 lineHeight: 1.65,
               }}>
                 {pain.description}

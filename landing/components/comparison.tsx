@@ -1,243 +1,335 @@
 "use client";
 
-const VideoIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-);
-const CodeIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-);
-const TerminalIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-);
-const CloudIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
-);
-const QuizIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-);
-const LockIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-);
-const LaptopIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-);
-const BugIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 2l1.88 1.88M14.12 3.88 16 2M9 7.13v-1a3.003 3.003 0 1 1 6 0v1M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6z"/><path d="M12 20v-9M6.53 9C4.6 8.8 3 7.1 3 5M6 13H2M3 21c0-3 1.5-6 3-8M20.97 5c0 2.1-1.6 3.8-3.5 4M22 13h-4M21 21c0-3-1.5-6-3-8"/></svg>
-);
-const FreeIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-);
-const CheckIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-);
-const OpenSourceIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 22a1 1 0 0 1-1-1v-4h-4v4a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V11l7-9 7 9v10a1 1 0 0 1-1 1z"/></svg>
-);
+import { APP_URL } from "@/lib/constants";
 
-const traditional = [
-  { text: "Watch pre-recorded videos passively", icon: <VideoIcon /> },
-  { text: "Follow copy-paste tutorials", icon: <CodeIcon /> },
-  { text: "Browser-based fake terminals", icon: <TerminalIcon /> },
-  { text: "Expensive cloud environments", icon: <CloudIcon /> },
-  { text: "Multiple-choice quizzes", icon: <QuizIcon /> },
-  { text: "Closed-source, gatekept content", icon: <LockIcon /> },
-];
+interface ComparisonRow {
+  title: string;
+  category: string;
+  traditional: {
+    headline: string;
+    description: string;
+  };
+  tld: {
+    headline: string;
+    description: string;
+    highlight: string;
+  };
+}
 
-const tld = [
-  { text: "Run labs on your actual machine", icon: <LaptopIcon /> },
-  { text: "Real troubleshooting scenarios", icon: <BugIcon /> },
-  { text: "Native terminal — full control", icon: <TerminalIcon /> },
-  { text: "No cloud costs — completely free", icon: <FreeIcon /> },
-  { text: "Practical validation with tld check", icon: <CheckIcon /> },
-  { text: "Fully open source & community-driven", icon: <OpenSourceIcon /> },
+const comparisons: ComparisonRow[] = [
+  {
+    category: "Execution Environment",
+    title: "Where your work happens",
+    traditional: {
+      headline: "Synthetic Web Playgrounds",
+      description: "Locked-down browser terminals with restricted privileges. You can't inspect systemd or debug kernel issues, and everything is wiped when the tab closes.",
+    },
+    tld: {
+      headline: "Safe, Isolated Container Sandboxes",
+      description: "Labs spin up in disposable Docker containers on your machine. You get the speed of native tools and real system behavior, while your host OS remains 100% untouched.",
+      highlight: "Zero host pollution · Instant teardown",
+    },
+  },
+  {
+    category: "Learning Methodology",
+    title: "How knowledge is built",
+    traditional: {
+      headline: "Passive Video Tutorials & Copy-Paste",
+      description: "Follow scripted walk-throughs where the instructor never hits an unexpected error. Gives an illusion of competence that vanishes during a real production incident.",
+    },
+    tld: {
+      headline: "Deliberately Broken Systems",
+      description: "You are dropped into crashlooping pods, broken network routes, and permission conflicts. You learn by diagnosing symptoms, reading logs, and fixing the root cause.",
+      highlight: "Builds real on-call intuition",
+    },
+  },
+  {
+    category: "Skill Verification",
+    title: "How competence is tested",
+    traditional: {
+      headline: "Multiple-Choice Trivia & Bash History Regex",
+      description: "Tests whether you memorized CLI flags or typed the exact command the author expected. Fails to verify whether the system actually recovered.",
+    },
+    tld: {
+      headline: "Automated System State Assertions",
+      description: "Running 'tld check' inspects active listening sockets, live container health, mounted volumes, exit codes, and process trees to prove the system is healthy.",
+      highlight: "Deterministic verification with tld check",
+    },
+  },
+  {
+    category: "Cost & Ownership",
+    title: "Accessibility & Pricing",
+    traditional: {
+      headline: "$35–$75/Month Metered Cloud Subscriptions",
+      description: "Expensive monthly subscriptions that bill by the hour, pause sessions unexpectedly, and wipe all your custom configurations.",
+    },
+    tld: {
+      headline: "100% Free Forever & Open Source",
+      description: "No credit cards, zero cloud compute bills, and no vendor lock-in. Works completely on your hardware with fully inspectable open-source scenarios.",
+      highlight: "Community-driven · No credit card required",
+    },
+  },
 ];
 
 export default function Comparison() {
   return (
     <section
+      id="comparison"
       className="section-divider"
       style={{ padding: "96px 24px", position: "relative", overflow: "hidden" }}
     >
-      {/* ambient */}
+      {/* Ambient background glows */}
       <div style={{
         position: "absolute",
-        top: "50%",
-        left: "25%",
-        transform: "translate(-50%, -50%)",
-        width: "400px",
-        height: "400px",
-        background: "radial-gradient(circle, rgba(239,68,68,0.04) 0%, transparent 70%)",
+        top: "20%",
+        left: "15%",
+        width: "500px",
+        height: "500px",
+        background: "radial-gradient(circle, rgba(239,68,68,0.03) 0%, transparent 70%)",
         pointerEvents: "none",
+        filter: "blur(60px)",
       }} />
       <div style={{
         position: "absolute",
-        top: "50%",
-        right: "10%",
-        transform: "translateY(-50%)",
-        width: "400px",
-        height: "400px",
-        background: "radial-gradient(circle, rgba(34,197,94,0.05) 0%, transparent 70%)",
+        bottom: "20%",
+        right: "15%",
+        width: "500px",
+        height: "500px",
+        background: "radial-gradient(circle, rgba(34,197,94,0.04) 0%, transparent 70%)",
         pointerEvents: "none",
+        filter: "blur(60px)",
       }} />
 
-      <div style={{ maxWidth: "1100px", margin: "0 auto", position: "relative", zIndex: 1 }}>
-        {/* Header */}
+      <div style={{ maxWidth: "1160px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+        {/* Section Header */}
         <div style={{ textAlign: "center", marginBottom: "64px" }}>
           <div style={{ marginBottom: "16px" }}>
-            <span className="section-badge">Why TLD</span>
+            <span className="section-badge" style={{ background: "rgba(34,197,94,0.08)", borderColor: "rgba(34,197,94,0.25)", color: "#4ade80" }}>
+              The Paradigm Shift
+            </span>
           </div>
           <h2 style={{
             fontSize: "clamp(28px, 4vw, 48px)",
             fontWeight: 800,
             letterSpacing: "-0.03em",
-            lineHeight: 1.1,
+            lineHeight: 1.15,
             marginBottom: "16px",
+            color: "#f0f0ff",
           }}>
             A fundamentally{" "}
             <span className="text-gradient">different approach</span>
           </h2>
-          <p style={{ fontSize: "18px", color: "#8888aa", maxWidth: "460px", margin: "0 auto", lineHeight: 1.6 }}>
-            Not another course platform. Built from the ground up for real skills.
+          <p style={{ fontSize: "17px", color: "#8888aa", maxWidth: "560px", margin: "0 auto", lineHeight: 1.6 }}>
+            Traditional platforms teach syntax through passive videos. The Last Deploy builds the diagnostic muscle memory you actually need on day one.
           </p>
         </div>
 
-        {/* Comparison grid */}
+        {/* Matrix Header Row */}
         <div
-          className="grid grid-cols-1 md:grid-cols-2"
+          className="comparison-header-row"
           style={{
-            gap: "16px",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "24px",
+            marginBottom: "20px",
+            padding: "0 8px",
           }}
         >
-          {/* Traditional — left */}
-          <div style={{
-            borderRadius: "16px",
-            padding: "32px",
-            background: "rgba(239,68,68,0.03)",
-            border: "1px solid rgba(239,68,68,0.12)",
-            backdropFilter: "blur(12px)",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "28px" }}>
-              <div style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "8px",
-                background: "rgba(239,68,68,0.1)",
-                border: "1px solid rgba(239,68,68,0.2)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "14px",
-                fontWeight: 700,
-                color: "#f87171",
-              }}>
-                ✕
-              </div>
-              <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#f87171" }}>
-                Traditional Learning
-              </h3>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{
+              width: "24px",
+              height: "24px",
+              borderRadius: "6px",
+              background: "rgba(239,68,68,0.1)",
+              border: "1px solid rgba(239,68,68,0.2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#f87171",
+            }}>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
             </div>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
-              {traditional.map((item) => (
-                <li
-                  key={item.text}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    fontSize: "14px",
-                    color: "#6a6a8a",
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    background: "rgba(239,68,68,0.03)",
-                    border: "1px solid rgba(239,68,68,0.06)",
-                  }}
-                >
-                  <span style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "rgba(239,68,68,0.5)",
-                    minWidth: "20px",
-                    flexShrink: 0,
-                  }}>
-                    {item.icon}
-                  </span>
-                  {item.text}
-                </li>
-              ))}
-            </ul>
+            <span style={{ fontSize: "14px", fontWeight: 700, color: "#f87171", letterSpacing: "0.02em", textTransform: "uppercase" }}>
+              Traditional Courses &amp; Sandboxes
+            </span>
           </div>
 
-          {/* TLD — right */}
-          <div style={{
-            borderRadius: "16px",
-            padding: "32px",
-            background: "rgba(34,197,94,0.03)",
-            border: "1px solid rgba(34,197,94,0.15)",
-            backdropFilter: "blur(12px)",
-            boxShadow: "0 0 30px rgba(34,197,94,0.04)",
-          }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "28px" }}>
-              <div style={{
-                width: "32px",
-                height: "32px",
-                borderRadius: "8px",
-                background: "rgba(34,197,94,0.12)",
-                border: "1px solid rgba(34,197,94,0.25)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "14px",
-                fontWeight: 700,
-                color: "#22c55e",
-                boxShadow: "0 0 10px rgba(34,197,94,0.15)",
-              }}>
-                ✓
-              </div>
-              <h3 style={{
-                fontSize: "16px",
-                fontWeight: 700,
-                background: "linear-gradient(135deg, #22c55e, #86efac)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>
-                The Last Deploy
-              </h3>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <div style={{
+              width: "24px",
+              height: "24px",
+              borderRadius: "6px",
+              background: "rgba(34,197,94,0.1)",
+              border: "1px solid rgba(34,197,94,0.25)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#4ade80",
+            }}>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
             </div>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "12px" }}>
-              {tld.map((item) => (
-                <li
-                  key={item.text}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    fontSize: "14px",
-                    color: "#c0c0d8",
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    background: "rgba(34,197,94,0.04)",
-                    border: "1px solid rgba(34,197,94,0.08)",
-                  }}
-                >
-                  <span style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "rgba(34,197,94,0.6)",
-                    minWidth: "20px",
-                    flexShrink: 0,
-                  }}>
-                    {item.icon}
-                  </span>
-                  {item.text}
-                </li>
-              ))}
-            </ul>
+            <span style={{ fontSize: "14px", fontWeight: 700, color: "#4ade80", letterSpacing: "0.02em", textTransform: "uppercase" }}>
+              The Last Deploy
+            </span>
           </div>
         </div>
+
+        {/* Matrix Cards */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          {comparisons.map((row, idx) => (
+            <div
+              key={idx}
+              className="comparison-card"
+              style={{
+                borderRadius: "16px",
+                border: "1px solid rgba(255,255,255,0.07)",
+                background: "rgba(10, 10, 18, 0.6)",
+                backdropFilter: "blur(12px)",
+                overflow: "hidden",
+                transition: "border-color 0.25s ease, transform 0.25s ease",
+              }}
+            >
+              {/* Pillar Category Pill */}
+              <div style={{
+                padding: "12px 24px",
+                borderBottom: "1px solid rgba(255,255,255,0.05)",
+                background: "rgba(255,255,255,0.02)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}>
+                <span style={{ fontSize: "11px", fontWeight: 700, fontFamily: "JetBrains Mono, monospace", color: "#6a6a8a", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                  {row.category}
+                </span>
+                <span style={{ fontSize: "12px", color: "#8888aa", fontWeight: 500 }}>
+                  {row.title}
+                </span>
+              </div>
+
+              {/* Two columns */}
+              <div
+                className="comparison-grid"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "0",
+                }}
+              >
+                {/* Traditional Side */}
+                <div style={{
+                  padding: "24px",
+                  borderRight: "1px solid rgba(255,255,255,0.05)",
+                  background: "rgba(239,68,68,0.015)",
+                }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "8px" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2.2" style={{ flexShrink: 0, marginTop: "2px" }}>
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="15" y1="9" x2="9" y2="15" />
+                      <line x1="9" y1="9" x2="15" y2="15" />
+                    </svg>
+                    <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#f87171", lineHeight: 1.4 }}>
+                      {row.traditional.headline}
+                    </h3>
+                  </div>
+                  <p style={{ fontSize: "13.5px", color: "#7a7a9a", lineHeight: 1.6, paddingLeft: "28px" }}>
+                    {row.traditional.description}
+                  </p>
+                </div>
+
+                {/* TLD Side */}
+                <div style={{
+                  padding: "24px",
+                  background: "rgba(34,197,94,0.025)",
+                }}>
+                  <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", marginBottom: "8px" }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.2" style={{ flexShrink: 0, marginTop: "2px" }}>
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="9 12 12 15 16 10" />
+                    </svg>
+                    <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#f0f0ff", lineHeight: 1.4 }}>
+                      {row.tld.headline}
+                    </h3>
+                  </div>
+                  <p style={{ fontSize: "13.5px", color: "#a0a0cc", lineHeight: 1.6, paddingLeft: "28px", marginBottom: "12px" }}>
+                    {row.tld.description}
+                  </p>
+                  <div style={{ paddingLeft: "28px" }}>
+                    <span style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      padding: "4px 10px",
+                      borderRadius: "6px",
+                      background: "rgba(34,197,94,0.1)",
+                      border: "1px solid rgba(34,197,94,0.2)",
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      color: "#4ade80",
+                      fontFamily: "JetBrains Mono, monospace",
+                    }}>
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      {row.tld.highlight}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom CTA trigger */}
+        <div style={{ marginTop: "48px", textAlign: "center" }}>
+          <a
+            href={`${APP_URL}/register`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "14px 32px",
+              fontSize: "14px",
+              fontWeight: 700,
+              color: "#030a04",
+              background: "linear-gradient(135deg, #22c55e 0%, #4ade80 100%)",
+              borderRadius: "10px",
+              textDecoration: "none",
+              boxShadow: "0 0 20px rgba(34,197,94,0.3)",
+              transition: "transform 0.2s ease",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.transform = "none";
+            }}
+          >
+            <span>Experience the Difference — Start Free</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </a>
+        </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .comparison-header-row { display: none !important; }
+          .comparison-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .comparison-grid > div:first-child {
+            border-right: none !important;
+            border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

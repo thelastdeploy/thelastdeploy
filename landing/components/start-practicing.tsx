@@ -1,5 +1,7 @@
 "use client";
 
+import { APP_URL } from "@/lib/constants";
+
 export default function StartPracticing() {
   return (
     <section
@@ -39,12 +41,13 @@ export default function StartPracticing() {
       >
         {/* Card */}
         <div
+          className="landing-card"
           style={{
-            background: "linear-gradient(135deg, rgba(13,13,31,0.9) 0%, rgba(10,10,22,0.95) 100%)",
-            border: "1px solid rgba(34,197,94,0.2)",
+            background: "var(--color-landing-card-gradient, linear-gradient(135deg, rgba(13,13,31,0.9) 0%, rgba(10,10,22,0.95) 100%))",
+            border: "1px solid var(--color-landing-card-border, rgba(34,197,94,0.2))",
             borderRadius: "20px",
             padding: "clamp(40px, 6vw, 72px)",
-            boxShadow: "0 0 0 1px rgba(255,255,255,0.03), 0 40px 80px rgba(0,0,0,0.5), 0 0 60px rgba(34,197,94,0.06)",
+            boxShadow: "0 0 0 1px rgba(255,255,255,0.03), 0 40px 80px rgba(0,0,0,0.3), 0 0 60px rgba(34,197,94,0.06)",
             position: "relative",
             overflow: "hidden",
             display: "flex",
@@ -82,9 +85,9 @@ export default function StartPracticing() {
           {/* Badge */}
           <div style={{ marginBottom: "28px", position: "relative", zIndex: 1 }}>
             <span className="section-badge" style={{
-              background: "rgba(34,197,94,0.1)",
-              borderColor: "rgba(34,197,94,0.3)",
-              color: "#4ade80",
+              background: "var(--color-landing-badge-bg, rgba(34,197,94,0.1))",
+              borderColor: "var(--color-landing-badge-border, rgba(34,197,94,0.3))",
+              color: "var(--color-landing-badge-text, #4ade80)",
               fontSize: "12px",
               padding: "6px 16px",
             }}>
@@ -110,10 +113,10 @@ export default function StartPracticing() {
               letterSpacing: "-0.04em",
               lineHeight: 1.08,
               marginBottom: "18px",
-              color: "#f0f0ff",
+              color: "var(--color-landing-heading, #f0f0ff)",
             }}
           >
-            Ready to break{" "}
+            Ready to master{" "}
             <span style={{
               background: "linear-gradient(135deg, #22c55e 0%, #86efac 60%, #22c55e 100%)",
               WebkitBackgroundClip: "text",
@@ -122,7 +125,7 @@ export default function StartPracticing() {
               backgroundSize: "200% auto",
               animation: "gradient-shift 4s ease infinite",
             }}>
-              real systems?
+              real infrastructure?
             </span>
           </h2>
 
@@ -131,12 +134,12 @@ export default function StartPracticing() {
             position: "relative",
             zIndex: 1,
             fontSize: "clamp(15px, 2vw, 18px)",
-            color: "#8888aa",
+            color: "var(--color-landing-subtext, #8888aa)",
             lineHeight: 1.7,
-            maxWidth: "520px",
+            maxWidth: "540px",
             marginBottom: "40px",
           }}>
-            Jump into the platform. Spin up a lab, break something, fix it — all locally with no sign-up required.
+            Spin up isolated container labs, troubleshoot real-world failures, and verify your fixes. 100% disposable sandboxes with zero host impact.
           </p>
 
           {/* Stats row */}
@@ -152,7 +155,7 @@ export default function StartPracticing() {
             {[
               { value: "7+", label: "Learning Tracks" },
               { value: "100%", label: "Open Source" },
-              { value: "0$", label: "Cloud Fees" },
+              { value: "$0", label: "Cloud Fees" },
             ].map(stat => (
               <div key={stat.label} style={{ textAlign: "center" }}>
                 <div style={{
@@ -168,62 +171,95 @@ export default function StartPracticing() {
                 }}>
                   {stat.value}
                 </div>
-                <div style={{ fontSize: "12px", color: "#5a5a7a", letterSpacing: "0.04em", fontWeight: 500 }}>
+                <div style={{ fontSize: "12px", color: "var(--color-landing-subtext, #5a5a7a)", letterSpacing: "0.04em", fontWeight: 500 }}>
                   {stat.label}
                 </div>
               </div>
             ))}
           </div>
 
-          {/* CTA Button */}
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <a
-              href="https://app.thelastdeploy.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "10px",
-                padding: "18px 44px",
-                fontSize: "16px",
-                fontWeight: 700,
-                color: "#030a04",
-                background: "linear-gradient(135deg, #22c55e 0%, #4ade80 50%, #22c55e 100%)",
-                backgroundSize: "200% auto",
-                animation: "gradient-shift 3s ease infinite",
-                borderRadius: "12px",
-                textDecoration: "none",
-                border: "1px solid rgba(34,197,94,0.5)",
-                boxShadow: "0 0 30px rgba(34,197,94,0.3), 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(34,197,94,0.1)",
-                transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease",
-                letterSpacing: "-0.01em",
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.transform = "translateY(-3px) scale(1.02)";
-                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 50px rgba(34,197,94,0.45), 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(34,197,94,0.2)";
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.transform = "none";
-                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 30px rgba(34,197,94,0.3), 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(34,197,94,0.1)";
-              }}
-            >
-              {/* Terminal icon */}
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
-                <polyline points="4 17 10 11 4 5" />
-                <line x1="12" y1="19" x2="20" y2="19" />
-              </svg>
-              Start Practicing — It&apos;s Free
-            </a>
+          {/* CTA Buttons */}
+          <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+            <div style={{ display: "flex", gap: "14px", flexWrap: "wrap", justifyContent: "center" }}>
+              <a
+                href={`${APP_URL}/register`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                  padding: "16px 36px",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  color: "#030a04",
+                  background: "linear-gradient(135deg, #22c55e 0%, #4ade80 50%, #22c55e 100%)",
+                  backgroundSize: "200% auto",
+                  animation: "gradient-shift 3s ease infinite",
+                  borderRadius: "12px",
+                  textDecoration: "none",
+                  border: "1px solid rgba(34,197,94,0.5)",
+                  boxShadow: "0 0 30px rgba(34,197,94,0.3), 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(34,197,94,0.1)",
+                  transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1), box-shadow 0.25s ease",
+                  letterSpacing: "-0.01em",
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.02)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 0 50px rgba(34,197,94,0.45), 0 16px 48px rgba(0,0,0,0.5)";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.transform = "none";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "0 0 30px rgba(34,197,94,0.3), 0 8px 32px rgba(0,0,0,0.4)";
+                }}
+              >
+                {/* Arrow icon */}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" width="18" height="18">
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                  <polyline points="12 5 19 12 12 19" />
+                </svg>
+                Create Free Account & Start
+              </a>
+
+              <a
+                href="#install"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  padding: "16px 28px",
+                  fontSize: "15px",
+                  fontWeight: 600,
+                  color: "var(--color-landing-btn-secondary-text, #c8c8e0)",
+                  background: "var(--color-landing-btn-secondary-bg, rgba(255,255,255,0.04))",
+                  border: "1px solid var(--color-landing-btn-secondary-border, rgba(255,255,255,0.1))",
+                  borderRadius: "12px",
+                  textDecoration: "none",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "var(--color-primary)";
+                  (e.currentTarget as HTMLElement).style.color = "var(--color-landing-heading)";
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLElement).style.borderColor = "var(--color-landing-btn-secondary-border, rgba(255,255,255,0.1))";
+                  (e.currentTarget as HTMLElement).style.color = "var(--color-landing-btn-secondary-text, #c8c8e0)";
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="4 17 10 11 4 5" />
+                  <line x1="12" y1="19" x2="20" y2="19" />
+                </svg>
+                Install CLI (`tld`)
+              </a>
+            </div>
 
             <p style={{
-              marginTop: "14px",
-              fontSize: "12px",
-              color: "#4a4a6a",
-              letterSpacing: "0.03em",
+              marginTop: "4px",
+              fontSize: "13px",
+              color: "var(--color-landing-subtext, #5a5a7a)",
+              letterSpacing: "0.02em",
             }}>
-              No credit card. No account required. Just Docker.
+              Free forever · 100% disposable container sandboxes · Save XP & badges
             </p>
           </div>
 

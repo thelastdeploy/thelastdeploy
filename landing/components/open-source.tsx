@@ -10,7 +10,7 @@ const principles = [
       </svg>
     ),
     title: "Zero Vendor Lock-in",
-    desc: "Everything runs on your machine. No account needed, no subscription, no dependency on our uptime.",
+    desc: "Labs run inside isolated Docker containers on your machine. Zero cloud bills, zero host residue, and complete privacy.",
   },
   {
     icon: (
@@ -63,12 +63,13 @@ export default function OpenSource() {
               letterSpacing: "-0.03em",
               lineHeight: 1.1,
               marginBottom: "16px",
+              color: "var(--color-landing-heading, #f0f0ff)",
             }}>
               Built entirely{" "}
               <span className="text-gradient">in the open</span>
             </h2>
 
-            <p style={{ fontSize: "17px", color: "#8888aa", lineHeight: 1.7, marginBottom: "32px" }}>
+            <p style={{ fontSize: "17px", color: "var(--color-landing-subtext, #8888aa)", lineHeight: 1.7, marginBottom: "32px" }}>
               The platform, labs, validators, and all content are fully open source.
               No gatekeeping, no vendor lock-in, no hidden costs. Forever.
             </p>
@@ -118,20 +119,20 @@ export default function OpenSource() {
                   padding: "11px 20px",
                   fontSize: "14px",
                   fontWeight: 500,
-                  color: "#a0a0cc",
-                  background: "rgba(255,255,255,0.04)",
+                  color: "var(--color-landing-btn-secondary-text, #a0a0cc)",
+                  background: "var(--color-landing-btn-secondary-bg, rgba(255,255,255,0.04))",
                   borderRadius: "9px",
                   textDecoration: "none",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  border: "1px solid var(--color-landing-btn-secondary-border, rgba(255,255,255,0.08))",
                   transition: "all 0.2s ease",
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)";
-                  (e.currentTarget as HTMLElement).style.color = "#f0f0ff";
+                  (e.currentTarget as HTMLElement).style.borderColor = "var(--color-primary)";
+                  (e.currentTarget as HTMLElement).style.color = "var(--color-landing-heading, #f0f0ff)";
                 }}
                 onMouseLeave={e => {
-                  (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-                  (e.currentTarget as HTMLElement).style.color = "#a0a0cc";
+                  (e.currentTarget as HTMLElement).style.borderColor = "var(--color-landing-btn-secondary-border, rgba(255,255,255,0.08))";
+                  (e.currentTarget as HTMLElement).style.color = "var(--color-landing-btn-secondary-text, #a0a0cc)";
                 }}
               >
                 Contribute →
@@ -168,10 +169,10 @@ export default function OpenSource() {
                   {p.icon}
                 </div>
                 <div>
-                  <h3 style={{ fontSize: "14px", fontWeight: 600, color: "#f0f0ff", marginBottom: "6px" }}>
+                  <h3 style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-landing-heading, #f0f0ff)", marginBottom: "6px" }}>
                     {p.title}
                   </h3>
-                  <p style={{ fontSize: "13px", color: "#6a6a8a", lineHeight: 1.6 }}>
+                  <p style={{ fontSize: "13px", color: "var(--color-landing-subtext, #6a6a8a)", lineHeight: 1.6 }}>
                     {p.desc}
                   </p>
                 </div>

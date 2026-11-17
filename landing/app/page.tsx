@@ -5,7 +5,6 @@ import StartPracticing from "@/components/start-practicing";
 import Problem from "@/components/problem";
 import HowItWorks from "@/components/how-it-works";
 import Tracks from "@/components/tracks";
-import Comparison from "@/components/comparison";
 import Preview from "@/components/preview";
 import OpenSource from "@/components/open-source";
 import Community from "@/components/community";
@@ -23,7 +22,6 @@ export default function Home() {
         <Problem />
         <HowItWorks />
         <Tracks />
-        <Comparison />
         <Preview />
         <OpenSource />
         <Community />

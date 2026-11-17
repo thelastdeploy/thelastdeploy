@@ -3,8 +3,8 @@
 const steps = [
   {
     num: "01",
-    label: "Learn",
-    description: "Understand the concept with focused, short-form theory",
+    label: "Briefing",
+    description: "Understand the scenario, architecture, and objectives with focused theory",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
@@ -13,8 +13,8 @@ const steps = [
   },
   {
     num: "02",
-    label: "Start",
-    description: "Spin up a local lab on your own machine in seconds",
+    label: "Deploy",
+    description: "Spin up an isolated container sandbox on your system in seconds",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
@@ -23,8 +23,8 @@ const steps = [
   },
   {
     num: "03",
-    label: "Break",
-    description: "Encounter a deliberately broken system. Debug it",
+    label: "Troubleshoot",
+    description: "Encounter an authentic broken scenario. Inspect logs and find the root cause",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -33,8 +33,8 @@ const steps = [
   },
   {
     num: "04",
-    label: "Fix",
-    description: "Apply your knowledge to restore the system",
+    label: "Restore",
+    description: "Apply your fix to restore configuration, services, or networking",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
@@ -43,8 +43,8 @@ const steps = [
   },
   {
     num: "05",
-    label: "Validate",
-    description: "Run tld check — automated verification against real criteria",
+    label: "Verify",
+    description: "Run tld check — automated, deterministic verification against live containers",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <polyline points="20 6 9 17 4 12"/>
@@ -54,7 +54,7 @@ const steps = [
   {
     num: "06",
     label: "Level Up",
-    description: "Earn XP, badges, and track your progress over time",
+    description: "Earn verified XP, unlock track badges, and track your engineering growth",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
@@ -73,6 +73,7 @@ const commands = [
 export default function HowItWorks() {
   return (
     <section
+      id="how-it-works"
       className="section-divider"
       style={{ padding: "96px 24px", position: "relative", overflow: "hidden" }}
     >
@@ -100,11 +101,12 @@ export default function HowItWorks() {
             letterSpacing: "-0.03em",
             lineHeight: 1.1,
             marginBottom: "16px",
+            color: "var(--color-landing-heading, #f0f0ff)",
           }}>
             A loop that builds{" "}
             <span className="text-gradient">real skills</span>
           </h2>
-          <p style={{ fontSize: "18px", color: "#8888aa", maxWidth: "440px", margin: "0 auto", lineHeight: 1.6 }}>
+          <p style={{ fontSize: "18px", color: "var(--color-landing-subtext, #8888aa)", maxWidth: "440px", margin: "0 auto", lineHeight: 1.6 }}>
             Six steps. Infinite growth. Every lab makes you sharper.
           </p>
         </div>
@@ -144,7 +146,7 @@ export default function HowItWorks() {
               <div style={{
                 fontSize: "10px",
                 fontFamily: "JetBrains Mono, monospace",
-                color: "#4a4a6a",
+                color: "var(--color-landing-subtext, #4a4a6a)",
                 letterSpacing: "0.1em",
                 marginBottom: "4px",
               }}>
@@ -153,12 +155,12 @@ export default function HowItWorks() {
               <h3 style={{
                 fontSize: "14px",
                 fontWeight: 700,
-                color: "#f0f0ff",
+                color: "var(--color-landing-heading, #f0f0ff)",
                 marginBottom: "8px",
               }}>
                 {step.label}
               </h3>
-              <p style={{ fontSize: "12px", color: "#6a6a8a", lineHeight: 1.55 }}>
+              <p style={{ fontSize: "12px", color: "var(--color-landing-subtext, #6a6a8a)", lineHeight: 1.55 }}>
                 {step.description}
               </p>
             </div>

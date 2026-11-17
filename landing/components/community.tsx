@@ -68,10 +68,11 @@ export default function Community() {
             letterSpacing: "-0.03em",
             lineHeight: 1.1,
             marginBottom: "16px",
+            color: "var(--color-landing-heading, #f0f0ff)",
           }}>
             Follow the journey
           </h2>
-          <p style={{ fontSize: "18px", color: "#8888aa", maxWidth: "400px", margin: "0 auto", lineHeight: 1.6 }}>
+          <p style={{ fontSize: "18px", color: "var(--color-landing-subtext, #8888aa)", maxWidth: "400px", margin: "0 auto", lineHeight: 1.6 }}>
             We build in public. Watch, star, and become part of it.
           </p>
         </div>
@@ -90,47 +91,46 @@ export default function Community() {
               href={social.href}
               target="_blank"
               rel="noopener noreferrer"
+              className="card-glass card-glass-hover"
               style={{
                 display: "flex",
                 flexDirection: "column",
                 gap: "12px",
                 padding: "28px",
                 borderRadius: "16px",
-                background: social.bg,
-                border: `1px solid ${social.border}`,
-                backdropFilter: "blur(12px)",
+                border: "1px solid var(--color-landing-card-border, " + social.border + ")",
                 textDecoration: "none",
-                transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                cursor: "pointer",
               }}
               onMouseEnter={e => {
                 const el = e.currentTarget as HTMLElement;
                 el.style.transform = "translateY(-3px)";
-                el.style.boxShadow = `0 0 24px ${social.bg.replace("0.04", "0.15").replace("0.05", "0.15")}, 0 16px 32px rgba(0,0,0,0.3)`;
-                el.style.borderColor = social.accent + "35";
+                el.style.boxShadow = `0 16px 32px rgba(0,0,0,0.1)`;
+                el.style.borderColor = "var(--color-primary)";
               }}
               onMouseLeave={e => {
                 const el = e.currentTarget as HTMLElement;
                 el.style.transform = "none";
                 el.style.boxShadow = "none";
-                el.style.borderColor = social.border;
+                el.style.borderColor = "var(--color-landing-card-border, " + social.border + ")";
               }}
             >
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ color: social.accent }}>
+                <div style={{ color: "var(--color-primary, #22c55e)" }}>
                   {social.icon}
                 </div>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" strokeWidth="2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: "var(--color-landing-subtext, #4a4a6a)" }}>
                   <path d="M7 17l9.2-9.2M17 17V7H7" />
                 </svg>
               </div>
               <div>
-                <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#f0f0ff", marginBottom: "4px" }}>
+                <h3 style={{ fontSize: "16px", fontWeight: 700, color: "var(--color-landing-heading, #f0f0ff)", marginBottom: "4px" }}>
                   {social.name}
                 </h3>
-                <p style={{ fontSize: "12px", color: "#4a4a6a", fontFamily: "JetBrains Mono, monospace", marginBottom: "8px" }}>
+                <p style={{ fontSize: "12px", color: "var(--color-landing-subtext, #4a4a6a)", fontFamily: "JetBrains Mono, monospace", marginBottom: "8px" }}>
                   {social.handle}
                 </p>
-                <p style={{ fontSize: "13px", color: "#6a6a8a", lineHeight: 1.55 }}>
+                <p style={{ fontSize: "13px", color: "var(--color-landing-subtext, #6a6a8a)", lineHeight: 1.55 }}>
                   {social.description}
                 </p>
               </div>

@@ -1,7 +1,6 @@
 "use client";
 
-import { SOCIAL_LINKS, DOCS_URL } from "@/lib/constants";
-
+import { SOCIAL_LINKS, DOCS_URL, APP_URL } from "@/lib/constants";
 
 export default function Hero() {
   return (
@@ -13,7 +12,7 @@ export default function Hero() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "120px 24px 80px",
+        padding: "130px 24px 80px",
         overflow: "hidden",
       }}
     >
@@ -88,12 +87,12 @@ export default function Hero() {
         style={{
           position: "relative",
           zIndex: 10,
-          maxWidth: "900px",
+          maxWidth: "920px",
           textAlign: "center",
           width: "100%",
         }}
       >
-        {/* Badge */}
+        {/* Trust Badge */}
         <div className="animate-fade-in-up" style={{ marginBottom: "24px" }}>
           <span className="section-badge animate-pulse-glow" style={{ background: "rgba(34,197,94,0.08)", borderColor: "rgba(34,197,94,0.25)", color: "#4ade80" }}>
             <span style={{
@@ -104,7 +103,7 @@ export default function Hero() {
               display: "inline-block",
               boxShadow: "0 0 6px rgba(34,197,94,0.8)",
             }} />
-            Now Live · Start Practicing Today
+            Free &amp; Open Source DevOps Practice Platform
           </span>
         </div>
 
@@ -112,10 +111,10 @@ export default function Hero() {
         <h1
           className="animate-fade-in-up-1"
           style={{
-            fontSize: "clamp(42px, 7vw, 88px)",
+            fontSize: "clamp(40px, 7vw, 84px)",
             fontWeight: 800,
             letterSpacing: "-0.04em",
-            lineHeight: 1.02,
+            lineHeight: 1.05,
             marginBottom: "24px",
           }}
         >
@@ -129,21 +128,18 @@ export default function Hero() {
         <p
           className="animate-fade-in-up-2"
           style={{
-            fontSize: "clamp(17px, 2vw, 21px)",
-            color: "#8888aa",
+            fontSize: "clamp(16px, 2vw, 20px)",
+            color: "var(--color-landing-subtext, #8888aa)",
             lineHeight: 1.65,
-            maxWidth: "600px",
-            margin: "0 auto 40px",
+            maxWidth: "680px",
+            margin: "0 auto 36px",
             fontWeight: 400,
           }}
         >
-          An open-source platform where you learn by doing.{" "}
-          <span style={{ color: "#a0a0cc" }}>
-            Local labs. Real terminals. No cloud fees.
-          </span>
+          Stop copy-pasting tutorials. Read the concepts online, debug real broken Docker and Kubernetes environments in safe, isolated sandboxes, and build the muscle memory to solve production incidents.
         </p>
 
-        {/* Secondary CTAs — no "Start Practicing" (moved to dedicated section) */}
+        {/* Action CTAs */}
         <div
           className="animate-fade-in-up-3"
           style={{
@@ -152,10 +148,80 @@ export default function Hero() {
             flexWrap: "wrap",
             alignItems: "center",
             justifyContent: "center",
-            gap: "12px",
-            marginBottom: "56px",
+            gap: "14px",
+            marginBottom: "16px",
           }}
         >
+          {/* Primary CTA */}
+          <a
+            href={`${APP_URL}/register`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              padding: "16px 36px",
+              fontSize: "16px",
+              fontWeight: 700,
+              color: "#030a04",
+              background: "linear-gradient(135deg, #22c55e 0%, #4ade80 100%)",
+              borderRadius: "12px",
+              textDecoration: "none",
+              boxShadow: "0 0 24px rgba(34,197,94,0.35)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.02)";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 32px rgba(34,197,94,0.5)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.transform = "none";
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 0 24px rgba(34,197,94,0.35)";
+            }}
+          >
+            <span>Start Practicing Free</span>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </a>
+
+          {/* Secondary CTA — Install CLI */}
+          <a
+            href="#install"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "8px",
+              padding: "16px 28px",
+              fontSize: "15px",
+              fontWeight: 600,
+              color: "var(--color-landing-btn-secondary-text, #f0f0ff)",
+              background: "var(--color-landing-btn-secondary-bg, rgba(255,255,255,0.05))",
+              borderRadius: "12px",
+              textDecoration: "none",
+              border: "1px solid var(--color-landing-btn-secondary-border, rgba(255,255,255,0.12))",
+              backdropFilter: "blur(10px)",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--color-primary)";
+              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--color-landing-btn-secondary-border, rgba(255,255,255,0.12))";
+              (e.currentTarget as HTMLElement).style.transform = "none";
+            }}
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="4 17 10 11 4 5" />
+              <line x1="12" y1="19" x2="20" y2="19" />
+            </svg>
+            <span>Install CLI</span>
+          </a>
+
+          {/* Tertiary CTA — Docs */}
           <a
             href={DOCS_URL}
             target="_blank"
@@ -165,121 +231,71 @@ export default function Hero() {
               alignItems: "center",
               justifyContent: "center",
               gap: "8px",
-              padding: "14px 28px",
+              padding: "16px 24px",
               fontSize: "15px",
               fontWeight: 500,
-              color: "#c8c8e0",
-              background: "rgba(255,255,255,0.04)",
-              borderRadius: "10px",
+              color: "var(--color-landing-subtext, #8888aa)",
+              background: "transparent",
+              borderRadius: "12px",
               textDecoration: "none",
-              border: "1px solid rgba(255,255,255,0.08)",
-              backdropFilter: "blur(8px)",
-              transition: "all 0.3s ease",
+              border: "1px solid transparent",
+              transition: "all 0.2s ease",
             }}
             onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.14)";
-              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.02)";
+              (e.currentTarget as HTMLElement).style.color = "var(--color-landing-heading, #f0f0ff)";
+              (e.currentTarget as HTMLElement).style.borderColor = "var(--color-landing-card-border, rgba(255,255,255,0.08))";
             }}
             onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
-              (e.currentTarget as HTMLElement).style.transform = "none";
+              (e.currentTarget as HTMLElement).style.color = "var(--color-landing-subtext, #8888aa)";
+              (e.currentTarget as HTMLElement).style.borderColor = "transparent";
             }}
           >
-            Read Docs
-          </a>
-
-          <a
-            href={SOCIAL_LINKS.discord}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              padding: "14px 28px",
-              fontSize: "15px",
-              fontWeight: 500,
-              color: "#c8c8e0",
-              background: "rgba(255,255,255,0.04)",
-              borderRadius: "10px",
-              textDecoration: "none",
-              border: "1px solid rgba(255,255,255,0.08)",
-              backdropFilter: "blur(8px)",
-              transition: "all 0.3s ease",
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.14)";
-              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.02)";
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
-              (e.currentTarget as HTMLElement).style.transform = "none";
-            }}
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-              <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.033.054a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
-            </svg>
-            Join Discord
-          </a>
-
-          <a
-            href={SOCIAL_LINKS.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              padding: "14px 28px",
-              fontSize: "15px",
-              fontWeight: 500,
-              color: "#c8c8e0",
-              background: "rgba(255,255,255,0.04)",
-              borderRadius: "10px",
-              textDecoration: "none",
-              border: "1px solid rgba(255,255,255,0.08)",
-              backdropFilter: "blur(8px)",
-              transition: "all 0.3s ease",
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.08)";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.14)";
-              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px) scale(1.02)";
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.04)";
-              (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.08)";
-              (e.currentTarget as HTMLElement).style.transform = "none";
-            }}
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-            </svg>
-            GitHub
+            Docs
           </a>
         </div>
 
-        {/* Live badge strip */}
+        {/* Safety reassurance microcopy */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", color: "var(--color-landing-subtext, #6a6a8a)", fontSize: "12px", marginBottom: "44px" }}>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            <path d="m9 12 2 2 4-4" />
+          </svg>
+          <span>100% safe &amp; containerized · Zero host changes · Instant clean teardown</span>
+        </div>
+
+        {/* Live metric / feature strip */}
         <div
           className="animate-fade-in-up-4"
-          style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "24px", flexWrap: "wrap" }}
+          style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "28px", flexWrap: "wrap" }}
         >
-          {[
-            { icon: "🚀", text: "Platform is live" },
-            { icon: "🔓", text: "No sign-up required" },
-            { icon: "🐋", text: "Just needs Docker" },
-          ].map(({ icon, text }) => (
-            <div key={text} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ fontSize: "13px" }}>{icon}</span>
-              <span style={{ fontSize: "12px", color: "#5a5a7a", fontFamily: "JetBrains Mono, monospace", letterSpacing: "0.04em" }}>{text}</span>
-            </div>
-          ))}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span style={{ fontSize: "12px", color: "var(--color-landing-subtext, #8888aa)", fontFamily: "JetBrains Mono, monospace" }}>
+              Self-paced &amp; hands-on
+            </span>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+            </svg>
+            <span style={{ fontSize: "12px", color: "#8888aa", fontFamily: "JetBrains Mono, monospace" }}>
+              Disposable Docker Sandboxes
+            </span>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+            <span style={{ fontSize: "12px", color: "#8888aa", fontFamily: "JetBrains Mono, monospace" }}>
+              Verified XP &amp; Achievements
+            </span>
+          </div>
         </div>
       </div>
 
@@ -289,7 +305,7 @@ export default function Hero() {
         style={{
           position: "relative",
           zIndex: 10,
-          marginTop: "64px",
+          marginTop: "56px",
           width: "100%",
           maxWidth: "720px",
         }}
@@ -317,26 +333,26 @@ export default function Hero() {
             fontSize: "13px",
             lineHeight: 1.8,
           }}>
-            <div style={{ color: "#4a4a6a", marginBottom: "4px" }}># Start your first real DevOps lab</div>
+            <div style={{ color: "#4a4a6a", marginBottom: "4px" }}># Start an isolated troubleshooting lab</div>
             <div style={{ marginBottom: "4px" }}>
               <span style={{ color: "#22c55e" }}>❯</span>
               {" "}<span style={{ color: "#f0f0ff" }}>tld start docker-fundamentals</span>
             </div>
             <div style={{ color: "#22c55e", marginBottom: "2px", paddingLeft: "12px" }}>
-              ✓ Environment ready — 3 containers spun up
+              [ok] Sandboxed container ready — scenario active
             </div>
             <div style={{ color: "#4a4a6a", paddingLeft: "12px", marginBottom: "12px" }}>
-              → Break the system. Fix it. Validate.
+              → Diagnose the crash. Fix the configuration. Validate.
             </div>
             <div style={{ marginBottom: "4px" }}>
               <span style={{ color: "#22c55e" }}>❯</span>
               {" "}<span style={{ color: "#f0f0ff" }}>tld check</span>
             </div>
             <div style={{ color: "#22c55e", paddingLeft: "12px", marginBottom: "4px" }}>
-              ✓ All 5 checks passed
+              [ok] All 5 system assertions passed
             </div>
             <div style={{ paddingLeft: "12px", color: "#a855f7" }}>
-              🎉 +50 XP · Level up: <span style={{ color: "#e879f9" }}>Container Engineer II</span>
+              +50 XP awarded · Rank promoted: <span style={{ color: "#e879f9" }}>Container Engineer II</span>
             </div>
             <div style={{ marginTop: "12px" }}>
               <span style={{ color: "#22c55e" }}>❯</span>
@@ -365,7 +381,7 @@ export default function Hero() {
       {/* Scroll indicator */}
       <div style={{
         position: "absolute",
-        bottom: "32px",
+        bottom: "24px",
         left: "50%",
         transform: "translateX(-50%)",
         display: "flex",

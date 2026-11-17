@@ -50,8 +50,11 @@ export default function QuickInstall() {
         {/* Section Header */}
         <div style={{ textAlign: "center", marginBottom: "40px" }}>
           <div style={{ marginBottom: "16px" }}>
-            <span className="section-badge" style={{ background: "rgba(34,197,94,0.1)", borderColor: "rgba(34,197,94,0.3)", color: "#4ade80" }}>
-              ⚡ One-Line Installation
+            <span className="section-badge" style={{ background: "rgba(34,197,94,0.1)", borderColor: "rgba(34,197,94,0.3)", color: "#4ade80", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+              One-Line CLI Installation
             </span>
           </div>
           <h2
@@ -59,7 +62,7 @@ export default function QuickInstall() {
               fontSize: "clamp(28px, 4vw, 48px)",
               fontWeight: 800,
               letterSpacing: "-0.03em",
-              color: "#f0f0ff",
+              color: "var(--color-landing-heading, #f0f0ff)",
               marginBottom: "12px",
             }}
           >
@@ -68,12 +71,12 @@ export default function QuickInstall() {
           <p
             style={{
               fontSize: "clamp(15px, 2vw, 17px)",
-              color: "#8888aa",
+              color: "var(--color-landing-subtext, #8888aa)",
               maxWidth: "540px",
               margin: "0 auto",
             }}
           >
-            Install the native <code style={{ color: "#4ade80" }}>tld</code> binary directly via shell script.
+            Install the native <code style={{ color: "var(--color-primary, #4ade80)" }}>tld</code> binary directly via shell script.
             No dependencies required except Docker.
           </p>
         </div>
@@ -104,9 +107,9 @@ export default function QuickInstall() {
                 fontWeight: 600,
                 cursor: "pointer",
                 transition: "all 0.2s ease",
-                border: activeTab === tab.id ? "1px solid rgba(34,197,94,0.4)" : "1px solid rgba(255,255,255,0.06)",
-                background: activeTab === tab.id ? "rgba(34,197,94,0.15)" : "rgba(13,13,31,0.6)",
-                color: activeTab === tab.id ? "#4ade80" : "#8888aa",
+                border: activeTab === tab.id ? "1px solid rgba(34,197,94,0.4)" : "1px solid var(--color-border, rgba(255,255,255,0.06))",
+                background: activeTab === tab.id ? "var(--color-primary-glow, rgba(34,197,94,0.15))" : "var(--color-landing-card, rgba(13,13,31,0.6))",
+                color: activeTab === tab.id ? "var(--color-primary, #4ade80)" : "var(--color-landing-subtext, #8888aa)",
               }}
             >
               {tab.label}
@@ -212,7 +215,11 @@ export default function QuickInstall() {
               gap: "8px",
             }}
           >
-            <span style={{ color: "#eab308" }}>💡</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#eab308" strokeWidth="2" style={{ flexShrink: 0 }}>
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
             {activeTab === "linux" && (
               <span>Detects x86_64 and ARM64 architecture automatically and verifies SHA-256 checksums.</span>
             )}
@@ -225,39 +232,78 @@ export default function QuickInstall() {
           </div>
         </div>
 
+        {/* Safety Callout */}
+        <div
+          style={{
+            marginTop: "16px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            padding: "12px 18px",
+            borderRadius: "10px",
+            background: "var(--color-landing-badge-bg, rgba(34,197,94,0.04))",
+            border: "1px solid var(--color-landing-badge-border, rgba(34,197,94,0.15))",
+            fontSize: "13px",
+            color: "var(--color-landing-subtext, #8888aa)",
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" style={{ flexShrink: 0 }}>
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          <span>
+            <strong style={{ color: "var(--color-primary, #4ade80)", fontWeight: 600 }}>100% Isolated Sandboxing:</strong> All lab environments run strictly inside disposable Docker containers. Your host files, system packages, and OS settings are completely isolated and untouched.
+          </span>
+        </div>
+
         {/* Post Install Guidance */}
         <div
           style={{
-            marginTop: "32px",
+            marginTop: "24px",
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
             gap: "16px",
           }}
         >
           <div
             style={{
-              background: "rgba(13,13,31,0.5)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              background: "var(--color-landing-card, rgba(13,13,31,0.5))",
+              border: "1px solid var(--color-landing-card-border, rgba(255,255,255,0.06))",
               borderRadius: "12px",
               padding: "16px 20px",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
             }}
           >
-            <div style={{ fontSize: "12px", color: "#5a5a7a", marginBottom: "4px", fontWeight: 600 }}>NEXT STEP 1</div>
-            <div style={{ fontFamily: "monospace", fontSize: "14px", color: "#f0f0ff" }}>tld doctor</div>
-            <div style={{ fontSize: "12px", color: "#8888aa", marginTop: "4px" }}>Checks Docker daemon and environment setup</div>
+            <div style={{ fontSize: "11px", color: "var(--color-landing-subtext, #5a5a7a)", marginBottom: "4px", fontWeight: 600, letterSpacing: "0.05em" }}>STEP 1 · VERIFY SETUP</div>
+            <div style={{ fontFamily: "monospace", fontSize: "14px", color: "var(--color-primary, #4ade80)" }}>tld doctor</div>
+            <div style={{ fontSize: "12px", color: "var(--color-landing-subtext, #8888aa)", marginTop: "4px" }}>Validates Docker daemon and container runtime</div>
           </div>
 
           <div
             style={{
-              background: "rgba(13,13,31,0.5)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              background: "var(--color-landing-card, rgba(13,13,31,0.5))",
+              border: "1px solid var(--color-landing-card-border, rgba(255,255,255,0.06))",
               borderRadius: "12px",
               padding: "16px 20px",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
             }}
           >
-            <div style={{ fontSize: "12px", color: "#5a5a7a", marginBottom: "4px", fontWeight: 600 }}>NEXT STEP 2</div>
-            <div style={{ fontFamily: "monospace", fontSize: "14px", color: "#f0f0ff" }}>tld sync --all</div>
-            <div style={{ fontSize: "12px", color: "#8888aa", marginTop: "4px" }}>Downloads all lab challenges to your machine</div>
+            <div style={{ fontSize: "11px", color: "var(--color-landing-subtext, #5a5a7a)", marginBottom: "4px", fontWeight: 600, letterSpacing: "0.05em" }}>STEP 2 · LINK ACCOUNT</div>
+            <div style={{ fontFamily: "monospace", fontSize: "14px", color: "var(--color-primary, #4ade80)" }}>tld login</div>
+            <div style={{ fontSize: "12px", color: "var(--color-landing-subtext, #8888aa)", marginTop: "4px" }}>Pairs CLI with your free account to track verified XP</div>
+          </div>
+
+          <div
+            style={{
+              background: "var(--color-landing-card, rgba(13,13,31,0.5))",
+              border: "1px solid var(--color-landing-card-border, rgba(255,255,255,0.06))",
+              borderRadius: "12px",
+              padding: "16px 20px",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
+            }}
+          >
+            <div style={{ fontSize: "11px", color: "var(--color-landing-subtext, #5a5a7a)", marginBottom: "4px", fontWeight: 600, letterSpacing: "0.05em" }}>STEP 3 · PULL CHALLENGES</div>
+            <div style={{ fontFamily: "monospace", fontSize: "14px", color: "var(--color-primary, #4ade80)" }}>tld sync --all</div>
+            <div style={{ fontSize: "12px", color: "var(--color-landing-subtext, #8888aa)", marginTop: "4px" }}>Downloads practice labs into your container library</div>
           </div>
         </div>
       </div>

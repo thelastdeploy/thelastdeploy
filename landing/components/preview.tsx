@@ -155,11 +155,12 @@ export default function Preview() {
             letterSpacing: "-0.03em",
             lineHeight: 1.1,
             marginBottom: "16px",
+            color: "var(--color-landing-heading, #f0f0ff)",
           }}>
             A first look at what{" "}
             <span className="text-gradient-purple">we&apos;re building</span>
           </h2>
-          <p style={{ fontSize: "18px", color: "#8888aa", maxWidth: "460px", margin: "0 auto", lineHeight: 1.6 }}>
+          <p style={{ fontSize: "18px", color: "var(--color-landing-subtext, #8888aa)", maxWidth: "460px", margin: "0 auto", lineHeight: 1.6 }}>
             Every screen is designed to keep you in flow — no distractions, just progress.
           </p>
         </div>
@@ -173,24 +174,22 @@ export default function Preview() {
           {previews.map((preview) => (
             <div
               key={preview.id}
+              className="card-glass card-glass-hover"
               style={{
                 borderRadius: "16px",
                 overflow: "hidden",
-                border: `1px solid ${preview.accent}20`,
-                background: "rgba(13,13,31,0.8)",
-                backdropFilter: "blur(12px)",
-                transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                border: `1px solid ${preview.accent}30`,
                 cursor: "default",
               }}
               onMouseEnter={e => {
                 const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = preview.accent + "40";
-                el.style.boxShadow = `0 0 30px ${preview.glow}, 0 20px 40px rgba(0,0,0,0.4)`;
+                el.style.borderColor = preview.accent + "60";
+                el.style.boxShadow = `0 0 30px ${preview.glow}, 0 20px 40px rgba(0,0,0,0.15)`;
                 el.style.transform = "translateY(-4px)";
               }}
               onMouseLeave={e => {
                 const el = e.currentTarget as HTMLElement;
-                el.style.borderColor = preview.accent + "20";
+                el.style.borderColor = preview.accent + "30";
                 el.style.boxShadow = "none";
                 el.style.transform = "none";
               }}
@@ -234,12 +233,12 @@ export default function Preview() {
               <div style={{
                 padding: "16px 20px",
                 borderTop: `1px solid ${preview.accent}12`,
-                background: "rgba(0,0,0,0.2)",
+                background: "rgba(0,0,0,0.08)",
               }}>
-                <h3 style={{ fontSize: "14px", fontWeight: 600, color: "#f0f0ff", marginBottom: "4px" }}>
+                <h3 style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-landing-heading, #f0f0ff)", marginBottom: "4px" }}>
                   {preview.label}
                 </h3>
-                <p style={{ fontSize: "12px", color: "#6a6a8a", lineHeight: 1.55 }}>
+                <p style={{ fontSize: "12px", color: "var(--color-landing-subtext, #6a6a8a)", lineHeight: 1.55 }}>
                   {preview.description}
                 </p>
               </div>
