@@ -56,8 +56,10 @@ services:
       ENVIRONMENT: development
       FRONTEND_URL: http://localhost:9000
       ANALYTICS_ENABLED: "false"
+      CHALLENGES_DIR: /app/challenges
     volumes:
       - ../../web/backend:/app
+      - ../../challenges:/app/challenges:ro
     depends_on:
       db:
         condition: service_healthy

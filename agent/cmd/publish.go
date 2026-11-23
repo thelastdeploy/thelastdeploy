@@ -14,25 +14,34 @@ import (
 	"time"
 
 	"github.com/thelastdeploy/agent/internal/config"
+	"github.com/thelastdeploy/agent/internal/contenthash"
 )
 
 type BuilderLabInput struct {
-	ID               string   `json:"id"`
-	Title            string   `json:"title"`
-	Order            int      `json:"order"`
-	XP               int      `json:"xp"`
-	EstimatedMinutes *int     `json:"estimated_minutes"`
-	SeedCommands     []string `json:"seed_commands"`
-	ValidatorScript  *string  `json:"validator_script"`
+	ID                 string   `json:"id"`
+	Title              string   `json:"title"`
+	Order              int      `json:"order"`
+	XP                 int      `json:"xp"`
+	EstimatedMinutes   *int     `json:"estimated_minutes"`
+	EnvironmentProfile string   `json:"environment_profile"`
+	SeedCommands       []string `json:"seed_commands"`
+	ValidatorScript    *string  `json:"validator_script"`
+	CleanupScript      *string  `json:"cleanup_script"`
+	ContentHash        string   `json:"content_hash"`
+	IsOrgOwned         bool     `json:"is_org_owned"`
+	OriginalID         string   `json:"original_id,omitempty"`
 }
 
 type BuilderSectionInput struct {
-	ID      string            `json:"id"`
-	Title   string            `json:"title"`
-	Order   int               `json:"order"`
-	XP      int               `json:"xp"`
-	Content *string           `json:"content"`
-	Labs    []BuilderLabInput `json:"labs"`
+	ID          string            `json:"id"`
+	Title       string            `json:"title"`
+	Order       int               `json:"order"`
+	XP          int               `json:"xp"`
+	Content     *string           `json:"content"`
+	ContentHash string            `json:"content_hash"`
+	IsOrgOwned  bool              `json:"is_org_owned"`
+	OriginalID  string            `json:"original_id,omitempty"`
+	Labs        []BuilderLabInput `json:"labs"`
 }
 
 type BuilderModuleInput struct {
@@ -42,6 +51,9 @@ type BuilderModuleInput struct {
 	Topic            string                `json:"topic"`
 	Difficulty       string                `json:"difficulty"`
 	EstimatedMinutes *int                  `json:"estimated_minutes"`
+	ContentHash      string                `json:"content_hash"`
+	IsOrgOwned       bool                  `json:"is_org_owned"`
+	OriginalID       string                `json:"original_id,omitempty"`
 	Sections         []BuilderSectionInput `json:"sections"`
 }
 
@@ -66,21 +78,43 @@ func runPublish(args []string) error {
 		return fmt.Errorf("you must be logged in to publish. Run 'tld login' first")
 	}
 
-	fmt.Printf("Preparing to publish module from folder: %s\n", folderPath)
+	fmt.Printf("Analyzing and preparing to publish module from folder: %s\n", folderPath)
 
-	module, err := parseModuleDirectory(folderPath)
+	module, err := parseAndHashModuleDirectory(folderPath)
 	if err != nil {
 		return fmt.Errorf("parse folder structure: %w", err)
 	}
 
-	// Double check that we override XP to 0 locally as required by safety guidelines
-	module.EstimatedMinutes = intPtr(0)
+	// Always ensure XP is 0 on publishing unverified content
 	for i := range module.Sections {
 		module.Sections[i].XP = 0
 		for j := range module.Sections[i].Labs {
 			module.Sections[i].Labs[j].XP = 0
 		}
 	}
+
+	// Output summary of detected ownership and modifications
+	fmt.Printf("\nContent Ownership & Publication Plan:\n")
+	modOwner := "Custom/Org-owned"
+	if !module.IsOrgOwned {
+		modOwner = "TLD Core"
+	}
+	fmt.Printf("📦 Module: %s (%s, hash: %.8s...)\n", module.ID, modOwner, module.ContentHash)
+	for _, sec := range module.Sections {
+		secOwner := "Custom/Org-owned"
+		if !sec.IsOrgOwned {
+			secOwner = "TLD Core (inherited)"
+		}
+		fmt.Printf("  ├── Section: %s [%s] (hash: %.8s...)\n", sec.ID, secOwner, sec.ContentHash)
+		for _, lab := range sec.Labs {
+			labOwner := "Custom/Org-owned"
+			if !lab.IsOrgOwned {
+				labOwner = "TLD Core (inherited)"
+			}
+			fmt.Printf("  │   └── Lab: %s [%s] (hash: %.8s...)\n", lab.ID, labOwner, lab.ContentHash)
+		}
+	}
+	fmt.Println()
 
 	payload, err := json.Marshal(module)
 	if err != nil {
@@ -110,14 +144,13 @@ func runPublish(args []string) error {
 		return fmt.Errorf("server returned status %d: %s", resp.StatusCode, string(bodyBytes))
 	}
 
-	fmt.Printf("\n\x1b[32m✓ Module '%s' successfully published!\x1b[0m\n", module.ID)
-	fmt.Println("It is now live but unverified (rewards 0 XP).")
-	fmt.Println("You can view it on the syllabus builder page /builder.")
+	fmt.Printf("\x1b[32m✓ Module '%s' successfully published!\x1b[0m\n", module.ID)
+	fmt.Println("Status: published (unverified, rewards 0 XP until approved).")
+	fmt.Println("Unmodified TLD sections/labs will inherit future TLD updates automatically.")
 
 	return nil
 }
 
-// Simple key-value text lines helper to parse YAML files without import overhead
 type yamlMap map[string]string
 
 func readSimpleYAML(path string) (yamlMap, error) {
@@ -144,11 +177,25 @@ func readSimpleYAML(path string) (yamlMap, error) {
 	return res, nil
 }
 
-func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
+func parseAndHashModuleDirectory(root string) (*BuilderModuleInput, error) {
+	// 1. Try reading .tld-baseline.json if present
+	var baseline *TLDBaseline
+	baselinePath := filepath.Join(root, ".tld-baseline.json")
+	if baselineBytes, err := os.ReadFile(baselinePath); err == nil {
+		var b TLDBaseline
+		if err := json.Unmarshal(baselineBytes, &b); err == nil {
+			baseline = &b
+		}
+	}
+
 	modYamlPath := filepath.Join(root, "module.yaml")
-	modData, err := readSimpleYAML(modYamlPath)
+	modRawBytes, err := os.ReadFile(modYamlPath)
 	if err != nil {
 		return nil, fmt.Errorf("read module.yaml: %w", err)
+	}
+	modData, err := readSimpleYAML(modYamlPath)
+	if err != nil {
+		return nil, fmt.Errorf("parse module.yaml: %w", err)
 	}
 
 	id := modData["id"]
@@ -168,13 +215,16 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 		}
 	}
 
-	tags := []string{}
-	if tagsStr, ok := modData["tags"]; ok {
-		for _, tag := range strings.Split(tagsStr, ",") {
-			trimmed := strings.TrimSpace(tag)
-			if trimmed != "" {
-				tags = append(tags, trimmed)
-			}
+	// Module hash (SHA-256 over module.yaml)
+	modHash := contenthash.ComputeModuleHash(modRawBytes)
+
+	// Direct module modification check
+	isModDirectlyModified := true
+	origModID := ""
+	if baseline != nil {
+		origModID = baseline.OriginalModuleID
+		if baseline.BaselineModuleHash != "" && baseline.BaselineModuleHash == modHash {
+			isModDirectlyModified = false
 		}
 	}
 
@@ -186,6 +236,7 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 
 	sections := []BuilderSectionInput{}
 	orderSec := 1
+	anySectionOrgOwned := false
 
 	for _, secEntry := range secEntries {
 		if !secEntry.IsDir() {
@@ -193,8 +244,11 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 		}
 		secFolder := filepath.Join(sectionsDir, secEntry.Name())
 		secYamlPath := filepath.Join(secFolder, "section.yaml")
-		if _, err := os.Stat(secYamlPath); os.IsNotExist(err) {
+		secRawBytes, err := os.ReadFile(secYamlPath)
+		if os.IsNotExist(err) {
 			continue
+		} else if err != nil {
+			return nil, fmt.Errorf("read section.yaml in %s: %w", secEntry.Name(), err)
 		}
 
 		secData, err := readSimpleYAML(secYamlPath)
@@ -210,15 +264,34 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 
 		// Read content.md
 		var content *string
+		var contentMDBytes []byte
 		contentMdPath := filepath.Join(secFolder, "content.md")
 		if mdBytes, err := os.ReadFile(contentMdPath); err == nil {
+			contentMDBytes = mdBytes
 			cStr := string(mdBytes)
 			content = &cStr
+		}
+
+		// Section hash (SHA-256 over section.yaml and content.md)
+		secHash := contenthash.ComputeSectionHash(secRawBytes, contentMDBytes)
+
+		// Direct section modification check
+		isSecDirectlyModified := true
+		origSecID := ""
+		if baseline != nil {
+			if baseSec, ok := baseline.Sections[secID]; ok {
+				origSecID = baseSec.OriginalID
+				if baseSec.BaselineHash != "" && baseSec.BaselineHash == secHash {
+					isSecDirectlyModified = false
+				}
+			}
 		}
 
 		// Read labs
 		labsDir := filepath.Join(secFolder, "labs")
 		labs := []BuilderLabInput{}
+		anyLabInSecOrgOwned := false
+
 		if _, err := os.Stat(labsDir); err == nil {
 			labEntries, err := os.ReadDir(labsDir)
 			if err == nil {
@@ -229,8 +302,11 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 					}
 					labFolder := filepath.Join(labsDir, labEntry.Name())
 					labYamlPath := filepath.Join(labFolder, "lab.yaml")
-					if _, err := os.Stat(labYamlPath); os.IsNotExist(err) {
+					labRawBytes, err := os.ReadFile(labYamlPath)
+					if os.IsNotExist(err) {
 						continue
+					} else if err != nil {
+						return nil, fmt.Errorf("read lab.yaml in %s: %w", labEntry.Name(), err)
 					}
 
 					labData, err := readSimpleYAML(labYamlPath)
@@ -251,72 +327,123 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 						}
 					}
 
-					// Setup commands parsing from raw file (we read it key value or line by line for seed_commands)
-					seedCmds := []string{}
+					profile := "tld-ubuntu"
+					if p, ok := labData["profile"]; ok && p != "" {
+						profile = p
+					}
 
-					labRawBytes, err := os.ReadFile(labYamlPath)
-					if err == nil {
-						rawYaml := string(labRawBytes)
-						// simple list parser for seed_commands
-						lines := strings.Split(rawYaml, "\n")
-						inSeedCmds := false
-						for _, line := range lines {
-							trimmed := strings.TrimSpace(line)
-							if strings.HasPrefix(trimmed, "seed_commands:") {
-								inSeedCmds = true
+					// Parse seed_commands
+					seedCmds := []string{}
+					rawYaml := string(labRawBytes)
+					lines := strings.Split(rawYaml, "\n")
+					inSeedCmds := false
+					for _, line := range lines {
+						trimmed := strings.TrimSpace(line)
+						if strings.HasPrefix(trimmed, "seed_commands:") {
+							inSeedCmds = true
+							continue
+						}
+						if inSeedCmds {
+							if strings.Contains(trimmed, ":") && !strings.HasPrefix(trimmed, "-") {
+								inSeedCmds = false
 								continue
 							}
-							if inSeedCmds {
-								// if it starts with a key/value pattern that is not a list indicator, stop
-								if strings.Contains(trimmed, ":") && !strings.HasPrefix(trimmed, "-") {
-									inSeedCmds = false
-									continue
-								}
-								if strings.HasPrefix(trimmed, "-") {
-									cmd := strings.Trim(strings.TrimSpace(trimmed[1:]), `"'`)
-									if cmd != "" {
-										seedCmds = append(seedCmds, cmd)
-									}
+							if strings.HasPrefix(trimmed, "-") {
+								cmd := strings.Trim(strings.TrimSpace(trimmed[1:]), `"'`)
+								if cmd != "" {
+									seedCmds = append(seedCmds, cmd)
 								}
 							}
 						}
 					}
 
+					// Read cleanup.sh
+					var cleanupBytes []byte
+					var cleanupScript *string
+					cleanupPath := filepath.Join(labFolder, "cleanup.sh")
+					if cBytes, err := os.ReadFile(cleanupPath); err == nil {
+						cleanupBytes = cBytes
+						cStr := string(cBytes)
+						cleanupScript = &cStr
+					}
+
 					// Read validator script
 					var valScript *string
+					var valBytes []byte
+					isPyVal := false
 					valPath := filepath.Join(labFolder, "validator.sh")
 					if _, err := os.Stat(valPath); os.IsNotExist(err) {
 						valPath = filepath.Join(labFolder, "validator.py")
+						isPyVal = true
 					}
-					if valBytes, err := os.ReadFile(valPath); err == nil {
-						vStr := string(valBytes)
+					if vBytes, err := os.ReadFile(valPath); err == nil {
+						valBytes = vBytes
+						vStr := string(vBytes)
 						valScript = &vStr
 					}
 
+					// Lab hash (SHA-256 over lab.yaml, cleanup.sh, validator)
+					labHash := contenthash.ComputeLabHash(labRawBytes, cleanupBytes, valBytes, isPyVal)
+
+					// Direct lab modification check
+					isLabDirectlyModified := true
+					origLabID := ""
+					if baseline != nil {
+						if baseLab, ok := baseline.Labs[labID]; ok {
+							origLabID = baseLab.OriginalID
+							if baseLab.BaselineHash != "" && baseLab.BaselineHash == labHash {
+								isLabDirectlyModified = false
+							}
+						}
+					}
+
+					if isLabDirectlyModified {
+						anyLabInSecOrgOwned = true
+					}
+
 					labs = append(labs, BuilderLabInput{
-						ID:               labID,
-						Title:            labTitle,
-						Order:            orderLab,
-						XP:               0,
-						EstimatedMinutes: labEstMin,
-						SeedCommands:     seedCmds,
-						ValidatorScript:  valScript,
+						ID:                 labID,
+						Title:              labTitle,
+						Order:              orderLab,
+						XP:                 0,
+						EstimatedMinutes:   labEstMin,
+						EnvironmentProfile: profile,
+						SeedCommands:       seedCmds,
+						ValidatorScript:    valScript,
+						CleanupScript:      cleanupScript,
+						ContentHash:        labHash,
+						IsOrgOwned:         isLabDirectlyModified,
+						OriginalID:         origLabID,
 					})
 					orderLab++
 				}
 			}
 		}
 
+		// UPWARD OWNERSHIP PROPAGATION:
+		// If ANY lab in this section is org-owned, the section is org-owned!
+		isSectionOrgOwned := isSecDirectlyModified || anyLabInSecOrgOwned
+		if isSectionOrgOwned {
+			anySectionOrgOwned = true
+		}
+
 		sections = append(sections, BuilderSectionInput{
-			ID:      secID,
-			Title:   secTitle,
-			Order:   orderSec,
-			XP:      0,
-			Content: content,
-			Labs:    labs,
+			ID:          secID,
+			Title:       secTitle,
+			Order:       orderSec,
+			XP:          0,
+			Content:     content,
+			ContentHash: secHash,
+			IsOrgOwned:  isSectionOrgOwned,
+			OriginalID:  origSecID,
+			Labs:        labs,
 		})
 		orderSec++
 	}
+
+	// UPWARD OWNERSHIP PROPAGATION:
+	// If ANY section in this module is org-owned, the module is org-owned!
+	isModuleOrgOwned := isModDirectlyModified || anySectionOrgOwned
 
 	return &BuilderModuleInput{
 		ID:               id,
@@ -325,10 +452,9 @@ func parseModuleDirectory(root string) (*BuilderModuleInput, error) {
 		Topic:            topic,
 		Difficulty:       difficulty,
 		EstimatedMinutes: estMin,
+		ContentHash:      modHash,
+		IsOrgOwned:       isModuleOrgOwned,
+		OriginalID:       origModID,
 		Sections:         sections,
 	}, nil
-}
-
-func intPtr(val int) *int {
-	return &val
 }

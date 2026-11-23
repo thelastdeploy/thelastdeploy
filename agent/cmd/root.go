@@ -64,6 +64,11 @@ func Execute() {
 			fmt.Fprintln(os.Stderr, "publish:", err)
 			os.Exit(1)
 		}
+	case "pull":
+		if err := runPull(os.Args[2:]); err != nil {
+			fmt.Fprintln(os.Stderr, "pull:", err)
+			os.Exit(1)
+		}
 	case "doctor":
 		if err := runDoctor(os.Args[2:]); err != nil {
 			fmt.Fprintln(os.Stderr, "doctor:", err)
@@ -123,6 +128,7 @@ Commands:
   login                 Authenticate with The Last Deploy API
   logout                Remove saved credentials
   publish <folder-path> Publish a local module directory to the builder API
+  pull <module-id>      Pull an official verified curriculum module for local customization
   doctor                Check if your system is ready to run TLD labs
   version               Show CLI version information
   help                  Show this help message

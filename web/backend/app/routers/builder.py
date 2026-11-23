@@ -9,7 +9,8 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from app.dependencies import get_db, get_current_user, get_current_organization
+from app.dependencies import get_db, get_current_user, get_current_organization, require_permission
+from app.hashing import compute_module_hash, compute_section_hash, compute_lab_hash
 from app.models import (
     User, Module, Section, Lab, LabProgress, SectionProgress,
     Organization, OrganizationMembership
@@ -213,11 +214,17 @@ async def publish_module_from_cli(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    _perm: OrganizationMembership = Depends(require_permission("content.publish")),
 ):
     organization, membership = org_and_mem
+    is_platform_org = organization.is_platform or organization.slug == "tld"
 
-    # 1. Resolve module in current organization
-    module_id = body.id if organization.is_platform else f"{organization.slug}-{body.id}"
+    # 1. Resolve module ID in current organization
+    if is_platform_org:
+        module_id = body.id
+    else:
+        prefix = f"{organization.slug}-"
+        module_id = body.id if body.id.startswith(prefix) else f"{prefix}{body.id}"
 
     stmt = select(Module).where(
         Module.owner_organization_id == organization.id,
@@ -239,7 +246,107 @@ async def publish_module_from_cli(
                 detail="Cannot modify or overwrite an officially verified module.",
             )
 
-    # 2. Setup/overwrite Module row
+    # 2. Process Sections and Labs with Selective Persistence
+    resolved_section_ids: list[str] = []
+
+    for s_input in body.sections:
+        if s_input.is_org_owned:
+            # Section is org-owned: generate org section ID
+            if is_platform_org:
+                sec_id = s_input.id
+            else:
+                prefix = f"{organization.slug}-"
+                sec_id = s_input.id if s_input.id.startswith(prefix) else f"{prefix}{s_input.id}"
+
+            resolved_lab_ids: list[str] = []
+            for l_input in s_input.labs:
+                if l_input.is_org_owned:
+                    # Lab is org-owned: persist new/updated Lab record
+                    if is_platform_org:
+                        lab_id = l_input.id
+                    else:
+                        prefix = f"{organization.slug}-"
+                        lab_id = l_input.id if l_input.id.startswith(prefix) else f"{prefix}{l_input.id}"
+
+                    seed_cmds_json = json.dumps(l_input.seed_commands) if l_input.seed_commands else None
+                    val_hash = _calculate_validator_hash(l_input.validator_script)
+
+                    l_res = await db.execute(select(Lab).where(Lab.id == lab_id))
+                    lab = l_res.scalar_one_or_none()
+                    if not lab:
+                        lab = Lab(
+                            id=lab_id,
+                            owner_organization_id=organization.id,
+                            title=l_input.title,
+                            xp=0,
+                            estimated_minutes=l_input.estimated_minutes,
+                            environment_profile=l_input.environment_profile or "tld-ubuntu",
+                            content_hash=l_input.content_hash,
+                            seed_commands=seed_cmds_json,
+                            version=1,
+                            validator_hash=val_hash,
+                            validator_script=l_input.validator_script,
+                            created_by=current_user.id,
+                        )
+                        db.add(lab)
+                    else:
+                        lab.title = l_input.title
+                        lab.estimated_minutes = l_input.estimated_minutes
+                        lab.environment_profile = l_input.environment_profile or lab.environment_profile
+                        lab.content_hash = l_input.content_hash
+                        lab.seed_commands = seed_cmds_json
+                        lab.validator_hash = val_hash
+                        lab.validator_script = l_input.validator_script
+                        db.add(lab)
+                    await db.flush()
+                    resolved_lab_ids.append(lab_id)
+                else:
+                    # Unchanged TLD Lab: DO NOT create a new record!
+                    tld_lab_id = l_input.original_id or l_input.id
+                    tld_lab = (await db.execute(select(Lab).where(Lab.id == tld_lab_id))).scalar_one_or_none()
+                    if not tld_lab:
+                        raise HTTPException(
+                            status_code=status.HTTP_400_BAD_REQUEST,
+                            detail=f"Referenced TLD lab '{tld_lab_id}' does not exist.",
+                        )
+                    resolved_lab_ids.append(tld_lab_id)
+
+            # Upsert Section record
+            s_res = await db.execute(select(Section).where(Section.id == sec_id))
+            section = s_res.scalar_one_or_none()
+            if not section:
+                section = Section(
+                    id=sec_id,
+                    owner_organization_id=organization.id,
+                    title=s_input.title,
+                    xp=0,
+                    content=s_input.content,
+                    content_hash=s_input.content_hash,
+                    labs=resolved_lab_ids,
+                    version=1,
+                    created_by=current_user.id,
+                )
+                db.add(section)
+            else:
+                section.title = s_input.title
+                section.content = s_input.content
+                section.content_hash = s_input.content_hash
+                section.labs = resolved_lab_ids
+                db.add(section)
+            await db.flush()
+            resolved_section_ids.append(sec_id)
+        else:
+            # Unchanged TLD Section: DO NOT create a new record!
+            tld_sec_id = s_input.original_id or s_input.id
+            tld_sec = (await db.execute(select(Section).where(Section.id == tld_sec_id))).scalar_one_or_none()
+            if not tld_sec:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Referenced TLD section '{tld_sec_id}' does not exist.",
+                )
+            resolved_section_ids.append(tld_sec_id)
+
+    # 3. Setup/overwrite Module row
     module_data = {
         "id": module_id,
         "owner_organization_id": organization.id,
@@ -250,6 +357,8 @@ async def publish_module_from_cli(
         "estimated_minutes": body.estimated_minutes,
         "version": 1,
         "total_xp": 0,  # Unverified modules have 0 XP
+        "sections": resolved_section_ids,
+        "content_hash": body.content_hash,
         "author_id": current_user.id,
         "updated_by": current_user.id,
         "status": "published",
@@ -257,76 +366,12 @@ async def publish_module_from_cli(
     }
 
     if existing_module:
-        stmt_update_module = select(Module).where(Module.id == module_id)
-        module = (await db.execute(stmt_update_module)).scalar_one()
         for key, val in module_data.items():
-            setattr(module, key, val)
+            setattr(existing_module, key, val)
+        module = existing_module
     else:
         module = Module(**module_data)
         db.add(module)
-        await db.flush()
-
-    # 3. Process Sections and Labs
-    section_ids = []
-    for s_input in body.sections:
-        sec_id = s_input.id if organization.is_platform else f"{organization.slug}-{s_input.id}"
-        section_ids.append(sec_id)
-
-        lab_ids = []
-        for l_input in s_input.labs:
-            lab_id = l_input.id if organization.is_platform else f"{organization.slug}-{l_input.id}"
-            lab_ids.append(lab_id)
-            seed_cmds_json = json.dumps(l_input.seed_commands) if l_input.seed_commands else None
-            val_hash = _calculate_validator_hash(l_input.validator_script)
-
-            l_res = await db.execute(select(Lab).where(Lab.id == lab_id))
-            lab = l_res.scalar_one_or_none()
-            if not lab:
-                lab = Lab(
-                    id=lab_id,
-                    owner_organization_id=organization.id,
-                    title=l_input.title,
-                    xp=0,
-                    estimated_minutes=l_input.estimated_minutes,
-                    seed_commands=seed_cmds_json,
-                    version=1,
-                    validator_hash=val_hash,
-                    validator_script=l_input.validator_script,
-                    created_by=current_user.id,
-                )
-                db.add(lab)
-            else:
-                lab.title = l_input.title
-                lab.seed_commands = seed_cmds_json
-                lab.validator_hash = val_hash
-                lab.validator_script = l_input.validator_script
-                db.add(lab)
-            await db.flush()
-
-        # Upsert section
-        s_res = await db.execute(select(Section).where(Section.id == sec_id))
-        section = s_res.scalar_one_or_none()
-        if not section:
-            section = Section(
-                id=sec_id,
-                owner_organization_id=organization.id,
-                title=s_input.title,
-                xp=0,
-                content=s_input.content,
-                labs=lab_ids,
-                version=1,
-                created_by=current_user.id,
-            )
-            db.add(section)
-        else:
-            section.title = s_input.title
-            section.content = s_input.content
-            section.labs = lab_ids
-            db.add(section)
-        await db.flush()
-
-    module.sections = section_ids
-    module.total_xp = 0
 
     await db.commit()
     await db.refresh(module)
@@ -338,7 +383,7 @@ async def publish_module_from_cli(
         entity_id=module.id,
         actor_user_id=current_user.id,
         organization_id=organization.id,
-        metadata={"id": module.id, "sections_count": len(section_ids)},
+        metadata={"id": module.id, "sections_count": len(resolved_section_ids)},
     )
 
     # 4. Generate the YAML payload and trigger GitHub push in the background

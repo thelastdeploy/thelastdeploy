@@ -252,6 +252,10 @@ class BuilderLabInput(BaseModel):
     environment_profile: str = "tld-ubuntu"
     seed_commands: list[str] = []
     validator_script: str | None = None  # None allowed in drafts, verified in publish gate
+    cleanup_script: str | None = None
+    content_hash: str | None = None
+    is_org_owned: bool = True
+    original_id: str | None = None
 
 class BuilderSectionInput(BaseModel):
     id: str
@@ -259,6 +263,9 @@ class BuilderSectionInput(BaseModel):
     order: int
     xp: int = 10
     content: str | None = None          # None allowed in drafts, verified in publish gate
+    content_hash: str | None = None
+    is_org_owned: bool = True
+    original_id: str | None = None
     labs: list[BuilderLabInput] = []
 
 class BuilderModuleInput(BaseModel):
@@ -268,7 +275,45 @@ class BuilderModuleInput(BaseModel):
     topic: str
     difficulty: str
     estimated_minutes: int | None = None
+    content_hash: str | None = None
+    is_org_owned: bool = True
+    original_id: str | None = None
     sections: list[BuilderSectionInput] = []
+
+class LabExportItem(BaseModel):
+    id: str
+    title: str
+    order: int
+    estimated_minutes: int | None = None
+    environment_profile: str = "tld-ubuntu"
+    seed_commands: list[str] = []
+    validator_script: str | None = None
+    cleanup_script: str | None = None
+    raw_lab_yaml: str | None = None
+    is_python_validator: bool = False
+    content_hash: str | None = None
+
+class SectionExportItem(BaseModel):
+    id: str
+    title: str
+    order: int
+    content: str | None = None
+    raw_section_yaml: str | None = None
+    content_hash: str | None = None
+    labs: list[LabExportItem] = []
+
+class ModuleExportResponse(BaseModel):
+    id: str
+    title: str
+    description: str | None = None
+    topic: str | None = None
+    difficulty: str | None = None
+    estimated_minutes: int | None = None
+    raw_module_yaml: str | None = None
+    content_hash: str | None = None
+    owner_organization_id: int
+    is_official_verified: bool
+    sections: list[SectionExportItem] = []
 
 class BuilderDraftListItem(BaseModel):
     id: str

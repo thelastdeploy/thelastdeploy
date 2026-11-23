@@ -13,6 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from sqlalchemy import select
 from app.database import AsyncSessionLocal
 from app.models import Module, Section, Lab, Organization
+from app.hashing import compute_module_hash, compute_section_hash, compute_lab_hash
 
 CHALLENGES_DIR = os.getenv(
     "CHALLENGES_DIR",
@@ -95,11 +96,17 @@ async def seed():
                     with open(section_yaml_path) as f:
                         section_data = yaml.safe_load(f)
 
-                    content = None
-                    if os.path.exists(content_path):
-                        with open(content_path) as f:
-                            content = f.read()
+                    with open(section_yaml_path, "rb") as f_raw:
+                        raw_sec_yaml = f_raw.read()
 
+                    content = None
+                    content_bytes = None
+                    if os.path.exists(content_path):
+                        with open(content_path, "rb") as f:
+                            content_bytes = f.read()
+                            content = content_bytes.decode("utf-8", errors="replace")
+
+                    sec_content_hash = compute_section_hash(raw_sec_yaml, content_bytes)
                     section_id = section_data["id"]
                     module_section_ids.append(section_id)
                     total_xp += section_data.get("xp", 10)
@@ -128,6 +135,9 @@ async def seed():
                             with open(lab_yaml_path) as f:
                                 lab_data = yaml.safe_load(f)
 
+                            with open(lab_yaml_path, "rb") as f_raw:
+                                raw_lab_yaml = f_raw.read()
+
                             lab_id = lab_data["id"]
                             section_lab_ids.append(lab_id)
                             total_xp += lab_data.get("xp", 0)
@@ -135,6 +145,7 @@ async def seed():
                             # Validator script & hash
                             validator_hash = None
                             validator_script = None
+                            c_bytes = None
                             validator_sh = os.path.join(lab_path, "validator.sh")
                             if os.path.exists(validator_sh):
                                 with open(validator_sh, "rb") as f:
@@ -142,6 +153,14 @@ async def seed():
                                 c_norm = c_bytes.replace(b"\r\n", b"\n").rstrip()
                                 validator_hash = hashlib.sha256(c_norm).hexdigest()
                                 validator_script = c_bytes.decode("utf-8", errors="replace")
+
+                            cleanup_sh = os.path.join(lab_path, "cleanup.sh")
+                            cleanup_bytes = None
+                            if os.path.exists(cleanup_sh):
+                                with open(cleanup_sh, "rb") as f:
+                                    cleanup_bytes = f.read()
+
+                            lab_content_hash = compute_lab_hash(raw_lab_yaml, cleanup_bytes, c_bytes)
 
                             setup_obj = lab_data.get("setup") or {}
                             if not isinstance(setup_obj, dict):
@@ -165,6 +184,7 @@ async def seed():
                                 existing_lab.version = lab_data.get("version", 1)
                                 existing_lab.validator_hash = validator_hash
                                 existing_lab.validator_script = validator_script
+                                existing_lab.content_hash = lab_content_hash
                                 db.add(existing_lab)
                             else:
                                 db.add(Lab(
@@ -178,6 +198,7 @@ async def seed():
                                     version=lab_data.get("version", 1),
                                     validator_hash=validator_hash,
                                     validator_script=validator_script,
+                                    content_hash=lab_content_hash,
                                 ))
 
                     # Upsert Section
@@ -190,6 +211,7 @@ async def seed():
                         existing_section.content = content
                         existing_section.labs = section_lab_ids
                         existing_section.version = section_data.get("version", 1)
+                        existing_section.content_hash = sec_content_hash
                         db.add(existing_section)
                     else:
                         db.add(Section(
@@ -200,9 +222,11 @@ async def seed():
                             content=content,
                             labs=section_lab_ids,
                             version=section_data.get("version", 1),
+                            content_hash=sec_content_hash,
                         ))
 
             # ── Upsert Module ──────────────────────────────────────────
+            mod_content_hash = compute_module_hash(raw_yaml)
             m_res = await db.execute(select(Module).where(Module.id == module_id))
             existing_module = m_res.scalar_one_or_none()
             shared_seed = module_data.get("shared_seed") or None
@@ -223,6 +247,7 @@ async def seed():
                 existing_module.shared_seed = shared_seed
                 existing_module.author_id = None
                 existing_module.status = 'verified'
+                existing_module.content_hash = mod_content_hash
                 db.add(existing_module)
                 print(f"  ↻ Updated module: {module_id} (total_xp: {total_xp}, sections: {len(module_section_ids)})")
             else:
@@ -240,6 +265,7 @@ async def seed():
                     shared_seed=shared_seed,
                     author_id=None,
                     status='verified',
+                    content_hash=mod_content_hash,
                 ))
                 print(f"  ✅ Seeded module: {module_id} (total_xp: {total_xp}, sections: {len(module_section_ids)})")
 
