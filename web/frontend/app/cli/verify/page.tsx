@@ -16,7 +16,7 @@ function CliVerifyContent() {
 
   const codeFromUrl = searchParams.get("code") || "";
   const [userCode, setUserCode] = useState(codeFromUrl);
-  const [status, setStatus] = useState<"idle" | "authorizing" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "authorizing" | "success" | "denied" | "error">("idle");
   const [message, setMessage] = useState<string | null>(null);
 
   // Redirect to login if user is not authenticated
@@ -43,12 +43,28 @@ function CliVerifyContent() {
     setMessage(null);
 
     try {
-      const res = await api.cliAuthorize(userCode);
+      const res = await api.cliAuthorize(userCode, "approve");
       setStatus("success");
       setMessage(res.detail);
     } catch (err: unknown) {
       setStatus("error");
       setMessage(err instanceof Error ? err.message : "Failed to authorize CLI");
+    }
+  };
+
+  const handleDeny = async () => {
+    if (!userCode.trim()) return;
+
+    setStatus("authorizing");
+    setMessage(null);
+
+    try {
+      const res = await api.cliAuthorize(userCode, "deny");
+      setStatus("denied");
+      setMessage(res.detail || "CLI authorization was denied.");
+    } catch (err: unknown) {
+      setStatus("error");
+      setMessage(err instanceof Error ? err.message : "Failed to deny CLI authorization");
     }
   };
 
@@ -104,6 +120,34 @@ function CliVerifyContent() {
               </p>
             </div>
           </div>
+        ) : status === "denied" ? (
+          <div className="text-center space-y-5 py-4">
+            <div className="w-16 h-16 mx-auto rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20 text-red-500">
+              <svg
+                className="w-8 h-8"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-foreground">Authorization Denied</h2>
+              <p className="text-muted-foreground text-sm mt-2 leading-relaxed">
+                {message || "CLI authorization was declined."}
+              </p>
+              <p className="text-xs text-muted-foreground mt-4">
+                You can safely close this tab and return to your terminal.
+              </p>
+            </div>
+          </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -131,13 +175,23 @@ function CliVerifyContent() {
               </div>
             )}
 
-            <button
-              type="submit"
-              disabled={status === "authorizing" || !userCode.trim()}
-              className="w-full h-12 rounded-xl font-bold text-background bg-[var(--accent-primary)] hover:opacity-90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed mt-4 transition-all text-white dark:text-black cursor-pointer shadow-sm shadow-[rgba(var(--accent-primary-rgb),0.1)]"
-            >
-              {status === "authorizing" ? "Authorizing CLI..." : "Authorize CLI"}
-            </button>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={handleDeny}
+                disabled={status === "authorizing" || !userCode.trim()}
+                className="flex-1 h-12 rounded-xl font-bold border border-border hover:bg-muted text-foreground transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Deny
+              </button>
+              <button
+                type="submit"
+                disabled={status === "authorizing" || !userCode.trim()}
+                className="flex-1 h-12 rounded-xl font-bold text-background bg-[var(--accent-primary)] hover:opacity-90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed transition-all text-white dark:text-black cursor-pointer shadow-sm shadow-[rgba(var(--accent-primary-rgb),0.1)]"
+              >
+                {status === "authorizing" ? "Authorizing..." : "Authorize CLI"}
+              </button>
+            </div>
           </form>
         )}
       </div>

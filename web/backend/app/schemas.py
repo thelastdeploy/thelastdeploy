@@ -57,6 +57,7 @@ class CLIDeviceCodeResponse(BaseModel):
 
 class CLIAuthorizeRequest(BaseModel):
     user_code: str
+    action: str = "approve"  # "approve" | "deny"
 
 class CLITokenRequest(BaseModel):
     device_code: str

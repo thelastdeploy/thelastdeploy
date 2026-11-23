@@ -57,6 +57,19 @@ async def _create_session(
             ip_address = request.client.host
     expires_at = datetime.now(timezone.utc) + timedelta(days=settings.ACCESS_TOKEN_EXPIRE_DAYS)
 
+    if client_type == "cli":
+        # Enforce one active CLI session per user policy:
+        # Revoke any prior unrevoked CLI sessions
+        await db.execute(
+            update(UserSession)
+            .where(
+                UserSession.user_id == user.id,
+                UserSession.client_type == "cli",
+                UserSession.revoked_at.is_(None),
+            )
+            .values(revoked_at=datetime.now(timezone.utc))
+        )
+
     session = UserSession(
         user_id=user.id,
         session_token_hash=token_hash,
@@ -96,12 +109,14 @@ async def register(
 
     is_dev = settings.ENVIRONMENT.lower() == "development"
     verification_token = None if is_dev else secrets.token_urlsafe(32)
+    verification_token_expires_at = None if is_dev else (datetime.now(timezone.utc) + timedelta(hours=24))
     user = User(
         email=body.email,
         username=body.username,
         password_hash=hash_password(body.password),
         is_verified=True if is_dev else False,
         verification_token=verification_token,
+        verification_token_expires_at=verification_token_expires_at,
     )
     db.add(user)
     await db.flush()
@@ -209,9 +224,6 @@ async def login(body: LoginRequest, request: Request, db: AsyncSession = Depends
                 detail="Please verify your email address before logging in.",
             )
 
-    await get_or_create_platform_membership(user.id, db)
-    await db.commit()
-
     session, token = await _create_session(db, user, client_type="web", request=request)
     return TokenResponse(access_token=token, device_key=session.device_key)
 
@@ -227,8 +239,15 @@ async def verify_email(body: VerifyEmailRequest, db: AsyncSession = Depends(get_
             detail="Invalid or expired verification token.",
         )
 
+    if user.verification_token_expires_at and ensure_utc(user.verification_token_expires_at) < datetime.now(timezone.utc):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Verification token has expired. Please request a new verification email.",
+        )
+
     user.is_verified = True
     user.verification_token = None
+    user.verification_token_expires_at = None
     db.add(user)
     await db.commit()
 
@@ -286,6 +305,14 @@ async def reset_password(body: ResetPasswordRequest, db: AsyncSession = Depends(
     user.password_hash = hash_password(body.password)
     user.reset_token = None
     user.reset_token_expires_at = None
+
+    # Invalidate all active sessions upon password reset
+    await db.execute(
+        update(UserSession)
+        .where(UserSession.user_id == user.id, UserSession.revoked_at.is_(None))
+        .values(revoked_at=datetime.now(timezone.utc))
+    )
+
     db.add(user)
     await db.commit()
 
@@ -309,6 +336,7 @@ async def resend_verification(
 
     verification_token = secrets.token_urlsafe(32)
     user.verification_token = verification_token
+    user.verification_token_expires_at = datetime.now(timezone.utc) + timedelta(hours=24)
     db.add(user)
     await db.commit()
 
@@ -387,6 +415,13 @@ async def cli_authorize(
             detail=f"This authorization code has already been processed (status: {device_auth.status}).",
         )
         
+    if body.action == "deny":
+        device_auth.user_id = current_user.id
+        device_auth.status = "denied"
+        db.add(device_auth)
+        await db.commit()
+        return MessageResponse(detail="CLI authorization was denied.")
+
     device_auth.user_id = current_user.id
     device_auth.status = "authorized"
     db.add(device_auth)
@@ -432,6 +467,12 @@ async def cli_token(body: CLITokenRequest, request: Request, db: AsyncSession = 
         return JSONResponse(
             status_code=400,
             content={"error": "expired_token", "error_description": "The device code has expired."}
+        )
+
+    if device_auth.status == "denied":
+        return JSONResponse(
+            status_code=400,
+            content={"error": "access_denied", "error_description": "User denied the authorization request."}
         )
         
     if device_auth.status == "pending":

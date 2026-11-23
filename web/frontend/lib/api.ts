@@ -155,10 +155,10 @@ export const api = {
     });
   },
 
-  cliAuthorize: async (userCode: string) => {
+  cliAuthorize: async (userCode: string, action: "approve" | "deny" = "approve") => {
     return request<{ detail: string }>("/cli/authorize", {
       method: "POST",
-      body: JSON.stringify({ user_code: userCode }),
+      body: JSON.stringify({ user_code: userCode, action }),
     });
   },
 
