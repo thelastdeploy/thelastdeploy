@@ -188,6 +188,12 @@ export const api = {
   getOrganizations: () =>
     request<OrganizationMembershipInfo[]>("/organizations"),
 
+  createOrganization: (data: { name: string; slug: string; type?: string; domains?: string[] }) =>
+    request<OrganizationResponse>("/organizations", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
   setSelectedOrg: (slug: string) => {
     if (typeof window !== "undefined") {
       localStorage.setItem("selected_org", slug);

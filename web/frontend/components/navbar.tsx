@@ -85,6 +85,16 @@ export function Navbar() {
     );
   };
 
+  const currentOrg = orgs.find((o) => o.slug === activeOrg) || orgs.find((o) => o.type === "platform" || o.is_platform) || orgs[0];
+  const isPlatform = currentOrg?.type === "platform" || currentOrg?.is_platform || currentOrg?.slug === "tld";
+  const isUniversity = currentOrg?.type === "university";
+  const isPlatformStaff = Boolean(user && (user.is_admin || user.is_maintainer || (user.platform_roles && user.platform_roles.length > 0)));
+  const canManageWorkspace = Boolean(
+    user?.can_manage_workspaces || 
+    user?.is_admin || 
+    currentOrg?.roles?.some((r) => ["owner", "admin", "platform_admin"].includes(r))
+  );
+
   return (
     <nav className="border-b border-border/70 bg-background/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -103,106 +113,92 @@ export function Navbar() {
             />
             <span className="font-black text-lg tracking-tight text-foreground group-hover:text-[var(--accent-primary)] transition-colors">The Last Deploy</span>
           </Link>
-          {user && orgs.length > 0 && (() => {
-            const currentOrg = orgs.find((o) => o.slug === activeOrg) || orgs.find((o) => o.type === "platform" || o.is_platform) || orgs[0];
-            const isPlatform = currentOrg?.type === "platform" || currentOrg?.is_platform || currentOrg?.slug === "tld";
-            const isUniversity = currentOrg?.type === "university";
-            const isAdmin = currentOrg?.roles?.includes("admin") || currentOrg?.roles?.includes("owner");
-
-            return (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 h-8 rounded-xl text-xs font-mono font-bold bg-muted/40 hover:bg-muted border-border/80 transition-all cursor-pointer"
-                  >
-                    {isUniversity ? (
-                      <GraduationCap className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
-                    ) : isPlatform ? (
-                      <Globe className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
-                    ) : (
-                      <Building2 className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
-                    )}
-                    <span className="max-w-[130px] truncate text-foreground">
-                      {currentOrg ? currentOrg.name : "TLD Platform"}
-                    </span>
-                    <ChevronDown className="h-3 w-3 text-muted-foreground" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-64 p-2 rounded-2xl bg-card border-border shadow-xl">
-                  <div className="px-2 py-1.5 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
-                    Active Workspace
-                  </div>
-                  {orgs.map((org) => {
-                    const isSelected = activeOrg === org.slug || (!activeOrg && (org.type === "platform" || org.is_platform));
-                    const isOrgUniv = org.type === "university";
-                    const isOrgPlatform = org.type === "platform" || org.is_platform;
-
-                    return (
-                      <DropdownMenuItem
-                        key={org.slug}
-                        onClick={() => {
-                          api.setSelectedOrg(org.slug);
-                          setActiveOrg(org.slug);
-                        }}
-                        className={`flex items-center justify-between p-2.5 rounded-xl cursor-pointer text-xs font-medium transition-colors ${
-                          isSelected ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold" : "hover:bg-muted"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5 truncate">
-                          {isOrgUniv ? (
-                            <GraduationCap className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" />
-                          ) : isOrgPlatform ? (
-                            <Globe className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" />
-                          ) : (
-                            <Building2 className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" />
-                          )}
-                          <div className="truncate">
-                            <p className="truncate text-foreground font-semibold">{org.name}</p>
-                            <p className="text-[10px] text-muted-foreground font-mono">
-                              {org.roles && org.roles.length > 0 ? org.roles.join(", ") : "Member"} • {org.total_xp} XP
-                            </p>
-                          </div>
-                        </div>
-                        {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-[var(--accent-primary)]" />}
-                      </DropdownMenuItem>
-                    );
-                  })}
-                  {isAdmin && currentOrg && (
-                    <>
-                      <DropdownMenuSeparator className="my-1.5 border-border" />
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/org/${currentOrg.slug}`}
-                          className="flex items-center gap-2 p-2 rounded-xl text-xs font-semibold hover:bg-muted cursor-pointer text-foreground"
-                        >
-                          <Settings className="h-3.5 w-3.5 text-muted-foreground" />
-                          <span>Manage {currentOrg.name}</span>
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
+          {user && orgs.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 h-8 rounded-xl text-xs font-mono font-bold bg-muted/40 hover:bg-muted border-border/80 transition-all cursor-pointer"
+                >
+                  {isUniversity ? (
+                    <GraduationCap className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                  ) : isPlatform ? (
+                    <Globe className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                  ) : (
+                    <Building2 className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
                   )}
-                  <DropdownMenuSeparator className="my-1.5 border-border" />
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/select-org"
-                      className="flex items-center justify-center p-2 rounded-xl text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-muted text-center cursor-pointer"
+                  <span className="max-w-[130px] truncate text-foreground">
+                    {currentOrg ? (isPlatform ? "Personal" : currentOrg.name) : "Personal"}
+                  </span>
+                  <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64 p-2 rounded-2xl bg-card border-border shadow-xl">
+                <div className="px-2 py-1.5 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                  Active Workspace
+                </div>
+                {orgs.map((org) => {
+                  const isSelected = activeOrg === org.slug || (!activeOrg && (org.type === "platform" || org.is_platform));
+                  const isOrgUniv = org.type === "university";
+                  const isOrgPlatform = org.type === "platform" || org.is_platform;
+
+                  return (
+                    <DropdownMenuItem
+                      key={org.slug}
+                      onClick={() => {
+                        api.setSelectedOrg(org.slug);
+                        setActiveOrg(org.slug);
+                        if (pathname.startsWith("/org/")) {
+                          router.push(`/org/${org.slug}`);
+                        } else {
+                          router.refresh();
+                        }
+                      }}
+                      className={`flex items-center justify-between p-2.5 rounded-xl cursor-pointer text-xs font-medium transition-colors ${
+                        isSelected ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold" : "hover:bg-muted"
+                      }`}
                     >
-                      Browse All Workspaces →
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            );
-          })()}
+                      <div className="flex items-center gap-2.5 truncate">
+                        {isOrgUniv ? (
+                          <GraduationCap className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" />
+                        ) : isOrgPlatform ? (
+                          <Globe className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" />
+                        ) : (
+                          <Building2 className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" />
+                        )}
+                        <div className="truncate">
+                          <p className="truncate text-foreground font-semibold">
+                            {isOrgPlatform ? "Personal" : org.name}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground font-mono">
+                            {org.roles && org.roles.length > 0 ? org.roles.join(", ") : "Member"} • {org.total_xp} XP
+                          </p>
+                        </div>
+                      </div>
+                      {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-[var(--accent-primary)]" />}
+                    </DropdownMenuItem>
+                  );
+                })}
+                <DropdownMenuSeparator className="my-1.5 border-border" />
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/select-org"
+                    className="flex items-center justify-center p-2 rounded-xl text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-muted text-center cursor-pointer"
+                  >
+                    Browse All Workspaces →
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         {/* Nav links */}
         <div className="hidden md:flex items-center gap-2">
           {navLink("/modules", "Modules")}
-          {user && navLink("/builder", "Builder")}
-          {user && (user.is_maintainer || user.is_admin) && navLink("/maintainer", "Control")}
+          {user && navLink("/paths", "Learning Paths")}
+          {user && navLink("/cohorts", "Cohorts")}
         </div>
 
         {/* Auth & Theme Toggler */}
@@ -240,22 +236,22 @@ export function Navbar() {
                   </div>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-52 bg-card border-border rounded-xl p-1.5 shadow-xl">
-                <DropdownMenuItem onClick={() => router.push("/builder")} className="cursor-pointer text-foreground hover:bg-muted flex items-center gap-2 font-bold rounded-lg py-2">
-                  <Hammer className="h-4 w-4 text-[var(--accent-primary)]" />
-                  Builder
-                </DropdownMenuItem>
-                {user && (user.is_maintainer || user.is_admin) && (
-                  <DropdownMenuItem onClick={() => router.push("/maintainer")} className="cursor-pointer text-foreground hover:bg-muted flex items-center gap-2 font-bold rounded-lg py-2">
-                    <Shield className="h-4 w-4 text-[var(--accent-primary)]" />
-                    Control
+              <DropdownMenuContent align="end" className="w-56 bg-card border-border rounded-xl p-1.5 shadow-xl">
+                {isPlatformStaff && (
+                  <DropdownMenuItem onClick={() => router.push("/platform")} className="cursor-pointer text-foreground hover:bg-muted flex items-center gap-2 font-bold rounded-lg py-2">
+                    <Globe className="h-4 w-4 text-[var(--accent-primary)]" />
+                    <span>Platform Console</span>
                   </DropdownMenuItem>
                 )}
-                <DropdownMenuItem onClick={() => router.push("/select-org")} className="cursor-pointer text-foreground hover:bg-muted flex items-center gap-2 font-bold rounded-lg py-2">
-                  <Building2 className="h-4 w-4 text-[var(--accent-primary)]" />
-                  Switch Workspace
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-border my-1" />
+                {canManageWorkspace && currentOrg && (
+                  <DropdownMenuItem onClick={() => router.push(`/org/${currentOrg.slug}`)} className="cursor-pointer text-foreground hover:bg-muted flex items-center gap-2 font-bold rounded-lg py-2">
+                    <Settings className="h-4 w-4 text-[var(--accent-primary)]" />
+                    <span>Manage Workspace</span>
+                  </DropdownMenuItem>
+                )}
+                {(isPlatformStaff || (canManageWorkspace && currentOrg)) && (
+                  <DropdownMenuSeparator className="bg-border my-1" />
+                )}
                 <DropdownMenuItem onClick={() => router.push("/profile")} className="cursor-pointer text-foreground hover:bg-muted rounded-lg py-2">
                   Profile & Settings
                 </DropdownMenuItem>

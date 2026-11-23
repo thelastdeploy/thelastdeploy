@@ -103,7 +103,7 @@ export default function SelectOrgPage() {
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-bold text-foreground group-hover:text-[var(--accent-primary)] transition-colors">
-                        {org.name}
+                        {isPlatform ? "Personal" : org.name}
                       </h3>
                       {isPlatform && (
                         <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold">

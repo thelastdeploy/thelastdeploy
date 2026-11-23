@@ -56,29 +56,45 @@ export function updateModuleInMemoryCache(updated: ModuleDetail | Module): void 
 }
 
 export function useModules() {
-  const currentOrg = typeof window !== "undefined" ? api.getSelectedOrg() : null;
-  const isCacheValid = memoryModulesCache && memoryModulesCache.org === currentOrg;
+  const [activeOrg, setActiveOrg] = useState<string | null>(typeof window !== "undefined" ? api.getSelectedOrg() : null);
+  const isCacheValid = memoryModulesCache && memoryModulesCache.org === activeOrg;
   const [modules, setModules] = useState<Module[]>(isCacheValid ? memoryModulesCache!.modules : []);
   const [loading, setLoading] = useState(!isCacheValid);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const activeOrg = api.getSelectedOrg();
-    if (memoryModulesCache && memoryModulesCache.org === activeOrg) {
+  const fetchModules = (orgSlug: string | null) => {
+    if (memoryModulesCache && memoryModulesCache.org === orgSlug) {
       setModules(memoryModulesCache.modules);
       setLoading(false);
       return;
     }
 
     setLoading(true);
+    setError(null);
     api.getModules()
       .then(({ modules }) => {
-        memoryModulesCache = { org: activeOrg, modules };
+        memoryModulesCache = { org: orgSlug, modules };
         setModules(modules);
       })
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, [currentOrg]);
+  };
+
+  useEffect(() => {
+    const current = api.getSelectedOrg();
+    setActiveOrg(current);
+    fetchModules(current);
+
+    const handleWorkspaceChange = () => {
+      const updated = api.getSelectedOrg();
+      setActiveOrg(updated);
+      clearModulesMemoryCache();
+      fetchModules(updated);
+    };
+
+    window.addEventListener("tld:workspace-changed", handleWorkspaceChange);
+    return () => window.removeEventListener("tld:workspace-changed", handleWorkspaceChange);
+  }, []);
 
   return { modules, loading, error };
 }

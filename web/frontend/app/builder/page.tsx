@@ -66,6 +66,23 @@ export default function BuilderDashboard() {
     };
 
     loadModules();
+
+    const handleWorkspaceChange = () => {
+      const selectedSlug = api.getSelectedOrg();
+      api.getOrganizations().then((orgs) => {
+        const current = orgs.find((o) => o.slug === selectedSlug) || orgs.find((o) => o.is_platform || o.type === "platform") || orgs[0] || null;
+        if (current) setActiveOrg(current);
+      }).catch(() => {});
+
+      setLoading(true);
+      api.getMyModules()
+        .then((data) => setModules(data))
+        .catch((err: any) => setError(err.message || "Failed to load modules"))
+        .finally(() => setLoading(false));
+    };
+
+    window.addEventListener("tld:workspace-changed", handleWorkspaceChange);
+    return () => window.removeEventListener("tld:workspace-changed", handleWorkspaceChange);
   }, [user, authLoading, router]);
 
   const handleSubmitForVerification = (id: string, title: string) => {

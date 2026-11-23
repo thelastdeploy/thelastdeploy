@@ -58,6 +58,9 @@ export interface User {
   unverified_xp: number;
   is_maintainer: boolean;
   is_admin?: boolean;
+  can_manage_workspaces?: boolean;
+  platform_roles?: string[];
+  platform_permissions?: string[];
   completed_labs: string[];      // lab IDs (tld check)
   completed_sections: string[];  // section IDs (reading / future: questions)
 }

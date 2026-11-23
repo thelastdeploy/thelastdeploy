@@ -4,8 +4,8 @@ import secrets
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
-from app.dependencies import get_db, get_current_user, is_user_maintainer, is_user_platform_admin
-from app.models import User, LabProgress, SectionProgress, PlatformRole, PlatformUserRole, Organization, OrganizationMembership
+from app.dependencies import get_db, get_current_user, is_user_maintainer, is_user_platform_admin, has_platform_permission
+from app.models import User, LabProgress, SectionProgress, PlatformRole, PlatformUserRole, PlatformRolePermission, PlatformPermission, Organization, OrganizationMembership
 from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse, MaintainerAddRequest
 from app.auth import verify_password, hash_password
 from app.email import send_verification_email
@@ -49,6 +49,23 @@ async def get_me(
 
     maintainer_status = await is_user_maintainer(current_user, db)
     admin_status = await is_user_platform_admin(current_user, db)
+    can_manage_workspaces = await has_platform_permission(current_user, "organization_settings.manage", db) or admin_status
+
+    # Fetch platform roles & permissions
+    roles_stmt = (
+        select(PlatformRole.slug)
+        .join(PlatformUserRole, PlatformUserRole.platform_role_id == PlatformRole.id)
+        .where(PlatformUserRole.user_id == current_user.id)
+    )
+    user_plat_roles = list((await db.scalars(roles_stmt)).all())
+
+    perms_stmt = (
+        select(PlatformPermission.key)
+        .join(PlatformRolePermission, PlatformRolePermission.permission_id == PlatformPermission.id)
+        .join(PlatformUserRole, PlatformUserRole.platform_role_id == PlatformRolePermission.platform_role_id)
+        .where(PlatformUserRole.user_id == current_user.id)
+    )
+    user_plat_perms = list((await db.scalars(perms_stmt)).all())
 
     # Resolve active workspace organization membership to return workspace-scoped XP
     org_slug = request.headers.get("x-organization-slug") or request.headers.get("x-organization")
@@ -81,6 +98,9 @@ async def get_me(
         unverified_xp=active_unverified_xp,
         is_maintainer=maintainer_status,
         is_admin=admin_status,
+        can_manage_workspaces=can_manage_workspaces,
+        platform_roles=user_plat_roles,
+        platform_permissions=user_plat_perms,
         completed_labs=completed_labs,
         completed_sections=completed_sections,
     )

@@ -22,6 +22,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { NumberStepper } from "@/components/ui/number-stepper";
 import {
   Building2,
   GraduationCap,
@@ -632,17 +634,18 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
               />
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
-              <select
-                value={memberRoleFilter}
-                onChange={(e) => setMemberRoleFilter(e.target.value)}
-                className="h-9 px-3 text-xs rounded-xl border border-border bg-card text-foreground cursor-pointer"
-              >
-                <option value="all">All Roles</option>
-                <option value="owner">Owner</option>
-                <option value="admin">Admin</option>
-                <option value="instructor">Instructor</option>
-                <option value="learner">Learner</option>
-              </select>
+              <Select value={memberRoleFilter} onValueChange={(val) => setMemberRoleFilter(val)}>
+                <SelectTrigger className="w-32 h-9 text-xs">
+                  <SelectValue placeholder="All Roles" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="owner">Owner</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="instructor">Instructor</SelectItem>
+                  <SelectItem value="learner">Learner</SelectItem>
+                </SelectContent>
+              </Select>
               <Button
                 size="sm"
                 onClick={() => setShowInviteModal(true)}
@@ -1056,28 +1059,30 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
                         {st.value ? "Enabled" : "Disabled"}
                       </Button>
                     ) : st.key === "onboarding.access_approval_mode" ? (
-                      <select
-                        value={st.value}
+                      <Select
+                        value={String(st.value)}
                         disabled={settingUpdating === st.key}
-                        onChange={(e) => handleUpdateSetting(st.key, e.target.value)}
-                        className="h-8 px-2.5 text-xs rounded-xl border border-border bg-card text-foreground cursor-pointer font-mono"
+                        onValueChange={(val) => handleUpdateSetting(st.key, val)}
                       >
-                        <option value="automatic">Automatic</option>
-                        <option value="manual">Manual (Review Queue)</option>
-                      </select>
+                        <SelectTrigger className="h-8 w-48 text-xs font-mono">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="automatic">Automatic</SelectItem>
+                          <SelectItem value="manual">Manual (Review Queue)</SelectItem>
+                        </SelectContent>
+                      </Select>
                     ) : st.data_type === "integer" ? (
-                      <div className="flex items-center gap-2">
-                        <Input
-                          type="number"
-                          defaultValue={st.value}
-                          onBlur={(e) => {
-                            const val = parseInt(e.target.value, 10);
-                            if (!isNaN(val) && val !== st.value) handleUpdateSetting(st.key, val);
-                          }}
-                          className="w-20 h-8 text-xs font-mono rounded-xl"
-                        />
-                        <span className="text-xs text-muted-foreground">days</span>
-                      </div>
+                      <NumberStepper
+                        defaultValue={typeof st.value === "number" ? st.value : parseInt(String(st.value), 10) || 0}
+                        disabled={settingUpdating === st.key}
+                        unit="days"
+                        min={1}
+                        max={365}
+                        onChange={(newVal) => {
+                          if (newVal !== st.value) handleUpdateSetting(st.key, newVal);
+                        }}
+                      />
                     ) : (
                       <span className="font-mono text-xs text-foreground">{JSON.stringify(st.value)}</span>
                     )}
@@ -1172,28 +1177,33 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground">Assigned Role</label>
-                  <select
-                    value={inviteRole}
-                    onChange={(e) => setInviteRole(e.target.value)}
-                    className="w-full h-9 px-3 text-xs rounded-xl border border-border bg-card text-foreground cursor-pointer"
-                  >
-                    <option value="learner">Learner (Student)</option>
-                    <option value="instructor">Instructor</option>
-                    <option value="admin">Administrator</option>
-                  </select>
+                  <Select value={inviteRole} onValueChange={(val) => setInviteRole(val)}>
+                    <SelectTrigger className="w-full h-9 text-xs">
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="learner">Learner (Student)</SelectItem>
+                      <SelectItem value="instructor">Instructor</SelectItem>
+                      <SelectItem value="admin">Administrator</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground">Target Cohort (Optional)</label>
-                  <select
-                    value={inviteCohortId || ""}
-                    onChange={(e) => setInviteCohortId(e.target.value ? parseInt(e.target.value, 10) : null)}
-                    className="w-full h-9 px-3 text-xs rounded-xl border border-border bg-card text-foreground cursor-pointer"
+                  <Select
+                    value={inviteCohortId ? String(inviteCohortId) : "none"}
+                    onValueChange={(val) => setInviteCohortId(val === "none" ? null : parseInt(val, 10))}
                   >
-                    <option value="">Whole Organization (No specific cohort)</option>
-                    {cohorts.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full h-9 text-xs">
+                      <SelectValue placeholder="Whole Organization (No specific cohort)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Whole Organization (No specific cohort)</SelectItem>
+                      {cohorts.map((c) => (
+                        <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </CardContent>
               <div className="p-4 pt-0 flex justify-end gap-2">
@@ -1237,16 +1247,20 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-foreground">Target Cohort (Optional)</label>
-                  <select
-                    value={inviteCohortId || ""}
-                    onChange={(e) => setInviteCohortId(e.target.value ? parseInt(e.target.value, 10) : null)}
-                    className="w-full h-9 px-3 text-xs rounded-xl border border-border bg-card text-foreground cursor-pointer"
+                  <Select
+                    value={inviteCohortId ? String(inviteCohortId) : "none"}
+                    onValueChange={(val) => setInviteCohortId(val === "none" ? null : parseInt(val, 10))}
                   >
-                    <option value="">Whole Organization</option>
-                    {cohorts.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-full h-9 text-xs">
+                      <SelectValue placeholder="Whole Organization" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Whole Organization</SelectItem>
+                      {cohorts.map((c) => (
+                        <SelectItem key={c.id} value={String(c.id)}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {bulkResult && (
@@ -1408,15 +1422,16 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <select
-                value={newRole}
-                onChange={(e) => setNewRole(e.target.value)}
-                className="w-full h-9 px-3 text-xs rounded-xl border border-border bg-card text-foreground cursor-pointer"
-              >
-                <option value="learner">Learner (Student)</option>
-                <option value="instructor">Instructor</option>
-                <option value="admin">Administrator</option>
-              </select>
+              <Select value={newRole} onValueChange={(val) => setNewRole(val)}>
+                <SelectTrigger className="w-full h-9 text-xs">
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="learner">Learner (Student)</SelectItem>
+                  <SelectItem value="instructor">Instructor</SelectItem>
+                  <SelectItem value="admin">Administrator</SelectItem>
+                </SelectContent>
+              </Select>
             </CardContent>
             <div className="p-4 pt-0 flex justify-end gap-2">
               <Button variant="outline" onClick={() => setRoleChangeUser(null)} className="rounded-xl text-xs">

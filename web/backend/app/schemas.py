@@ -233,6 +233,9 @@ class MeResponse(BaseModel):
     unverified_xp: int = 0
     is_maintainer: bool = False
     is_admin: bool = False
+    can_manage_workspaces: bool = False
+    platform_roles: list[str] = []
+    platform_permissions: list[str] = []
     completed_labs: list[str]       # lab IDs (from lab_progress)
     completed_sections: list[str]   # section IDs (from section_progress — reading/questions)
 

@@ -62,7 +62,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
     window.addEventListener(CACHE_EVENT, handleUpdate);
-    return () => window.removeEventListener(CACHE_EVENT, handleUpdate);
+
+    const handleWsChange = () => {
+      refreshUser();
+    };
+    window.addEventListener("tld:workspace-changed", handleWsChange);
+
+    return () => {
+      window.removeEventListener(CACHE_EVENT, handleUpdate);
+      window.removeEventListener("tld:workspace-changed", handleWsChange);
+    };
   }, []);
 
   const login = async (token: string, deviceKey?: string) => {

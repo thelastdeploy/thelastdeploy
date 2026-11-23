@@ -107,6 +107,27 @@ export default function ModuleDetailPage() {
     return () => { cancelled = true; };
   }, [id, applyModuleData]);
 
+  // Re-fetch when workspace changes
+  useEffect(() => {
+    const handleWorkspaceChange = () => {
+      setLoading(true);
+      api.getModule(id)
+        .then((data) => {
+          applyModuleData(data);
+          setError(null);
+        })
+        .catch((e: unknown) => {
+          setError(e instanceof Error ? e.message : "Failed to load module");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+
+    window.addEventListener("tld:workspace-changed", handleWorkspaceChange);
+    return () => window.removeEventListener("tld:workspace-changed", handleWorkspaceChange);
+  }, [id, applyModuleData]);
+
   // Reset scroll on section change
   useEffect(() => {
     if (contentRef.current) contentRef.current.scrollTop = 0;

@@ -11,6 +11,8 @@ from app.dependencies import (
     get_current_organization,
     require_permission,
     require_platform_permission,
+    is_user_platform_admin,
+    has_platform_permission,
 )
 from app.models import (
     User,
@@ -47,7 +49,11 @@ async def list_user_organizations(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """List all organizations the current user belongs to, along with their roles and XP in each."""
+    """List all organizations the current user belongs to, along with their roles and XP in each.
+    If caller is a platform administrator, all active platform organizations are returned.
+    """
+    has_workspace_authority = await has_platform_permission(current_user, "organization_settings.manage", db) or await is_user_platform_admin(current_user, db)
+
     stmt = (
         select(OrganizationMembership)
         .options(
@@ -63,10 +69,14 @@ async def list_user_organizations(
     result = await db.execute(stmt)
     memberships = result.scalars().all()
 
+    existing_org_ids = set()
     responses = []
     for m in memberships:
         org = m.organization
+        existing_org_ids.add(org.id)
         role_slugs = [r.role.slug for r in m.roles if r.role]
+        if has_workspace_authority and "admin" not in role_slugs:
+            role_slugs.append("admin")
         responses.append(
             OrganizationResponse(
                 id=org.id,
@@ -82,6 +92,27 @@ async def list_user_organizations(
                 joined_at=m.joined_at,
             )
         )
+
+    if has_workspace_authority:
+        all_orgs = (await db.execute(select(Organization).where(Organization.status == "active"))).scalars().all()
+        for o in all_orgs:
+            if o.id not in existing_org_ids:
+                responses.append(
+                    OrganizationResponse(
+                        id=o.id,
+                        name=o.name,
+                        slug=o.slug,
+                        type=o.type,
+                        is_platform=o.is_platform,
+                        status=o.status,
+                        domains=o.domains or [],
+                        roles=["platform_admin", "admin"],
+                        total_xp=0,
+                        unverified_xp=0,
+                        joined_at=o.created_at,
+                    )
+                )
+
     return responses
 
 
