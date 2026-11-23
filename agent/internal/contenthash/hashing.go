@@ -69,3 +69,4 @@ func ComputeLabHash(labYAML []byte, cleanupSH []byte, validatorScript []byte, is
 	}
 	return ComputeFilesHash(files)
 }
+

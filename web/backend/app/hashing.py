@@ -56,3 +56,4 @@ def compute_lab_hash(
     elif validator_py is not None:
         files["validator.py"] = validator_py
     return compute_files_hash(files)
+

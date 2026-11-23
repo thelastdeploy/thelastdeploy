@@ -85,11 +85,15 @@ func runPublish(args []string) error {
 		return fmt.Errorf("parse folder structure: %w", err)
 	}
 
-	// Always ensure XP is 0 on publishing unverified content
+	// Ensure proposed XP is defaulted if missing
 	for i := range module.Sections {
-		module.Sections[i].XP = 0
+		if module.Sections[i].XP == 0 {
+			module.Sections[i].XP = 10
+		}
 		for j := range module.Sections[i].Labs {
-			module.Sections[i].Labs[j].XP = 0
+			if module.Sections[i].Labs[j].XP == 0 {
+				module.Sections[i].Labs[j].XP = 30
+			}
 		}
 	}
 

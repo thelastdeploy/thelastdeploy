@@ -4,13 +4,18 @@ import hashlib
 import hmac
 import logging
 from datetime import timezone
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.dependencies import get_db, get_optional_user, get_optional_session
-from app.models import Lab, LabProgress, User, UserSession, OrganizationMembership
+from app.models import Lab, LabProgress, User, UserSession, Organization, OrganizationMembership
 from app.schemas import ResultRequest, ResultResponse
-from app.services import recalculate_and_update_user_xp, get_or_create_platform_membership
+from app.services import (
+    recalculate_and_update_user_xp,
+    get_or_create_platform_membership,
+    get_organizations_using_content,
+    recalculate_membership_xp,
+)
 from app.analytics import analytics, AnalyticsEvent
 
 router = APIRouter()
@@ -44,6 +49,7 @@ def _verify_signature(body: ResultRequest, device_key: str) -> bool:
 @router.post("/results", response_model=ResultResponse)
 async def submit_result(
     body: ResultRequest,
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: User | None = Depends(get_optional_user),
     current_session: UserSession | None = Depends(get_optional_session),
@@ -97,7 +103,7 @@ async def submit_result(
                 detail="Invalid signature",
             )
 
-    # 3. If not passed, return early — no XP
+    # 3. If not passed, return early — no completion, no XP awarded, no attempt history
     if not body.passed:
         return ResultResponse(xp_awarded=0)
 
@@ -105,46 +111,57 @@ async def submit_result(
     if not current_user:
         return ResultResponse(xp_awarded=lab.xp)
 
-    # 5. Determine user's active membership(s)
-    memberships = (await db.scalars(
+    # 5. Determine which organizations use this lab entity
+    using_org_ids = await get_organizations_using_content(db, lab_id=body.lab_id)
+    if not using_org_ids:
+        using_org_ids.add(lab.owner_organization_id)
+
+    # 6. Find all active memberships of current_user in organizations that use this lab
+    eligible_memberships = (await db.scalars(
         select(OrganizationMembership).where(
             OrganizationMembership.user_id == current_user.id,
+            OrganizationMembership.organization_id.in_(using_org_ids),
             OrganizationMembership.status != "removed",
         )
     )).all()
 
-    if not memberships:
-        default_mem = await get_or_create_platform_membership(current_user.id, db)
-        await db.flush()
-        memberships = [default_mem]
-
-    # Check if already completed in any of the user's active memberships
-    mem_ids = [m.id for m in memberships]
-    existing = await db.scalar(
-        select(LabProgress.id).where(
-            LabProgress.organization_membership_id.in_(mem_ids),
-            LabProgress.lab_id == body.lab_id,
+    if not eligible_memberships:
+        # Check if platform org uses it and ensure user has platform membership
+        plat_org = await db.scalar(
+            select(Organization).where((Organization.type == "platform") | (Organization.slug == "tld"))
         )
-    )
+        if plat_org and plat_org.id in using_org_ids:
+            default_mem = await get_or_create_platform_membership(current_user.id, db)
+            await db.flush()
+            eligible_memberships = [default_mem]
 
-    if existing:
-        return ResultResponse(xp_awarded=0)
+    any_new_completion = False
 
-    # 6. First completion — award progress to all memberships
-    for m in memberships:
-        db.add(LabProgress(
-            organization_membership_id=m.id,
-            lab_id=body.lab_id,
-            xp_awarded=lab.xp,
-        ))
+    # 7. Record progress only for eligible memberships where not already completed
+    for mem in eligible_memberships:
+        existing = await db.scalar(
+            select(LabProgress.id).where(
+                LabProgress.organization_membership_id == mem.id,
+                LabProgress.lab_id == body.lab_id,
+            )
+        )
+        if not existing:
+            db.add(LabProgress(
+                organization_membership_id=mem.id,
+                lab_id=body.lab_id,
+                xp_awarded=lab.xp,
+            ))
+            any_new_completion = True
 
     await db.flush()
 
-    # Recalculate true total XP by summing database entries for the lab's owner organization
-    await recalculate_and_update_user_xp(current_user, db, organization_id=lab.owner_organization_id)
+    # 8. Recalculate independent verified and unverified XP for all eligible memberships
+    for mem in eligible_memberships:
+        await recalculate_membership_xp(mem.id, db)
 
     await db.commit()
-    logger.info("Lab completed: user=%s lab=%s xp=%d", current_user.id, body.lab_id, lab.xp)
+    logger.info("Lab completed: user=%s lab=%s xp=%d (propagated across %d memberships)", 
+                current_user.id, body.lab_id, lab.xp, len(eligible_memberships))
 
     analytics.track(
         "anonymous",
@@ -155,4 +172,4 @@ async def submit_result(
         },
     )
 
-    return ResultResponse(xp_awarded=lab.xp)
+    return ResultResponse(xp_awarded=lab.xp if any_new_completion else 0)

@@ -29,3 +29,4 @@ def downgrade() -> None:
     op.drop_column('labs', 'content_hash')
     op.drop_column('sections', 'content_hash')
     op.drop_column('modules', 'content_hash')
+

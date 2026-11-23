@@ -4,11 +4,163 @@ from sqlalchemy import select, func, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import (
     User, LabProgress, SectionProgress, Lab, Section, Module,
-    OrganizationMembership, Organization, AuditLog, Role, MembershipRole
+    OrganizationMembership, Organization, AuditLog, Role, MembershipRole,
+    LearningPath
 )
 
 
 from app.analytics import analytics, AnalyticsEvent
+
+
+async def get_organizations_using_content(
+    db: AsyncSession,
+    lab_id: str | None = None,
+    section_id: str | None = None,
+) -> set[int]:
+    """
+    Determine the set of organization IDs that 'use' a given content entity (lab or section).
+    An organization uses content if:
+    1. It directly owns the lab or section.
+    2. Any module owned by the organization contains the section or lab.
+    3. Any learning path belonging to the organization contains a module with that section or lab.
+    4. For TLD official core content: the platform organization always uses it.
+    """
+    using_org_ids: set[int] = set()
+
+    containing_section_ids: set[str] = set()
+    if section_id:
+        containing_section_ids.add(section_id)
+        sec = await db.scalar(select(Section).where(Section.id == section_id))
+        if sec:
+            using_org_ids.add(sec.owner_organization_id)
+    if lab_id:
+        lab = await db.scalar(select(Lab).where(Lab.id == lab_id))
+        if lab:
+            using_org_ids.add(lab.owner_organization_id)
+        sec_rows = (await db.scalars(
+            select(Section.id).where(Section.labs.contains([lab_id]))
+        )).all()
+        for sid in sec_rows:
+            containing_section_ids.add(sid)
+
+    containing_module_ids: set[str] = set()
+    if containing_section_ids:
+        mod_rows = (await db.execute(
+            select(Module.id, Module.owner_organization_id, Module.sections)
+        )).all()
+        for mid, owner_id, secs in mod_rows:
+            if secs and any(sid in secs for sid in containing_section_ids):
+                containing_module_ids.add(mid)
+                using_org_ids.add(owner_id)
+
+    if containing_module_ids:
+        lp_rows = (await db.execute(
+            select(LearningPath.organization_id, LearningPath.modules)
+        )).all()
+        for org_id, lp_mods in lp_rows:
+            if lp_mods and any(mid in lp_mods for mid in containing_module_ids):
+                using_org_ids.add(org_id)
+
+    # If content is owned by platform organization (TLD core curriculum), platform org uses it
+    plat_org = await db.scalar(
+        select(Organization).where((Organization.type == "platform") | (Organization.slug == "tld"))
+    )
+    if plat_org:
+        if lab_id:
+            lab_owner = await db.scalar(select(Lab.owner_organization_id).where(Lab.id == lab_id))
+            if lab_owner == plat_org.id:
+                using_org_ids.add(plat_org.id)
+        elif section_id:
+            sec_owner = await db.scalar(select(Section.owner_organization_id).where(Section.id == section_id))
+            if sec_owner == plat_org.id:
+                using_org_ids.add(plat_org.id)
+
+    return using_org_ids
+
+
+async def recalculate_membership_xp(
+    membership_id: int,
+    db: AsyncSession,
+) -> tuple[int, int]:
+    """
+    Recalculates verified total_xp and unverified_xp for an organization membership.
+    total_xp = sum of xp_awarded for labs and sections belonging to VERIFIED modules.
+    unverified_xp = sum of xp_awarded for labs and sections belonging only to UNVERIFIED modules.
+    Atomically updates the OrganizationMembership row and returns (total_xp, unverified_xp).
+    """
+    mem = await db.scalar(
+        select(OrganizationMembership).where(OrganizationMembership.id == membership_id)
+    )
+    if not mem:
+        return 0, 0
+
+    org_id = mem.organization_id
+    plat_org_id = await db.scalar(
+        select(Organization.id).where((Organization.type == "platform") | (Organization.slug == "tld"))
+    )
+
+    # Get all verified modules accessible in this organization
+    target_orgs = [org_id]
+    if plat_org_id and plat_org_id not in target_orgs:
+        target_orgs.append(plat_org_id)
+
+    verified_mods = (await db.execute(
+        select(Module.sections)
+        .where(
+            Module.owner_organization_id.in_(target_orgs),
+            Module.status == "verified",
+        )
+    )).all()
+
+    verified_section_ids: set[str] = set()
+    for (secs,) in verified_mods:
+        if secs:
+            for s in secs:
+                verified_section_ids.add(s)
+
+    verified_lab_ids: set[str] = set()
+    if verified_section_ids:
+        sec_rows = (await db.execute(
+            select(Section.labs).where(Section.id.in_(verified_section_ids))
+        )).all()
+        for (labs,) in sec_rows:
+            if labs:
+                for l in labs:
+                    verified_lab_ids.add(l)
+
+    # Compute verified vs unverified for labs
+    lab_progress_rows = (await db.execute(
+        select(LabProgress.lab_id, LabProgress.xp_awarded)
+        .where(LabProgress.organization_membership_id == mem.id)
+    )).all()
+
+    verified_xp = 0
+    unverified_xp = 0
+
+    for lid, xp in lab_progress_rows:
+        if lid in verified_lab_ids:
+            verified_xp += xp
+        else:
+            unverified_xp += xp
+
+    # Compute verified vs unverified for sections
+    sec_progress_rows = (await db.execute(
+        select(SectionProgress.section_id, SectionProgress.xp_awarded)
+        .where(SectionProgress.organization_membership_id == mem.id)
+    )).all()
+
+    for sid, xp in sec_progress_rows:
+        if sid in verified_section_ids:
+            verified_xp += xp
+        else:
+            unverified_xp += xp
+
+    mem.total_xp = verified_xp
+    mem.unverified_xp = unverified_xp
+    db.add(mem)
+    await db.flush()
+
+    return verified_xp, unverified_xp
 
 
 async def recalculate_and_update_user_xp(
@@ -17,94 +169,26 @@ async def recalculate_and_update_user_xp(
     organization_id: int | None = None
 ) -> tuple[int, int]:
     """
-    Recalculate verified total_xp and unverified_xp for a user within an organization
-    based on the owner_organization_id of the completed modules.
-    Returns (total_xp, unverified_xp) for the target organization.
+    Recalculate verified total_xp and unverified_xp across memberships for a user.
     """
-    # 1. Determine target organization(s)
+    stmt = select(OrganizationMembership).where(
+        OrganizationMembership.user_id == user.id,
+        OrganizationMembership.status != "removed",
+    )
     if organization_id is not None:
-        target_org_ids = [organization_id]
-    else:
-        # Update all organizations the user has active memberships in
-        target_org_ids = (await db.scalars(
-            select(OrganizationMembership.organization_id)
-            .where(OrganizationMembership.user_id == user.id, OrganizationMembership.status != "removed")
-        )).all()
-        if not target_org_ids:
-            # Fallback to platform org
-            plat_id = await db.scalar(
-                select(Organization.id).where(
-                    (Organization.type == "platform") | (Organization.slug == "tld")
-                )
-            )
-            target_org_ids = [plat_id] if plat_id else []
+        stmt = stmt.where(OrganizationMembership.organization_id == organization_id)
 
-    primary_verified = 0
-    primary_unverified = 0
-
-    for oid in target_org_ids:
-        # Get membership for this org
-        mem = await db.scalar(
-            select(OrganizationMembership).where(
-                OrganizationMembership.user_id == user.id,
-                OrganizationMembership.organization_id == oid,
-                OrganizationMembership.status != "removed",
-            )
-        )
-        if not mem:
-            continue
-
-        # Verified XP: content owned by this organization
-        lab_verified = await db.scalar(
-            select(func.sum(LabProgress.xp_awarded))
-            .join(Lab, Lab.id == LabProgress.lab_id)
-            .where(
-                LabProgress.organization_membership_id == mem.id,
-                Lab.owner_organization_id == oid,
-            )
-        ) or 0
-
-        sec_verified = await db.scalar(
-            select(func.sum(SectionProgress.xp_awarded))
-            .join(Section, Section.id == SectionProgress.section_id)
-            .where(
-                SectionProgress.organization_membership_id == mem.id,
-                Section.owner_organization_id == oid,
-            )
-        ) or 0
-
-        # Unverified XP: content owned outside this organization
-        lab_unverified = await db.scalar(
-            select(func.sum(LabProgress.xp_awarded))
-            .join(Lab, Lab.id == LabProgress.lab_id)
-            .where(
-                LabProgress.organization_membership_id == mem.id,
-                Lab.owner_organization_id != oid,
-            )
-        ) or 0
-
-        sec_unverified = await db.scalar(
-            select(func.sum(SectionProgress.xp_awarded))
-            .join(Section, Section.id == SectionProgress.section_id)
-            .where(
-                SectionProgress.organization_membership_id == mem.id,
-                Section.owner_organization_id != oid,
-            )
-        ) or 0
-
-        tot_xp = int(lab_verified + sec_verified)
-        unv_xp = int(lab_unverified + sec_unverified)
-
-        mem.total_xp = tot_xp
-        mem.unverified_xp = unv_xp
-        db.add(mem)
-
-        if oid == organization_id or (primary_verified == 0 and primary_unverified == 0):
-            primary_verified = tot_xp
-            primary_unverified = unv_xp
+    memberships = (await db.scalars(stmt)).all()
+    primary_tot = 0
+    primary_unv = 0
+    for mem in memberships:
+        tot, unv = await recalculate_membership_xp(mem.id, db)
+        if organization_id is None or mem.organization_id == organization_id:
+            primary_tot = tot
+            primary_unv = unv
 
     await db.commit()
-    return primary_verified, primary_unverified
+    return primary_tot, primary_unv
 
 
 async def log_audit_event(

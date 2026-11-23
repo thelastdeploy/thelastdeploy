@@ -271,6 +271,7 @@ async def publish_module_from_cli(
                     seed_cmds_json = json.dumps(l_input.seed_commands) if l_input.seed_commands else None
                     val_hash = _calculate_validator_hash(l_input.validator_script)
 
+                    lab_xp = l_input.xp if (l_input.xp and l_input.xp > 0) else 30
                     l_res = await db.execute(select(Lab).where(Lab.id == lab_id))
                     lab = l_res.scalar_one_or_none()
                     if not lab:
@@ -278,7 +279,7 @@ async def publish_module_from_cli(
                             id=lab_id,
                             owner_organization_id=organization.id,
                             title=l_input.title,
-                            xp=0,
+                            xp=lab_xp,
                             estimated_minutes=l_input.estimated_minutes,
                             environment_profile=l_input.environment_profile or "tld-ubuntu",
                             content_hash=l_input.content_hash,
@@ -291,6 +292,7 @@ async def publish_module_from_cli(
                         db.add(lab)
                     else:
                         lab.title = l_input.title
+                        lab.xp = lab_xp
                         lab.estimated_minutes = l_input.estimated_minutes
                         lab.environment_profile = l_input.environment_profile or lab.environment_profile
                         lab.content_hash = l_input.content_hash
@@ -312,6 +314,7 @@ async def publish_module_from_cli(
                     resolved_lab_ids.append(tld_lab_id)
 
             # Upsert Section record
+            sec_xp = s_input.xp if (s_input.xp and s_input.xp > 0) else 10
             s_res = await db.execute(select(Section).where(Section.id == sec_id))
             section = s_res.scalar_one_or_none()
             if not section:
@@ -319,7 +322,7 @@ async def publish_module_from_cli(
                     id=sec_id,
                     owner_organization_id=organization.id,
                     title=s_input.title,
-                    xp=0,
+                    xp=sec_xp,
                     content=s_input.content,
                     content_hash=s_input.content_hash,
                     labs=resolved_lab_ids,
@@ -329,6 +332,7 @@ async def publish_module_from_cli(
                 db.add(section)
             else:
                 section.title = s_input.title
+                section.xp = sec_xp
                 section.content = s_input.content
                 section.content_hash = s_input.content_hash
                 section.labs = resolved_lab_ids

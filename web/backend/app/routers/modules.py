@@ -28,7 +28,13 @@ from app.schemas import (
     VerifyModulePayload, VerifySectionXP, VerifyLabXP, RejectModulePayload,
     ModuleExportResponse, SectionExportItem, LabExportItem,
 )
-from app.services import recalculate_and_update_user_xp, check_and_track_module_completion, get_or_create_platform_membership
+from app.services import (
+    recalculate_and_update_user_xp,
+    check_and_track_module_completion,
+    get_or_create_platform_membership,
+    get_organizations_using_content,
+    recalculate_membership_xp,
+)
 from app.analytics import analytics, AnalyticsEvent
 
 router = APIRouter()
@@ -798,32 +804,21 @@ async def verify_module(
         labs = (await db.execute(select(Lab).where(Lab.id.in_(all_lab_ids)))).scalars().all()
     lab_map = {l.id: l for l in labs}
 
-    user_ids = set()
+    affected_mem_ids: set[int] = set()
     if all_lab_ids:
-        lp_result = await db.execute(
-            select(OrganizationMembership.user_id)
-            .join(LabProgress, LabProgress.organization_membership_id == OrganizationMembership.id)
-            .where(
-                LabProgress.lab_id.in_(all_lab_ids),
-            )
-        )
-        user_ids.update(lp_result.scalars().all())
+        l_mems = (await db.scalars(
+            select(LabProgress.organization_membership_id).where(LabProgress.lab_id.in_(all_lab_ids))
+        )).all()
+        affected_mem_ids.update(l_mems)
 
     if sec_ids:
-        sp_result = await db.execute(
-            select(OrganizationMembership.user_id)
-            .join(SectionProgress, SectionProgress.organization_membership_id == OrganizationMembership.id)
-            .where(
-                SectionProgress.section_id.in_(sec_ids),
-            )
-        )
-        user_ids.update(sp_result.scalars().all())
+        s_mems = (await db.scalars(
+            select(SectionProgress.organization_membership_id).where(SectionProgress.section_id.in_(sec_ids))
+        )).all()
+        affected_mem_ids.update(s_mems)
 
-    for u_id in user_ids:
-        user_res = await db.execute(select(User).where(User.id == u_id))
-        target_user = user_res.scalar_one_or_none()
-        if target_user:
-            await recalculate_and_update_user_xp(target_user, db, organization_id=module.owner_organization_id)
+    for mid in affected_mem_ids:
+        await recalculate_membership_xp(mid, db)
 
     await db.commit()
 
@@ -932,16 +927,21 @@ async def reject_module(
     "/modules/{module_id}/sections/{section_id}/complete",
     response_model=CompleteSectionResponse,
 )
+@router.post(
+    "/sections/{section_id}/complete",
+    response_model=CompleteSectionResponse,
+)
 async def complete_reading_section(
-    module_id: str,
     section_id: str,
+    module_id: str | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    result = await db.execute(select(Module).where(Module.id == module_id))
-    module = result.scalar_one_or_none()
-    if not module:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
+    if module_id:
+        result = await db.execute(select(Module).where(Module.id == module_id))
+        module = result.scalar_one_or_none()
+        if not module:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
 
     sec_result = await db.execute(select(Section).where(Section.id == section_id))
     section = sec_result.scalar_one_or_none()
@@ -949,23 +949,22 @@ async def complete_reading_section(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Section not found")
 
     # Get all active memberships for user
-    memberships = (await db.scalars(
+    user_mems = (await db.scalars(
         select(OrganizationMembership).where(
             OrganizationMembership.user_id == current_user.id,
             OrganizationMembership.status != "removed",
         )
     )).all()
-    if not memberships:
+    if not user_mems:
         default_mem = await get_or_create_platform_membership(current_user.id, db)
         await db.flush()
-        memberships = [default_mem]
+        user_mems = [default_mem]
 
-    mem_ids = [m.id for m in memberships]
+    mem_ids = [m.id for m in user_mems]
 
-    # For lab sections — verify all labs are actually completed before awarding
+    # For lab sections — verify all required labs are completed before allowing section completion
     lab_ids = section.labs or []
     if lab_ids:
-        # Check all labs are completed in any of the user's memberships
         completed_labs = await db.execute(
             select(LabProgress.lab_id).where(
                 LabProgress.organization_membership_id.in_(mem_ids),
@@ -976,55 +975,65 @@ async def complete_reading_section(
         if not set(lab_ids).issubset(completed_lab_ids):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Complete all labs in this section first",
+                detail="Cannot complete section: all required labs in this section must be completed first",
             )
 
-    existing = await db.scalar(
-        select(SectionProgress.id).where(
-            SectionProgress.organization_membership_id.in_(mem_ids),
-            SectionProgress.section_id == section_id,
+    # Determine which organizations use this section entity
+    using_org_ids = await get_organizations_using_content(db, section_id=section_id)
+    if not using_org_ids:
+        using_org_ids.add(section.owner_organization_id)
+
+    # Filter user's memberships to only those in organizations using this section
+    eligible_memberships = [m for m in user_mems if m.organization_id in using_org_ids]
+    if not eligible_memberships:
+        plat_org = await db.scalar(
+            select(Organization).where((Organization.type == "platform") | (Organization.slug == "tld"))
         )
-    )
+        if plat_org and plat_org.id in using_org_ids:
+            default_mem = await get_or_create_platform_membership(current_user.id, db)
+            await db.flush()
+            eligible_memberships = [default_mem]
 
-    mem_xp = await db.scalar(
-        select(OrganizationMembership.total_xp).where(
-            OrganizationMembership.user_id == current_user.id,
-            OrganizationMembership.organization_id == module.owner_organization_id,
+    any_new_completion = False
+    xp = section.xp
+
+    for m in eligible_memberships:
+        existing = await db.scalar(
+            select(SectionProgress.id).where(
+                SectionProgress.organization_membership_id == m.id,
+                SectionProgress.section_id == section_id,
+            )
         )
-    )
-    current_mem_xp = int(mem_xp) if mem_xp else 0
-
-    if existing:
-        return CompleteSectionResponse(xp_awarded=0, total_xp=current_mem_xp)
-
-    xp = section.xp  # reading XP from section.yaml (labs XP already awarded separately)
-
-    for m in memberships:
-        db.add(SectionProgress(
-            organization_membership_id=m.id,
-            section_id=section_id,
-            xp_awarded=xp,
-        ))
+        if not existing:
+            db.add(SectionProgress(
+                organization_membership_id=m.id,
+                section_id=section_id,
+                xp_awarded=xp,
+            ))
+            any_new_completion = True
 
     await db.flush()
 
-    # Recalculate true total XP by summing database entries for the module's owner organization
-    tot_xp, _ = await recalculate_and_update_user_xp(current_user, db, organization_id=module.owner_organization_id)
+    # Recalculate verified and unverified XP for all eligible memberships
+    for m in eligible_memberships:
+        await recalculate_membership_xp(m.id, db)
 
     await db.commit()
 
-    analytics.track(
-        "anonymous",
-        AnalyticsEvent.SECTION_COMPLETED,
-        {
-            "module_id": module_id,
-            "section_id": section_id,
-            "xp": xp,
-        },
-    )
-    await check_and_track_module_completion(current_user.id, module_id, db)
+    if module_id:
+        analytics.track(
+            "anonymous",
+            AnalyticsEvent.SECTION_COMPLETED,
+            {
+                "module_id": module_id,
+                "section_id": section_id,
+                "xp": xp,
+            },
+        )
+        await check_and_track_module_completion(current_user.id, module_id, db)
 
-    return CompleteSectionResponse(xp_awarded=xp, total_xp=tot_xp)
+    reported_total_xp = eligible_memberships[0].total_xp if eligible_memberships else 0
+    return CompleteSectionResponse(xp_awarded=xp if any_new_completion else 0, total_xp=reported_total_xp)
 
 
 # ---------------------------------------------------------------------------
