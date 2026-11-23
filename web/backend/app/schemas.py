@@ -193,6 +193,9 @@ class VerifySectionXP(BaseModel):
 class VerifyModulePayload(BaseModel):
     sections: list[VerifySectionXP] = []
 
+class RejectModulePayload(BaseModel):
+    reason: str | None = None
+
 
 # --- Progress ---
 

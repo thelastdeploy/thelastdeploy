@@ -179,6 +179,31 @@ export default function MaintainerDashboard() {
     });
   };
 
+  const handleReject = () => {
+    if (!selectedModule) return;
+    const reason = prompt("Enter feedback / reason for rejection (optional):");
+    if (reason === null) return;
+
+    setModalConfig({
+      isOpen: true,
+      title: "Reject Module Submission",
+      message: `Are you sure you want to reject "${selectedModule.title}"? The module status will be reset to draft for author edits.`,
+      confirmText: "Reject Submission",
+      type: "danger",
+      onCancel: () => setModalConfig((prev) => ({ ...prev, isOpen: false })),
+      onConfirm: async () => {
+        setModalConfig((prev) => ({ ...prev, isOpen: false }));
+        try {
+          await api.rejectModule(selectedModule.id, reason || undefined);
+          setSelectedModule(null);
+          loadModules();
+        } catch (err: any) {
+          alert("Failed to reject module: " + err.message);
+        }
+      },
+    });
+  };
+
   if (authLoading || loading) {
     return <LoadingSpinner className="py-40" />;
   }
@@ -379,12 +404,20 @@ export default function MaintainerDashboard() {
                       Author: <span className="font-bold text-zinc-400">{selectedModule.author?.name || "Anonymous"}</span>
                     </p>
                   </div>
-                  <button
-                    onClick={handleVerify}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition-colors shadow-md cursor-pointer border-0"
-                  >
-                    <CheckCircle className="h-4 w-4" /> Approve & Verify
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleReject}
+                      className="flex items-center gap-1 px-3 py-2 rounded-xl text-xs font-bold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" /> Reject
+                    </button>
+                    <button
+                      onClick={handleVerify}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-500 transition-colors shadow-md cursor-pointer border-0"
+                    >
+                      <CheckCircle className="h-4 w-4" /> Approve & Verify
+                    </button>
+                  </div>
                 </div>
 
                 {selectedModule.description && (

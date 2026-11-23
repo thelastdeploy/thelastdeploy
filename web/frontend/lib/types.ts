@@ -75,7 +75,7 @@ export interface OrganizationMembershipInfo {
   joined_at: string;
 }
 
-export type ModuleStatus = 'draft' | 'published' | 'verified';
+export type ModuleStatus = 'draft' | 'published' | 'pending' | 'verified';
 
 export interface BuilderLabInput {
   id: string;

@@ -465,3 +465,48 @@ async def delete_module(
 
     await db.commit()
     return {"detail": f"Module '{module_id}' deleted successfully."}
+
+
+# ---------------------------------------------------------------------------
+# POST /builder/modules/{module_id}/submit (Submit Module for Verification)
+# ---------------------------------------------------------------------------
+@router.post("/builder/modules/{module_id}/submit", response_model=dict)
+async def submit_module_for_verification(
+    module_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    stmt = select(Module).where(Module.id == module_id)
+    result = await db.execute(stmt)
+    module = result.scalar_one_or_none()
+
+    if not module:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
+    if module.author_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+
+    if module.status == "verified":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Module is already verified.")
+
+    if not module.sections or len(module.sections) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Module must contain at least one section before submitting for verification."
+        )
+
+    module.status = "pending"
+    module.submitted_at = datetime.now(timezone.utc)
+    db.add(module)
+    await db.commit()
+
+    await log_audit_event(
+        db,
+        action="module.submitted_for_verification",
+        entity_type="module",
+        entity_id=module.id,
+        actor_user_id=current_user.id,
+        organization_id=module.owner_organization_id,
+        metadata={"id": module.id, "title": module.title},
+    )
+
+    return {"detail": f"Module '{module.title}' has been submitted for platform maintainer verification."}

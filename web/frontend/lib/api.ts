@@ -249,10 +249,21 @@ export const api = {
       method: "DELETE",
     }),
 
+  submitModuleForVerification: (id: string) =>
+    request<{ detail: string }>(`/builder/modules/${id}/submit`, {
+      method: "POST",
+    }),
+
   verifyModule: (id: string, data: any) =>
     request<{ detail: string }>(`/modules/${id}/verify`, {
       method: "PATCH",
       body: JSON.stringify(data),
+    }),
+
+  rejectModule: (id: string, reason?: string) =>
+    request<{ detail: string }>(`/modules/${id}/reject`, {
+      method: "PATCH",
+      body: JSON.stringify({ reason }),
     }),
 
   adminGetMaintainers: () =>

@@ -14,7 +14,7 @@ from app.schemas import (
     ModuleListResponse, ModuleListItem,
     ModuleDetail, ModuleSummary,
     SectionSchema,
-    VerifyModulePayload, VerifySectionXP, VerifyLabXP,
+    VerifyModulePayload, VerifySectionXP, VerifyLabXP, RejectModulePayload,
 )
 from app.services import recalculate_and_update_user_xp, check_and_track_module_completion, get_or_create_platform_membership
 from app.analytics import analytics, AnalyticsEvent
@@ -636,6 +636,45 @@ async def verify_module(
     )
 
     return {"detail": f"Module '{module_id}' is now officially verified."}
+
+
+@router.patch("/modules/{module_id}/reject", response_model=dict)
+async def reject_module(
+    module_id: str,
+    payload: RejectModulePayload,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    can_verify = await is_user_maintainer(current_user, db)
+    if not can_verify:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only administrators and maintainers can reject module submissions",
+        )
+    result = await db.execute(select(Module).where(Module.id == module_id))
+    module = result.scalar_one_or_none()
+    if not module:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
+
+    if module.status == "verified":
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cannot reject an already verified module.")
+
+    module.status = "draft"
+    db.add(module)
+    await db.commit()
+
+    from app.services import log_audit_event
+    await log_audit_event(
+        db,
+        action="module.rejected",
+        entity_type="module",
+        entity_id=module.id,
+        actor_user_id=current_user.id,
+        organization_id=module.owner_organization_id,
+        metadata={"id": module.id, "reason": payload.reason},
+    )
+
+    return {"detail": f"Module '{module.title}' submission rejected."}
 
 
 # ---------------------------------------------------------------------------
