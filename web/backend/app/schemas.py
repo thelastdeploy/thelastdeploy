@@ -345,6 +345,18 @@ class CohortMemberResponse(BaseModel):
     joined_at: datetime
 
 
+class AuditLogResponse(BaseModel):
+    id: int
+    organization_id: int | None = None
+    actor_user_id: int | None = None
+    actor_username: str | None = None
+    action: str
+    entity_type: str
+    entity_id: str | None = None
+    metadata: dict = {}
+    created_at: datetime
+
+
 class CohortCreateRequest(BaseModel):
     name: str
     description: str | None = None

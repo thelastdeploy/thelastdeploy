@@ -30,9 +30,9 @@ async def list_org_settings(
     org_slug: str,
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
     db: AsyncSession = Depends(get_db),
-    _perm: OrganizationMembership = Depends(require_permission("settings.view")),
+    _perm: OrganizationMembership = Depends(require_permission("organization.manage")),
 ):
-    """List all settings currently enabled for the organization (requires 'settings.view')."""
+    """List all settings currently enabled for the organization (requires 'organization.manage')."""
     organization, _ = org_and_mem
     return await SettingsService.list_settings_for_org_admin(db, organization.id)
 
@@ -43,7 +43,7 @@ async def get_org_setting(
     setting_key: str,
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
     db: AsyncSession = Depends(get_db),
-    _perm: OrganizationMembership = Depends(require_permission("settings.view")),
+    _perm: OrganizationMembership = Depends(require_permission("organization.manage")),
 ):
     """Get a single setting if enabled for the organization."""
     organization, _ = org_and_mem
@@ -71,9 +71,9 @@ async def update_org_setting(
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-    _perm: OrganizationMembership = Depends(require_permission("settings.manage")),
+    _perm: OrganizationMembership = Depends(require_permission("organization.manage")),
 ):
-    """Update an enabled setting value as an organization administrator (requires 'settings.manage')."""
+    """Update an enabled setting value as an organization administrator (requires 'organization.manage')."""
     organization, _ = org_and_mem
     return await SettingsService.update_setting_by_org_admin(
         db=db,

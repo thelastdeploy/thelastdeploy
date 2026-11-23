@@ -3,26 +3,63 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { useDashboardCache } from "@/lib/dashboard/use-dashboard-cache";
-import { ModuleDetail } from "@/lib/types";
+import { ModuleDetail, OrganizationMembershipInfo, CohortResponse, LearningPathResponse } from "@/lib/types";
+import { api } from "@/lib/api";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SectionBadge } from "@/components/dashboard/section-badge";
 import { getRank, getNextRank, getXpProgress } from "@/lib/ranks";
-import { Zap, Trophy, Terminal, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Zap, Trophy, Terminal, ArrowRight, CheckCircle2, Building2, GraduationCap, Globe, Users, BookOpen, Calendar } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardPage() {
   const { user: authUser, loading: authLoading } = useAuth();
   const router = useRouter();
   const { data, loading } = useDashboardCache();
+  const [activeOrgInfo, setActiveOrgInfo] = useState<OrganizationMembershipInfo | null>(null);
+  const [cohorts, setCohorts] = useState<CohortResponse[]>([]);
+  const [learningPaths, setLearningPaths] = useState<LearningPathResponse[]>([]);
 
   useEffect(() => {
     if (!authLoading && !authUser) router.push("/login");
   }, [authUser, authLoading, router]);
+
+  useEffect(() => {
+    const fetchOrgData = async () => {
+      try {
+        const orgs = await api.getOrganizations();
+        const selectedSlug = api.getSelectedOrg();
+        const current = orgs.find((o) => o.slug === selectedSlug) || orgs.find((o) => o.is_platform || o.type === "platform") || orgs[0] || null;
+        setActiveOrgInfo(current);
+
+        if (current && !current.is_platform && current.type !== "platform") {
+          const [cList, lpList] = await Promise.all([
+            api.getCohorts(current.slug).catch(() => []),
+            api.getLearningPaths(current.slug).catch(() => []),
+          ]);
+          setCohorts(cList);
+          setLearningPaths(lpList);
+        } else {
+          setCohorts([]);
+          setLearningPaths([]);
+        }
+      } catch {
+        // Non-blocking
+      }
+    };
+
+    fetchOrgData();
+
+    const onWsChange = () => {
+      fetchOrgData();
+    };
+    window.addEventListener("tld:workspace-changed", onWsChange);
+    return () => window.removeEventListener("tld:workspace-changed", onWsChange);
+  }, []);
 
   if (authLoading || (loading && !data)) return <LoadingSpinner className="py-40" />;
   if (!data) return null;
@@ -86,6 +123,45 @@ export default function DashboardPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
 
+      {/* Active Workspace Bar */}
+      {activeOrgInfo && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3.5 mb-6 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
+              {activeOrgInfo.type === "university" ? (
+                <GraduationCap className="h-4 w-4" />
+              ) : activeOrgInfo.is_platform || activeOrgInfo.type === "platform" ? (
+                <Globe className="h-4 w-4" />
+              ) : (
+                <Building2 className="h-4 w-4" />
+              )}
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Active Workspace</span>
+                <span className="text-sm font-bold text-foreground">{activeOrgInfo.name}</span>
+                {activeOrgInfo.roles && activeOrgInfo.roles.length > 0 && (
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted border border-border text-muted-foreground uppercase">
+                    {activeOrgInfo.roles.join(", ")}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Progress, XP, and rank are scoped to this organization workspace.
+              </p>
+            </div>
+          </div>
+          {(activeOrgInfo.roles?.includes("admin") || activeOrgInfo.roles?.includes("instructor")) && (
+            <Link
+              href={`/org/${activeOrgInfo.slug}`}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/20 border border-[var(--accent-primary)]/20 transition-all self-start sm:self-center"
+            >
+              Manage Organization <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          )}
+        </div>
+      )}
+
       {/* Top banner */}
       <div
         className="rounded-2xl border p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-card border-border shadow-sm"
@@ -144,6 +220,11 @@ export default function DashboardPage() {
             <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Total XP</span>
           </div>
           <p className="text-3xl font-black font-mono text-[var(--accent-primary)]">{user.xp}</p>
+          {user.unverified_xp > 0 && (
+            <p className="text-xs text-amber-500 font-mono mt-1 font-semibold">
+              +{user.unverified_xp} unverified XP
+            </p>
+          )}
         </div>
 
         <div className="rounded-2xl border p-5 shadow-sm" style={{ backgroundColor: "var(--topic-linux)", borderColor: "var(--topic-linux-border)" }}>
@@ -179,6 +260,68 @@ export default function DashboardPage() {
       {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 flex flex-col gap-6">
+
+          {/* Assigned Cohorts & Curricula (for Institutional Workspaces) */}
+          {activeOrgInfo && !activeOrgInfo.is_platform && (cohorts.length > 0 || learningPaths.length > 0) && (
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-[var(--accent-primary)]" />
+                  <h2 className="font-black text-lg text-foreground">Assigned Cohorts & Learning Paths</h2>
+                </div>
+                <span className="text-xs text-muted-foreground font-mono">
+                  {activeOrgInfo.name}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {cohorts.map((c) => (
+                  <div key={c.id} className="p-4 rounded-xl border border-border/80 bg-muted/20 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-sm text-foreground">{c.name}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                          c.status === "active" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" : "bg-muted text-muted-foreground"
+                        }`}>
+                          {c.status}
+                        </span>
+                      </div>
+                      {c.description && <p className="text-xs text-muted-foreground mb-3">{c.description}</p>}
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] text-muted-foreground pt-2 border-t border-border/50">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span>
+                        {c.starts_at ? new Date(c.starts_at).toLocaleDateString() : "Immediate"} - {c.ends_at ? new Date(c.ends_at).toLocaleDateString() : "Ongoing"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+
+                {learningPaths.map((lp) => (
+                  <div key={lp.id} className="p-4 rounded-xl border border-border/80 bg-muted/20 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-bold text-sm text-foreground">{lp.name}</span>
+                        <span className="text-[10px] font-mono text-[var(--accent-primary)] bg-[var(--accent-primary)]/10 px-2 py-0.5 rounded-full">
+                          {lp.module_count} modules
+                        </span>
+                      </div>
+                      {lp.description && <p className="text-xs text-muted-foreground mb-3">{lp.description}</p>}
+                    </div>
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-2 border-t border-border/50">
+                      <div className="flex items-center gap-1.5">
+                        <BookOpen className="h-3.5 w-3.5" />
+                        <span>Custom Curriculum</span>
+                      </div>
+                      <Link href="/modules" className="text-[var(--accent-primary)] font-bold hover:underline">
+                        View Modules →
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Modules progress */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">

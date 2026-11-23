@@ -128,12 +128,33 @@ export function useDashboardCache(): UseDashboardCacheReturn {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const handleUpdate = () => {
+    const handleUpdate = async () => {
       const cached = readCache();
-      if (cached) setData(cached);
+      if (cached) {
+        setData(cached);
+      } else {
+        setLoading(true);
+        try {
+          const [user, modules] = await Promise.all([
+            api.getMe(),
+            api.getAllModulesFull(true),
+          ]);
+          const fresh: DashboardCache = { user, modules };
+          writeCache(fresh);
+          setData(fresh);
+        } catch (e) {
+          setError(e instanceof Error ? e.message : "Failed to load");
+        } finally {
+          setLoading(false);
+        }
+      }
     };
     window.addEventListener(CACHE_EVENT, handleUpdate);
-    return () => window.removeEventListener(CACHE_EVENT, handleUpdate);
+    window.addEventListener("tld:workspace-changed", handleUpdate);
+    return () => {
+      window.removeEventListener(CACHE_EVENT, handleUpdate);
+      window.removeEventListener("tld:workspace-changed", handleUpdate);
+    };
   }, []);
 
   // Instant local patch — updates state + localStorage atomically

@@ -12,6 +12,14 @@ import {
   SessionResponse,
   OrganizationMemberResponse,
   CohortMemberResponse,
+  OrganizationResponse,
+  CohortResponse,
+  LearningPathResponse,
+  InvitationResponse,
+  InvitationStatsResponse,
+  AccessRequestResponse,
+  OrgSettingItemResponse,
+  AuditLogResponse,
 } from "./types";
 import { writeCache, clearDashboardCache } from "./dashboard/use-dashboard-cache";
 import { clearModulesMemoryCache } from "@/hooks/use-modules";
@@ -321,4 +329,99 @@ export const api = {
 
   getCohortMembers: (orgSlug: string, cohortId: number) =>
     request<CohortMemberResponse[]>(`/organizations/${orgSlug}/cohorts/${cohortId}/members`),
+
+  getOrganization: (orgSlug: string) =>
+    request<OrganizationResponse>(`/organizations/${orgSlug}`),
+
+  getOrganizationMembers: (orgSlug: string) =>
+    request<OrganizationMemberResponse[]>(`/organizations/${orgSlug}/members`),
+
+  getCohorts: (orgSlug: string) =>
+    request<CohortResponse[]>(`/organizations/${orgSlug}/cohorts`),
+
+  createCohort: (orgSlug: string, data: { name: string; description?: string; starts_at: string; ends_at: string; learning_paths?: number[] }) =>
+    request<CohortResponse>(`/organizations/${orgSlug}/cohorts`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  getLearningPaths: (orgSlug: string) =>
+    request<LearningPathResponse[]>(`/organizations/${orgSlug}/learning-paths`),
+
+  createLearningPath: (orgSlug: string, data: { name: string; slug: string; description?: string; visibility?: string; modules?: string[] }) =>
+    request<LearningPathResponse>(`/organizations/${orgSlug}/learning-paths`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  getInvitations: () =>
+    request<InvitationResponse[]>("/organizations/invitations"),
+
+  getInvitationStats: () =>
+    request<InvitationStatsResponse>("/organizations/invitations/stats"),
+
+  createInvitation: (data: { email: string; role?: string; cohort_id?: number | null }) =>
+    request<InvitationResponse>("/organizations/invitations", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  uploadBulkInvitations: async (file: File, cohortId?: number | null) => {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const selectedOrg = typeof window !== "undefined" ? localStorage.getItem("selected_org") : null;
+    const formData = new FormData();
+    formData.append("file", file);
+    if (cohortId) formData.append("cohort_id", cohortId.toString());
+
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    if (selectedOrg) {
+      headers["X-Organization-Slug"] = selectedOrg;
+      headers["X-Organization"] = selectedOrg;
+    }
+
+    const baseUrl = getApiBaseUrl();
+    const res = await fetch(`${baseUrl}/organizations/invitations/bulk`, {
+      method: "POST",
+      headers,
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: "Upload failed" }));
+      throw new Error(err.detail || "Upload failed");
+    }
+    return res.json();
+  },
+
+  revokeInvitation: (id: number) =>
+    request<{ detail: string }>(`/organizations/invitations/${id}/revoke`, {
+      method: "POST",
+    }),
+
+  getAccessRequests: () =>
+    request<AccessRequestResponse[]>("/organizations/access-requests"),
+
+  approveAccessRequest: (id: number) =>
+    request<{ status: string; detail: string; invitation_id: number; invitation_code?: string }>(`/organizations/access-requests/${id}/approve`, {
+      method: "POST",
+      body: JSON.stringify({}),
+    }),
+
+  rejectAccessRequest: (id: number, reason?: string) =>
+    request<{ detail: string }>(`/organizations/access-requests/${id}/reject`, {
+      method: "POST",
+      body: JSON.stringify({ reason }),
+    }),
+
+  getOrgSettings: (orgSlug: string) =>
+    request<OrgSettingItemResponse[]>(`/organizations/${orgSlug}/settings`),
+
+  updateOrgSetting: (orgSlug: string, key: string, value: any) =>
+    request<OrgSettingItemResponse>(`/organizations/${orgSlug}/settings/${key}`, {
+      method: "PATCH",
+      body: JSON.stringify({ value }),
+    }),
+
+  getOrgAuditLogs: (orgSlug: string, limit: number = 50, offset: number = 0) =>
+    request<AuditLogResponse[]>(`/organizations/${orgSlug}/audit-logs?limit=${limit}&offset=${offset}`),
 };

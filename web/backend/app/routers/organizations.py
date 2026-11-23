@@ -22,6 +22,7 @@ from app.models import (
     CohortMembership,
     LearningPath,
     OrganizationRoleAvailability,
+    AuditLog,
 )
 from app.schemas import (
     OrganizationResponse,
@@ -34,6 +35,7 @@ from app.schemas import (
     CohortMemberResponse,
     LearningPathCreateRequest,
     LearningPathResponse,
+    AuditLogResponse,
 )
 from app.services import log_audit_event
 
@@ -497,6 +499,44 @@ async def create_learning_path(
         module_count=len(lp.modules or []),
         created_at=lp.created_at,
     )
+
+
+@router.get("/{org_slug}/audit-logs", response_model=list[AuditLogResponse])
+async def list_organization_audit_logs(
+    org_slug: str,
+    limit: int = 50,
+    offset: int = 0,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("members.manage")),
+):
+    """List audit events for the organization (requires 'members.manage' permission)."""
+    organization, _ = org_and_mem
+    stmt = (
+        select(AuditLog, User.username)
+        .outerjoin(User, AuditLog.actor_user_id == User.id)
+        .where(AuditLog.organization_id == organization.id)
+        .order_by(AuditLog.created_at.desc())
+        .limit(min(limit, 100))
+        .offset(offset)
+    )
+    res = await db.execute(stmt)
+    rows = res.all()
+
+    return [
+        AuditLogResponse(
+            id=log.id,
+            organization_id=log.organization_id,
+            actor_user_id=log.actor_user_id,
+            actor_username=username or "System",
+            action=log.action,
+            entity_type=log.entity_type,
+            entity_id=log.entity_id,
+            metadata=log.metadata_ or {},
+            created_at=log.created_at,
+        )
+        for log, username in rows
+    ]
 
 
 # --- Platform Staff Administrative Endpoints ---
