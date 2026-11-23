@@ -96,7 +96,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!token) return;
     try {
       const me = await api.getMe();
-      setUser(me);
+      setUser((prev) => {
+        if (prev && JSON.stringify(prev) === JSON.stringify(me)) {
+          return prev;
+        }
+        return me;
+      });
       const cache = readCache();
       if (cache) {
         writeCache({ ...cache, user: me });

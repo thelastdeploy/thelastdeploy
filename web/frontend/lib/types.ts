@@ -358,6 +358,20 @@ export interface PathAnalyticsItem {
   completed_labs: number;
 }
 
+export interface PathModuleDetailItem {
+  module_id: string;
+  title: string;
+  status: string;
+  total_labs: number;
+  total_sections: number;
+  completed_labs: number;
+}
+
+export interface PathDetailAnalyticsResponse {
+  path: PathAnalyticsItem;
+  modules: PathModuleDetailItem[];
+}
+
 export interface ContentItemMetric {
   id: string;
   title: string;

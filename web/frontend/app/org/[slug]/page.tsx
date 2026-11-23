@@ -153,7 +153,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
       return;
     }
     loadOrgData();
-  }, [user, authLoading, orgSlug]);
+  }, [authLoading, user?.id, orgSlug]);
 
   useEffect(() => {
     if (!org) return;
@@ -165,10 +165,10 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
     if (activeTab === "paths") loadLearningPaths();
     if (activeTab === "settings") loadSettings();
     if (activeTab === "audit") loadAuditLogs();
-  }, [activeTab, org]);
+  }, [activeTab, org?.id]);
 
   const loadOrgData = async () => {
-    setLoading(true);
+    if (!org) setLoading(true);
     setError(null);
     try {
       const orgData = await api.getOrganization(orgSlug);

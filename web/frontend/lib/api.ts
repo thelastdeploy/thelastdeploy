@@ -209,6 +209,8 @@ export const api = {
 
   setSelectedOrg: (slug: string) => {
     if (typeof window !== "undefined") {
+      const current = localStorage.getItem("selected_org");
+      if (current === slug) return;
       localStorage.setItem("selected_org", slug);
       clearDashboardCache();
       clearModulesMemoryCache();
