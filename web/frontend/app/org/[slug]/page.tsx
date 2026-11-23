@@ -18,6 +18,12 @@ import {
   OrgSettingItemResponse,
   AuditLogResponse,
   ModuleDetail,
+  AnalyticsOverviewResponse,
+  AnalyticsTrendsResponse,
+  CohortAnalyticsItem,
+  ContentAnalyticsResponse,
+  XpAnalyticsResponse,
+  LearnerDetailAnalyticsResponse,
 } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,6 +54,12 @@ import {
   Send,
   RefreshCw,
   FolderPlus,
+  BarChart3,
+  Download,
+  TrendingUp,
+  Award,
+  Activity,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -62,7 +74,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
   const [error, setError] = useState<string | null>(null);
 
   // Tab navigation
-  type TabKey = "overview" | "members" | "invitations" | "requests" | "cohorts" | "paths" | "settings" | "audit";
+  type TabKey = "overview" | "analytics" | "members" | "invitations" | "requests" | "cohorts" | "paths" | "settings" | "audit";
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
 
   // Tab Data States
@@ -75,6 +87,21 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
   const [settingsList, setSettingsList] = useState<OrgSettingItemResponse[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLogResponse[]>([]);
   const [availableModules, setAvailableModules] = useState<ModuleDetail[]>([]);
+
+  // Analytics Data States
+  const [analyticsOverview, setAnalyticsOverview] = useState<AnalyticsOverviewResponse | null>(null);
+  const [analyticsTrends, setAnalyticsTrends] = useState<AnalyticsTrendsResponse | null>(null);
+  const [analyticsCohorts, setAnalyticsCohorts] = useState<CohortAnalyticsItem[]>([]);
+  const [analyticsContent, setAnalyticsContent] = useState<ContentAnalyticsResponse | null>(null);
+  const [analyticsXp, setAnalyticsXp] = useState<XpAnalyticsResponse | null>(null);
+  const [analyticsPeriod, setAnalyticsPeriod] = useState<string>("30d");
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState<string | null>(null);
+
+  // Learner Detail Modal State
+  const [selectedLearnerUserId, setSelectedLearnerUserId] = useState<number | null>(null);
+  const [selectedLearnerDetail, setSelectedLearnerDetail] = useState<LearnerDetailAnalyticsResponse | null>(null);
+  const [learnerDetailLoading, setLearnerDetailLoading] = useState(false);
 
   // Search & Filters
   const [memberSearch, setMemberSearch] = useState("");
@@ -130,6 +157,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
 
   useEffect(() => {
     if (!org) return;
+    if (activeTab === "analytics") loadAnalytics();
     if (activeTab === "members") loadMembers();
     if (activeTab === "invitations") loadInvitations();
     if (activeTab === "requests") loadAccessRequests();
@@ -231,6 +259,61 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
       setAuditLogs(logs);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const loadAnalytics = async (period: string = analyticsPeriod) => {
+    setAnalyticsLoading(true);
+    try {
+      const [ov, tr, coh, con, xp] = await Promise.all([
+        api.getOrgAnalyticsOverview(orgSlug).catch(() => null),
+        api.getOrgAnalyticsTrends(orgSlug, period).catch(() => null),
+        api.getOrgAnalyticsCohorts(orgSlug).catch(() => []),
+        api.getOrgAnalyticsContent(orgSlug).catch(() => null),
+        api.getOrgAnalyticsXp(orgSlug).catch(() => null),
+      ]);
+      setAnalyticsOverview(ov);
+      setAnalyticsTrends(tr);
+      setAnalyticsCohorts(coh);
+      setAnalyticsContent(con);
+      setAnalyticsXp(xp);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  };
+
+  const handleExport = async (type: "learners" | "activity" | "cohorts" | "content") => {
+    setExportLoading(type);
+    try {
+      const blob = await api.exportOrgAnalyticsBlob(orgSlug, type);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${type}_${orgSlug}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      alert(`Export failed: ${err.message || "Export disabled or unauthorized"}`);
+    } finally {
+      setExportLoading(null);
+    }
+  };
+
+  const handleInspectLearner = async (userId: number) => {
+    setSelectedLearnerUserId(userId);
+    setLearnerDetailLoading(true);
+    try {
+      const detail = await api.getOrgAnalyticsLearnerDetail(orgSlug, userId);
+      setSelectedLearnerDetail(detail);
+    } catch (err: any) {
+      alert("Failed to load learner progress: " + err.message);
+      setSelectedLearnerUserId(null);
+    } finally {
+      setLearnerDetailLoading(false);
     }
   };
 
@@ -487,6 +570,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
       <div className="flex items-center gap-1.5 border-b border-border mb-8 overflow-x-auto pb-1 scrollbar-none">
         {[
           { key: "overview", label: "Overview", icon: Building2 },
+          { key: "analytics", label: "Analytics", icon: BarChart3 },
           { key: "members", label: "Members", count: members.length, icon: Users },
           { key: "invitations", label: "Invitations", count: invitationStats?.pending, icon: Mail },
           { key: "requests", label: "Access Requests", count: accessRequests.filter((r) => r.status === "pending").length, icon: ShieldCheck },
@@ -620,7 +704,314 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
         </div>
       )}
 
-      {/* 2. MEMBERS TAB */}
+      {/* 2. ANALYTICS & REPORTING TAB */}
+      {activeTab === "analytics" && (
+        <div className="space-y-6">
+          {/* Controls Bar */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider font-mono mr-1">Period:</span>
+              {(["7d", "30d", "90d", "all"] as const).map((p) => (
+                <Button
+                  key={p}
+                  size="sm"
+                  variant={analyticsPeriod === p ? "default" : "outline"}
+                  onClick={() => {
+                    setAnalyticsPeriod(p);
+                    loadAnalytics(p);
+                  }}
+                  className={`h-8 px-3 rounded-xl text-xs font-bold ${
+                    analyticsPeriod === p ? "bg-[var(--accent-primary)] text-black" : ""
+                  }`}
+                >
+                  {p === "all" ? "All Time" : p.toUpperCase()}
+                </Button>
+              ))}
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => loadAnalytics(analyticsPeriod)}
+                disabled={analyticsLoading}
+                className="h-8 w-8 p-0 rounded-xl ml-1 text-muted-foreground hover:text-foreground cursor-pointer"
+                title="Refresh Analytics"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${analyticsLoading ? "animate-spin" : ""}`} />
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider font-mono mr-1">Export:</span>
+              {(["learners", "activity", "cohorts", "content"] as const).map((expType) => (
+                <Button
+                  key={expType}
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleExport(expType)}
+                  disabled={exportLoading === expType}
+                  className="h-8 px-2.5 rounded-xl text-xs font-semibold gap-1.5 cursor-pointer"
+                >
+                  <Download className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                  <span className="capitalize">{expType}</span>
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          {/* Overview KPI Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="rounded-2xl border-border bg-card">
+              <CardContent className="p-5">
+                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Learners Participation</span>
+                <p className="text-3xl font-black font-mono text-foreground mt-2">
+                  {analyticsOverview ? `${analyticsOverview.learners_started} / ${analyticsOverview.total_learners}` : "—"}
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  {analyticsOverview && analyticsOverview.total_learners > 0
+                    ? `${Math.round((analyticsOverview.learners_started / analyticsOverview.total_learners) * 100)}% active learners`
+                    : "0% active"}
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-border bg-card">
+              <CardContent className="p-5">
+                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Labs Completed</span>
+                <p className="text-3xl font-black font-mono text-[var(--accent-primary)] mt-2">
+                  {analyticsOverview?.total_completed_labs ?? "—"}
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  {analyticsOverview?.total_completed_sections ?? 0} reading sections finished
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-border bg-card">
+              <CardContent className="p-5">
+                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Verified XP</span>
+                <p className="text-3xl font-black font-mono text-emerald-500 mt-2">
+                  {analyticsOverview?.total_verified_xp ?? "—"}
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Authoritative tenant score
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-border bg-card">
+              <CardContent className="p-5">
+                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Unverified XP</span>
+                <p className="text-3xl font-black font-mono text-amber-500 mt-2">
+                  {analyticsOverview?.total_unverified_xp ?? "—"}
+                </p>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  From custom/pending content
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Activity Trends & XP Breakdown */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Recent Activity Table / Timeline */}
+            <Card className="rounded-2xl border-border bg-card">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-base font-bold">Activity Trends</CardTitle>
+                    <CardDescription className="text-xs">Lab completions & XP earned ({analyticsPeriod})</CardDescription>
+                  </div>
+                  <TrendingUp className="h-4 w-4 text-[var(--accent-primary)]" />
+                </div>
+              </CardHeader>
+              <CardContent>
+                {analyticsTrends && analyticsTrends.lab_completions.filter((p) => p.count > 0).length > 0 ? (
+                  <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
+                    {analyticsTrends.lab_completions
+                      .filter((p) => p.count > 0)
+                      .slice(-10)
+                      .reverse()
+                      .map((pt) => {
+                        const xpPoint = analyticsTrends.xp_earned.find((x) => x.date === pt.date);
+                        return (
+                          <div key={pt.date} className="flex items-center justify-between py-2 border-b border-border/40 text-xs">
+                            <span className="font-mono text-muted-foreground">{pt.date}</span>
+                            <div className="flex items-center gap-3">
+                              <span className="font-bold text-foreground">{pt.count} lab{pt.count > 1 ? "s" : ""}</span>
+                              {xpPoint && xpPoint.xp > 0 && (
+                                <span className="font-mono text-[var(--accent-primary)] font-bold">+{xpPoint.xp} XP</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                ) : (
+                  <div className="py-8 text-center text-xs text-muted-foreground">
+                    No completion activity recorded in selected timeframe.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* XP Statistics & Distribution */}
+            <Card className="rounded-2xl border-border bg-card">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-base font-bold">XP Distribution</CardTitle>
+                    <CardDescription className="text-xs">Summary metrics across organization members</CardDescription>
+                  </div>
+                  <Award className="h-4 w-4 text-emerald-500" />
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-4 gap-2 text-center">
+                  <div className="p-2.5 rounded-xl bg-muted/30">
+                    <span className="text-[10px] text-muted-foreground uppercase font-bold">Average</span>
+                    <p className="text-sm font-black font-mono mt-1">{analyticsXp?.average_xp ?? 0}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-muted/30">
+                    <span className="text-[10px] text-muted-foreground uppercase font-bold">Median</span>
+                    <p className="text-sm font-black font-mono mt-1">{analyticsXp?.median_xp ?? 0}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-muted/30">
+                    <span className="text-[10px] text-muted-foreground uppercase font-bold">Min</span>
+                    <p className="text-sm font-black font-mono mt-1">{analyticsXp?.min_xp ?? 0}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-muted/30">
+                    <span className="text-[10px] text-muted-foreground uppercase font-bold">Max</span>
+                    <p className="text-sm font-black font-mono mt-1 text-[var(--accent-primary)]">{analyticsXp?.max_xp ?? 0}</p>
+                  </div>
+                </div>
+
+                {analyticsXp && analyticsXp.distribution.length > 0 && (
+                  <div className="space-y-2 pt-2">
+                    {analyticsXp.distribution.map((d) => (
+                      <div key={d.range_label} className="flex items-center justify-between text-xs py-1 border-b border-border/40">
+                        <span className="text-muted-foreground font-mono">{d.range_label}</span>
+                        <span className="font-bold font-mono text-foreground">{d.learner_count} learners</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Cohort Performance Table */}
+          <Card className="rounded-2xl border-border bg-card overflow-hidden">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-bold">Cohort Performance</CardTitle>
+              <CardDescription className="text-xs">Progress and XP generated by cohort cohorts</CardDescription>
+            </CardHeader>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left">
+                <thead className="bg-muted/40 text-muted-foreground uppercase font-mono text-[10px] border-b border-border">
+                  <tr>
+                    <th className="px-4 py-3">Cohort</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Members</th>
+                    <th className="px-4 py-3">Learners Active</th>
+                    <th className="px-4 py-3">Completed Labs</th>
+                    <th className="px-4 py-3">Verified XP</th>
+                    <th className="px-4 py-3">Unverified XP</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/60">
+                  {analyticsCohorts.length > 0 ? (
+                    analyticsCohorts.map((c) => (
+                      <tr key={c.cohort_id} className="hover:bg-muted/20 transition-colors">
+                        <td className="px-4 py-3 font-bold text-foreground">{c.name}</td>
+                        <td className="px-4 py-3">
+                          <span className="capitalize font-mono px-2 py-0.5 rounded-full text-[10px] bg-muted font-bold">
+                            {c.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 font-mono">{c.member_count}</td>
+                        <td className="px-4 py-3 font-mono text-[var(--accent-primary)] font-bold">{c.learners_started}</td>
+                        <td className="px-4 py-3 font-mono">{c.completed_labs}</td>
+                        <td className="px-4 py-3 font-mono text-emerald-500 font-bold">{c.total_verified_xp} XP</td>
+                        <td className="px-4 py-3 font-mono text-amber-500">{c.total_unverified_xp} XP</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                        No cohorts configured in this organization.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+
+          {/* Content Usage Breakdown */}
+          {analyticsContent && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="rounded-2xl border-border bg-card">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">Most Completed Modules</CardTitle>
+                  <CardDescription className="text-xs">Top modules with recorded lab completions</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {analyticsContent.most_completed_modules.filter((m) => m.completions_count > 0).length > 0 ? (
+                    <div className="space-y-2">
+                      {analyticsContent.most_completed_modules
+                        .filter((m) => m.completions_count > 0)
+                        .slice(0, 5)
+                        .map((m) => (
+                          <div key={m.id} className="flex items-center justify-between py-2 border-b border-border/40 text-xs">
+                            <div>
+                              <p className="font-bold text-foreground">{m.title}</p>
+                              <span className="text-[10px] font-mono text-muted-foreground">
+                                {m.is_tld_owned ? "TLD Core" : "Custom Org"} • {m.distinct_learners_count} learners
+                              </span>
+                            </div>
+                            <span className="font-mono font-bold text-[var(--accent-primary)]">{m.completions_count} finished</span>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <p className="py-6 text-center text-xs text-muted-foreground">No module completions recorded yet.</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-2xl border-border bg-card">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">Content Ownership & Verification</CardTitle>
+                  <CardDescription className="text-xs">Module catalog breakdown for this organization</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 text-xs">
+                  <div className="flex justify-between py-1.5 border-b border-border/50">
+                    <span className="text-muted-foreground">Verified Modules Available</span>
+                    <span className="font-bold text-emerald-500 font-mono">{analyticsContent.verified_modules_count}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-border/50">
+                    <span className="text-muted-foreground">Custom / Unverified Modules</span>
+                    <span className="font-bold text-amber-500 font-mono">{analyticsContent.unverified_modules_count}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-border/50">
+                    <span className="text-muted-foreground">TLD-Owned Modules</span>
+                    <span className="font-bold text-foreground font-mono">{analyticsContent.tld_owned_modules_count}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-border/50">
+                    <span className="text-muted-foreground">Organization-Owned Modules</span>
+                    <span className="font-bold text-foreground font-mono">{analyticsContent.org_owned_modules_count}</span>
+                  </div>
+                  <div className="flex justify-between py-1.5 border-b border-border/50">
+                    <span className="text-muted-foreground">Verified Lab Completions</span>
+                    <span className="font-bold text-emerald-500 font-mono">{analyticsContent.verified_lab_completions}</span>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 3. MEMBERS TAB */}
       {activeTab === "members" && (
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -689,6 +1080,15 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
                       </td>
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleInspectLearner(m.user_id)}
+                            className="h-7 px-2 text-[11px] font-semibold rounded-lg cursor-pointer text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10 gap-1"
+                          >
+                            <Eye className="h-3 w-3" />
+                            <span>Progress</span>
+                          </Button>
                           <Button
                             size="sm"
                             variant="ghost"
@@ -1467,6 +1867,141 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
               </Button>
               <Button onClick={handleRejectRequest} className="rounded-xl bg-destructive text-destructive-foreground font-bold text-xs">
                 Confirm Rejection
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Learner Progress Inspection Modal */}
+      {selectedLearnerUserId && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <Card className="max-w-2xl w-full rounded-2xl shadow-2xl border-border bg-card max-h-[85vh] flex flex-col">
+            <CardHeader className="pb-3 border-b border-border">
+              <div className="flex items-start justify-between">
+                <div>
+                  <CardTitle className="text-base font-bold">Learner Progress Report</CardTitle>
+                  <CardDescription className="text-xs">
+                    {selectedLearnerDetail ? (
+                      <>
+                        <strong>{selectedLearnerDetail.learner.username}</strong> ({selectedLearnerDetail.learner.email})
+                      </>
+                    ) : (
+                      "Loading learner progress..."
+                    )}
+                  </CardDescription>
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => { setSelectedLearnerUserId(null); setSelectedLearnerDetail(null); }}
+                  className="h-8 w-8 p-0 rounded-xl cursor-pointer"
+                >
+                  <XCircle className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-5 overflow-y-auto space-y-4 flex-1">
+              {learnerDetailLoading ? (
+                <div className="py-12 text-center text-xs text-muted-foreground">Loading details...</div>
+              ) : selectedLearnerDetail ? (
+                <>
+                  {/* Summary Grid */}
+                  <div className="grid grid-cols-4 gap-2 text-center">
+                    <div className="p-2.5 rounded-xl bg-muted/30">
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold">Total XP</span>
+                      <p className="text-sm font-black font-mono text-[var(--accent-primary)] mt-1">
+                        {selectedLearnerDetail.learner.total_xp}
+                      </p>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-muted/30">
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold">Labs Done</span>
+                      <p className="text-sm font-black font-mono mt-1">
+                        {selectedLearnerDetail.learner.completed_labs_count}
+                      </p>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-muted/30">
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold">Sections Done</span>
+                      <p className="text-sm font-black font-mono mt-1">
+                        {selectedLearnerDetail.learner.completed_sections_count}
+                      </p>
+                    </div>
+                    <div className="p-2.5 rounded-xl bg-muted/30">
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold">Role</span>
+                      <p className="text-sm font-black font-mono capitalize mt-1">
+                        {selectedLearnerDetail.learner.role}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Module Progress Breakdown */}
+                  <div>
+                    <h4 className="text-xs font-bold text-foreground mb-2">Module Progress</h4>
+                    {selectedLearnerDetail.module_progress.length > 0 ? (
+                      <div className="space-y-2">
+                        {selectedLearnerDetail.module_progress.map((mp) => (
+                          <div key={mp.module_id} className="p-3 rounded-xl bg-muted/20 border border-border/50 text-xs">
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="font-bold text-foreground">{mp.title}</span>
+                              <span className="font-mono text-[var(--accent-primary)] font-bold">{mp.percent_complete}%</span>
+                            </div>
+                            <div className="w-full bg-muted/50 rounded-full h-1.5 overflow-hidden">
+                              <div
+                                className="bg-[var(--accent-primary)] h-1.5 rounded-full transition-all"
+                                style={{ width: `${mp.percent_complete}%` }}
+                              />
+                            </div>
+                            <div className="flex justify-between text-[10px] text-muted-foreground font-mono mt-1">
+                              <span>Labs: {mp.completed_labs} / {mp.total_labs}</span>
+                              <span>Sections: {mp.completed_sections} / {mp.total_sections}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground py-2">No module progress started yet.</p>
+                    )}
+                  </div>
+
+                  {/* Completed Labs List */}
+                  <div>
+                    <h4 className="text-xs font-bold text-foreground mb-2">Completed Labs</h4>
+                    {selectedLearnerDetail.completed_labs.length > 0 ? (
+                      <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                        {selectedLearnerDetail.completed_labs.map((cl) => (
+                          <div key={cl.lab_id + cl.completed_at} className="flex items-center justify-between py-1.5 px-2.5 rounded-lg bg-muted/30 text-xs">
+                            <div>
+                              <p className="font-bold text-foreground">{cl.title}</p>
+                              {cl.module_title && (
+                                <span className="text-[10px] text-muted-foreground">{cl.module_title}</span>
+                              )}
+                            </div>
+                            <div className="text-right">
+                              <span className="font-mono text-emerald-500 font-bold">+{cl.xp_awarded} XP</span>
+                              <p className="text-[10px] text-muted-foreground font-mono">
+                                {new Date(cl.completed_at).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-muted-foreground py-2">No labs completed yet.</p>
+                    )}
+                  </div>
+                </>
+              ) : null}
+            </CardContent>
+
+            <div className="p-4 border-t border-border flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => { setSelectedLearnerUserId(null); setSelectedLearnerDetail(null); }}
+                className="rounded-xl text-xs font-semibold"
+              >
+                Close
               </Button>
             </div>
           </Card>

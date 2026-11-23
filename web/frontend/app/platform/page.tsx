@@ -11,7 +11,7 @@ import {
   Building2, Users, Award, ShieldAlert, Shield, CheckCircle, 
   ExternalLink, Plus, Trash2, Clock, Globe, GraduationCap, 
   Search, AlertCircle, CheckCircle2, ChevronRight, BookOpen, 
-  Terminal, Sparkles, KeyRound
+  Terminal, Sparkles, KeyRound, BarChart3, Download, TrendingUp, RefreshCw
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -19,14 +19,21 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ConfirmModal } from "@/components/builder/confirm-modal";
-import { Module, ModuleDetail, OrganizationMembershipInfo } from "@/lib/types";
+import {
+  Module,
+  ModuleDetail,
+  OrganizationMembershipInfo,
+  PlatformOverviewAnalyticsResponse,
+  PlatformTrendsAnalyticsResponse,
+  PlatformOrgSummaryItem,
+} from "@/lib/types";
 
 export default function PlatformConsolePage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   // Active tab state
-  const [activeTab, setActiveTab] = useState<"organizations" | "staff" | "curriculum">("organizations");
+  const [activeTab, setActiveTab] = useState<"organizations" | "analytics" | "staff" | "curriculum">("organizations");
 
   // Loading & error states
   const [loading, setLoading] = useState(true);
@@ -47,6 +54,14 @@ export default function PlatformConsolePage() {
   const [maintainers, setMaintainers] = useState<{ id: number; username: string; email: string }[]>([]);
   const [newMaintainerIdentity, setNewMaintainerIdentity] = useState("");
   const [loadingStaff, setLoadingStaff] = useState(false);
+
+  // Platform Analytics State
+  const [platformOverview, setPlatformOverview] = useState<PlatformOverviewAnalyticsResponse | null>(null);
+  const [platformTrends, setPlatformTrends] = useState<PlatformTrendsAnalyticsResponse | null>(null);
+  const [platformOrgsSummary, setPlatformOrgsSummary] = useState<PlatformOrgSummaryItem[]>([]);
+  const [platformPeriod, setPlatformPeriod] = useState<string>("30d");
+  const [platformAnalyticsLoading, setPlatformAnalyticsLoading] = useState(false);
+  const [exportingPlatform, setExportingPlatform] = useState(false);
 
   // Curriculum review state
   const [unverifiedModules, setUnverifiedModules] = useState<Module[]>([]);
@@ -88,6 +103,49 @@ export default function PlatformConsolePage() {
 
     loadInitialData();
   }, [user, authLoading, isPlatformStaff]);
+
+  useEffect(() => {
+    if (activeTab === "analytics") {
+      loadPlatformAnalytics();
+    }
+  }, [activeTab]);
+
+  const loadPlatformAnalytics = async (period: string = platformPeriod) => {
+    setPlatformAnalyticsLoading(true);
+    try {
+      const [ov, tr, orgsSummary] = await Promise.all([
+        api.getPlatformAnalyticsOverview().catch(() => null),
+        api.getPlatformAnalyticsTrends(period).catch(() => null),
+        api.getPlatformAnalyticsOrganizations().catch(() => []),
+      ]);
+      setPlatformOverview(ov);
+      setPlatformTrends(tr);
+      setPlatformOrgsSummary(orgsSummary);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setPlatformAnalyticsLoading(false);
+    }
+  };
+
+  const handleExportPlatformOrgs = async () => {
+    setExportingPlatform(true);
+    try {
+      const blob = await api.exportPlatformAnalyticsBlob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "platform_organizations_summary.csv";
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err: any) {
+      alert("Platform export failed: " + err.message);
+    } finally {
+      setExportingPlatform(false);
+    }
+  };
 
   const loadInitialData = async () => {
     setLoading(true);
@@ -301,6 +359,17 @@ export default function PlatformConsolePage() {
                 <span>Organizations ({orgs.length})</span>
               </Button>
               <Button
+                variant={activeTab === "analytics" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setActiveTab("analytics")}
+                className={`rounded-xl text-xs font-bold gap-1.5 cursor-pointer ${
+                  activeTab === "analytics" ? "bg-[var(--accent-primary)] text-black" : ""
+                }`}
+              >
+                <BarChart3 className="h-3.5 w-3.5" />
+                <span>Global Analytics</span>
+              </Button>
+              <Button
                 variant={activeTab === "staff" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setActiveTab("staff")}
@@ -329,6 +398,211 @@ export default function PlatformConsolePage() {
 
       {/* Main Content Area */}
       <div className="max-w-6xl mx-auto px-4 py-8">
+        {/* ========================================================================= */}
+        {/* TAB: Global Analytics & Platform Intelligence                             */}
+        {/* ========================================================================= */}
+        {activeTab === "analytics" && (
+          <div className="space-y-6">
+            {/* Controls Bar */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider font-mono mr-1">Period:</span>
+                {(["7d", "30d", "90d", "all"] as const).map((p) => (
+                  <Button
+                    key={p}
+                    size="sm"
+                    variant={platformPeriod === p ? "default" : "outline"}
+                    onClick={() => {
+                      setPlatformPeriod(p);
+                      loadPlatformAnalytics(p);
+                    }}
+                    className={`h-8 px-3 rounded-xl text-xs font-bold ${
+                      platformPeriod === p ? "bg-[var(--accent-primary)] text-black" : ""
+                    }`}
+                  >
+                    {p === "all" ? "All Time" : p.toUpperCase()}
+                  </Button>
+                ))}
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => loadPlatformAnalytics(platformPeriod)}
+                  disabled={platformAnalyticsLoading}
+                  className="h-8 w-8 p-0 rounded-xl ml-1 text-muted-foreground hover:text-foreground cursor-pointer"
+                  title="Refresh Platform Analytics"
+                >
+                  <RefreshCw className={`h-3.5 w-3.5 ${platformAnalyticsLoading ? "animate-spin" : ""}`} />
+                </Button>
+              </div>
+
+              <div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleExportPlatformOrgs}
+                  disabled={exportingPlatform}
+                  className="h-8 px-3 rounded-xl text-xs font-semibold gap-1.5 cursor-pointer"
+                >
+                  <Download className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                  <span>{exportingPlatform ? "Exporting..." : "Export Organizations CSV"}</span>
+                </Button>
+              </div>
+            </div>
+
+            {/* Top Metrics Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card className="rounded-2xl border-border bg-card">
+                <CardContent className="p-5">
+                  <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Total Users</span>
+                  <p className="text-3xl font-black font-mono text-foreground mt-2">
+                    {platformOverview?.total_users ?? "—"}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    {platformOverview?.total_memberships ?? 0} total memberships
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-2xl border-border bg-card">
+                <CardContent className="p-5">
+                  <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Organizations</span>
+                  <p className="text-3xl font-black font-mono text-[var(--accent-primary)] mt-2">
+                    {platformOverview?.total_organizations ?? "—"}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    {platformOverview?.total_cohorts ?? 0} active cohorts
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-2xl border-border bg-card">
+                <CardContent className="p-5">
+                  <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Curriculum Catalog</span>
+                  <p className="text-3xl font-black font-mono text-foreground mt-2">
+                    {platformOverview?.total_modules ?? "—"}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    <span className="text-emerald-500 font-bold">{platformOverview?.total_verified_modules ?? 0} verified</span> • {platformOverview?.total_unverified_modules ?? 0} custom
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-2xl border-border bg-card">
+                <CardContent className="p-5">
+                  <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Global Platform XP</span>
+                  <p className="text-3xl font-black font-mono text-emerald-500 mt-2">
+                    {platformOverview?.total_verified_xp ?? "—"}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    {platformOverview?.total_lab_completions ?? 0} labs validated
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Platform Activity Trends */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card className="rounded-2xl border-border bg-card">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">Registration & Growth Trends</CardTitle>
+                  <CardDescription className="text-xs">New user registrations ({platformPeriod})</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {platformTrends && platformTrends.user_registrations.filter((p) => p.count > 0).length > 0 ? (
+                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                      {platformTrends.user_registrations
+                        .filter((p) => p.count > 0)
+                        .slice(-10)
+                        .reverse()
+                        .map((pt) => (
+                          <div key={pt.date} className="flex items-center justify-between py-1.5 border-b border-border/40 text-xs">
+                            <span className="font-mono text-muted-foreground">{pt.date}</span>
+                            <span className="font-bold font-mono text-foreground">+{pt.count} user{pt.count > 1 ? "s" : ""}</span>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <p className="py-6 text-center text-xs text-muted-foreground">No registrations in selected period.</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="rounded-2xl border-border bg-card">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base font-bold">Platform Lab Validations</CardTitle>
+                  <CardDescription className="text-xs">Successful completions across all tenants ({platformPeriod})</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {platformTrends && platformTrends.lab_completions.filter((p) => p.count > 0).length > 0 ? (
+                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                      {platformTrends.lab_completions
+                        .filter((p) => p.count > 0)
+                        .slice(-10)
+                        .reverse()
+                        .map((pt) => (
+                          <div key={pt.date} className="flex items-center justify-between py-1.5 border-b border-border/40 text-xs">
+                            <span className="font-mono text-muted-foreground">{pt.date}</span>
+                            <span className="font-bold font-mono text-[var(--accent-primary)]">{pt.count} validation{pt.count > 1 ? "s" : ""}</span>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <p className="py-6 text-center text-xs text-muted-foreground">No completions recorded in selected period.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Organizations Performance Table */}
+            <Card className="rounded-2xl border-border bg-card overflow-hidden">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base font-bold">Tenants Summary</CardTitle>
+                <CardDescription className="text-xs">Adoption, completions, and authoritative XP across organizations</CardDescription>
+              </CardHeader>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-muted/40 text-muted-foreground uppercase font-mono text-[10px] border-b border-border">
+                    <tr>
+                      <th className="px-4 py-3">Organization</th>
+                      <th className="px-4 py-3">Slug</th>
+                      <th className="px-4 py-3">Type</th>
+                      <th className="px-4 py-3">Members</th>
+                      <th className="px-4 py-3">Cohorts</th>
+                      <th className="px-4 py-3">Labs Done</th>
+                      <th className="px-4 py-3">Verified XP</th>
+                      <th className="px-4 py-3">Created</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60">
+                    {platformOrgsSummary.length > 0 ? (
+                      platformOrgsSummary.map((po) => (
+                        <tr key={po.organization_id} className="hover:bg-muted/20 transition-colors">
+                          <td className="px-4 py-3 font-bold text-foreground">{po.name}</td>
+                          <td className="px-4 py-3 font-mono text-muted-foreground">{po.slug}</td>
+                          <td className="px-4 py-3 capitalize">{po.type}</td>
+                          <td className="px-4 py-3 font-mono font-bold">{po.member_count}</td>
+                          <td className="px-4 py-3 font-mono">{po.cohort_count}</td>
+                          <td className="px-4 py-3 font-mono text-[var(--accent-primary)] font-bold">{po.lab_completions_count}</td>
+                          <td className="px-4 py-3 font-mono text-emerald-500 font-bold">{po.total_verified_xp} XP</td>
+                          <td className="px-4 py-3 text-muted-foreground">
+                            {new Date(po.created_at).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                          No organizations found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </div>
+        )}
+
         {/* ========================================================================= */}
         {/* TAB 1: Organizations Directory & Provisioning                             */}
         {/* ========================================================================= */}

@@ -20,6 +20,19 @@ import {
   AccessRequestResponse,
   OrgSettingItemResponse,
   AuditLogResponse,
+  AnalyticsOverviewResponse,
+  AnalyticsTrendsResponse,
+  CohortAnalyticsItem,
+  CohortDetailAnalyticsResponse,
+  PathAnalyticsItem,
+  PathDetailAnalyticsResponse,
+  ContentAnalyticsResponse,
+  XpAnalyticsResponse,
+  LearnerAnalyticsItem,
+  LearnerDetailAnalyticsResponse,
+  PlatformOverviewAnalyticsResponse,
+  PlatformTrendsAnalyticsResponse,
+  PlatformOrgSummaryItem,
 } from "./types";
 import { writeCache, clearDashboardCache } from "./dashboard/use-dashboard-cache";
 import { clearModulesMemoryCache } from "@/hooks/use-modules";
@@ -441,4 +454,81 @@ export const api = {
 
   getOrgAuditLogs: (orgSlug: string, limit: number = 50, offset: number = 0) =>
     request<AuditLogResponse[]>(`/organizations/${orgSlug}/audit-logs?limit=${limit}&offset=${offset}`),
+
+  // Analytics & Reporting
+  getOrgAnalyticsOverview: (orgSlug: string) =>
+    request<AnalyticsOverviewResponse>(`/organizations/${orgSlug}/analytics/overview`),
+
+  getOrgAnalyticsTrends: (orgSlug: string, period: string = "30d", startDate?: string, endDate?: string) => {
+    let url = `/organizations/${orgSlug}/analytics/trends?period=${period}`;
+    if (startDate) url += `&start_date=${encodeURIComponent(startDate)}`;
+    if (endDate) url += `&end_date=${encodeURIComponent(endDate)}`;
+    return request<AnalyticsTrendsResponse>(url);
+  },
+
+  getOrgAnalyticsCohorts: (orgSlug: string) =>
+    request<CohortAnalyticsItem[]>(`/organizations/${orgSlug}/analytics/cohorts`),
+
+  getOrgAnalyticsCohortDetail: (orgSlug: string, cohortId: number) =>
+    request<CohortDetailAnalyticsResponse>(`/organizations/${orgSlug}/analytics/cohorts/${cohortId}`),
+
+  getOrgAnalyticsPaths: (orgSlug: string) =>
+    request<PathAnalyticsItem[]>(`/organizations/${orgSlug}/analytics/paths`),
+
+  getOrgAnalyticsPathDetail: (orgSlug: string, pathId: number) =>
+    request<PathDetailAnalyticsResponse>(`/organizations/${orgSlug}/analytics/paths/${pathId}`),
+
+  getOrgAnalyticsContent: (orgSlug: string) =>
+    request<ContentAnalyticsResponse>(`/organizations/${orgSlug}/analytics/content`),
+
+  getOrgAnalyticsXp: (orgSlug: string) =>
+    request<XpAnalyticsResponse>(`/organizations/${orgSlug}/analytics/xp`),
+
+  getOrgAnalyticsLearners: (orgSlug: string, cohortId?: number, search?: string) => {
+    let url = `/organizations/${orgSlug}/analytics/learners?`;
+    if (cohortId) url += `cohort_id=${cohortId}&`;
+    if (search) url += `search=${encodeURIComponent(search)}&`;
+    return request<LearnerAnalyticsItem[]>(url);
+  },
+
+  getOrgAnalyticsLearnerDetail: (orgSlug: string, userId: number) =>
+    request<LearnerDetailAnalyticsResponse>(`/organizations/${orgSlug}/analytics/learners/${userId}`),
+
+  exportOrgAnalyticsBlob: async (orgSlug: string, type: string) => {
+    const token = getToken();
+    const res = await fetch(`${API_BASE}/organizations/${orgSlug}/analytics/export/${type}`, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        "X-Organization-Slug": orgSlug,
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: "Export failed" }));
+      throw new Error(err.detail || "Export failed");
+    }
+    return await res.blob();
+  },
+
+  getPlatformAnalyticsOverview: () =>
+    request<PlatformOverviewAnalyticsResponse>("/platform/analytics/overview"),
+
+  getPlatformAnalyticsTrends: (period: string = "30d") =>
+    request<PlatformTrendsAnalyticsResponse>(`/platform/analytics/trends?period=${period}`),
+
+  getPlatformAnalyticsOrganizations: () =>
+    request<PlatformOrgSummaryItem[]>("/platform/analytics/organizations"),
+
+  exportPlatformAnalyticsBlob: async () => {
+    const token = getToken();
+    const res = await fetch(`${API_BASE}/platform/analytics/export/organizations`, {
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: "Export failed" }));
+      throw new Error(err.detail || "Export failed");
+    }
+    return await res.blob();
+  },
 };
