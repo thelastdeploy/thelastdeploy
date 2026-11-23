@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter, usePathname } from "next/navigation";
-import { Sun, Moon, Hammer, Shield, Building2, GraduationCap } from "lucide-react";
+import { Sun, Moon, Hammer, Shield, Building2, GraduationCap, ChevronDown, Globe, Check, Settings } from "lucide-react";
 import { OrganizationMembershipInfo } from "@/lib/types";
 
 export function Navbar() {
@@ -103,27 +103,97 @@ export function Navbar() {
             />
             <span className="font-black text-lg tracking-tight text-foreground group-hover:text-[var(--accent-primary)] transition-colors">The Last Deploy</span>
           </Link>
-          {(() => {
-            const currentOrg = orgs.find((o) => o.slug === activeOrg);
-            const isPlatformOrg = !activeOrg || activeOrg === "tld" || currentOrg?.type === "platform" || currentOrg?.is_platform;
-            if (!user || isPlatformOrg || !activeOrg || activeOrg === "tld") return null;
-
-            const orgDisplayName = currentOrg?.name || (activeOrg === "apex-univ" ? "Apex University" : activeOrg === "cloudscale" ? "CloudScale" : activeOrg);
+          {user && orgs.length > 0 && (() => {
+            const currentOrg = orgs.find((o) => o.slug === activeOrg) || orgs.find((o) => o.type === "platform" || o.is_platform) || orgs[0];
+            const isPlatform = currentOrg?.type === "platform" || currentOrg?.is_platform || currentOrg?.slug === "tld";
             const isUniversity = currentOrg?.type === "university";
+            const isAdmin = currentOrg?.roles?.includes("admin") || currentOrg?.roles?.includes("owner");
 
             return (
-              <Link
-                href="/select-org"
-                className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-muted/60 hover:bg-muted text-muted-foreground hover:text-foreground border border-border/60 transition-colors"
-                title="Click to switch workspace"
-              >
-                {isUniversity ? (
-                  <GraduationCap className="h-3 w-3 text-[var(--accent-primary)]" />
-                ) : (
-                  <Building2 className="h-3 w-3 text-[var(--accent-primary)]" />
-                )}
-                <span>{orgDisplayName}</span>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 h-8 rounded-xl text-xs font-mono font-bold bg-muted/40 hover:bg-muted border-border/80 transition-all cursor-pointer"
+                  >
+                    {isUniversity ? (
+                      <GraduationCap className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                    ) : isPlatform ? (
+                      <Globe className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                    ) : (
+                      <Building2 className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                    )}
+                    <span className="max-w-[130px] truncate text-foreground">
+                      {currentOrg ? currentOrg.name : "TLD Platform"}
+                    </span>
+                    <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-64 p-2 rounded-2xl bg-card border-border shadow-xl">
+                  <div className="px-2 py-1.5 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
+                    Active Workspace
+                  </div>
+                  {orgs.map((org) => {
+                    const isSelected = activeOrg === org.slug || (!activeOrg && (org.type === "platform" || org.is_platform));
+                    const isOrgUniv = org.type === "university";
+                    const isOrgPlatform = org.type === "platform" || org.is_platform;
+
+                    return (
+                      <DropdownMenuItem
+                        key={org.slug}
+                        onClick={() => {
+                          api.setSelectedOrg(org.slug);
+                          setActiveOrg(org.slug);
+                        }}
+                        className={`flex items-center justify-between p-2.5 rounded-xl cursor-pointer text-xs font-medium transition-colors ${
+                          isSelected ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold" : "hover:bg-muted"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 truncate">
+                          {isOrgUniv ? (
+                            <GraduationCap className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" />
+                          ) : isOrgPlatform ? (
+                            <Globe className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" />
+                          ) : (
+                            <Building2 className="h-4 w-4 shrink-0 text-[var(--accent-primary)]" />
+                          )}
+                          <div className="truncate">
+                            <p className="truncate text-foreground font-semibold">{org.name}</p>
+                            <p className="text-[10px] text-muted-foreground font-mono">
+                              {org.roles && org.roles.length > 0 ? org.roles.join(", ") : "Member"} • {org.total_xp} XP
+                            </p>
+                          </div>
+                        </div>
+                        {isSelected && <Check className="h-3.5 w-3.5 shrink-0 text-[var(--accent-primary)]" />}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                  {isAdmin && currentOrg && (
+                    <>
+                      <DropdownMenuSeparator className="my-1.5 border-border" />
+                      <DropdownMenuItem asChild>
+                        <Link
+                          href={`/org/${currentOrg.slug}`}
+                          className="flex items-center gap-2 p-2 rounded-xl text-xs font-semibold hover:bg-muted cursor-pointer text-foreground"
+                        >
+                          <Settings className="h-3.5 w-3.5 text-muted-foreground" />
+                          <span>Manage {currentOrg.name}</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  <DropdownMenuSeparator className="my-1.5 border-border" />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/select-org"
+                      className="flex items-center justify-center p-2 rounded-xl text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-muted text-center cursor-pointer"
+                    >
+                      Browse All Workspaces →
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             );
           })()}
         </div>

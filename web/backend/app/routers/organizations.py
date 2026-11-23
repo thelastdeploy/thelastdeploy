@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
 
 from app.dependencies import (
@@ -19,6 +19,7 @@ from app.models import (
     MembershipRole,
     Role,
     Cohort,
+    CohortMembership,
     LearningPath,
     OrganizationRoleAvailability,
 )
@@ -26,8 +27,11 @@ from app.schemas import (
     OrganizationResponse,
     OrganizationCreateRequest,
     OrganizationMemberResponse,
+    MemberRoleUpdateRequest,
+    MessageResponse,
     CohortCreateRequest,
     CohortResponse,
+    CohortMemberResponse,
     LearningPathCreateRequest,
     LearningPathResponse,
 )
@@ -161,6 +165,164 @@ async def list_organization_members(
             joined_at=m.joined_at,
         )
         for m in memberships
+    ]
+
+
+@router.patch("/{org_slug}/members/{user_id}/role", response_model=OrganizationMemberResponse)
+async def update_member_role(
+    org_slug: str,
+    user_id: int,
+    body: MemberRoleUpdateRequest,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("members.manage")),
+):
+    """Change the role of an organization member (requires 'members.manage' permission)."""
+    organization, caller_mem = org_and_mem
+    stmt = (
+        select(OrganizationMembership)
+        .options(
+            selectinload(OrganizationMembership.user),
+            selectinload(OrganizationMembership.roles).selectinload(MembershipRole.role),
+        )
+        .where(
+            OrganizationMembership.organization_id == organization.id,
+            OrganizationMembership.user_id == user_id,
+            OrganizationMembership.status != "removed",
+        )
+    )
+    res = await db.execute(stmt)
+    target_mem = res.scalar_one_or_none()
+    if not target_mem:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Member not found in organization.",
+        )
+
+    clean_role_slug = body.role.strip().lower()
+    target_role = await db.scalar(select(Role).where(Role.slug == clean_role_slug))
+    if not target_role:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Role '{body.role}' is not recognized.",
+        )
+
+    # Delete existing roles and assign the new role
+    await db.execute(delete(MembershipRole).where(MembershipRole.membership_id == target_mem.id))
+    db.add(MembershipRole(membership_id=target_mem.id, role_id=target_role.id, assigned_by=current_user.id))
+    await db.commit()
+    await db.refresh(target_mem)
+
+    await log_audit_event(
+        db,
+        action="member.role_updated",
+        entity_type="membership",
+        entity_id=str(target_mem.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"user_id": user_id, "new_role": target_role.slug},
+    )
+
+    return OrganizationMemberResponse(
+        membership_id=target_mem.id,
+        user_id=target_mem.user.id,
+        username=target_mem.user.username,
+        email=target_mem.user.email,
+        status=target_mem.status,
+        roles=[target_role.slug],
+        total_xp=target_mem.total_xp,
+        unverified_xp=target_mem.unverified_xp,
+        joined_at=target_mem.joined_at,
+    )
+
+
+@router.delete("/{org_slug}/members/{user_id}", response_model=MessageResponse)
+async def remove_organization_member(
+    org_slug: str,
+    user_id: int,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("members.manage")),
+):
+    """Remove a member from the organization (requires 'members.manage' permission)."""
+    organization, caller_mem = org_and_mem
+    if caller_mem.user_id == user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You cannot remove yourself from the organization.",
+        )
+
+    stmt = select(OrganizationMembership).where(
+        OrganizationMembership.organization_id == organization.id,
+        OrganizationMembership.user_id == user_id,
+        OrganizationMembership.status != "removed",
+    )
+    target_mem = await db.scalar(stmt)
+    if not target_mem:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Member not found in organization.",
+        )
+
+    target_mem.status = "removed"
+    db.add(target_mem)
+    await db.commit()
+
+    await log_audit_event(
+        db,
+        action="member.removed",
+        entity_type="membership",
+        entity_id=str(target_mem.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"user_id": user_id},
+    )
+
+    return MessageResponse(detail="Member removed successfully.")
+
+
+@router.get("/{org_slug}/cohorts/{cohort_id}/members", response_model=list[CohortMemberResponse])
+async def list_cohort_members(
+    org_slug: str,
+    cohort_id: int,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("cohorts.manage")),
+):
+    """List enrolled students in a cohort (requires 'cohorts.manage' permission)."""
+    organization, _ = org_and_mem
+    cohort = await db.scalar(
+        select(Cohort).where(Cohort.id == cohort_id, Cohort.organization_id == organization.id)
+    )
+    if not cohort:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cohort not found.")
+
+    stmt = (
+        select(CohortMembership, OrganizationMembership, User)
+        .join(OrganizationMembership, CohortMembership.organization_membership_id == OrganizationMembership.id)
+        .join(User, OrganizationMembership.user_id == User.id)
+        .where(
+            CohortMembership.cohort_id == cohort.id,
+            OrganizationMembership.status == "active",
+        )
+        .order_by(CohortMembership.joined_at.asc())
+    )
+    res = await db.execute(stmt)
+    rows = res.all()
+
+    return [
+        CohortMemberResponse(
+            membership_id=om.id,
+            cohort_membership_id=cm.id,
+            user_id=u.id,
+            username=u.username,
+            email=u.email,
+            total_xp=om.total_xp,
+            joined_at=cm.joined_at,
+        )
+        for cm, om, u in rows
     ]
 
 

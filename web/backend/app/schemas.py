@@ -331,6 +331,20 @@ class OrganizationMemberResponse(BaseModel):
     joined_at: datetime
 
 
+class MemberRoleUpdateRequest(BaseModel):
+    role: str  # 'admin', 'instructor', 'learner'
+
+
+class CohortMemberResponse(BaseModel):
+    membership_id: int
+    cohort_membership_id: int
+    user_id: int
+    username: str
+    email: str
+    total_xp: int = 0
+    joined_at: datetime
+
+
 class CohortCreateRequest(BaseModel):
     name: str
     description: str | None = None

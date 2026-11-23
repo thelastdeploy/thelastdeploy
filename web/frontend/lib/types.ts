@@ -120,3 +120,59 @@ export interface BuilderDraftListItem {
   submitted_at: string | null;
 }
 
+export interface OrganizationPublicInfoResponse {
+  name: string;
+  slug: string;
+  type: string;
+  domains: string[];
+  requires_domain_match: boolean;
+  approval_mode: string;
+  invitations_enabled: boolean;
+}
+
+export interface InvitationVerifyResponse {
+  valid: boolean;
+  email: string;
+  organization_name: string;
+  organization_slug: string;
+  cohort_id?: number | null;
+  cohort_name?: string | null;
+  role: string;
+  expires_at: string;
+  is_existing_user: boolean;
+}
+
+export interface SessionResponse {
+  id: number;
+  client_type: string;
+  user_agent: string | null;
+  ip_address: string | null;
+  created_at: string;
+  expires_at: string;
+  last_used_at: string | null;
+  is_current: boolean;
+}
+
+export interface OrganizationMemberResponse {
+  membership_id: number;
+  user_id: number;
+  username: string;
+  email: string;
+  status: string;
+  roles: string[];
+  total_xp: number;
+  unverified_xp: number;
+  joined_at: string;
+}
+
+export interface CohortMemberResponse {
+  membership_id: number;
+  cohort_membership_id: number;
+  user_id: number;
+  username: string;
+  email: string;
+  total_xp: number;
+  joined_at: string;
+}
+
+

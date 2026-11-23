@@ -10,6 +10,8 @@ import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getRank, getNextRank, getXpProgress } from "@/lib/ranks";
+import { SessionResponse } from "@/lib/types";
+import { Laptop, Terminal, Trash2, ShieldCheck, Clock, Check } from "lucide-react";
 
 export default function ProfilePage() {
   const { user, loading, logout, refreshUser } = useAuth();
@@ -35,6 +37,37 @@ export default function ProfilePage() {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+
+  // Active Sessions state (Module A)
+  const [sessions, setSessions] = useState<SessionResponse[]>([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "security" && user) {
+      loadSessions();
+    }
+  }, [activeTab, user]);
+
+  const loadSessions = async () => {
+    setSessionsLoading(true);
+    try {
+      const data = await api.getSessions();
+      setSessions(data);
+    } catch (err) {
+      console.error("Failed to load sessions:", err);
+    } finally {
+      setSessionsLoading(false);
+    }
+  };
+
+  const handleRevokeSession = async (sessionId: number) => {
+    try {
+      await api.revokeSession(sessionId);
+      setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+    } catch (err: any) {
+      alert("Failed to revoke session: " + err.message);
+    }
+  };
 
   // Sync inputs with user data once loaded
   useEffect(() => {
@@ -468,13 +501,14 @@ export default function ProfilePage() {
 
         {/* TAB 3: SECURITY / PASSWORD */}
         {activeTab === "security" && (
-          <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-md max-w-xl">
-            <div className="mb-6">
-              <h2 className="text-xl font-black text-foreground">Change Password</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Ensure your account stays secure.</p>
-            </div>
+          <div className="space-y-6 max-w-xl">
+            <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-md">
+              <div className="mb-6">
+                <h2 className="text-xl font-black text-foreground">Change Password</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Ensure your account stays secure.</p>
+              </div>
 
-            <form onSubmit={handleUpdatePassword} className="space-y-4">
+              <form onSubmit={handleUpdatePassword} className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="oldPassword" className="text-muted-foreground/80 text-xs font-semibold uppercase tracking-wider">
                   Current Password
@@ -541,7 +575,77 @@ export default function ProfilePage() {
               </button>
             </form>
           </div>
-        )}
+
+          {/* Active Sessions & Devices (Module A) */}
+          <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-md max-w-xl mt-6">
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-black text-foreground">Active Sessions & Devices</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Manage authenticated browser and CLI sessions.</p>
+              </div>
+              <ShieldCheck className="h-5 w-5 text-[var(--accent-primary)]" />
+            </div>
+
+            {sessionsLoading ? (
+              <div className="py-6 text-center text-xs font-mono text-muted-foreground animate-pulse">
+                Loading sessions...
+              </div>
+            ) : sessions.length === 0 ? (
+              <div className="py-6 text-center text-xs text-muted-foreground">
+                No active sessions found.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {sessions.map((s) => {
+                  const isCli = s.client_type === "cli";
+                  return (
+                    <div
+                      key={s.id}
+                      className="p-3.5 rounded-xl border border-border/70 bg-muted/20 flex items-center justify-between gap-3 text-xs"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-muted text-foreground">
+                          {isCli ? <Terminal className="h-4 w-4 text-[var(--accent-primary)]" /> : <Laptop className="h-4 w-4 text-[var(--accent-primary)]" />}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-foreground capitalize">
+                              {s.client_type} Session
+                            </span>
+                            {s.is_current && (
+                              <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 font-bold flex items-center gap-1">
+                                <Check className="h-2.5 w-2.5" /> This Device
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-muted-foreground font-mono mt-0.5">
+                            {s.ip_address || "Unknown IP"} • {s.user_agent ? (s.user_agent.length > 35 ? s.user_agent.slice(0, 35) + "..." : s.user_agent) : "TLD Client"}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground/60 flex items-center gap-1 mt-0.5">
+                            <Clock className="h-2.5 w-2.5" />
+                            Active: {s.last_used_at ? new Date(s.last_used_at).toLocaleDateString() : "Just now"}
+                          </p>
+                        </div>
+                      </div>
+
+                      {!s.is_current && (
+                        <button
+                          type="button"
+                          onClick={() => handleRevokeSession(s.id)}
+                          className="px-2.5 py-1.5 rounded-lg border border-border/80 hover:border-destructive text-destructive hover:bg-destructive/10 text-xs font-semibold cursor-pointer transition-colors"
+                          title="Revoke session"
+                        >
+                          Revoke
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       </div>
     </div>

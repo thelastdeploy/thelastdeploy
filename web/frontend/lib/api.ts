@@ -1,6 +1,18 @@
 // web/frontend/lib/api.ts
 
-import { Module, ModuleDetail, User, BuilderDraftListItem, BuilderModuleInput, OrganizationMembershipInfo } from "./types";
+import {
+  Module,
+  ModuleDetail,
+  User,
+  BuilderDraftListItem,
+  BuilderModuleInput,
+  OrganizationMembershipInfo,
+  OrganizationPublicInfoResponse,
+  InvitationVerifyResponse,
+  SessionResponse,
+  OrganizationMemberResponse,
+  CohortMemberResponse,
+} from "./types";
 import { writeCache, clearDashboardCache } from "./dashboard/use-dashboard-cache";
 import { clearModulesMemoryCache } from "@/hooks/use-modules";
 
@@ -248,4 +260,65 @@ export const api = {
     request<any>(`/admin/maintainers/${userId}`, {
       method: "DELETE",
     }),
+
+  // Onboarding & Invitations (Module F)
+  getOrganizationInfo: () =>
+    request<OrganizationPublicInfoResponse>("/onboarding/organization-info"),
+
+  requestAccess: (email: string) =>
+    request<{ detail: string; status: string; mode?: string }>("/onboarding/access-request", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    }),
+
+  verifyInvitation: (token?: string, code?: string) =>
+    request<InvitationVerifyResponse>("/onboarding/invitations/verify", {
+      method: "POST",
+      body: JSON.stringify({ token, code }),
+    }),
+
+  redeemInvitation: (token?: string, code?: string) =>
+    request<{
+      detail: string;
+      access_token?: string;
+      onboarding_token?: string;
+      requires_password_setup?: boolean;
+    }>("/onboarding/invitations/redeem", {
+      method: "POST",
+      body: JSON.stringify({ token, code }),
+    }),
+
+  completeOnboardingSetup: (onboardingToken: string, username: string, password: string) =>
+    request<{ detail: string; access_token: string }>("/onboarding/invitations/complete-setup", {
+      method: "POST",
+      body: JSON.stringify({
+        onboarding_token: onboardingToken,
+        username,
+        password,
+      }),
+    }),
+
+  // Sessions (Module A)
+  getSessions: () =>
+    request<SessionResponse[]>("/sessions"),
+
+  revokeSession: (sessionId: number) =>
+    request<{ detail: string }>(`/sessions/${sessionId}`, {
+      method: "DELETE",
+    }),
+
+  // Organization Administration (Module B)
+  updateMemberRole: (orgSlug: string, userId: number, role: string) =>
+    request<OrganizationMemberResponse>(`/organizations/${orgSlug}/members/${userId}/role`, {
+      method: "PATCH",
+      body: JSON.stringify({ role }),
+    }),
+
+  removeMember: (orgSlug: string, userId: number) =>
+    request<{ detail: string }>(`/organizations/${orgSlug}/members/${userId}`, {
+      method: "DELETE",
+    }),
+
+  getCohortMembers: (orgSlug: string, cohortId: number) =>
+    request<CohortMemberResponse[]>(`/organizations/${orgSlug}/cohorts/${cohortId}/members`),
 };
