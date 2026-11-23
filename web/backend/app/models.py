@@ -530,6 +530,7 @@ class OrganizationInvitation(Base):
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
     cohort_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("cohorts.id", ondelete="CASCADE"), nullable=True)
+    learning_path_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("learning_paths.id", ondelete="SET NULL"), nullable=True)
     email: Mapped[str] = mapped_column(String(255), nullable=False)
     token_hash: Mapped[str] = mapped_column(String(64), nullable=False)
     invitation_code: Mapped[str | None] = mapped_column(String(32), nullable=True)
@@ -544,6 +545,7 @@ class OrganizationInvitation(Base):
 
     organization: Mapped["Organization"] = relationship("Organization")
     cohort: Mapped["Cohort | None"] = relationship("Cohort")
+    learning_path: Mapped["LearningPath | None"] = relationship("LearningPath")
     creator: Mapped["User | None"] = relationship("User", foreign_keys=[created_by_user_id])
     redeemer: Mapped["User | None"] = relationship("User", foreign_keys=[redeemed_by_user_id])
     revoker: Mapped["User | None"] = relationship("User", foreign_keys=[revoked_by_user_id])

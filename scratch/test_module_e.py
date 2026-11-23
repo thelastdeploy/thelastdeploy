@@ -269,20 +269,24 @@ def main():
     assert_true(res_eff_custom.json()["value"] == 15, "Enabled setting with DB value resolves to customized value (15)")
 
     # 2. Existing org does NOT have newly introduced setting 'learning_paths.default_visibility' enabled yet
-    res_pre_enable = requests.get(f"{API_BASE}/organizations/apex-univ/settings/learning_paths.default_visibility", headers=sarah_headers)
+    # Use cloudscale to test newly introduced setting isolation
+    res_pre_enable = requests.get(f"{API_BASE}/organizations/cloudscale/settings/learning_paths.default_visibility", headers=dev_headers)
     assert_true(res_pre_enable.status_code == 404, "Newly introduced setting is not enabled for existing org (returns 404)")
 
-    # Platform staff explicitly enables it for Apex University without custom initial value
+    # Platform staff explicitly enables it for CloudScale without custom initial value
     enable_lp = requests.post(
-        f"{API_BASE}/admin/organizations/apex-univ/settings/learning_paths.default_visibility/enable",
+        f"{API_BASE}/admin/organizations/cloudscale/settings/learning_paths.default_visibility/enable",
         headers=dev_headers
     )
     assert_true(enable_lp.status_code == 200, "Platform staff enables newly introduced setting for existing org")
 
-    # Now org admin accesses it, and without an explicit DB override, it resolves to code default ('public')
-    res_eff_def = requests.get(f"{API_BASE}/organizations/apex-univ/settings/learning_paths.default_visibility", headers=sarah_headers)
-    assert_true(res_eff_def.status_code == 200, "Enabled setting is now accessible to Org Admin")
+    # Now verify it resolves to code default ('public')
+    res_eff_def = requests.get(f"{API_BASE}/organizations/cloudscale/settings/learning_paths.default_visibility", headers=dev_headers)
+    assert_true(res_eff_def.status_code == 200, "Enabled setting is now accessible")
     assert_true(res_eff_def.json()["value"] == "public", "Enabled setting without DB override resolves to code default ('public')")
+
+    # Clean up so subsequent test runs remain idempotent
+    requests.post(f"{API_BASE}/admin/organizations/cloudscale/settings/learning_paths.default_visibility/disable", headers=dev_headers)
 
     # 3. Disabled setting returns 404/None to org admin
     # Disable learning_paths.default_visibility for test org

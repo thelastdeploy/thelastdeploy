@@ -530,10 +530,11 @@ class AccessRequestRejectPayload(BaseModel):
 class InvitationCreateRequest(BaseModel):
     email: EmailStr
     cohort_id: int | None = None
+    learning_path_id: int | None = None
 
 class BulkInvitationResultItem(BaseModel):
     email: str
-    status: str  # created, skipped_duplicate, invalid_format, error
+    status: str  # created, skipped_duplicate, invalid_format, error, skipped_member, skipped_pending
     detail: str | None = None
 
 class BulkInvitationResponse(BaseModel):
@@ -546,6 +547,7 @@ class InvitationResponse(BaseModel):
     id: int
     organization_id: int
     cohort_id: int | None = None
+    learning_path_id: int | None = None
     email: str
     invitation_code: str | None = None
     status: str
@@ -559,6 +561,7 @@ class InvitationDetailResponse(InvitationResponse):
     organization_name: str
     organization_slug: str
     cohort_name: str | None = None
+    learning_path_name: str | None = None
 
 class InvitationVerifyRequest(BaseModel):
     token: str | None = None
@@ -570,6 +573,7 @@ class InvitationVerifyResponse(BaseModel):
     organization_name: str
     organization_slug: str
     cohort_name: str | None = None
+    learning_path_name: str | None = None
     is_existing_user: bool
     requires_password_setup: bool
 

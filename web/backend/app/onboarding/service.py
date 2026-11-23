@@ -21,6 +21,7 @@ from app.models import (
     CohortMembership,
     OrganizationInvitation,
     OrganizationAccessRequest,
+    LearningPath,
     AuditLog,
 )
 from jose import jwt
@@ -35,6 +36,22 @@ from app.services import log_audit_event
 from app.settings.service import SettingsService
 
 EMAIL_REGEX = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+
+def is_domain_eligible(email: str, allowed_domains: list[str]) -> bool:
+    """
+    Checks if an email address belongs to any authorized domain.
+    Supports exact match (e.g. apex.edu) or valid subdomains (e.g. cs.apex.edu).
+    Rejects lookalikes (e.g. fakeapex.edu, apex.edu.evil.com) and naive substrings.
+    """
+    if not email or "@" not in email:
+        return False
+    email_domain = email.strip().lower().split("@")[-1]
+    for d in allowed_domains:
+        d_clean = d.strip().lower().lstrip("@")
+        if email_domain == d_clean or email_domain.endswith(f".{d_clean}"):
+            return True
+    return False
 
 
 def extract_subdomain_org_slug(host: str | None) -> str | None:
@@ -106,10 +123,11 @@ async def create_organization_invitation(
     organization_id: int,
     email: str,
     cohort_id: int | None = None,
+    learning_path_id: int | None = None,
     created_by_user_id: int | None = None,
 ) -> tuple[OrganizationInvitation, str]:
     """
-    Issues an individual single-use organization or cohort invitation.
+    Issues an individual single-use organization or cohort/learning-path invitation.
     Returns: (invitation_record, raw_token)
     """
     normalized_email = email.strip().lower()
@@ -132,25 +150,55 @@ async def create_organization_invitation(
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cohort not found in this organization")
         cohort_name = cohort.name
 
-    # 3. Check domain enforcement setting if applicable
+    # 3. Validate learning path if provided
+    learning_path_name = None
+    if learning_path_id is not None:
+        lp = await db.scalar(
+            select(LearningPath).where(
+                LearningPath.id == learning_path_id,
+                LearningPath.organization_id == organization_id,
+            )
+        )
+        if not lp:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Learning path not found in this organization")
+        learning_path_name = lp.name
+
+    # 4. Check domain enforcement setting if applicable
     settings_service = SettingsService()
     enforce_domain = await settings_service.get_effective_setting_value(
         db, organization_id, "security.enforce_domain_match"
     )
     if enforce_domain and org.type != "platform" and org.domains:
-        email_domain = normalized_email.split("@")[-1]
         valid_domains = [d.lower().strip() for d in org.domains]
-        if email_domain not in valid_domains:
+        if not is_domain_eligible(normalized_email, valid_domains):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Email domain '{email_domain}' does not match organization verified domains: {valid_domains}",
+                detail=f"Email domain does not match organization verified domains: {valid_domains}",
             )
 
-    # 4. Check for active pending invitation for this exact scope
+    # 5. Check if user is already an active member of this organization without cohort assignment
+    if cohort_id is None:
+        existing_user = await db.scalar(select(User).where(User.email == normalized_email))
+        if existing_user:
+            mem = await db.scalar(
+                select(OrganizationMembership).where(
+                    OrganizationMembership.organization_id == organization_id,
+                    OrganizationMembership.user_id == existing_user.id,
+                    OrganizationMembership.status == "active",
+                )
+            )
+            if mem:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"User '{normalized_email}' is already an active member of this organization",
+                )
+
+    # 6. Check for active pending invitation for this exact scope
     existing_invite = await db.scalar(
         select(OrganizationInvitation).where(
             OrganizationInvitation.organization_id == organization_id,
             OrganizationInvitation.cohort_id == cohort_id,
+            OrganizationInvitation.learning_path_id == learning_path_id,
             OrganizationInvitation.email == normalized_email,
             OrganizationInvitation.status == "pending",
             OrganizationInvitation.expires_at > datetime.now(timezone.utc),
@@ -163,13 +211,14 @@ async def create_organization_invitation(
         existing_invite.revoked_at = datetime.now(timezone.utc)
         existing_invite.revoked_by_user_id = created_by_user_id
 
-    # 5. Generate secrets and snapshot expiry
+    # 7. Generate secrets and snapshot expiry
     raw_token, token_hash, invitation_code = generate_invitation_tokens()
     expires_at = await get_organization_invitation_expiry(db, organization_id)
 
     invitation = OrganizationInvitation(
         organization_id=organization_id,
         cohort_id=cohort_id,
+        learning_path_id=learning_path_id,
         email=normalized_email,
         token_hash=token_hash,
         invitation_code=invitation_code,
@@ -180,7 +229,7 @@ async def create_organization_invitation(
     db.add(invitation)
     await db.flush()
 
-    # 6. Audit log
+    # 8. Audit log
     await log_audit_event(
         db=db,
         action="invitation.created",
@@ -192,10 +241,73 @@ async def create_organization_invitation(
             "email": normalized_email,
             "cohort_id": cohort_id,
             "cohort_name": cohort_name,
+            "learning_path_id": learning_path_id,
+            "learning_path_name": learning_path_name,
             "expires_at": expires_at.isoformat(),
         },
     )
 
+    return invitation, raw_token
+
+
+async def resend_organization_invitation(
+    db: AsyncSession,
+    invitation_id: int,
+    organization_id: int,
+    actor_user_id: int,
+) -> tuple[OrganizationInvitation, str]:
+    """
+    Resends an active pending invitation by renewing credentials and expiry
+    while strictly preserving target email, scope, and organization.
+    """
+    invitation = await db.scalar(
+        select(OrganizationInvitation).where(
+            OrganizationInvitation.id == invitation_id,
+            OrganizationInvitation.organization_id == organization_id,
+        )
+    )
+    if not invitation:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invitation not found")
+
+    if invitation.status != "pending":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot resend invitation with status '{invitation.status}'",
+        )
+
+    if invitation.expires_at <= datetime.now(timezone.utc):
+        invitation.status = "expired"
+        db.add(invitation)
+        await db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot resend an expired invitation. Please create a new invitation.",
+        )
+
+    raw_token, token_hash, invitation_code = generate_invitation_tokens()
+    new_expires_at = await get_organization_invitation_expiry(db, organization_id)
+
+    invitation.token_hash = token_hash
+    invitation.invitation_code = invitation_code
+    invitation.expires_at = new_expires_at
+    db.add(invitation)
+    await db.flush()
+
+    await log_audit_event(
+        db=db,
+        action="invitation.resent",
+        entity_type="organization_invitation",
+        entity_id=str(invitation.id),
+        actor_user_id=actor_user_id,
+        organization_id=organization_id,
+        metadata={
+            "email": invitation.email,
+            "cohort_id": invitation.cohort_id,
+            "learning_path_id": invitation.learning_path_id,
+            "new_expires_at": new_expires_at.isoformat(),
+        },
+    )
+    await db.commit()
     return invitation, raw_token
 
 
@@ -257,13 +369,12 @@ async def create_access_request(
     if not org or org.status != "active":
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found or inactive")
 
-    # Domain eligibility check
-    email_domain = normalized_email.split("@")[-1]
+    # Domain eligibility check using exact or valid subdomain matching
     valid_domains = [d.lower().strip() for d in (org.domains or [])]
-    if not valid_domains or email_domain not in valid_domains:
+    if not is_domain_eligible(normalized_email, valid_domains):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Email domain '@{email_domain}' is not authorized for {org.name}. Authorized domains: {valid_domains}",
+            detail=f"Email domain is not authorized for {org.name}. Authorized domains: {valid_domains}",
         )
 
     # Check approval mode
@@ -542,10 +653,13 @@ async def process_bulk_invitations_csv(
     created_by_user_id: int,
 ) -> tuple[int, int, int, list[dict[str, Any]], list[tuple[str, str, str | None, datetime]]]:
     """
-    Parses a CSV containing an 'email' column, validates each address,
+    Parses a CSV containing an 'email' column, validates each address and optional cohort/learning_path,
     creates individual invitations, and returns a detailed report.
     Returns: (total_processed, created_count, skipped_count, results_summary, pending_emails_to_dispatch)
     """
+    if len(csv_bytes) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="CSV file exceeds maximum allowed size (5MB)")
+
     try:
         text = csv_bytes.decode("utf-8-sig")
     except UnicodeDecodeError:
@@ -559,6 +673,9 @@ async def process_bulk_invitations_csv(
     if not email_col:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="CSV must contain an 'email' header column")
 
+    cohort_col = next((c for c in reader.fieldnames if c.strip().lower() in ("cohort", "cohort_id", "cohort_name", "cohort_slug")), None)
+    lp_col = next((c for c in reader.fieldnames if c.strip().lower() in ("learning_path", "learning_path_id", "path", "path_slug")), None)
+
     results: list[dict[str, Any]] = []
     seen_in_batch = set()
     created_count = 0
@@ -566,6 +683,9 @@ async def process_bulk_invitations_csv(
     pending_emails: list[tuple[str, str, str | None, datetime]] = []
 
     for row in reader:
+        if not any(v.strip() for v in row.values() if v):
+            continue
+
         raw_email = row.get(email_col, "").strip()
         if not raw_email:
             continue
@@ -583,12 +703,92 @@ async def process_bulk_invitations_csv(
             results.append({"email": raw_email, "status": "invalid_format", "detail": "Invalid email address format"})
             continue
 
+        # Resolve cohort for row
+        row_cohort_id = cohort_id
+        if cohort_col and row.get(cohort_col, "").strip():
+            val = row[cohort_col].strip()
+            # Match by id or name
+            cohort_query = select(Cohort).where(Cohort.organization_id == organization_id)
+            if val.isdigit():
+                cohort_query = cohort_query.where(Cohort.id == int(val))
+            else:
+                cohort_query = cohort_query.where(func.lower(Cohort.name) == val.lower())
+            found_cohort = await db.scalar(cohort_query)
+            if not found_cohort:
+                skipped_count += 1
+                results.append({"email": normalized, "status": "error", "detail": f"Unknown cohort '{val}' in this organization"})
+                continue
+            row_cohort_id = found_cohort.id
+
+        # Resolve learning path for row
+        row_lp_id = None
+        if lp_col and row.get(lp_col, "").strip():
+            lp_val = row[lp_col].strip()
+            lp_query = select(LearningPath).where(LearningPath.organization_id == organization_id)
+            if lp_val.isdigit():
+                lp_query = lp_query.where(LearningPath.id == int(lp_val))
+            else:
+                lp_query = lp_query.where(
+                    (func.lower(LearningPath.slug) == lp_val.lower()) | (func.lower(LearningPath.name) == lp_val.lower())
+                )
+            found_lp = await db.scalar(lp_query)
+            if not found_lp:
+                skipped_count += 1
+                results.append({"email": normalized, "status": "error", "detail": f"Unknown learning path '{lp_val}' in this organization"})
+                continue
+            row_lp_id = found_lp.id
+
+        # Check existing member
+        user = await db.scalar(select(User).where(User.email == normalized))
+        if user:
+            mem = await db.scalar(
+                select(OrganizationMembership).where(
+                    OrganizationMembership.organization_id == organization_id,
+                    OrganizationMembership.user_id == user.id,
+                    OrganizationMembership.status == "active",
+                )
+            )
+            if mem:
+                if row_cohort_id is None:
+                    skipped_count += 1
+                    results.append({"email": normalized, "status": "skipped_member", "detail": "User is already an active member of this organization"})
+                    continue
+                else:
+                    cm = await db.scalar(
+                        select(CohortMembership).where(
+                            CohortMembership.cohort_id == row_cohort_id,
+                            CohortMembership.organization_membership_id == mem.id,
+                        )
+                    )
+                    if cm:
+                        skipped_count += 1
+                        results.append({"email": normalized, "status": "skipped_member", "detail": f"User is already a member of cohort ID {row_cohort_id}"})
+                        continue
+
+        # Check existing active pending invitation
+        existing_pending = await db.scalar(
+            select(OrganizationInvitation).where(
+                OrganizationInvitation.organization_id == organization_id,
+                OrganizationInvitation.cohort_id == row_cohort_id,
+                OrganizationInvitation.learning_path_id == row_lp_id,
+                OrganizationInvitation.email == normalized,
+                OrganizationInvitation.status == "pending",
+                OrganizationInvitation.expires_at > datetime.now(timezone.utc),
+                OrganizationInvitation.revoked_at.is_(None),
+            )
+        )
+        if existing_pending:
+            skipped_count += 1
+            results.append({"email": normalized, "status": "skipped_pending", "detail": "Active pending invitation already exists for this email"})
+            continue
+
         try:
             invitation, raw_token = await create_organization_invitation(
                 db=db,
                 organization_id=organization_id,
                 email=normalized,
-                cohort_id=cohort_id,
+                cohort_id=row_cohort_id,
+                learning_path_id=row_lp_id,
                 created_by_user_id=created_by_user_id,
             )
             created_count += 1

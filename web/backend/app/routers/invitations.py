@@ -33,6 +33,7 @@ from app.email import send_invitation_email
 from app.config import settings
 from app.onboarding.service import (
     create_organization_invitation,
+    resend_organization_invitation,
     revoke_organization_invitation,
     approve_access_request,
     reject_access_request,
@@ -173,11 +174,50 @@ async def create_invitation(
         organization_id=organization.id,
         email=body.email,
         cohort_id=body.cohort_id,
+        learning_path_id=body.learning_path_id,
         created_by_user_id=current_user.id,
     )
     await db.commit()
 
     # Dispatch email
+    invite_url = _get_invite_url(organization.slug, raw_token)
+    send_invitation_email(
+        email=invitation.email,
+        org_name=organization.name,
+        invite_url=invite_url,
+        invite_code=invitation.invitation_code,
+        cohort_name=cohort_name,
+        expires_at=invitation.expires_at,
+        background_tasks=background_tasks,
+    )
+
+    return invitation
+
+
+@router.post("/invitations/{invitation_id}/resend", response_model=InvitationResponse)
+async def resend_invitation_endpoint(
+    invitation_id: int,
+    background_tasks: BackgroundTasks,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: User = Depends(require_permission("members.manage")),
+):
+    """Resends an active pending invitation with fresh credentials."""
+    organization, _ = org_and_mem
+    invitation, raw_token = await resend_organization_invitation(
+        db=db,
+        invitation_id=invitation_id,
+        organization_id=organization.id,
+        actor_user_id=current_user.id,
+    )
+
+    cohort_name = None
+    if invitation.cohort_id:
+        cohort = await db.scalar(select(Cohort).where(Cohort.id == invitation.cohort_id))
+        if cohort:
+            cohort_name = cohort.name
+
     invite_url = _get_invite_url(organization.slug, raw_token)
     send_invitation_email(
         email=invitation.email,

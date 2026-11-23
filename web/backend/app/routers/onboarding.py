@@ -13,6 +13,7 @@ from app.models import (
     OrganizationInvitation,
     OrganizationAccessRequest,
     Cohort,
+    LearningPath,
 )
 from app.schemas import (
     OrganizationPublicInfoResponse,
@@ -24,7 +25,7 @@ from app.schemas import (
     TokenResponse,
     MessageResponse,
 )
-from app.auth import hash_password
+from app.auth import hash_password, decode_token_payload
 from app.routers.auth import _create_session
 from app.settings.service import SettingsService
 from app.email import send_invitation_email
@@ -131,13 +132,19 @@ async def verify_invitation(
         for_update=False,
     )
 
-    # Resolve organization & cohort details
+    # Resolve organization & cohort & learning path details
     org = await db.scalar(select(Organization).where(Organization.id == invitation.organization_id))
     cohort_name = None
     if invitation.cohort_id:
         cohort = await db.scalar(select(Cohort).where(Cohort.id == invitation.cohort_id))
         if cohort:
             cohort_name = cohort.name
+
+    learning_path_name = None
+    if invitation.learning_path_id:
+        lp = await db.scalar(select(LearningPath).where(LearningPath.id == invitation.learning_path_id))
+        if lp:
+            learning_path_name = lp.name
 
     # Check if recipient already exists as a global user
     user = await db.scalar(select(User).where(User.email == invitation.email))
@@ -149,6 +156,7 @@ async def verify_invitation(
         organization_name=org.name if org else "The Last Deploy",
         organization_slug=org.slug if org else "tld",
         cohort_name=cohort_name,
+        learning_path_name=learning_path_name,
         is_existing_user=is_existing,
         requires_password_setup=not is_existing,
     )
@@ -162,6 +170,7 @@ async def redeem_invitation(
 ):
     """
     Redeems an invitation atomically.
+    - If caller is authenticated: enforces that authenticated email matches invitation recipient.
     - If recipient email exists in users: consumes invitation, creates org/cohort membership, establishes session.
     - If recipient email does NOT exist: generates restricted onboarding session token for password setup.
     """
@@ -172,9 +181,31 @@ async def redeem_invitation(
         for_update=True,
     )
 
-    user = await db.scalar(select(User).where(User.email == invitation.email))
+    # Check if caller has an existing authenticated session
+    auth_header = request.headers.get("Authorization")
+    auth_user = None
+    if auth_header and auth_header.startswith("Bearer "):
+        token_str = auth_header[7:].strip()
+        try:
+            payload = decode_token_payload(token_str)
+            if payload and "sub" in payload:
+                user_id = int(payload["sub"])
+                auth_user = await db.scalar(select(User).where(User.id == user_id))
+        except Exception:
+            pass
 
-    if not user:
+    if auth_user:
+        # Authenticated user is accepting invitation -> enforce email match!
+        if auth_user.email.strip().lower() != invitation.email.strip().lower():
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Authenticated email '{auth_user.email}' does not match invitation recipient '{invitation.email}'",
+            )
+        target_user = auth_user
+    else:
+        target_user = await db.scalar(select(User).where(User.email == invitation.email.strip().lower()))
+
+    if not target_user:
         # Case A: New user -> issue short-lived onboarding token
         onboarding_token = create_onboarding_token(
             invitation_id=invitation.id,
@@ -193,13 +224,13 @@ async def redeem_invitation(
     mem, cohort_mem = await ensure_organization_and_cohort_membership(
         db=db,
         organization_id=invitation.organization_id,
-        user_id=user.id,
+        user_id=target_user.id,
         cohort_id=invitation.cohort_id,
     )
 
     invitation.status = "accepted"
     invitation.redeemed_at = datetime.now(timezone.utc)
-    invitation.redeemed_by_user_id = user.id
+    invitation.redeemed_by_user_id = target_user.id
     db.add(invitation)
 
     await log_audit_event(
@@ -207,18 +238,18 @@ async def redeem_invitation(
         action="invitation.redeemed",
         entity_type="organization_invitation",
         entity_id=str(invitation.id),
-        actor_user_id=user.id,
+        actor_user_id=target_user.id,
         organization_id=invitation.organization_id,
         metadata={
             "email": invitation.email,
             "cohort_id": invitation.cohort_id,
-            "user_id": user.id,
+            "user_id": target_user.id,
             "is_new_user": False,
         },
     )
     await db.commit()
 
-    session, access_token = await _create_session(db, user, client_type="web", request=request)
+    session, access_token = await _create_session(db, target_user, client_type="web", request=request)
     return {
         "status": "accepted",
         "requires_password_setup": False,
