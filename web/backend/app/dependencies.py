@@ -311,6 +311,8 @@ def require_platform_permission(permission_key: str):
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
     ) -> User:
+        if await is_user_platform_admin(current_user, db):
+            return current_user
         stmt = (
             select(PlatformPermission.id)
             .join(PlatformRolePermission, PlatformRolePermission.permission_id == PlatformPermission.id)

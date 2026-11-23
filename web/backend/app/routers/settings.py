@@ -11,7 +11,7 @@ from app.dependencies import (
     require_permission,
     require_platform_permission,
 )
-from app.models import User, Organization, OrganizationMembership
+from app.models import User, Organization, OrganizationMembership, OrganizationSettingAvailability
 from app.schemas import (
     OrgSettingItemResponse,
     OrgSettingAdminItemResponse,
@@ -48,12 +48,18 @@ async def get_org_setting(
     """Get a single setting if enabled for the organization."""
     organization, _ = org_and_mem
     defn = SettingsService.get_definition(setting_key)
-    effective_val = await SettingsService.get_effective_setting(db, organization.id, setting_key)
-    if effective_val is None:
+    avail = await db.scalar(
+        select(OrganizationSettingAvailability.is_enabled).where(
+            OrganizationSettingAvailability.organization_id == organization.id,
+            OrganizationSettingAvailability.setting_key == setting_key,
+        )
+    )
+    if not avail:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Setting '{setting_key}' is not available or enabled for this organization.",
         )
+    effective_val = await SettingsService.get_effective_setting(db, organization.id, setting_key)
     return {
         "key": setting_key,
         "value": effective_val,
@@ -94,7 +100,7 @@ async def list_all_settings_for_platform(
     org_slug: str,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
-    _perm: User = Depends(require_platform_permission("platform.organizations.view")),
+    _perm: User = Depends(require_platform_permission("organization_settings.manage")),
 ):
     """Platform staff only: view all settings and availability for an organization."""
     org = await db.scalar(select(Organization).where(Organization.slug == org_slug))
@@ -110,7 +116,7 @@ async def enable_setting_for_platform(
     body: OrgSettingEnableRequest | None = None,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
-    _perm: User = Depends(require_platform_permission("platform.organizations.manage")),
+    _perm: User = Depends(require_platform_permission("organization_settings.manage")),
 ):
     """Platform staff only: enable a setting for an organization."""
     org = await db.scalar(select(Organization).where(Organization.slug == org_slug))
@@ -133,7 +139,7 @@ async def disable_setting_for_platform(
     setting_key: str,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
-    _perm: User = Depends(require_platform_permission("platform.organizations.manage")),
+    _perm: User = Depends(require_platform_permission("organization_settings.manage")),
 ):
     """Platform staff only: disable a setting for an organization (preserves stored value)."""
     org = await db.scalar(select(Organization).where(Organization.slug == org_slug))
@@ -155,7 +161,7 @@ async def override_setting_for_platform(
     body: OrgSettingUpdateRequest,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
-    _perm: User = Depends(require_platform_permission("platform.organizations.manage")),
+    _perm: User = Depends(require_platform_permission("organization_settings.manage")),
 ):
     """Platform staff only: override any setting value for an organization."""
     org = await db.scalar(select(Organization).where(Organization.slug == org_slug))

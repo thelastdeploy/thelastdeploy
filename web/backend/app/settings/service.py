@@ -34,9 +34,15 @@ class SettingsService:
     async def get_effective_setting(db: AsyncSession, organization_id: int, setting_key: str) -> Any | None:
         """
         Get the effective setting value for an organization.
-        Returns the configured value IF and ONLY IF the setting is currently enabled in availability.
-        Returns None if disabled or not configured.
+        Returns:
+        - None if the setting is disabled, unavailable, or unregistered.
+        - The configured DB value if enabled and customized.
+        - The code default if enabled but not explicitly customized.
         """
+        defn = get_setting_definition(setting_key)
+        if not defn:
+            return None
+
         # 1. Check availability
         avail = await db.scalar(
             select(OrganizationSettingAvailability.is_enabled).where(
@@ -48,25 +54,23 @@ class SettingsService:
             return None
 
         # 2. Query configured value
-        val_record = await db.scalar(
-            select(OrganizationSetting.value).where(
+        setting = await db.scalar(
+            select(OrganizationSetting).where(
                 OrganizationSetting.organization_id == organization_id,
                 OrganizationSetting.setting_key == setting_key,
             )
         )
-        return val_record
+        if setting is not None and setting.value is not None:
+            return setting.value
+        return defn.default
 
     @staticmethod
     async def get_effective_setting_value(db: AsyncSession, organization_id: int, setting_key: str) -> Any:
         """
         Get the effective setting value for an organization, falling back to the registry default
-        if not explicitly customized.
+        if enabled, or None if disabled or unrecognized.
         """
-        val = await SettingsService.get_effective_setting(db, organization_id, setting_key)
-        if val is not None:
-            return val
-        definition = get_setting_definition(setting_key)
-        return definition.default if definition else None
+        return await SettingsService.get_effective_setting(db, organization_id, setting_key)
 
     @staticmethod
     async def list_settings_for_org_admin(db: AsyncSession, organization_id: int) -> list[dict[str, Any]]:
@@ -448,47 +452,51 @@ class SettingsService:
         db: AsyncSession,
         organization_id: int,
         tier: str = "free",
+        auto_commit: bool = True,
     ) -> None:
         """
         Initialize available settings and default values for a newly provisioned organization.
         Safe to call multiple times (never overwrites existing values).
         """
         eligible_keys = get_tier_eligible_settings(tier)
+        all_defs = get_all_setting_definitions()
 
-        for key in eligible_keys:
-            defn = get_setting_definition(key)
-            if not defn:
-                continue
+        for defn in all_defs:
+            is_eligible = defn.key in eligible_keys
 
             # 1. Availability
             avail = await db.scalar(
                 select(OrganizationSettingAvailability).where(
                     OrganizationSettingAvailability.organization_id == organization_id,
-                    OrganizationSettingAvailability.setting_key == key,
+                    OrganizationSettingAvailability.setting_key == defn.key,
                 )
             )
             if not avail:
                 avail = OrganizationSettingAvailability(
                     organization_id=organization_id,
-                    setting_key=key,
-                    is_enabled=True,
+                    setting_key=defn.key,
+                    is_enabled=is_eligible,
                 )
                 db.add(avail)
 
-            # 2. Setting value (never overwrite existing)
-            setting = await db.scalar(
-                select(OrganizationSetting).where(
-                    OrganizationSetting.organization_id == organization_id,
-                    OrganizationSetting.setting_key == key,
+            # 2. Setting value if eligible (never overwrite existing)
+            if is_eligible:
+                setting = await db.scalar(
+                    select(OrganizationSetting).where(
+                        OrganizationSetting.organization_id == organization_id,
+                        OrganizationSetting.setting_key == defn.key,
+                    )
                 )
-            )
-            if not setting:
-                setting = OrganizationSetting(
-                    organization_id=organization_id,
-                    setting_key=key,
-                    value=defn.default,
-                )
-                db.add(setting)
+                if not setting:
+                    setting = OrganizationSetting(
+                        organization_id=organization_id,
+                        setting_key=defn.key,
+                        value=defn.default,
+                    )
+                    db.add(setting)
 
-        await db.commit()
+        if auto_commit:
+            await db.commit()
+        else:
+            await db.flush()
 

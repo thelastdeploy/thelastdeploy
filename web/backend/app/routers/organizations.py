@@ -999,6 +999,9 @@ async def provision_organization(
     if owner_role:
         db.add(MembershipRole(membership_id=membership.id, role_id=owner_role.id, assigned_by=current_user.id))
 
+    # Initialize code-defined organization settings for the newly provisioned organization
+    await SettingsService.initialize_organization_settings(db, org.id, tier="free", auto_commit=False)
+
     await db.commit()
     await db.refresh(org)
 
