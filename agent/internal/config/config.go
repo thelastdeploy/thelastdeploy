@@ -14,6 +14,7 @@ type Config struct {
 	ChallengesDir  string
 	AuthToken      string
 	Username       string
+	ActiveOrg      string
 	ChallengesRepo string
 	Environment    string // "production" or "local"
 }
@@ -160,6 +161,8 @@ func parse(raw string) *Config {
 			cfg.AuthToken = val
 		case "username":
 			cfg.Username = val
+		case "active_org":
+			cfg.ActiveOrg = val
 		case "environment":
 			if val != "" {
 				cfg.Environment = val
@@ -191,8 +194,12 @@ func write(path string, cfg *Config) error {
 	if cfg.Username != "" {
 		userLine = fmt.Sprintf("username: %s\n", strings.TrimSpace(cfg.Username))
 	}
-	content := fmt.Sprintf("# The Last Deploy — agent configuration\n# Generated automatically on first run. Safe to edit.\nenvironment: %s\napi_base_url: %s\ndevice_key_path: %s\nchallenges_dir: %s\nchallenges_repo: %s\n%s%s",
-		cfg.Environment, cfg.APIBaseURL, cfg.DeviceKeyPath, cfg.ChallengesDir, cfg.ChallengesRepo, authLine, userLine)
+	orgLine := ""
+	if cfg.ActiveOrg != "" {
+		orgLine = fmt.Sprintf("active_org: %s\n", strings.TrimSpace(cfg.ActiveOrg))
+	}
+	content := fmt.Sprintf("# The Last Deploy — agent configuration\n# Generated automatically on first run. Safe to edit.\nenvironment: %s\napi_base_url: %s\ndevice_key_path: %s\nchallenges_dir: %s\nchallenges_repo: %s\n%s%s%s",
+		cfg.Environment, cfg.APIBaseURL, cfg.DeviceKeyPath, cfg.ChallengesDir, cfg.ChallengesRepo, authLine, userLine, orgLine)
 	return os.WriteFile(path, []byte(content), 0600)
 }
 

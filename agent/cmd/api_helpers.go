@@ -13,7 +13,7 @@ import (
 
 // postJSONRequest sends a JSON POST request to the API with authorization headers and timeout.
 // It returns error, shouldRetry boolean, and decoded response JSON body map if available.
-func postJSONRequest(apiBaseURL, endpoint, authToken string, payload interface{}, timeout time.Duration) (error, bool, map[string]interface{}) {
+func postJSONRequest(apiBaseURL, endpoint, authToken string, payload interface{}, timeout time.Duration, orgSlug ...string) (error, bool, map[string]interface{}) {
 	data, err := json.MarshalIndent(payload, "", "  ")
 	if err != nil {
 		return err, false, nil
@@ -28,6 +28,10 @@ func postJSONRequest(apiBaseURL, endpoint, authToken string, payload interface{}
 	req.Header.Set("Content-Type", "application/json")
 	if authToken != "" {
 		req.Header.Set("Authorization", "Bearer "+authToken)
+	}
+	if len(orgSlug) > 0 && orgSlug[0] != "" {
+		req.Header.Set("X-Organization-Slug", orgSlug[0])
+		req.Header.Set("X-Organization", orgSlug[0])
 	}
 
 	resp, err := client.Do(req)
@@ -46,4 +50,35 @@ func postJSONRequest(apiBaseURL, endpoint, authToken string, payload interface{}
 	_ = json.NewDecoder(resp.Body).Decode(&respBody)
 
 	return nil, false, respBody
+}
+
+// getJSONRequest sends a GET request with authorization and optional organization headers.
+func getJSONRequest(apiBaseURL, endpoint, authToken string, timeout time.Duration, orgSlug ...string) (error, int, []byte) {
+	client := &http.Client{Timeout: timeout}
+	req, err := http.NewRequest(http.MethodGet, apiBaseURL+endpoint, nil)
+	if err != nil {
+		return err, 0, nil
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	if authToken != "" {
+		req.Header.Set("Authorization", "Bearer "+authToken)
+	}
+	if len(orgSlug) > 0 && orgSlug[0] != "" {
+		req.Header.Set("X-Organization-Slug", orgSlug[0])
+		req.Header.Set("X-Organization", orgSlug[0])
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err, 0, nil
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err, resp.StatusCode, nil
+	}
+
+	return nil, resp.StatusCode, body
 }

@@ -374,3 +374,26 @@ async def is_user_platform_admin(user: User, db: AsyncSession) -> bool:
     )
     res = await db.execute(stmt)
     return res.scalar_one_or_none() is not None
+
+
+async def has_org_permission(
+    membership: OrganizationMembership,
+    permission_key: str,
+    user: User,
+    db: AsyncSession,
+) -> bool:
+    """Helper to check if a user/membership has a specific organization permission key."""
+    if await has_platform_permission(user, "organization_settings.manage", db) or await is_user_platform_admin(user, db):
+        return True
+    stmt = (
+        select(Permission.id)
+        .join(RolePermission, RolePermission.permission_id == Permission.id)
+        .join(MembershipRole, MembershipRole.role_id == RolePermission.role_id)
+        .where(
+            MembershipRole.membership_id == membership.id,
+            Permission.key == permission_key,
+        )
+        .limit(1)
+    )
+    result = await db.execute(stmt)
+    return result.scalar_one_or_none() is not None

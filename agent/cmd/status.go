@@ -50,6 +50,11 @@ func runStatus(args []string) error {
 		} else if cfg.Username != "" {
 			fmt.Printf("  User:          %s\n", cfg.Username)
 		}
+		activeOrg := cfg.ActiveOrg
+		if activeOrg == "" || activeOrg == "tld" {
+			activeOrg = "Personal (tld)"
+		}
+		fmt.Printf("  Workspace:     %s\n", activeOrg)
 		fmt.Println("  Run 'tld logout' to sign out.")
 	} else {
 		fmt.Println("  Not logged in — run: tld login")

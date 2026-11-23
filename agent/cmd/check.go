@@ -70,7 +70,7 @@ func runCheck(args []string) error {
 	}
 
 	tldDir := filepath.Dir(cfg.DeviceKeyPath)
-	err, retry := postResult(cfg.APIBaseURL, cfg.AuthToken, session.LabID, session.SectionID, result)
+	err, retry := postResult(cfg.APIBaseURL, cfg.AuthToken, cfg.ActiveOrg, session.LabID, session.SectionID, result)
 	if err != nil {
 		if strings.Contains(err.Error(), "Validator script mismatch") {
 			fmt.Println("\n⚠️  INTEGRITY ERROR: Validator script mismatch!")
@@ -114,7 +114,7 @@ type resultPayload struct {
 	ValidatorHash string    `json:"validator_hash"`
 }
 
-func postResult(apiBaseURL, authToken, labID, sectionID string, r *validator.Result) (error, bool) {
+func postResult(apiBaseURL, authToken, activeOrg, labID, sectionID string, r *validator.Result) (error, bool) {
 	payload := resultPayload{
 		LabID:         labID,
 		SectionID:     sectionID,
@@ -125,7 +125,7 @@ func postResult(apiBaseURL, authToken, labID, sectionID string, r *validator.Res
 		ValidatorHash: r.ValidatorHash,
 	}
 
-	err, retry, respBody := postJSONRequest(apiBaseURL, "/results", authToken, payload, 30*time.Second)
+	err, retry, respBody := postJSONRequest(apiBaseURL, "/results", authToken, payload, 30*time.Second, activeOrg)
 	if err != nil {
 		return err, retry
 	}

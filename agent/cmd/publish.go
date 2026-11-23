@@ -94,6 +94,10 @@ func runPublish(args []string) error {
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+cfg.AuthToken)
+	if cfg.ActiveOrg != "" {
+		req.Header.Set("X-Organization-Slug", cfg.ActiveOrg)
+		req.Header.Set("X-Organization", cfg.ActiveOrg)
+	}
 
 	resp, err := client.Do(req)
 	if err != nil {

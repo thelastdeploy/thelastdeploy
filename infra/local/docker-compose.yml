@@ -56,6 +56,8 @@ services:
       ENVIRONMENT: development
       FRONTEND_URL: http://localhost:9000
       ANALYTICS_ENABLED: "false"
+    volumes:
+      - ../../web/backend:/app
     depends_on:
       db:
         condition: service_healthy

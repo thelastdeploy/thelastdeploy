@@ -44,6 +44,11 @@ func Execute() {
 			fmt.Fprintln(os.Stderr, "status:", err)
 			os.Exit(1)
 		}
+	case "workspace", "workspaces":
+		if err := runWorkspace(os.Args[2:]); err != nil {
+			fmt.Fprintln(os.Stderr, "workspace:", err)
+			os.Exit(1)
+		}
 	case "login":
 		if err := runLogin(os.Args[2:]); err != nil {
 			fmt.Fprintln(os.Stderr, "login:", err)
@@ -112,6 +117,8 @@ Commands:
   stop                  Stop running lab and destroy environment
   check                 Run the validator inside container and report pass/fail
   status                Show auth, synced content, and active lab
+  workspace             View active workspace and available organizations
+  workspace switch <slug> Switch active workspace context
   update                Update CLI to latest release (--edge for bleeding edge)
   login                 Authenticate with The Last Deploy API
   logout                Remove saved credentials

@@ -121,6 +121,14 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         category="Cohorts",
         description="Whether direct cohort invitations are permitted in this organization.",
     ),
+    "learning_paths.default_visibility": SettingDefinition(
+        key="learning_paths.default_visibility",
+        data_type=SettingType.STRING,
+        default="public",
+        allowed_values=["public", "private"],
+        category="Learning Paths",
+        description="Default visibility ('public' or 'private') for newly created learning paths.",
+    ),
 }
 
 
@@ -148,6 +156,7 @@ TIER_DEFAULT_SETTINGS: dict[str, set[str]] = {
         "invitations.expiry_days",
         "onboarding.access_approval_mode",
         "cohorts.invitations_enabled",
+        "learning_paths.default_visibility",
     },
     "starter": {
         "content.show_unverified",
@@ -157,6 +166,7 @@ TIER_DEFAULT_SETTINGS: dict[str, set[str]] = {
         "invitations.expiry_days",
         "onboarding.access_approval_mode",
         "cohorts.invitations_enabled",
+        "learning_paths.default_visibility",
     },
     "enterprise": {
         "content.show_unverified",
@@ -167,6 +177,7 @@ TIER_DEFAULT_SETTINGS: dict[str, set[str]] = {
         "invitations.expiry_days",
         "onboarding.access_approval_mode",
         "cohorts.invitations_enabled",
+        "learning_paths.default_visibility",
     },
 }
 

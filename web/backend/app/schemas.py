@@ -372,6 +372,19 @@ class CohortCreateRequest(BaseModel):
     ends_at: datetime
 
 
+class CohortUpdateRequest(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    status: str | None = None
+    learning_paths: list[int] | None = None
+    starts_at: datetime | None = None
+    ends_at: datetime | None = None
+
+
+class CohortMemberAddRequest(BaseModel):
+    user_id: int
+
+
 class CohortResponse(BaseModel):
     id: int
     organization_id: int
@@ -388,8 +401,16 @@ class LearningPathCreateRequest(BaseModel):
     name: str
     slug: str
     description: str | None = None
-    visibility: str = "public"  # 'public' or 'private'
+    visibility: str | None = None  # 'public' or 'private', falls back to Module E setting
     modules: list[str] = []
+
+
+class LearningPathUpdateRequest(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    visibility: str | None = None  # 'public' or 'private'
+    status: str | None = None
+    modules: list[str] | None = None
 
 
 class LearningPathResponse(BaseModel):

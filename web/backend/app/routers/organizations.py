@@ -13,6 +13,7 @@ from app.dependencies import (
     require_platform_permission,
     is_user_platform_admin,
     has_platform_permission,
+    has_org_permission,
 )
 from app.models import (
     User,
@@ -33,13 +34,17 @@ from app.schemas import (
     MemberRoleUpdateRequest,
     MessageResponse,
     CohortCreateRequest,
+    CohortUpdateRequest,
+    CohortMemberAddRequest,
     CohortResponse,
     CohortMemberResponse,
     LearningPathCreateRequest,
+    LearningPathUpdateRequest,
     LearningPathResponse,
     AuditLogResponse,
 )
 from app.services import log_audit_event
+from app.settings.service import SettingsService
 
 router = APIRouter(prefix="/organizations", tags=["organizations"])
 
@@ -338,6 +343,7 @@ async def list_cohort_members(
         .join(User, OrganizationMembership.user_id == User.id)
         .where(
             CohortMembership.cohort_id == cohort.id,
+            CohortMembership.removed_at.is_(None),
             OrganizationMembership.status == "active",
         )
         .order_by(CohortMembership.joined_at.asc())
@@ -437,21 +443,289 @@ async def create_cohort(
     )
 
 
+@router.patch("/{org_slug}/cohorts/{cohort_id}", response_model=CohortResponse)
+async def update_cohort(
+    org_slug: str,
+    cohort_id: int,
+    body: CohortUpdateRequest,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("cohorts.manage")),
+):
+    """Update an existing cohort (requires 'cohorts.manage')."""
+    organization, _ = org_and_mem
+    cohort = await db.scalar(
+        select(Cohort).where(Cohort.id == cohort_id, Cohort.organization_id == organization.id)
+    )
+    if not cohort:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cohort not found.")
+
+    if body.name is not None:
+        cohort.name = body.name.strip()
+    if body.description is not None:
+        cohort.description = body.description
+    if body.status is not None:
+        cohort.status = body.status
+    if body.learning_paths is not None:
+        cohort.learning_paths = body.learning_paths
+    if body.starts_at is not None:
+        cohort.starts_at = body.starts_at
+    if body.ends_at is not None:
+        cohort.ends_at = body.ends_at
+
+    db.add(cohort)
+    await db.commit()
+    await db.refresh(cohort)
+
+    await log_audit_event(
+        db,
+        action="cohort.updated",
+        entity_type="cohort",
+        entity_id=str(cohort.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"name": cohort.name, "learning_paths": cohort.learning_paths},
+    )
+
+    return CohortResponse(
+        id=cohort.id,
+        organization_id=cohort.organization_id,
+        name=cohort.name,
+        description=cohort.description,
+        status=cohort.status,
+        learning_paths=cohort.learning_paths or [],
+        starts_at=cohort.starts_at,
+        ends_at=cohort.ends_at,
+        created_at=cohort.created_at,
+    )
+
+
+@router.delete("/{org_slug}/cohorts/{cohort_id}", response_model=MessageResponse)
+async def delete_cohort(
+    org_slug: str,
+    cohort_id: int,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("cohorts.manage")),
+):
+    """Archive a cohort (requires 'cohorts.manage')."""
+    organization, _ = org_and_mem
+    cohort = await db.scalar(
+        select(Cohort).where(Cohort.id == cohort_id, Cohort.organization_id == organization.id)
+    )
+    if not cohort:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cohort not found.")
+
+    cohort.status = "archived"
+    db.add(cohort)
+    await db.commit()
+
+    await log_audit_event(
+        db,
+        action="cohort.archived",
+        entity_type="cohort",
+        entity_id=str(cohort.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"name": cohort.name},
+    )
+
+    return MessageResponse(detail="Cohort archived successfully.")
+
+
+@router.post("/{org_slug}/cohorts/{cohort_id}/members", response_model=CohortMemberResponse, status_code=status.HTTP_201_CREATED)
+async def add_cohort_member(
+    org_slug: str,
+    cohort_id: int,
+    body: CohortMemberAddRequest,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("cohorts.manage")),
+):
+    """Enroll an organization member into a cohort (requires 'cohorts.manage')."""
+    organization, _ = org_and_mem
+    cohort = await db.scalar(
+        select(Cohort).where(Cohort.id == cohort_id, Cohort.organization_id == organization.id)
+    )
+    if not cohort:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cohort not found.")
+
+    # Target user must be an active member of this organization
+    target_mem = await db.scalar(
+        select(OrganizationMembership)
+        .options(selectinload(OrganizationMembership.user))
+        .where(
+            OrganizationMembership.organization_id == organization.id,
+            OrganizationMembership.user_id == body.user_id,
+            OrganizationMembership.status == "active",
+        )
+    )
+    if not target_mem:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User is not an active member of this organization.",
+        )
+
+    # Check if cohort membership already exists
+    cm = await db.scalar(
+        select(CohortMembership).where(
+            CohortMembership.cohort_id == cohort.id,
+            CohortMembership.organization_membership_id == target_mem.id,
+        )
+    )
+    from datetime import datetime, timezone
+    if cm:
+        if cm.removed_at is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User is already enrolled in this cohort.",
+            )
+        cm.removed_at = None
+        cm.joined_at = datetime.now(timezone.utc)
+    else:
+        cm = CohortMembership(
+            organization_id=organization.id,
+            cohort_id=cohort.id,
+            organization_membership_id=target_mem.id,
+            joined_at=datetime.now(timezone.utc),
+        )
+        db.add(cm)
+
+    await db.commit()
+    await db.refresh(cm)
+
+    await log_audit_event(
+        db,
+        action="cohort.member_added",
+        entity_type="cohort",
+        entity_id=str(cohort.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"user_id": body.user_id, "username": target_mem.user.username},
+    )
+
+    return CohortMemberResponse(
+        membership_id=target_mem.id,
+        cohort_membership_id=cm.id,
+        user_id=target_mem.user.id,
+        username=target_mem.user.username,
+        email=target_mem.user.email,
+        total_xp=target_mem.total_xp,
+        joined_at=cm.joined_at,
+    )
+
+
+@router.delete("/{org_slug}/cohorts/{cohort_id}/members/{user_id}", response_model=MessageResponse)
+async def remove_cohort_member(
+    org_slug: str,
+    cohort_id: int,
+    user_id: int,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("cohorts.manage")),
+):
+    """Remove a student from a cohort (requires 'cohorts.manage')."""
+    organization, _ = org_and_mem
+    cohort = await db.scalar(
+        select(Cohort).where(Cohort.id == cohort_id, Cohort.organization_id == organization.id)
+    )
+    if not cohort:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cohort not found.")
+
+    target_mem = await db.scalar(
+        select(OrganizationMembership).where(
+            OrganizationMembership.organization_id == organization.id,
+            OrganizationMembership.user_id == user_id,
+        )
+    )
+    if not target_mem:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Member not found in organization.")
+
+    cm = await db.scalar(
+        select(CohortMembership).where(
+            CohortMembership.cohort_id == cohort.id,
+            CohortMembership.organization_membership_id == target_mem.id,
+            CohortMembership.removed_at.is_(None),
+        )
+    )
+    if not cm:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Student is not active in this cohort.")
+
+    from datetime import datetime, timezone
+    cm.removed_at = datetime.now(timezone.utc)
+    db.add(cm)
+    await db.commit()
+
+    await log_audit_event(
+        db,
+        action="cohort.member_removed",
+        entity_type="cohort",
+        entity_id=str(cohort.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"user_id": user_id},
+    )
+
+    return MessageResponse(detail="Member removed from cohort successfully.")
+
+
 @router.get("/{org_slug}/learning-paths", response_model=list[LearningPathResponse])
 async def list_learning_paths(
     org_slug: str,
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """List learning paths for the organization."""
-    organization, _ = org_and_mem
+    """
+    List learning paths for the organization.
+    Instructors/Admins view all learning paths.
+    Learners view public paths plus private paths assigned to cohorts they belong to.
+    """
+    organization, caller_mem = org_and_mem
+    is_manager = await has_org_permission(caller_mem, "learning_paths.manage", current_user, db)
+
     stmt = (
         select(LearningPath)
-        .where(LearningPath.organization_id == organization.id)
+        .where(
+            LearningPath.organization_id == organization.id,
+            LearningPath.status == "active",
+        )
         .order_by(LearningPath.created_at.desc())
     )
     result = await db.execute(stmt)
-    paths = result.scalars().all()
+    all_paths = result.scalars().all()
+
+    if is_manager:
+        paths = all_paths
+    else:
+        # Get learning paths assigned to cohorts where this user is an active enrolled member
+        cohort_lp_stmt = (
+            select(Cohort.learning_paths)
+            .join(CohortMembership, CohortMembership.cohort_id == Cohort.id)
+            .where(
+                CohortMembership.organization_membership_id == caller_mem.id,
+                CohortMembership.removed_at.is_(None),
+                Cohort.organization_id == organization.id,
+                Cohort.status == "active",
+            )
+        )
+        cohort_lp_res = await db.execute(cohort_lp_stmt)
+        allowed_path_refs = set()
+        for row in cohort_lp_res.scalars().all():
+            if isinstance(row, list):
+                for item in row:
+                    allowed_path_refs.add(str(item))
+                    if isinstance(item, int) or (isinstance(item, str) and item.isdigit()):
+                        allowed_path_refs.add(int(item))
+
+        paths = [
+            p for p in all_paths
+            if p.visibility == "public" or p.id in allowed_path_refs or str(p.id) in allowed_path_refs or p.slug in allowed_path_refs
+        ]
 
     return [
         LearningPathResponse(
@@ -482,11 +756,12 @@ async def create_learning_path(
     """Create a new learning path within the organization (requires 'learning_paths.manage')."""
     organization, _ = org_and_mem
 
-    # Check slug uniqueness within organization
+    # Check slug uniqueness within organization (excluding archived paths)
     existing = await db.scalar(
         select(LearningPath.id).where(
             LearningPath.organization_id == organization.id,
             LearningPath.slug == body.slug.strip(),
+            LearningPath.status != "archived",
         )
     )
     if existing:
@@ -495,12 +770,20 @@ async def create_learning_path(
             detail=f"Learning path with slug '{body.slug}' already exists in this organization",
         )
 
+    # Visibility handling: use provided or fallback to Module E setting
+    visibility = body.visibility
+    if not visibility:
+        effective_vis = await SettingsService.get_effective_setting(db, organization.id, "learning_paths.default_visibility")
+        visibility = str(effective_vis) if effective_vis else "public"
+    if visibility not in ["public", "private"]:
+        visibility = "public"
+
     lp = LearningPath(
         organization_id=organization.id,
         name=body.name,
         slug=body.slug.strip(),
         description=body.description,
-        visibility=body.visibility,
+        visibility=visibility,
         modules=body.modules or [],
         created_by=current_user.id,
     )
@@ -515,7 +798,7 @@ async def create_learning_path(
         entity_id=str(lp.id),
         actor_user_id=current_user.id,
         organization_id=organization.id,
-        metadata={"slug": lp.slug, "modules": lp.modules},
+        metadata={"slug": lp.slug, "visibility": lp.visibility, "modules": lp.modules},
     )
 
     return LearningPathResponse(
@@ -530,6 +813,105 @@ async def create_learning_path(
         module_count=len(lp.modules or []),
         created_at=lp.created_at,
     )
+
+
+@router.patch("/{org_slug}/learning-paths/{path_id}", response_model=LearningPathResponse)
+async def update_learning_path(
+    org_slug: str,
+    path_id: int,
+    body: LearningPathUpdateRequest,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("learning_paths.manage")),
+):
+    """Update learning path metadata, visibility, or modules (requires 'learning_paths.manage')."""
+    organization, _ = org_and_mem
+    lp = await db.scalar(
+        select(LearningPath).where(
+            LearningPath.id == path_id,
+            LearningPath.organization_id == organization.id,
+        )
+    )
+    if not lp:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Learning path not found.")
+
+    if body.name is not None:
+        lp.name = body.name.strip()
+    if body.description is not None:
+        lp.description = body.description
+    if body.visibility is not None:
+        if body.visibility not in ["public", "private"]:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Visibility must be 'public' or 'private'")
+        lp.visibility = body.visibility
+    if body.status is not None:
+        lp.status = body.status
+    if body.modules is not None:
+        lp.modules = body.modules
+
+    db.add(lp)
+    await db.commit()
+    await db.refresh(lp)
+
+    await log_audit_event(
+        db,
+        action="learning_path.updated",
+        entity_type="learning_path",
+        entity_id=str(lp.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"slug": lp.slug, "visibility": lp.visibility, "modules": lp.modules},
+    )
+
+    return LearningPathResponse(
+        id=lp.id,
+        organization_id=lp.organization_id,
+        name=lp.name,
+        slug=lp.slug,
+        description=lp.description,
+        visibility=lp.visibility,
+        status=lp.status,
+        modules=lp.modules or [],
+        module_count=len(lp.modules or []),
+        created_at=lp.created_at,
+    )
+
+
+@router.delete("/{org_slug}/learning-paths/{path_id}", response_model=MessageResponse)
+async def delete_learning_path(
+    org_slug: str,
+    path_id: int,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("learning_paths.manage")),
+):
+    """Archive a learning path (requires 'learning_paths.manage')."""
+    organization, _ = org_and_mem
+    lp = await db.scalar(
+        select(LearningPath).where(
+            LearningPath.id == path_id,
+            LearningPath.organization_id == organization.id,
+        )
+    )
+    if not lp:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Learning path not found.")
+
+    lp.status = "archived"
+    db.add(lp)
+    await db.commit()
+
+    await log_audit_event(
+        db,
+        action="learning_path.deleted",
+        entity_type="learning_path",
+        entity_id=str(lp.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"slug": lp.slug},
+    )
+
+    return MessageResponse(detail="Learning path archived successfully.")
 
 
 @router.get("/{org_slug}/audit-logs", response_model=list[AuditLogResponse])
