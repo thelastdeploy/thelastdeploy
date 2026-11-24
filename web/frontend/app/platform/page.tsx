@@ -897,33 +897,26 @@ export default function PlatformConsolePage() {
                           <div className="flex items-center gap-2">
                             <h4 className="font-bold text-xs text-foreground">{pUser.username}</h4>
                             {isSelf && (
-                              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold uppercase">
+                              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/20 font-bold uppercase">
                                 You
-                              </span>
-                            )}
-                            {isDevUser && (
-                              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 font-bold uppercase">
-                                Superadmin
-                              </span>
-                            )}
-                            {canConfigureOthers && !isDevUser && (
-                              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold uppercase">
-                                Can Delegate
                               </span>
                             )}
                           </div>
                           <p className="text-[11px] text-muted-foreground font-mono">{pUser.email}</p>
                           <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                            <span className="text-[10px] font-mono text-zinc-400">
+                            <span className="text-[11px] font-mono font-medium text-muted-foreground">
                               {pUser.permissions.length} active permissions:
                             </span>
                             {pUser.permissions.slice(0, 3).map((pk) => (
-                              <span key={pk} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-muted/60 text-zinc-300">
+                              <span
+                                key={pk}
+                                className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-md bg-muted text-foreground border border-border"
+                              >
                                 {pk.replace("platform.", "")}
                               </span>
                             ))}
                             {pUser.permissions.length > 3 && (
-                              <span className="text-[9px] font-mono text-muted-foreground">
+                              <span className="text-[10px] font-mono text-muted-foreground font-medium">
                                 +{pUser.permissions.length - 3} more
                               </span>
                             )}

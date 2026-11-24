@@ -489,21 +489,8 @@ export default function UserRbacConfigPage() {
                     <h1 className="text-xl font-bold tracking-tight flex items-center gap-2">
                       <span>{operator.username}</span>
                       {isSelf && (
-                        <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-400 border-amber-500/30 font-mono">
-                          You (Current Session)
-                        </Badge>
-                      )}
-                      {operator.permissions.length === 19 ? (
-                        <Badge className="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
-                          Root Superadmin
-                        </Badge>
-                      ) : operator.permissions.includes("platform.permissions.manage") ? (
-                        <Badge className="text-[10px] bg-blue-500/20 text-blue-300 border border-blue-500/30 font-mono">
-                          Delegated Admin
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary" className="text-[10px] font-mono">
-                          Scoped Operator
+                        <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30 font-mono">
+                          You
                         </Badge>
                       )}
                     </h1>
@@ -546,19 +533,6 @@ export default function UserRbacConfigPage() {
               </Button>
             </div>
           </div>
-
-          {/* Self-Protection Alert Banner */}
-          {isSelf && (
-            <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5 text-xs text-amber-300">
-              <ShieldAlert className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
-              <div>
-                <p className="font-bold">Self-Lockout Protection Guard Active</p>
-                <p className="text-muted-foreground mt-0.5">
-                  You are editing your own platform operator account. Administrative delegation rights (<code className="text-amber-400 font-mono">platform.permissions.manage</code>) and account deletion are hard-locked to prevent accidental lockout of global platform administration.
-                </p>
-              </div>
-            </div>
-          )}
 
           {/* Success or Error Banners */}
           {successMessage && (
@@ -792,8 +766,8 @@ export default function UserRbacConfigPage() {
                               {meta.categoryLabel}
                             </Badge>
                             {isLockedSelf && (
-                              <Badge className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono flex items-center gap-1">
-                                <Lock className="h-2.5 w-2.5" /> Self-Protection Locked
+                              <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30 font-mono flex items-center gap-1">
+                                <Lock className="h-2.5 w-2.5" /> Locked
                               </Badge>
                             )}
                           </div>
