@@ -217,14 +217,11 @@ async def publish_module_from_cli(
     _perm: OrganizationMembership = Depends(require_permission("content.publish")),
 ):
     organization, membership = org_and_mem
-    is_platform_org = organization.is_platform or organization.slug == "tld"
+    is_platform_org = organization.type == "platform"
+    platform_org_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
 
-    # 1. Resolve module ID in current organization
-    if is_platform_org:
-        module_id = body.id
-    else:
-        prefix = f"{organization.slug}-"
-        module_id = body.id if body.id.startswith(prefix) else f"{prefix}{body.id}"
+    # 1. Resolve module ID in current organization (composite PK: id + owner_organization_id, no forced slug prefix)
+    module_id = body.id
 
     stmt = select(Module).where(
         Module.owner_organization_id == organization.id,
@@ -251,28 +248,20 @@ async def publish_module_from_cli(
 
     for s_input in body.sections:
         if s_input.is_org_owned:
-            # Section is org-owned: generate org section ID
-            if is_platform_org:
-                sec_id = s_input.id
-            else:
-                prefix = f"{organization.slug}-"
-                sec_id = s_input.id if s_input.id.startswith(prefix) else f"{prefix}{s_input.id}"
+            # Section is org-owned: use provided ID directly (composite PK: id + owner_organization_id)
+            sec_id = s_input.id
 
             resolved_lab_ids: list[str] = []
             for l_input in s_input.labs:
                 if l_input.is_org_owned:
                     # Lab is org-owned: persist new/updated Lab record
-                    if is_platform_org:
-                        lab_id = l_input.id
-                    else:
-                        prefix = f"{organization.slug}-"
-                        lab_id = l_input.id if l_input.id.startswith(prefix) else f"{prefix}{l_input.id}"
+                    lab_id = l_input.id
 
                     seed_cmds_json = json.dumps(l_input.seed_commands) if l_input.seed_commands else None
                     val_hash = _calculate_validator_hash(l_input.validator_script)
 
                     lab_xp = l_input.xp if (l_input.xp and l_input.xp > 0) else 30
-                    l_res = await db.execute(select(Lab).where(Lab.id == lab_id))
+                    l_res = await db.execute(select(Lab).where(Lab.id == lab_id, Lab.owner_organization_id == organization.id))
                     lab = l_res.scalar_one_or_none()
                     if not lab:
                         lab = Lab(
@@ -303,19 +292,19 @@ async def publish_module_from_cli(
                     await db.flush()
                     resolved_lab_ids.append(lab_id)
                 else:
-                    # Unchanged TLD Lab: DO NOT create a new record!
+                    # Unchanged platform lab reference
                     tld_lab_id = l_input.original_id or l_input.id
-                    tld_lab = (await db.execute(select(Lab).where(Lab.id == tld_lab_id))).scalar_one_or_none()
+                    tld_lab = (await db.execute(select(Lab).where(Lab.id == tld_lab_id, Lab.owner_organization_id == platform_org_id))).scalar_one_or_none()
                     if not tld_lab:
                         raise HTTPException(
                             status_code=status.HTTP_400_BAD_REQUEST,
-                            detail=f"Referenced TLD lab '{tld_lab_id}' does not exist.",
+                            detail=f"Referenced platform lab '{tld_lab_id}' does not exist.",
                         )
                     resolved_lab_ids.append(tld_lab_id)
 
             # Upsert Section record
             sec_xp = s_input.xp if (s_input.xp and s_input.xp > 0) else 10
-            s_res = await db.execute(select(Section).where(Section.id == sec_id))
+            s_res = await db.execute(select(Section).where(Section.id == sec_id, Section.owner_organization_id == organization.id))
             section = s_res.scalar_one_or_none()
             if not section:
                 section = Section(
@@ -340,13 +329,13 @@ async def publish_module_from_cli(
             await db.flush()
             resolved_section_ids.append(sec_id)
         else:
-            # Unchanged TLD Section: DO NOT create a new record!
+            # Unchanged platform section reference
             tld_sec_id = s_input.original_id or s_input.id
-            tld_sec = (await db.execute(select(Section).where(Section.id == tld_sec_id))).scalar_one_or_none()
+            tld_sec = (await db.execute(select(Section).where(Section.id == tld_sec_id, Section.owner_organization_id == platform_org_id))).scalar_one_or_none()
             if not tld_sec:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail=f"Referenced TLD section '{tld_sec_id}' does not exist.",
+                    detail=f"Referenced platform section '{tld_sec_id}' does not exist.",
                 )
             resolved_section_ids.append(tld_sec_id)
 

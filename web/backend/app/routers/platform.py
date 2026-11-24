@@ -90,25 +90,12 @@ async def list_platform_users(
     _perm: User = Depends(require_platform_permission("platform.permissions.manage")),
 ):
     """List all users who possess platform permissions."""
-    # Find all user IDs present in platform_user_permissions or devuser
     perm_user_ids = select(PlatformUserPermission.user_id)
-    dev_user_id = select(User.id).where(User.username == "devuser")
-
-    combined_stmt = select(User).where(
-        or_(
-            User.id.in_(perm_user_ids),
-            User.id.in_(dev_user_id),
-        )
-    ).distinct().order_by(User.username.asc())
-
-    users = (await db.execute(combined_stmt)).scalars().all()
-
-    # Pre-fetch all available DB permissions for devuser fallback
-    all_db_perms = list((await db.scalars(select(PlatformPermission.key))).all())
+    users = (await db.execute(select(User).where(User.id.in_(perm_user_ids)).distinct().order_by(User.username.asc()))).scalars().all()
 
     summaries = []
     for u in users:
-        # Fetch direct permissions (pure granular RBAC)
+        # Fetch direct permissions purely from DB
         direct_stmt = (
             select(PlatformPermission.key, PlatformUserPermission.assigned_at)
             .join(PlatformUserPermission, PlatformUserPermission.permission_id == PlatformPermission.id)
@@ -118,16 +105,12 @@ async def list_platform_users(
         direct_keys = {row[0] for row in direct_res}
         latest_assigned_at = max([row[1] for row in direct_res], default=None)
 
-        all_keys = direct_keys
-        if u.username == "devuser":
-            all_keys = set(all_db_perms)
-
         summaries.append(
             PlatformUserPermissionSummary(
                 id=u.id,
                 username=u.username,
                 email=u.email,
-                permissions=sorted(list(all_keys)),
+                permissions=sorted(list(direct_keys)),
                 assigned_at=latest_assigned_at or u.created_at,
             )
         )
@@ -216,16 +199,6 @@ async def get_user_permissions(
     if not target_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
-    if target_user.username == "devuser":
-        all_perms = list((await db.scalars(select(PlatformPermission.key))).all())
-        return PlatformUserPermissionSummary(
-            id=target_user.id,
-            username=target_user.username,
-            email=target_user.email,
-            permissions=sorted(all_perms),
-            assigned_at=target_user.created_at,
-        )
-
     direct_keys = set((await db.scalars(
         select(PlatformPermission.key)
         .join(PlatformUserPermission, PlatformUserPermission.permission_id == PlatformPermission.id)
@@ -259,13 +232,6 @@ async def update_user_permissions(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Self-lockout protection: you cannot revoke your own 'platform.permissions.manage' permission.",
-        )
-
-    # Safety guard: protect devuser root permissions
-    if target_user.username == "devuser" and "platform.permissions.manage" not in body.permissions:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot revoke root 'platform.permissions.manage' from superadmin devuser",
         )
 
     valid_perms_res = await db.execute(select(PlatformPermission).where(PlatformPermission.key.in_(body.permissions)))
@@ -335,12 +301,6 @@ async def revoke_platform_user(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Self-protection: you cannot delete or revoke your own platform operator account.",
-        )
-
-    if target_user.username == "devuser":
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot revoke platform access for primary superadmin devuser",
         )
 
     # Delete direct permissions

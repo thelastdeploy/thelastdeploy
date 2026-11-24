@@ -51,18 +51,14 @@ async def get_me(
     admin_status = await is_user_platform_admin(current_user, db)
     can_manage_workspaces = await has_platform_permission(current_user, "organization_settings.manage", db) or admin_status
 
-    # Fetch platform permissions purely from PlatformUserPermission
-    if current_user.username == "devuser":
-        user_plat_perms = sorted(list((await db.scalars(select(PlatformPermission.key))).all()))
-        user_plat_roles = ["platform_admin"]
-    else:
-        direct_perms_stmt = (
-            select(PlatformPermission.key)
-            .join(PlatformUserPermission, PlatformUserPermission.permission_id == PlatformPermission.id)
-            .where(PlatformUserPermission.user_id == current_user.id)
-        )
-        user_plat_perms = sorted(list((await db.scalars(direct_perms_stmt)).all()))
-        user_plat_roles = ["platform_admin"] if "platform.permissions.manage" in user_plat_perms else []
+    # Fetch platform permissions purely from PlatformUserPermission (DB is source of truth)
+    direct_perms_stmt = (
+        select(PlatformPermission.key)
+        .join(PlatformUserPermission, PlatformUserPermission.permission_id == PlatformPermission.id)
+        .where(PlatformUserPermission.user_id == current_user.id)
+    )
+    user_plat_perms = sorted(list((await db.scalars(direct_perms_stmt)).all()))
+    user_plat_roles = ["platform_admin"] if "platform.permissions.manage" in user_plat_perms else []
 
     # Resolve active workspace organization membership to return workspace-scoped XP
     org_slug = request.headers.get("x-organization-slug") or request.headers.get("x-organization")

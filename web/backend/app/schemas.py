@@ -241,6 +241,12 @@ class MeResponse(BaseModel):
     completed_sections: list[str]   # section IDs (from section_progress — reading/questions)
 
 
+class AdoptModuleRequest(BaseModel):
+    tld_module_id: str
+    custom_id: str | None = None
+    custom_title: str | None = None
+
+
 # --- Builder (Module Authoring) ---
 
 class BuilderLabInput(BaseModel):

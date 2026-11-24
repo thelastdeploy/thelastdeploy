@@ -26,6 +26,9 @@ from app.models import (
     LearningPath,
     OrganizationRoleAvailability,
     AuditLog,
+    Module,
+    Section,
+    Lab,
 )
 from app.schemas import (
     OrganizationResponse,
@@ -42,6 +45,9 @@ from app.schemas import (
     LearningPathUpdateRequest,
     LearningPathResponse,
     AuditLogResponse,
+    AdoptModuleRequest,
+    ModuleListItem,
+    AuthorInfo,
 )
 from app.services import log_audit_event
 from app.settings.service import SettingsService
@@ -1028,4 +1034,284 @@ async def provision_organization(
         unverified_xp=0,
         joined_at=membership.joined_at,
     )
+
+
+# ---------------------------------------------------------------------------
+# Organization Workspace Curriculum Endpoints
+# ---------------------------------------------------------------------------
+
+@router.get("/{org_slug}/curriculum", response_model=list[ModuleListItem])
+async def list_organization_curriculum(
+    org_slug: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """List all modules belonging to this organization's workspace catalog."""
+    org = await db.scalar(select(Organization).where(Organization.slug == org_slug.strip()))
+    if not org:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found")
+
+    # Caller must be a member or platform operator
+    mem = await db.scalar(
+        select(OrganizationMembership.id).where(
+            OrganizationMembership.organization_id == org.id,
+            OrganizationMembership.user_id == current_user.id,
+            OrganizationMembership.status == "active",
+        )
+    )
+    if not mem and not await is_user_platform_admin(current_user, db):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized for this organization")
+
+    stmt = (
+        select(Module)
+        .options(selectinload(Module.author))
+        .where(
+            Module.owner_organization_id == org.id,
+            Module.status != "draft",
+        )
+        .order_by(Module.title.asc())
+    )
+    modules = (await db.execute(stmt)).scalars().all()
+
+    return [
+        ModuleListItem(
+            id=m.id,
+            title=m.title,
+            description=m.description,
+            topic=m.topic,
+            difficulty=m.difficulty,
+            estimated_minutes=m.estimated_minutes,
+            total_xp=m.total_xp,
+            total_sections=len(m.sections or []),
+            completed_sections=0,
+            version=m.version,
+            author=AuthorInfo(name=m.author.username, is_official=False) if m.author else AuthorInfo(name="The Last Deploy", is_official=True),
+            status=m.status,
+            is_official_verified=(m.status == "verified"),
+        )
+        for m in modules
+    ]
+
+
+@router.get("/{org_slug}/curriculum/available", response_model=list[ModuleListItem])
+async def list_available_tld_modules(
+    org_slug: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """List official platform modules available to be directly adopted into this workspace."""
+    org = await db.scalar(select(Organization).where(Organization.slug == org_slug.strip()))
+    if not org:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found")
+
+    platform_org_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
+    if not platform_org_id:
+        return []
+
+    # Get IDs of modules already present in this organization
+    org_mod_ids = set((await db.scalars(
+        select(Module.id).where(Module.owner_organization_id == org.id)
+    )).all())
+
+    # Get verified official TLD modules not yet added to this organization
+    stmt = (
+        select(Module)
+        .options(selectinload(Module.author))
+        .where(
+            Module.owner_organization_id == platform_org_id,
+            Module.status.in_(["verified", "published"]),
+        )
+        .order_by(Module.title.asc())
+    )
+    tld_modules = (await db.execute(stmt)).scalars().all()
+
+    return [
+        ModuleListItem(
+            id=m.id,
+            title=m.title,
+            description=m.description,
+            topic=m.topic,
+            difficulty=m.difficulty,
+            estimated_minutes=m.estimated_minutes,
+            total_xp=m.total_xp,
+            total_sections=len(m.sections or []),
+            completed_sections=0,
+            version=m.version,
+            author=AuthorInfo(name="The Last Deploy", is_official=True),
+            status=m.status,
+            is_official_verified=True,
+        )
+        for m in tld_modules
+        if m.id not in org_mod_ids
+    ]
+
+
+@router.post("/{org_slug}/curriculum/adopt", response_model=ModuleListItem, status_code=status.HTTP_201_CREATED)
+async def adopt_tld_module(
+    org_slug: str,
+    body: AdoptModuleRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Directly adopt an official TLD module into the organization workspace without modifying sections."""
+    org = await db.scalar(select(Organization).where(Organization.slug == org_slug.strip()))
+    if not org:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found")
+
+    # Caller must have admin rights or content publishing permission in this org
+    mem = await db.scalar(
+        select(OrganizationMembership).where(
+            OrganizationMembership.organization_id == org.id,
+            OrganizationMembership.user_id == current_user.id,
+            OrganizationMembership.status == "active",
+        )
+    )
+    is_platform_admin = await is_user_platform_admin(current_user, db)
+    can_publish = mem and (await has_org_permission(mem, "content.publish", current_user, db) or await has_org_permission(mem, "workspace.manage", current_user, db))
+    if not can_publish and not is_platform_admin:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Requires content.publish or workspace.manage permission")
+
+    platform_org_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
+    if not platform_org_id:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Platform organization not configured")
+
+    # 1. Fetch official TLD module
+    tld_mod = (await db.execute(
+        select(Module).where(
+            Module.id == body.tld_module_id,
+            Module.owner_organization_id == platform_org_id,
+        )
+    )).scalar_one_or_none()
+    if not tld_mod:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Official TLD module '{body.tld_module_id}' not found")
+
+    target_id = (body.custom_id or tld_mod.id).strip()
+    if not target_id:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Module ID cannot be empty")
+
+    # 2. Check if (target_id, org.id) already exists
+    existing = await db.scalar(
+        select(Module.id).where(
+            Module.id == target_id,
+            Module.owner_organization_id == org.id,
+        )
+    )
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Module '{target_id}' is already present in this organization's workspace",
+        )
+
+    # 3. Golden Integrity Validation: verify all referenced sections belong to platform or org
+    sec_ids = tld_mod.sections or []
+    if sec_ids:
+        valid_sec_ids = set((await db.scalars(
+            select(Section.id).where(
+                Section.id.in_(sec_ids),
+                Section.owner_organization_id.in_([platform_org_id, org.id]),
+            )
+        )).all())
+        missing_secs = [sid for sid in sec_ids if sid not in valid_sec_ids]
+        if missing_secs:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Integrity check failed: Referenced sections not found in platform or org: {missing_secs}",
+            )
+
+    # 4. Insert new Module record for this organization
+    target_title = (body.custom_title or tld_mod.title).strip()
+    new_mod = Module(
+        id=target_id,
+        owner_organization_id=org.id,
+        title=target_title,
+        description=tld_mod.description,
+        topic=tld_mod.topic,
+        difficulty=tld_mod.difficulty,
+        estimated_minutes=tld_mod.estimated_minutes,
+        version=tld_mod.version,
+        total_xp=tld_mod.total_xp,
+        sections=tld_mod.sections,
+        shared_seed=tld_mod.shared_seed,
+        author_id=current_user.id,
+        status="verified",
+        content_hash=tld_mod.content_hash,
+    )
+    db.add(new_mod)
+    await db.commit()
+    await db.refresh(new_mod)
+
+    await log_audit_event(
+        db,
+        action="organization.curriculum.adopt",
+        entity_type="module",
+        entity_id=new_mod.id,
+        actor_user_id=current_user.id,
+        organization_id=org.id,
+        metadata={"adopted_from": tld_mod.id, "module_id": new_mod.id, "title": new_mod.title},
+    )
+
+    return ModuleListItem(
+        id=new_mod.id,
+        title=new_mod.title,
+        description=new_mod.description,
+        topic=new_mod.topic,
+        difficulty=new_mod.difficulty,
+        estimated_minutes=new_mod.estimated_minutes,
+        total_xp=new_mod.total_xp,
+        total_sections=len(new_mod.sections or []),
+        completed_sections=0,
+        version=new_mod.version,
+        author=AuthorInfo(name="The Last Deploy", is_official=True),
+        status=new_mod.status,
+        is_official_verified=True,
+    )
+
+
+@router.delete("/{org_slug}/curriculum/{module_id}", response_model=MessageResponse)
+async def remove_organization_module(
+    org_slug: str,
+    module_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Remove a module from the organization workspace."""
+    org = await db.scalar(select(Organization).where(Organization.slug == org_slug.strip()))
+    if not org:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found")
+
+    mem = await db.scalar(
+        select(OrganizationMembership).where(
+            OrganizationMembership.organization_id == org.id,
+            OrganizationMembership.user_id == current_user.id,
+            OrganizationMembership.status == "active",
+        )
+    )
+    is_platform_admin = await is_user_platform_admin(current_user, db)
+    can_manage = mem and (await has_org_permission(mem, "content.publish", current_user, db) or await has_org_permission(mem, "workspace.manage", current_user, db))
+    if not can_manage and not is_platform_admin:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Requires content.publish or workspace.manage permission")
+
+    mod = (await db.execute(
+        select(Module).where(
+            Module.id == module_id,
+            Module.owner_organization_id == org.id,
+        )
+    )).scalar_one_or_none()
+    if not mod:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found in this organization")
+
+    await db.delete(mod)
+    await db.commit()
+
+    await log_audit_event(
+        db,
+        action="organization.curriculum.remove",
+        entity_type="module",
+        entity_id=module_id,
+        actor_user_id=current_user.id,
+        organization_id=org.id,
+        metadata={"module_id": module_id},
+    )
+
+    return MessageResponse(detail=f"Module '{module_id}' successfully removed from {org.name}.")
 

@@ -58,15 +58,14 @@ def _total_xp(sections: list[Section], labs: list[Lab]) -> int:
 async def _get_visible_org_ids(request: Request, db: AsyncSession, current_user: User | None) -> list[int]:
     """
     Returns the organization IDs whose content is visible in the current request.
-    Tenant workspaces see their organization's content plus official platform content.
+    In a tenant workspace, returns ONLY that organization ID (no platform leakage).
+    In the platform workspace (no tenant header), returns the platform organization ID.
     """
     org_slug = request.headers.get("x-organization-slug") or request.headers.get("x-organization")
     org_id_hdr = request.headers.get("x-organization-id")
 
     platform_org_id = await db.scalar(
-        select(Organization.id).where(
-            (Organization.type == "platform") | (Organization.slug == "tld")
-        )
+        select(Organization.id).where(Organization.type == "platform")
     )
 
     target_org_id = None
@@ -85,9 +84,11 @@ async def _get_visible_org_ids(request: Request, db: AsyncSession, current_user:
     elif current_user:
         primary_membership = (await db.execute(
             select(OrganizationMembership.organization_id)
+            .join(Organization, Organization.id == OrganizationMembership.organization_id)
             .where(
                 OrganizationMembership.user_id == current_user.id,
                 OrganizationMembership.status == "active",
+                Organization.type != "platform",
             )
             .order_by(OrganizationMembership.created_at.asc())
         )).scalars().first()
@@ -95,8 +96,6 @@ async def _get_visible_org_ids(request: Request, db: AsyncSession, current_user:
             target_org_id = primary_membership
 
     if target_org_id:
-        if platform_org_id and target_org_id != platform_org_id:
-            return [target_org_id, platform_org_id]
         return [target_org_id]
 
     return [platform_org_id] if platform_org_id else []
@@ -225,18 +224,31 @@ async def get_all_modules_full(
     )
     modules = result.scalars().all()
 
-    # 2. Batch load all referenced sections and labs
+    platform_org_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
+    allowed_content_orgs = set(visible_org_ids)
+    if platform_org_id:
+        allowed_content_orgs.add(platform_org_id)
+
+    # 2. Batch load all referenced sections and labs (scoped to allowed orgs)
     all_sec_ids = [sid for m in modules for sid in (m.sections or [])]
     sec_map: dict[str, Section] = {}
     if all_sec_ids:
-        sec_rows = (await db.execute(select(Section).where(Section.id.in_(all_sec_ids)))).scalars().all()
-        sec_map = {s.id: s for s in sec_rows}
+        sec_rows = (await db.execute(
+            select(Section)
+            .where(Section.id.in_(all_sec_ids), Section.owner_organization_id.in_(allowed_content_orgs))
+        )).scalars().all()
+        # Prefer org-owned section over platform section if same ID exists
+        sec_map = {s.id: s for s in sorted(sec_rows, key=lambda s: 1 if s.owner_organization_id == platform_org_id else 2)}
 
     all_lab_ids = [lid for s in sec_map.values() for lid in (s.labs or [])]
     lab_map: dict[str, Lab] = {}
     if all_lab_ids:
-        lab_rows = (await db.execute(select(Lab).where(Lab.id.in_(all_lab_ids)))).scalars().all()
-        lab_map = {l.id: l for l in lab_rows}
+        lab_rows = (await db.execute(
+            select(Lab)
+            .where(Lab.id.in_(all_lab_ids), Lab.owner_organization_id.in_(allowed_content_orgs))
+        )).scalars().all()
+        # Prefer org-owned lab over platform lab if same ID exists
+        lab_map = {l.id: l for l in sorted(lab_rows, key=lambda l: 1 if l.owner_organization_id == platform_org_id else 2)}
 
     # 3. Retrieve user's lab and section progress globally
     lab_progress_map = {}
@@ -336,6 +348,10 @@ async def get_module_full(
     from sqlalchemy.orm import selectinload
 
     visible_org_ids = await _get_visible_org_ids(request, db, current_user)
+    platform_org_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
+    allowed_content_orgs = set(visible_org_ids)
+    if platform_org_id:
+        allowed_content_orgs.add(platform_org_id)
 
     result = await db.execute(
         select(Module)
@@ -353,15 +369,21 @@ async def get_module_full(
     sec_map: dict[str, Section] = {}
     sections: list[Section] = []
     if sec_ids:
-        sec_rows = (await db.execute(select(Section).where(Section.id.in_(sec_ids)))).scalars().all()
-        sec_map = {s.id: s for s in sec_rows}
+        sec_rows = (await db.execute(
+            select(Section)
+            .where(Section.id.in_(sec_ids), Section.owner_organization_id.in_(allowed_content_orgs))
+        )).scalars().all()
+        sec_map = {s.id: s for s in sorted(sec_rows, key=lambda s: 1 if s.owner_organization_id == platform_org_id else 2)}
         sections = [sec_map[sid] for sid in sec_ids if sid in sec_map]
 
     all_lab_ids = [lid for s in sections for lid in (s.labs or [])]
     lab_map: dict[str, Lab] = {}
     if all_lab_ids:
-        lab_rows = (await db.execute(select(Lab).where(Lab.id.in_(all_lab_ids)))).scalars().all()
-        lab_map = {l.id: l for l in lab_rows}
+        lab_rows = (await db.execute(
+            select(Lab)
+            .where(Lab.id.in_(all_lab_ids), Lab.owner_organization_id.in_(allowed_content_orgs))
+        )).scalars().all()
+        lab_map = {l.id: l for l in sorted(lab_rows, key=lambda l: 1 if l.owner_organization_id == platform_org_id else 2)}
 
     lab_progress_map: dict[str, LabProgress] = {}
     completed_section_ids: set[str] = set()
@@ -462,14 +484,25 @@ async def get_module_full(
 
 @router.get("/modules/{module_id}", response_model=ModuleSummary)
 async def get_module_summary(
+    request: Request,
     module_id: str,
     db: AsyncSession = Depends(get_db),
+    current_user: User | None = Depends(get_optional_user),
 ):
     from sqlalchemy.orm import selectinload
+    visible_org_ids = await _get_visible_org_ids(request, db, current_user)
+    platform_org_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
+    allowed_content_orgs = set(visible_org_ids)
+    if platform_org_id:
+        allowed_content_orgs.add(platform_org_id)
+
     result = await db.execute(
         select(Module)
         .options(selectinload(Module.author))
-        .where(Module.id == module_id)
+        .where(
+            Module.id == module_id,
+            Module.owner_organization_id.in_(visible_org_ids),
+        )
     )
     module = result.scalar_one_or_none()
     if not module:
@@ -478,14 +511,22 @@ async def get_module_summary(
     sec_ids = module.sections or []
     sections: list[Section] = []
     if sec_ids:
-        sec_rows = (await db.execute(select(Section).where(Section.id.in_(sec_ids)))).scalars().all()
-        sec_map = {s.id: s for s in sec_rows}
+        sec_rows = (await db.execute(
+            select(Section)
+            .where(Section.id.in_(sec_ids), Section.owner_organization_id.in_(allowed_content_orgs))
+        )).scalars().all()
+        sec_map = {s.id: s for s in sorted(sec_rows, key=lambda s: 1 if s.owner_organization_id == platform_org_id else 2)}
         sections = [sec_map[sid] for sid in sec_ids if sid in sec_map]
 
     all_lab_ids = [lid for s in sections for lid in (s.labs or [])]
     labs: list[Lab] = []
     if all_lab_ids:
-        labs = (await db.execute(select(Lab).where(Lab.id.in_(all_lab_ids)))).scalars().all()
+        lab_rows = (await db.execute(
+            select(Lab)
+            .where(Lab.id.in_(all_lab_ids), Lab.owner_organization_id.in_(allowed_content_orgs))
+        )).scalars().all()
+        lab_map = {l.id: l for l in sorted(lab_rows, key=lambda l: 1 if l.owner_organization_id == platform_org_id else 2)}
+        labs = [lab_map[lid] for lid in all_lab_ids if lid in lab_map]
 
     return ModuleSummary(
         id=module.id,

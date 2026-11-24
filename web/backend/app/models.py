@@ -82,7 +82,7 @@ class Module(Base):
     )
 
     id: Mapped[str] = mapped_column(String(100), primary_key=True)
-    owner_organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
+    owner_organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), primary_key=True, nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     topic: Mapped[str | None] = mapped_column(String(50), nullable=True)
@@ -116,7 +116,7 @@ class Section(Base):
     )
 
     id: Mapped[str] = mapped_column(String(100), primary_key=True)
-    owner_organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
+    owner_organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), primary_key=True, nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     xp: Mapped[int] = mapped_column(Integer, default=10)
     content: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -128,7 +128,6 @@ class Section(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     owner_organization: Mapped["Organization"] = relationship("Organization")
-    progress: Mapped[list["SectionProgress"]] = relationship("SectionProgress", back_populates="section")
 
 
 class Lab(Base):
@@ -138,7 +137,7 @@ class Lab(Base):
     )
 
     id: Mapped[str] = mapped_column(String(100), primary_key=True)  # globally unique
-    owner_organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
+    owner_organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), primary_key=True, nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     xp: Mapped[int] = mapped_column(Integer, default=0)
     estimated_minutes: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -153,7 +152,6 @@ class Lab(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     owner_organization: Mapped["Organization"] = relationship("Organization")
-    progress: Mapped[list["LabProgress"]] = relationship("LabProgress", back_populates="lab")
 
 
 class LabProgress(Base):
@@ -165,12 +163,11 @@ class LabProgress(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     organization_membership_id: Mapped[int] = mapped_column(Integer, ForeignKey("organization_memberships.id", ondelete="CASCADE"), index=True, nullable=False)
-    lab_id: Mapped[str] = mapped_column(String(100), ForeignKey("labs.id", ondelete="CASCADE"), index=True, nullable=False)
+    lab_id: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
     xp_awarded: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     membership: Mapped["OrganizationMembership"] = relationship("OrganizationMembership", back_populates="lab_progress")
-    lab: Mapped["Lab"] = relationship("Lab", back_populates="progress")
 
 
 class SectionProgress(Base):
@@ -182,12 +179,11 @@ class SectionProgress(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     organization_membership_id: Mapped[int] = mapped_column(Integer, ForeignKey("organization_memberships.id", ondelete="CASCADE"), index=True, nullable=False)
-    section_id: Mapped[str] = mapped_column(String(100), ForeignKey("sections.id", ondelete="CASCADE"), index=True, nullable=False)
+    section_id: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
     xp_awarded: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     membership: Mapped["OrganizationMembership"] = relationship("OrganizationMembership", back_populates="section_progress")
-    section: Mapped["Section"] = relationship("Section", back_populates="progress")
 
 
 # =============================================================================

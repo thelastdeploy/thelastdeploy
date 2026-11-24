@@ -18,6 +18,7 @@ import {
   OrgSettingItemResponse,
   AuditLogResponse,
   ModuleDetail,
+  Module,
   AnalyticsOverviewResponse,
   AnalyticsTrendsResponse,
   CohortAnalyticsItem,
@@ -60,6 +61,8 @@ import {
   Award,
   Activity,
   Eye,
+  Layers,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -74,7 +77,7 @@ export default function OrgAdminPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Tab navigation
-  type TabKey = "overview" | "analytics" | "members" | "invitations" | "requests" | "cohorts" | "paths" | "settings" | "audit";
+  type TabKey = "overview" | "analytics" | "members" | "invitations" | "requests" | "cohorts" | "paths" | "curriculum" | "settings" | "audit";
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
 
   // Tab Data States
@@ -84,6 +87,16 @@ export default function OrgAdminPage() {
   const [accessRequests, setAccessRequests] = useState<AccessRequestResponse[]>([]);
   const [cohorts, setCohorts] = useState<CohortResponse[]>([]);
   const [learningPaths, setLearningPaths] = useState<LearningPathResponse[]>([]);
+  const [curriculumModules, setCurriculumModules] = useState<Module[]>([]);
+  const [curriculumLoading, setCurriculumLoading] = useState(false);
+  const [availableTLDModules, setAvailableTLDModules] = useState<Module[]>([]);
+  const [showAdoptModal, setShowAdoptModal] = useState(false);
+  const [adoptLoading, setAdoptLoading] = useState(false);
+  const [adoptSearch, setAdoptSearch] = useState("");
+  const [selectedAdoptModule, setSelectedAdoptModule] = useState<Module | null>(null);
+  const [customAdoptId, setCustomAdoptId] = useState("");
+  const [customAdoptTitle, setCustomAdoptTitle] = useState("");
+  const [adoptError, setAdoptError] = useState<string | null>(null);
   const [settingsList, setSettingsList] = useState<OrgSettingItemResponse[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLogResponse[]>([]);
   const [availableModules, setAvailableModules] = useState<ModuleDetail[]>([]);
@@ -163,6 +176,7 @@ export default function OrgAdminPage() {
     if (activeTab === "requests") loadAccessRequests();
     if (activeTab === "cohorts") loadCohorts();
     if (activeTab === "paths") loadLearningPaths();
+    if (activeTab === "curriculum") loadCurriculum();
     if (activeTab === "settings") loadSettings();
     if (activeTab === "audit") loadAuditLogs();
   }, [activeTab, org?.id]);
@@ -176,18 +190,77 @@ export default function OrgAdminPage() {
       setOrg(orgData);
 
       // Pre-load overview stats passing orgSlug explicitly without mutating global workspace session
-      const [membersData, cohortsData, invStats] = await Promise.all([
+      const [membersData, cohortsData, invStats, currData] = await Promise.all([
         api.getOrganizationMembers(orgSlug).catch(() => []),
         api.getCohorts(orgSlug).catch(() => []),
         api.getInvitationStats(orgSlug).catch(() => null),
+        api.getOrgCurriculum(orgSlug).catch(() => []),
       ]);
       setMembers(membersData);
       setCohorts(cohortsData);
       setInvitationStats(invStats);
+      setCurriculumModules(currData);
     } catch (err: any) {
       setError(err.message || "Failed to load organization.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadCurriculum = async () => {
+    if (!orgSlug) return;
+    try {
+      setCurriculumLoading(true);
+      const data = await api.getOrgCurriculum(orgSlug);
+      setCurriculumModules(data);
+    } catch (err: any) {
+      console.error("Failed to load curriculum:", err);
+    } finally {
+      setCurriculumLoading(false);
+    }
+  };
+
+  const loadAvailableTLD = async () => {
+    if (!orgSlug) return;
+    try {
+      const data = await api.getAvailableTLDModules(orgSlug);
+      setAvailableTLDModules(data);
+    } catch (err: any) {
+      console.error("Failed to load available TLD modules:", err);
+    }
+  };
+
+  const handleAdoptModule = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!orgSlug || !selectedAdoptModule) return;
+    setAdoptLoading(true);
+    setAdoptError(null);
+    try {
+      await api.adoptTLDModule(orgSlug, {
+        tld_module_id: selectedAdoptModule.id,
+        custom_id: customAdoptId.trim() || undefined,
+        custom_title: customAdoptTitle.trim() || undefined,
+      });
+      setShowAdoptModal(false);
+      setSelectedAdoptModule(null);
+      setCustomAdoptId("");
+      setCustomAdoptTitle("");
+      await loadCurriculum();
+    } catch (err: any) {
+      setAdoptError(err.message || "Failed to adopt module");
+    } finally {
+      setAdoptLoading(false);
+    }
+  };
+
+  const handleRemoveModule = async (moduleId: string) => {
+    if (!orgSlug) return;
+    if (!confirm(`Are you sure you want to remove '${moduleId}' from this organization's workspace?`)) return;
+    try {
+      await api.removeOrgModule(orgSlug, moduleId);
+      await loadCurriculum();
+    } catch (err: any) {
+      alert(err.message || "Failed to remove module");
     }
   };
 
@@ -579,6 +652,7 @@ export default function OrgAdminPage() {
           { key: "requests", label: "Access Requests", count: accessRequests.filter((r) => r.status === "pending").length, icon: ShieldCheck },
           { key: "cohorts", label: "Cohorts", count: cohorts.length, icon: GraduationCap },
           { key: "paths", label: "Learning Paths", count: learningPaths.length, icon: BookOpen },
+          { key: "curriculum", label: "Curriculum", count: curriculumModules.length, icon: Layers },
           { key: "settings", label: "Settings", icon: Settings },
           { key: "audit", label: "Audit Logs", icon: FileText },
         ].map((tab) => {
@@ -1426,6 +1500,112 @@ export default function OrgAdminPage() {
         </div>
       )}
 
+      {/* CURRICULUM TAB */}
+      {activeTab === "curriculum" && (
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-sm font-bold text-foreground">Workspace Curriculum Catalog</h3>
+              <p className="text-xs text-muted-foreground">
+                Manage learning modules available to learners and cohorts in this organization.
+              </p>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => {
+                setSelectedAdoptModule(null);
+                setCustomAdoptId("");
+                setCustomAdoptTitle("");
+                setAdoptError(null);
+                setShowAdoptModal(true);
+                loadAvailableTLD();
+              }}
+              className="rounded-xl bg-[var(--accent-primary)] text-black hover:opacity-90 font-bold text-xs h-9 cursor-pointer gap-1.5 shadow-sm"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Adopt Platform Module</span>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {curriculumModules.map((mod) => (
+              <Card key={mod.id} className="rounded-2xl border-border bg-card flex flex-col justify-between hover:border-[var(--accent-primary)]/40 transition-all">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-muted font-bold text-muted-foreground">
+                      {mod.topic || "devops"}
+                    </span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      mod.is_official_verified
+                        ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                        : "bg-blue-500/10 text-blue-500 border border-blue-500/20"
+                    }`}>
+                      {mod.is_official_verified ? "Official Verified" : mod.status}
+                    </span>
+                  </div>
+                  <CardTitle className="text-base font-bold mt-2 leading-snug">{mod.title}</CardTitle>
+                  <CardDescription className="text-xs line-clamp-2 mt-1">{mod.description || "No description provided."}</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border">
+                    <div className="flex items-center gap-3">
+                      <span>{mod.total_sections} sections</span>
+                      <span>•</span>
+                      <span>{mod.difficulty || "intermediate"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => router.push(`/modules/${mod.id}`)}
+                        className="h-8 px-2 text-xs hover:text-[var(--accent-primary)] cursor-pointer"
+                        title="View module syllabus"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleRemoveModule(mod.id)}
+                        className="h-8 px-2 text-xs text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 cursor-pointer"
+                        title="Remove module from workspace"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+
+            {curriculumModules.length === 0 && !curriculumLoading && (
+              <div className="col-span-full py-16 text-center border border-dashed border-border rounded-2xl bg-muted/20">
+                <Layers className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
+                <h4 className="text-sm font-bold text-foreground">No modules in this workspace yet</h4>
+                <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+                  Adopt official modules from the platform library or publish custom curriculum using the TLD CLI.
+                </p>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setSelectedAdoptModule(null);
+                    setCustomAdoptId("");
+                    setCustomAdoptTitle("");
+                    setAdoptError(null);
+                    setShowAdoptModal(true);
+                    loadAvailableTLD();
+                  }}
+                  className="mt-4 rounded-xl bg-[var(--accent-primary)] text-black hover:opacity-90 font-bold text-xs h-9 cursor-pointer gap-1.5"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Browse & Adopt Modules</span>
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* 7. SETTINGS TAB (Module E) */}
       {activeTab === "settings" && (
         <div className="space-y-6 max-w-2xl">
@@ -2008,6 +2188,160 @@ export default function OrgAdminPage() {
               </Button>
             </div>
           </Card>
+        </div>
+      )}
+
+      {/* ADOPT OFFICIAL MODULE MODAL */}
+      {showAdoptModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div className="p-6 border-b border-border flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-foreground">Adopt Official Platform Module</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Directly add verified TLD curriculum to this organization without modifying underlying labs.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAdoptModal(false)}
+                className="text-muted-foreground hover:text-foreground cursor-pointer p-1 rounded-lg hover:bg-muted"
+              >
+                <XCircle className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              {adoptError && (
+                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  <span>{adoptError}</span>
+                </div>
+              )}
+
+              {!selectedAdoptModule ? (
+                <>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search official modules by title or topic..."
+                      value={adoptSearch}
+                      onChange={(e) => setAdoptSearch(e.target.value)}
+                      className="pl-9 rounded-xl text-xs h-9"
+                    />
+                  </div>
+
+                  <div className="space-y-2 mt-3 max-h-[400px] overflow-y-auto pr-1">
+                    {availableTLDModules
+                      .filter((m) =>
+                        m.title.toLowerCase().includes(adoptSearch.toLowerCase()) ||
+                        (m.topic && m.topic.toLowerCase().includes(adoptSearch.toLowerCase()))
+                      )
+                      .map((mod) => (
+                        <div
+                          key={mod.id}
+                          onClick={() => {
+                            setSelectedAdoptModule(mod);
+                            setCustomAdoptId(mod.id);
+                            setCustomAdoptTitle(mod.title);
+                          }}
+                          className="p-4 rounded-xl border border-border hover:border-[var(--accent-primary)]/60 bg-muted/20 hover:bg-muted/40 transition-all cursor-pointer flex items-center justify-between gap-4"
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-bold text-foreground">{mod.title}</span>
+                              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-muted font-bold text-muted-foreground">
+                                {mod.topic}
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted-foreground line-clamp-1">{mod.description}</p>
+                            <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+                              <span>{mod.total_sections} sections</span>
+                              <span>•</span>
+                              <span>{mod.difficulty}</span>
+                              <span>•</span>
+                              <span>{mod.estimated_minutes} min</span>
+                            </div>
+                          </div>
+                          <Button size="sm" variant="outline" className="rounded-xl text-xs font-bold shrink-0">
+                            Select
+                          </Button>
+                        </div>
+                      ))}
+
+                    {availableTLDModules.length === 0 && (
+                      <div className="py-8 text-center text-xs text-muted-foreground">
+                        All official platform modules have already been adopted into this workspace!
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <form onSubmit={handleAdoptModule} className="space-y-4">
+                  <div className="p-4 rounded-xl border border-border bg-muted/30 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs text-muted-foreground font-mono">Selected Source Module</div>
+                      <div className="text-sm font-bold text-foreground mt-0.5">{selectedAdoptModule.title}</div>
+                      <div className="text-xs text-muted-foreground font-mono">{selectedAdoptModule.id}</div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setSelectedAdoptModule(null)}
+                      className="text-xs cursor-pointer"
+                    >
+                      Change
+                    </Button>
+                  </div>
+
+                  <div className="space-y-3 pt-2">
+                    <div>
+                      <label className="text-xs font-bold text-foreground mb-1 block">Module ID in Workspace</label>
+                      <Input
+                        value={customAdoptId}
+                        onChange={(e) => setCustomAdoptId(e.target.value)}
+                        placeholder="e.g. linux-fundamentals"
+                        className="rounded-xl text-xs font-mono h-9"
+                        required
+                      />
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        Defaults to the official ID. You can customize the identifier for this workspace.
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-foreground mb-1 block">Module Title in Workspace</label>
+                      <Input
+                        value={customAdoptTitle}
+                        onChange={(e) => setCustomAdoptTitle(e.target.value)}
+                        placeholder="e.g. Linux Fundamentals"
+                        className="rounded-xl text-xs h-9"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-border flex items-center justify-end gap-2.5">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setSelectedAdoptModule(null)}
+                      className="rounded-xl text-xs font-bold h-9"
+                    >
+                      Back
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={adoptLoading}
+                      className="rounded-xl bg-[var(--accent-primary)] text-black hover:opacity-90 font-bold text-xs h-9"
+                    >
+                      {adoptLoading ? "Adopting..." : "Confirm & Add to Workspace"}
+                    </Button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

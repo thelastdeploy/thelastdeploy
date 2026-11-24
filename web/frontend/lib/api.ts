@@ -383,6 +383,26 @@ export const api = {
   getLearningPaths: (orgSlug: string) =>
     request<LearningPathResponse[]>(`/organizations/${orgSlug}/learning-paths`),
 
+  getOrgCurriculum: (orgSlug: string) =>
+    request<Module[]>(`/organizations/${orgSlug}/curriculum`),
+
+  getAvailableTLDModules: (orgSlug: string) =>
+    request<Module[]>(`/organizations/${orgSlug}/curriculum/available`),
+
+  adoptTLDModule: (
+    orgSlug: string,
+    data: { tld_module_id: string; custom_id?: string; custom_title?: string }
+  ) =>
+    request<Module>(`/organizations/${orgSlug}/curriculum/adopt`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  removeOrgModule: (orgSlug: string, moduleId: string) =>
+    request<{ detail: string }>(`/organizations/${orgSlug}/curriculum/${moduleId}`, {
+      method: "DELETE",
+    }),
+
   createLearningPath: (orgSlug: string, data: { name: string; slug: string; description?: string; visibility?: string; modules?: string[] }) =>
     request<LearningPathResponse>(`/organizations/${orgSlug}/learning-paths`, {
       method: "POST",
