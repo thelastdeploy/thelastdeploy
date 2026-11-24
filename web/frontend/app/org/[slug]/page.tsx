@@ -2,8 +2,8 @@
 
 "use client";
 
-import { useEffect, useState, use } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 import {
@@ -63,10 +63,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export default function OrgAdminPage({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = use(params);
-  const orgSlug = resolvedParams.slug;
+export default function OrgAdminPage() {
   const router = useRouter();
+  const params = useParams();
+  const orgSlug = (params?.slug as string) || "";
   const { user, loading: authLoading } = useAuth();
 
   const [org, setOrg] = useState<OrganizationResponse | null>(null);
@@ -168,18 +168,18 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
   }, [activeTab, org?.id]);
 
   const loadOrgData = async () => {
+    if (!orgSlug) return;
     if (!org) setLoading(true);
     setError(null);
     try {
       const orgData = await api.getOrganization(orgSlug);
       setOrg(orgData);
 
-      // Pre-load overview stats
-      api.setSelectedOrg(orgSlug);
+      // Pre-load overview stats passing orgSlug explicitly without mutating global workspace session
       const [membersData, cohortsData, invStats] = await Promise.all([
         api.getOrganizationMembers(orgSlug).catch(() => []),
         api.getCohorts(orgSlug).catch(() => []),
-        api.getInvitationStats().catch(() => null),
+        api.getInvitationStats(orgSlug).catch(() => null),
       ]);
       setMembers(membersData);
       setCohorts(cohortsData);
@@ -192,6 +192,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
   };
 
   const loadMembers = async () => {
+    if (!orgSlug) return;
     try {
       const res = await api.getOrganizationMembers(orgSlug);
       setMembers(res);
@@ -201,10 +202,11 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
   };
 
   const loadInvitations = async () => {
+    if (!orgSlug) return;
     try {
       const [invs, stats] = await Promise.all([
-        api.getInvitations(),
-        api.getInvitationStats(),
+        api.getInvitations(orgSlug),
+        api.getInvitationStats(orgSlug),
       ]);
       setInvitations(invs);
       setInvitationStats(stats);
@@ -214,8 +216,9 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
   };
 
   const loadAccessRequests = async () => {
+    if (!orgSlug) return;
     try {
-      const reqs = await api.getAccessRequests();
+      const reqs = await api.getAccessRequests(orgSlug);
       setAccessRequests(reqs);
     } catch (err) {
       console.error(err);
@@ -327,7 +330,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
         email: inviteEmail.trim(),
         role: inviteRole,
         cohort_id: inviteCohortId,
-      });
+      }, orgSlug);
       setShowInviteModal(false);
       setInviteEmail("");
       loadInvitations();
@@ -343,7 +346,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
     if (!bulkFile) return;
     setBulkLoading(true);
     try {
-      const res = await api.uploadBulkInvitations(bulkFile, inviteCohortId);
+      const res = await api.uploadBulkInvitations(bulkFile, inviteCohortId, orgSlug);
       setBulkResult(res);
       loadInvitations();
     } catch (err: any) {
@@ -356,7 +359,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
   const handleRevokeInvite = async (id: number) => {
     if (!confirm("Are you sure you want to revoke this invitation?")) return;
     try {
-      await api.revokeInvitation(id);
+      await api.revokeInvitation(id, orgSlug);
       loadInvitations();
     } catch (err: any) {
       alert("Failed to revoke: " + err.message);
@@ -365,7 +368,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
 
   const handleApproveRequest = async (id: number) => {
     try {
-      await api.approveAccessRequest(id);
+      await api.approveAccessRequest(id, orgSlug);
       loadAccessRequests();
     } catch (err: any) {
       alert("Failed to approve request: " + err.message);
@@ -375,7 +378,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
   const handleRejectRequest = async () => {
     if (!rejectReqId) return;
     try {
-      await api.rejectAccessRequest(rejectReqId, rejectReason.trim() || undefined);
+      await api.rejectAccessRequest(rejectReqId, rejectReason.trim() || undefined, orgSlug);
       setRejectReqId(null);
       setRejectReason("");
       loadAccessRequests();
@@ -481,7 +484,7 @@ export default function OrgAdminPage({ params }: { params: Promise<{ slug: strin
     }
   };
 
-  if (authLoading || loading) {
+  if (authLoading || (loading && !org)) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
         <div className="text-muted-foreground animate-pulse text-sm font-mono">

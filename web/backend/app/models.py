@@ -31,6 +31,7 @@ class User(Base):
     sessions: Mapped[list["UserSession"]] = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
     memberships: Mapped[list["OrganizationMembership"]] = relationship("OrganizationMembership", back_populates="user", cascade="all, delete-orphan")
     platform_roles: Mapped[list["PlatformUserRole"]] = relationship("PlatformUserRole", back_populates="user", cascade="all, delete-orphan", foreign_keys="PlatformUserRole.user_id")
+    platform_permissions: Mapped[list["PlatformUserPermission"]] = relationship("PlatformUserPermission", back_populates="user", cascade="all, delete-orphan", foreign_keys="PlatformUserPermission.user_id")
 
 
 class UserSession(Base):
@@ -373,6 +374,24 @@ class PlatformUserRole(Base):
 
     user: Mapped["User"] = relationship("User", back_populates="platform_roles", foreign_keys=[user_id])
     platform_role: Mapped["PlatformRole"] = relationship("PlatformRole")
+    assigner: Mapped["User | None"] = relationship("User", foreign_keys=[assigned_by])
+
+
+class PlatformUserPermission(Base):
+    __tablename__ = "platform_user_permissions"
+    __table_args__ = (
+        UniqueConstraint("user_id", "permission_id", name="uq_platform_user_perms"),
+        Index("idx_platform_user_perms_user", "user_id"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    permission_id: Mapped[int] = mapped_column(Integer, ForeignKey("platform_permissions.id", ondelete="CASCADE"), nullable=False)
+    assigned_by: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    assigned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    user: Mapped["User"] = relationship("User", back_populates="platform_permissions", foreign_keys=[user_id])
+    permission: Mapped["PlatformPermission"] = relationship("PlatformPermission")
     assigner: Mapped["User | None"] = relationship("User", foreign_keys=[assigned_by])
 
 

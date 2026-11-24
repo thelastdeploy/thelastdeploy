@@ -8,7 +8,8 @@ from app.analytics import analytics
 from app.routers import (
     auth, modules, results, users, builder,
     analytics as analytics_router, organizations,
-    settings as settings_router, onboarding, invitations
+    settings as settings_router, onboarding, invitations,
+    platform
 )
 
 
@@ -67,6 +68,7 @@ app.include_router(invitations.router)
 app.include_router(settings_router.router)
 app.include_router(settings_router.admin_router)
 app.include_router(organizations.router)
+app.include_router(platform.router)
 
 
 @app.get("/")

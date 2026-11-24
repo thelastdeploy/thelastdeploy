@@ -72,6 +72,7 @@ export interface OrganizationMembershipInfo {
   type: string;
   is_platform: boolean;
   status: string;
+  domains?: string[];
   roles: string[];
   total_xp: number;
   unverified_xp: number;
@@ -507,5 +508,31 @@ export interface PlatformOrgSummaryItem {
   total_verified_xp: number;
   total_unverified_xp: number;
 }
+
+export interface PlatformPermissionItem {
+  id: number;
+  key: string;
+  description: string;
+}
+
+export interface PlatformUserPermissionSummary {
+  id: number;
+  username: string;
+  email: string;
+  permissions: string[];
+  assigned_at?: string | null;
+}
+
+export interface OrgSettingAdminItemResponse {
+  key: string;
+  is_enabled: boolean;
+  value: any;
+  default: any;
+  category: string;
+  description: string;
+  data_type: string;
+  updated_at?: string | null;
+}
+
 
 

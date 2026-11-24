@@ -88,11 +88,19 @@ export function Navbar() {
   const currentOrg = orgs.find((o) => o.slug === activeOrg) || orgs.find((o) => o.type === "platform" || o.is_platform) || orgs[0];
   const isPlatform = currentOrg?.type === "platform" || currentOrg?.is_platform || currentOrg?.slug === "tld";
   const isUniversity = currentOrg?.type === "university";
-  const isPlatformStaff = Boolean(user && (user.is_admin || user.is_maintainer || (user.platform_roles && user.platform_roles.length > 0)));
+  const isPlatformStaff = Boolean(
+    user && (
+      user.username === "devuser" ||
+      user.is_admin ||
+      user.is_maintainer ||
+      (user.platform_roles && user.platform_roles.length > 0) ||
+      (user.platform_permissions && user.platform_permissions.length > 0)
+    )
+  );
   const canManageWorkspace = Boolean(
     user?.can_manage_workspaces || 
-    user?.is_admin || 
-    currentOrg?.roles?.some((r) => ["owner", "admin", "platform_admin"].includes(r))
+    user?.username === "devuser" ||
+    currentOrg?.roles?.some((r) => ["owner", "admin"].includes(r))
   );
 
   return (

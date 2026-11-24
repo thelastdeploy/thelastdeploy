@@ -14,7 +14,7 @@ from app.models import (  # noqa: F401 — registers models
     User, UserSession, CLIDeviceAuth, Module, Section, Lab, LabProgress, SectionProgress,
     Organization, OrganizationMembership, Permission, Role,
     RolePermission, OrganizationRoleAvailability, MembershipRole, PlatformRole,
-    PlatformPermission, PlatformRolePermission, PlatformUserRole, Cohort,
+    PlatformPermission, PlatformRolePermission, PlatformUserRole, PlatformUserPermission, Cohort,
     CohortMembership, CohortInvite, LearningPath, AuditLog,
     OrganizationSettingAvailability, OrganizationSetting,
     OrganizationInvitation, OrganizationAccessRequest

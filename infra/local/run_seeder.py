@@ -20,6 +20,9 @@ from app.models import (
     MembershipRole,
     PlatformRole,
     PlatformUserRole,
+    PlatformPermission,
+    PlatformUserPermission,
+    PlatformRolePermission,
     Cohort,
     CohortMembership,
     LearningPath,
@@ -204,6 +207,11 @@ async def seed_users(db, org_map):
             await db.flush()
             print("  ✅ Linked organization_settings.manage to platform_admin role")
 
+    # Fetch all platform permissions into map
+    all_perm_objs = (await db.execute(select(PlatformPermission))).scalars().all()
+    perm_map = {p.key: p for p in all_perm_objs}
+    all_perm_keys = list(perm_map.keys())
+
     # Fetch org roles
     role_owner = (await db.execute(select(Role).where(Role.slug == "owner"))).scalar_one_or_none()
     role_admin = (await db.execute(select(Role).where(Role.slug == "admin"))).scalar_one_or_none()
@@ -224,24 +232,37 @@ async def seed_users(db, org_map):
             "username": "devuser",
             "email": "dev@example.com",
             "platform_roles": [plat_admin_role],
+            "platform_permissions": all_perm_keys,
             "memberships": [{"org_slug": "tld", "roles": ["owner", "admin"], "xp": 40}],
         },
         {
             "username": "testdev",
             "email": "testdev@example.com",
             "platform_roles": [plat_admin_role],
+            "platform_permissions": all_perm_keys,
             "memberships": [{"org_slug": "tld", "roles": ["owner", "admin"], "xp": 55}],
         },
         {
             "username": "kai_curriculum",
             "email": "kai.curriculum@example.com",
             "platform_roles": [curr_lead_role],
+            "platform_permissions": [
+                "platform.modules.view_all",
+                "platform.modules.verify",
+                "platform.modules.calibrate_xp",
+                "platform.modules.reject",
+            ],
             "memberships": [{"org_slug": "tld", "roles": ["instructor"], "xp": 180}],
         },
         {
             "username": "sam_support",
             "email": "sam.support@example.com",
             "platform_roles": [support_role],
+            "platform_permissions": [
+                "platform.organizations.view",
+                "platform.analytics.view",
+                "platform.audit.view",
+            ],
             "memberships": [{"org_slug": "tld", "roles": ["learner"], "xp": 50}],
         },
         # Platform-only Learners
@@ -288,6 +309,7 @@ async def seed_users(db, org_map):
             "username": "ethan_apex",
             "email": "ethan.apex@example.com",
             "platform_roles": [curr_lead_role],
+            "platform_permissions": ["platform.modules.view_all", "platform.modules.verify"],
             "memberships": [
                 {"org_slug": "apex-univ", "roles": ["learner"], "xp": 80},
                 {"org_slug": "tld", "roles": ["instructor"], "xp": 80},
@@ -373,6 +395,19 @@ async def seed_users(db, org_map):
                 ))).scalar_one_or_none()
                 if not has_pr:
                     db.add(PlatformUserRole(user_id=user.id, platform_role_id=pr.id))
+
+        # Direct Platform Permissions
+        for pkey in udef.get("platform_permissions", []):
+            perm_obj = perm_map.get(pkey)
+            if perm_obj:
+                has_perm = (await db.scalar(
+                    select(PlatformUserPermission.id).where(
+                        PlatformUserPermission.user_id == user.id,
+                        PlatformUserPermission.permission_id == perm_obj.id,
+                    )
+                )) is not None
+                if not has_perm:
+                    db.add(PlatformUserPermission(user_id=user.id, permission_id=perm_obj.id))
 
         # Memberships
         for mdef in udef["memberships"]:

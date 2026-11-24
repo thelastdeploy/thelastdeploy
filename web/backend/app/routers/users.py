@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from app.dependencies import get_db, get_current_user, is_user_maintainer, is_user_platform_admin, has_platform_permission
-from app.models import User, LabProgress, SectionProgress, PlatformRole, PlatformUserRole, PlatformRolePermission, PlatformPermission, Organization, OrganizationMembership
+from app.models import User, LabProgress, SectionProgress, PlatformRole, PlatformUserRole, PlatformRolePermission, PlatformPermission, PlatformUserPermission, Organization, OrganizationMembership
 from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse, MaintainerAddRequest
 from app.auth import verify_password, hash_password
 from app.email import send_verification_email
@@ -59,13 +59,28 @@ async def get_me(
     )
     user_plat_roles = list((await db.scalars(roles_stmt)).all())
 
-    perms_stmt = (
+    # Fetch platform permissions (direct + role-inherited)
+    direct_perms_stmt = (
+        select(PlatformPermission.key)
+        .join(PlatformUserPermission, PlatformUserPermission.permission_id == PlatformPermission.id)
+        .where(PlatformUserPermission.user_id == current_user.id)
+    )
+    direct_perms = set((await db.scalars(direct_perms_stmt)).all())
+
+    role_perms_stmt = (
         select(PlatformPermission.key)
         .join(PlatformRolePermission, PlatformRolePermission.permission_id == PlatformPermission.id)
         .join(PlatformUserRole, PlatformUserRole.platform_role_id == PlatformRolePermission.platform_role_id)
         .where(PlatformUserRole.user_id == current_user.id)
     )
-    user_plat_perms = list((await db.scalars(perms_stmt)).all())
+    role_perms = set((await db.scalars(role_perms_stmt)).all())
+
+    all_effective_perms = direct_perms | role_perms
+    if current_user.username == "devuser" or "platform_admin" in user_plat_roles:
+        all_db_perms = set((await db.scalars(select(PlatformPermission.key))).all())
+        all_effective_perms |= all_db_perms
+
+    user_plat_perms = sorted(list(all_effective_perms))
 
     # Resolve active workspace organization membership to return workspace-scoped XP
     org_slug = request.headers.get("x-organization-slug") or request.headers.get("x-organization")
