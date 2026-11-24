@@ -265,6 +265,35 @@ async def seed_users(db, org_map):
             ],
             "memberships": [{"org_slug": "tld", "roles": ["learner"], "xp": 50}],
         },
+        {
+            "username": "elena_auditor",
+            "email": "elena.auditor@example.com",
+            "platform_roles": [],
+            "platform_permissions": [
+                "platform.audit.view",
+                "platform.analytics.view",
+                "platform.analytics.export",
+            ],
+            "memberships": [{"org_slug": "tld", "roles": ["learner"], "xp": 60}],
+        },
+        {
+            "username": "nora_onboarding",
+            "email": "nora.onboarding@example.com",
+            "platform_roles": [],
+            "platform_permissions": [
+                "platform.organizations.view",
+                "platform.organizations.create",
+                "platform.organizations.settings",
+            ],
+            "memberships": [{"org_slug": "tld", "roles": ["learner"], "xp": 90}],
+        },
+        {
+            "username": "alex_operator",
+            "email": "alex.operator@example.com",
+            "platform_roles": [],
+            "platform_permissions": [],
+            "memberships": [{"org_slug": "tld", "roles": ["learner"], "xp": 10}],
+        },
         # Platform-only Learners
         {
             "username": "maya_tld",
