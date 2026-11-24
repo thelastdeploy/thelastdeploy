@@ -11,7 +11,6 @@ import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import {
   Shield,
   ShieldAlert,
-  ShieldCheck,
   Lock,
   Unlock,
   KeyRound,
@@ -438,7 +437,7 @@ export default function UserRbacConfigPage() {
   if (!operator) return null;
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-background text-foreground pb-24">
+    <div className="min-h-[calc(100vh-64px)] bg-background text-foreground pb-12">
       {/* Top Header & Breadcrumbs */}
       <div className="border-b border-border bg-card/40 backdrop-blur-md sticky top-16 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -510,7 +509,7 @@ export default function UserRbacConfigPage() {
                 className="rounded-xl text-xs h-9 font-bold bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 text-black cursor-pointer gap-1.5 shadow-[0_0_15px_rgba(var(--accent-primary-rgb),0.2)]"
               >
                 {saving ? <LoadingSpinner /> : <Save className="h-3.5 w-3.5" />}
-                <span>Save Permissions</span>
+                <span>Save</span>
               </Button>
             </div>
           </div>
@@ -813,55 +812,6 @@ export default function UserRbacConfigPage() {
                 })}
               </div>
             )}
-          </div>
-        </div>
-      </div>
-
-      {/* Sticky Bottom Dock: Live Diff & Commit Actions */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-card/90 backdrop-blur-md py-3 px-4 z-40 shadow-2xl">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className={`h-2.5 w-2.5 rounded-full ${diff.hasChanges ? "bg-amber-400 animate-pulse" : "bg-emerald-400"}`} />
-              <span className="text-xs font-mono font-bold">
-                {diff.hasChanges ? (
-                  <span>
-                    Pending Commits:{" "}
-                    {diff.added.length > 0 && <span className="text-emerald-400 font-bold">+{diff.added.length} Granted </span>}
-                    {diff.removed.length > 0 && <span className="text-red-400 font-bold">-{diff.removed.length} Revoked</span>}
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground">Configuration clean • No unsaved changes</span>
-                )}
-              </span>
-            </div>
-
-            {/* Audit log indicator */}
-            <span className="hidden md:inline-flex items-center gap-1 text-[11px] text-muted-foreground font-mono">
-              <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
-              <span>Immutable audit trail enforced</span>
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleReset}
-              disabled={!diff.hasChanges || saving}
-              className="rounded-xl text-xs h-9 cursor-pointer"
-            >
-              Discard Changes
-            </Button>
-            <Button
-              size="sm"
-              onClick={handleSave}
-              disabled={!diff.hasChanges || saving}
-              className="rounded-xl text-xs h-9 font-bold bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 text-black cursor-pointer gap-2 shadow-[0_0_15px_rgba(var(--accent-primary-rgb),0.3)]"
-            >
-              {saving ? <LoadingSpinner /> : <Save className="h-4 w-4" />}
-              <span>Commit Changes</span>
-            </Button>
           </div>
         </div>
       </div>

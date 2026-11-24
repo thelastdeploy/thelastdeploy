@@ -63,3 +63,4 @@ def downgrade() -> None:
             ('platform.system.maintenance', 'System Maintenance & Notices: Configure global platform maintenance modes or system announcements')
         ON CONFLICT (key) DO NOTHING
     """)
+
