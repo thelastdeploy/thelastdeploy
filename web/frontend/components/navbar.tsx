@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
@@ -88,6 +88,15 @@ export function Navbar() {
   const currentOrg = orgs.find((o) => o.slug === activeOrg) || orgs.find((o) => o.type === "platform" || o.is_platform) || orgs[0];
   const isPlatform = currentOrg?.type === "platform" || currentOrg?.is_platform || currentOrg?.slug === "tld";
   const isUniversity = currentOrg?.type === "university";
+
+  // Limit dropdown to top 3-4 workspaces, prioritizing active workspace
+  const topOrgs = useMemo(() => {
+    if (orgs.length <= 4) return orgs;
+    const active = orgs.find((o) => o.slug === activeOrg || (!activeOrg && (o.type === "platform" || o.is_platform)));
+    const others = orgs.filter((o) => o.slug !== active?.slug);
+    others.sort((a, b) => (b.total_xp || 0) - (a.total_xp || 0));
+    return active ? [active, ...others].slice(0, 4) : others.slice(0, 4);
+  }, [orgs, activeOrg]);
   const isPlatformStaff = Boolean(
     user && (
       user.username === "devuser" ||
@@ -105,7 +114,7 @@ export function Navbar() {
 
   return (
     <nav className="border-b border-border/70 bg-background/80 backdrop-blur-md sticky top-0 z-50 transition-all duration-300 shadow-sm">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo — dashboard if logged in, landing if not */}
         <div className="flex items-center gap-3">
           <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group">
@@ -146,7 +155,7 @@ export function Navbar() {
                 <div className="px-2 py-1.5 text-[10px] font-mono uppercase tracking-wider text-muted-foreground">
                   Active Workspace
                 </div>
-                {orgs.map((org) => {
+                {topOrgs.map((org) => {
                   const isSelected = activeOrg === org.slug || (!activeOrg && (org.type === "platform" || org.is_platform));
                   const isOrgUniv = org.type === "university";
                   const isOrgPlatform = org.type === "platform" || org.is_platform;
@@ -192,9 +201,12 @@ export function Navbar() {
                 <DropdownMenuItem asChild>
                   <Link
                     href="/select-org"
-                    className="flex items-center justify-center p-2 rounded-xl text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-muted text-center cursor-pointer"
+                    className="flex items-center justify-between p-2 rounded-xl text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer transition-colors"
                   >
-                    Browse All Workspaces →
+                    <span>Browse All Workspaces</span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-mono">
+                      {orgs.length} →
+                    </span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
