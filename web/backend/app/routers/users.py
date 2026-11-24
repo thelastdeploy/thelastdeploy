@@ -51,36 +51,18 @@ async def get_me(
     admin_status = await is_user_platform_admin(current_user, db)
     can_manage_workspaces = await has_platform_permission(current_user, "organization_settings.manage", db) or admin_status
 
-    # Fetch platform roles & permissions
-    roles_stmt = (
-        select(PlatformRole.slug)
-        .join(PlatformUserRole, PlatformUserRole.platform_role_id == PlatformRole.id)
-        .where(PlatformUserRole.user_id == current_user.id)
-    )
-    user_plat_roles = list((await db.scalars(roles_stmt)).all())
-
-    # Fetch platform permissions (direct + role-inherited)
-    direct_perms_stmt = (
-        select(PlatformPermission.key)
-        .join(PlatformUserPermission, PlatformUserPermission.permission_id == PlatformPermission.id)
-        .where(PlatformUserPermission.user_id == current_user.id)
-    )
-    direct_perms = set((await db.scalars(direct_perms_stmt)).all())
-
-    role_perms_stmt = (
-        select(PlatformPermission.key)
-        .join(PlatformRolePermission, PlatformRolePermission.permission_id == PlatformPermission.id)
-        .join(PlatformUserRole, PlatformUserRole.platform_role_id == PlatformRolePermission.platform_role_id)
-        .where(PlatformUserRole.user_id == current_user.id)
-    )
-    role_perms = set((await db.scalars(role_perms_stmt)).all())
-
-    all_effective_perms = direct_perms | role_perms
-    if current_user.username == "devuser" or "platform_admin" in user_plat_roles:
-        all_db_perms = set((await db.scalars(select(PlatformPermission.key))).all())
-        all_effective_perms |= all_db_perms
-
-    user_plat_perms = sorted(list(all_effective_perms))
+    # Fetch platform permissions purely from PlatformUserPermission
+    if current_user.username == "devuser":
+        user_plat_perms = sorted(list((await db.scalars(select(PlatformPermission.key))).all()))
+        user_plat_roles = ["platform_admin"]
+    else:
+        direct_perms_stmt = (
+            select(PlatformPermission.key)
+            .join(PlatformUserPermission, PlatformUserPermission.permission_id == PlatformPermission.id)
+            .where(PlatformUserPermission.user_id == current_user.id)
+        )
+        user_plat_perms = sorted(list((await db.scalars(direct_perms_stmt)).all()))
+        user_plat_roles = ["platform_admin"] if "platform.permissions.manage" in user_plat_perms else []
 
     # Resolve active workspace organization membership to return workspace-scoped XP
     org_slug = request.headers.get("x-organization-slug") or request.headers.get("x-organization")

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
-from sqlalchemy import select, func, or_
+from sqlalchemy import select, func, or_, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import AsyncSessionLocal
@@ -90,15 +90,13 @@ async def list_platform_users(
     _perm: User = Depends(require_platform_permission("platform.permissions.manage")),
 ):
     """List all users who possess platform permissions."""
-    # Find all user IDs present in platform_user_permissions or platform_user_roles or devuser
+    # Find all user IDs present in platform_user_permissions or devuser
     perm_user_ids = select(PlatformUserPermission.user_id)
-    role_user_ids = select(PlatformUserRole.user_id)
     dev_user_id = select(User.id).where(User.username == "devuser")
 
     combined_stmt = select(User).where(
         or_(
             User.id.in_(perm_user_ids),
-            User.id.in_(role_user_ids),
             User.id.in_(dev_user_id),
         )
     ).distinct().order_by(User.username.asc())
@@ -110,7 +108,7 @@ async def list_platform_users(
 
     summaries = []
     for u in users:
-        # Fetch direct permissions
+        # Fetch direct permissions (pure granular RBAC)
         direct_stmt = (
             select(PlatformPermission.key, PlatformUserPermission.assigned_at)
             .join(PlatformUserPermission, PlatformUserPermission.permission_id == PlatformPermission.id)
@@ -120,16 +118,7 @@ async def list_platform_users(
         direct_keys = {row[0] for row in direct_res}
         latest_assigned_at = max([row[1] for row in direct_res], default=None)
 
-        # Fetch role permissions
-        role_stmt = (
-            select(PlatformPermission.key)
-            .join(PlatformRolePermission, PlatformRolePermission.permission_id == PlatformPermission.id)
-            .join(PlatformUserRole, PlatformUserRole.platform_role_id == PlatformRolePermission.platform_role_id)
-            .where(PlatformUserRole.user_id == u.id)
-        )
-        role_keys = set((await db.scalars(role_stmt)).all())
-
-        all_keys = direct_keys | role_keys
+        all_keys = direct_keys
         if u.username == "devuser":
             all_keys = set(all_db_perms)
 
@@ -187,6 +176,9 @@ async def add_platform_user(
                 assigned_at=datetime.now(timezone.utc),
             ))
 
+    # Clean up any legacy platform user roles to eliminate ghost role permissions
+    await db.execute(delete(PlatformUserRole).where(PlatformUserRole.user_id == target_user.id))
+
     await db.commit()
 
     await log_audit_event(
@@ -240,18 +232,11 @@ async def get_user_permissions(
         .where(PlatformUserPermission.user_id == target_user.id)
     )).all())
 
-    role_keys = set((await db.scalars(
-        select(PlatformPermission.key)
-        .join(PlatformRolePermission, PlatformRolePermission.permission_id == PlatformPermission.id)
-        .join(PlatformUserRole, PlatformUserRole.platform_role_id == PlatformRolePermission.platform_role_id)
-        .where(PlatformUserRole.user_id == target_user.id)
-    )).all())
-
     return PlatformUserPermissionSummary(
         id=target_user.id,
         username=target_user.username,
         email=target_user.email,
-        permissions=sorted(list(direct_keys | role_keys)),
+        permissions=sorted(list(direct_keys)),
         assigned_at=target_user.created_at,
     )
 
@@ -305,6 +290,9 @@ async def update_user_permissions(
                 assigned_by=current_user.id,
                 assigned_at=datetime.now(timezone.utc),
             ))
+
+    # Clean up any legacy platform user roles to eliminate ghost role permissions
+    await db.execute(delete(PlatformUserRole).where(PlatformUserRole.user_id == target_user.id))
 
     await db.commit()
 
@@ -368,6 +356,9 @@ async def revoke_platform_user(
     )).scalars().all()
     for er in existing_roles:
         await db.delete(er)
+
+    # Clean up any legacy platform user roles to eliminate ghost role permissions
+    await db.execute(delete(PlatformUserRole).where(PlatformUserRole.user_id == target_user.id))
 
     await db.commit()
 

@@ -231,21 +231,21 @@ async def seed_users(db, org_map):
         {
             "username": "devuser",
             "email": "dev@example.com",
-            "platform_roles": [plat_admin_role],
+            "platform_roles": [],
             "platform_permissions": all_perm_keys,
             "memberships": [{"org_slug": "tld", "roles": ["owner", "admin"], "xp": 40}],
         },
         {
             "username": "testdev",
             "email": "testdev@example.com",
-            "platform_roles": [plat_admin_role],
+            "platform_roles": [],
             "platform_permissions": all_perm_keys,
             "memberships": [{"org_slug": "tld", "roles": ["owner", "admin"], "xp": 55}],
         },
         {
             "username": "kai_curriculum",
             "email": "kai.curriculum@example.com",
-            "platform_roles": [curr_lead_role],
+            "platform_roles": [],
             "platform_permissions": [
                 "platform.modules.view_all",
                 "platform.modules.verify",
@@ -257,7 +257,7 @@ async def seed_users(db, org_map):
         {
             "username": "sam_support",
             "email": "sam.support@example.com",
-            "platform_roles": [support_role],
+            "platform_roles": [],
             "platform_permissions": [
                 "platform.organizations.view",
                 "platform.analytics.view",

@@ -325,10 +325,8 @@ async def has_platform_permission(user: User, permission_key: str, db: AsyncSess
     """Helper to check if a user has a specific platform permission key."""
     if user.username == "devuser":
         return True
-    if await is_user_platform_admin(user, db):
-        return True
 
-    # 1. Direct user permission check
+    # Direct user permission check ONLY (pure granular RBAC)
     stmt_direct = (
         select(PlatformUserPermission.id)
         .join(PlatformPermission, PlatformPermission.id == PlatformUserPermission.permission_id)
@@ -338,22 +336,7 @@ async def has_platform_permission(user: User, permission_key: str, db: AsyncSess
         )
         .limit(1)
     )
-    if (await db.scalar(stmt_direct)) is not None:
-        return True
-
-    # 2. Role-based permission check
-    stmt_role = (
-        select(PlatformRolePermission.id)
-        .join(PlatformPermission, PlatformPermission.id == PlatformRolePermission.permission_id)
-        .join(PlatformUserRole, PlatformUserRole.platform_role_id == PlatformRolePermission.platform_role_id)
-        .where(
-            PlatformUserRole.user_id == user.id,
-            PlatformPermission.key.in_([permission_key, f"platform.{permission_key}"]),
-        )
-        .limit(1)
-    )
-    res = await db.execute(stmt_role)
-    return res.scalar_one_or_none() is not None
+    return (await db.scalar(stmt_direct)) is not None
 
 
 async def is_user_maintainer(user: User, db: AsyncSession) -> bool:
@@ -361,29 +344,15 @@ async def is_user_maintainer(user: User, db: AsyncSession) -> bool:
     if user.username == "devuser":
         return True
     stmt_perm = select(PlatformUserPermission.id).where(PlatformUserPermission.user_id == user.id).limit(1)
-    if (await db.scalar(stmt_perm)) is not None:
-        return True
-    stmt_role = select(PlatformUserRole.id).where(PlatformUserRole.user_id == user.id).limit(1)
-    return (await db.scalar(stmt_role)) is not None
+    return (await db.scalar(stmt_perm)) is not None
 
 
 async def is_user_platform_admin(user: User, db: AsyncSession) -> bool:
-    """Helper to check if a user is a platform super administrator."""
+    """Helper to check if a user is a platform administrator with delegation rights."""
     if user.username == "devuser":
         return True
-    stmt = (
-        select(PlatformUserRole.id)
-        .join(PlatformRole, PlatformRole.id == PlatformUserRole.platform_role_id)
-        .where(
-            PlatformUserRole.user_id == user.id,
-            PlatformRole.slug == "platform_admin",
-        )
-        .limit(1)
-    )
-    if (await db.scalar(stmt)) is not None:
-        return True
 
-    # Also check if user has platform.permissions.manage permission directly
+    # Check if user has platform.permissions.manage permission directly
     stmt_perm = (
         select(PlatformUserPermission.id)
         .join(PlatformPermission, PlatformPermission.id == PlatformUserPermission.permission_id)
