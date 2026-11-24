@@ -37,8 +37,13 @@ import {
 type TabKey = "organizations" | "analytics" | "staff" | "curriculum" | "audit";
 
 export default function PlatformConsolePage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, refreshUser } = useAuth();
   const router = useRouter();
+
+  // Revalidate current user permissions on page mount
+  useEffect(() => {
+    refreshUser();
+  }, []);
 
   // Helper for checking granular platform permissions
   const hasPerm = (permKey: string): boolean => {
@@ -52,7 +57,7 @@ export default function PlatformConsolePage() {
     if (hasPerm("platform.organizations.view") || hasPerm("platform.organizations.create") || hasPerm("platform.organizations.manage") || hasPerm("platform.organizations.settings")) {
       tabs.push({ key: "organizations", label: "Organizations", icon: Building2 });
     }
-    if (hasPerm("platform.analytics.view") || hasPerm("platform.audit.view")) {
+    if (hasPerm("platform.analytics.view")) {
       tabs.push({ key: "analytics", label: "Global Analytics", icon: BarChart3 });
     }
     if (hasPerm("platform.users.view") || hasPerm("platform.users.manage") || hasPerm("platform.permissions.manage")) {
@@ -547,10 +552,6 @@ export default function PlatformConsolePage() {
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="flex items-start justify-between gap-6 flex-wrap">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-xs font-mono font-bold mb-3">
-                <Globe className="h-3.5 w-3.5" />
-                <span>Superadmin Operations</span>
-              </div>
               <h1 className="text-3xl font-black tracking-tight text-foreground">
                 Platform Console
               </h1>

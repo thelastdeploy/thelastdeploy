@@ -180,7 +180,7 @@ export default function UserRbacConfigPage() {
   const targetUserIdStr = (params?.id as string) || "";
   const targetUserId = parseInt(targetUserIdStr, 10);
 
-  const { user: currentUser, loading: authLoading } = useAuth();
+  const { user: currentUser, loading: authLoading, refreshUser } = useAuth();
 
   // State
   const [operator, setOperator] = useState<PlatformUserPermissionSummary | null>(null);
@@ -332,6 +332,11 @@ export default function UserRbacConfigPage() {
       setActivePerms(new Set(newSet));
       setSuccessMessage("Platform permissions committed successfully.");
       setTimeout(() => setSuccessMessage(null), 4000);
+
+      // Immediately refresh current user if editing self
+      if (currentUser && (operator.id === currentUser.id || operator.username === currentUser.username)) {
+        await refreshUser();
+      }
     } catch (err: any) {
       setError(err.message || "Failed to commit permissions.");
     } finally {

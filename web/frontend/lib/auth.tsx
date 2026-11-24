@@ -29,14 +29,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUser = async () => {
     try {
-      // Try cache first — avoids an extra /me call on every page load
+      // Warm state immediately from cache if available so UI does not flicker
       const cache = readCache();
       if (cache?.user) {
         setUser(cache.user);
-        return;
       }
+      // Always revalidate with /me to ensure RBAC permissions and session data are 100% current
       const me = await api.getMe();
       setUser(me);
+      if (cache) {
+        writeCache({ ...cache, user: me });
+      }
     } catch {
       localStorage.removeItem("token");
       localStorage.removeItem("device_key");
@@ -68,9 +71,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     window.addEventListener("tld:workspace-changed", handleWsChange);
 
+    const handleFocus = () => {
+      refreshUser();
+    };
+    window.addEventListener("focus", handleFocus);
+
     return () => {
       window.removeEventListener(CACHE_EVENT, handleUpdate);
       window.removeEventListener("tld:workspace-changed", handleWsChange);
+      window.removeEventListener("focus", handleFocus);
     };
   }, []);
 
