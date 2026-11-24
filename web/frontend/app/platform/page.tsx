@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NumberStepper } from "@/components/ui/number-stepper";
-import { ConfirmModal } from "@/components/builder/confirm-modal";
+import { ConfirmModal } from "@/components/shared/confirm-modal";
 import {
   OrganizationResponse,
   PlatformOverviewAnalyticsResponse,
@@ -469,7 +469,7 @@ export default function PlatformConsolePage() {
     <div className="min-h-[calc(100vh-64px)]">
       {/* Top Banner */}
       <div className="border-b border-border bg-card/30">
-        <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex items-start justify-between gap-6 flex-wrap">
             <div>
               <h1 className="text-3xl font-black tracking-tight text-foreground">
@@ -506,7 +506,7 @@ export default function PlatformConsolePage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* ========================================================================= */}
         {/* TAB 1: Organizations Directory & Platform Governance                      */}
         {/* ========================================================================= */}

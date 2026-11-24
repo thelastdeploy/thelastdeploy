@@ -1,4 +1,4 @@
-// web/frontend/components/builder/confirm-modal.tsx
+// web/frontend/components/shared/confirm-modal.tsx
 
 "use client";
 

@@ -4,8 +4,6 @@ import {
   Module,
   ModuleDetail,
   User,
-  BuilderDraftListItem,
-  BuilderModuleInput,
   OrganizationMembershipInfo,
   OrganizationPublicInfoResponse,
   InvitationVerifyResponse,
@@ -243,66 +241,6 @@ export const api = {
 
   // Users
   getMe: () => request<User>("/me"),
-
-  // Builder
-  getMyModules: () =>
-    request<BuilderDraftListItem[]>("/builder/modules"),
-
-  getBuilderModule: (id: string) =>
-    request<BuilderModuleInput>(`/builder/modules/${id}`),
-
-  createModule: (data: BuilderModuleInput) =>
-    request<{ id: string }>("/builder/modules", {
-      method: "POST",
-      body: JSON.stringify(data),
-    }),
-
-  saveModule: (id: string, data: BuilderModuleInput) =>
-    request<{ id: string }>(`/builder/modules/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    }),
-
-  publishModule: (id: string) =>
-    request<{ id: string }>([`/builder/modules/${id}/publish`][0], {
-      method: "POST",
-    }),
-
-  deleteModule: (id: string) =>
-    request<{ detail: string }>(`/builder/modules/${id}`, {
-      method: "DELETE",
-    }),
-
-  submitModuleForVerification: (id: string) =>
-    request<{ detail: string }>(`/builder/modules/${id}/submit`, {
-      method: "POST",
-    }),
-
-  verifyModule: (id: string, data: any) =>
-    request<{ detail: string }>(`/modules/${id}/verify`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    }),
-
-  rejectModule: (id: string, reason?: string) =>
-    request<{ detail: string }>(`/modules/${id}/reject`, {
-      method: "PATCH",
-      body: JSON.stringify({ reason }),
-    }),
-
-  adminGetMaintainers: () =>
-    request<any[]>("/admin/maintainers"),
-
-  adminAddMaintainer: (identity: string) =>
-    request<any>("/admin/maintainers", {
-      method: "POST",
-      body: JSON.stringify({ identity }),
-    }),
-
-  adminRemoveMaintainer: (userId: number) =>
-    request<any>(`/admin/maintainers/${userId}`, {
-      method: "DELETE",
-    }),
 
   // Onboarding & Invitations (Module F)
   getOrganizationInfo: () =>

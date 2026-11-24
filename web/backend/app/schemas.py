@@ -223,9 +223,6 @@ class ResultResponse(BaseModel):
 
 # --- Users ---
 
-class MaintainerAddRequest(BaseModel):
-    identity: str
-
 class MeResponse(BaseModel):
     id: int
     username: str

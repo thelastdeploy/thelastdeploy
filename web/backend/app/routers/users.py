@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from app.dependencies import get_db, get_current_user, is_user_maintainer, is_user_platform_admin, has_platform_permission
 from app.models import User, LabProgress, SectionProgress, PlatformRole, PlatformUserRole, PlatformRolePermission, PlatformPermission, PlatformUserPermission, Organization, OrganizationMembership
-from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse, MaintainerAddRequest
+from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse
 from app.auth import verify_password, hash_password
 from app.email import send_verification_email
 
@@ -162,83 +162,4 @@ async def update_password(
 
     return MessageResponse(detail="Password updated successfully.")
 
-
-@router.get("/admin/maintainers", response_model=list[dict])
-async def list_maintainers(
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    if not (await is_user_platform_admin(current_user, db)):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only Platform Administrators can manage maintainers",
-        )
-    stmt = (
-        select(User)
-        .join(PlatformUserRole, PlatformUserRole.user_id == User.id)
-        .distinct()
-        .order_by(User.username)
-    )
-    result = await db.execute(stmt)
-    maintainers = result.scalars().all()
-    return [{"id": u.id, "username": u.username, "email": u.email} for u in maintainers]
-
-
-@router.post("/admin/maintainers", response_model=dict)
-async def add_maintainer(
-    body: MaintainerAddRequest,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    if not (await is_user_platform_admin(current_user, db)):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only Platform Administrators can manage maintainers",
-        )
-    
-    # Try finding user by username or email
-    stmt = select(User).where(
-        (User.username == body.identity) | (User.email == body.identity)
-    )
-    result = await db.execute(stmt)
-    user = result.scalar_one_or_none()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
-    # Assign platform staff role
-    admin_role = (await db.execute(select(PlatformRole).where(PlatformRole.slug == 'platform_admin'))).scalar_one_or_none()
-    if admin_role:
-        existing_pur = (await db.execute(
-            select(PlatformUserRole).where(
-                PlatformUserRole.user_id == user.id,
-                PlatformUserRole.platform_role_id == admin_role.id
-            )
-        )).scalar_one_or_none()
-        if not existing_pur:
-            db.add(PlatformUserRole(user_id=user.id, platform_role_id=admin_role.id, assigned_by=current_user.id))
-
-    await db.commit()
-    return {"detail": f"User '{user.username}' is now a maintainer."}
-
-
-@router.delete("/admin/maintainers/{user_id}", response_model=dict)
-async def remove_maintainer(
-    user_id: int,
-    db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    if not (await is_user_platform_admin(current_user, db)):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only Platform Administrators can manage maintainers",
-        )
-    
-    user_res = await db.execute(select(User).where(User.id == user_id))
-    user = user_res.scalar_one_or_none()
-    if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-        
-    await db.execute(delete(PlatformUserRole).where(PlatformUserRole.user_id == user.id))
-    await db.commit()
-    return {"detail": f"User '{user.username}' is no longer a maintainer."}
 
