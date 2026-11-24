@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { NumberStepper } from "@/components/ui/number-stepper";
 import { ConfirmModal } from "@/components/shared/confirm-modal";
 import {
   OrganizationResponse,
@@ -28,7 +27,6 @@ import {
   PlatformOrgSummaryItem,
   PlatformPermissionItem,
   PlatformUserPermissionSummary,
-  OrgSettingAdminItemResponse,
   AuditLogResponse,
 } from "@/lib/types";
 
@@ -85,15 +83,6 @@ export default function PlatformConsolePage() {
   const [newOrgDomain, setNewOrgDomain] = useState("");
   const [createOrgLoading, setCreateOrgLoading] = useState(false);
   const [createOrgError, setCreateOrgError] = useState<string | null>(null);
-
-  // "Manage Org" Platform Settings Modal State
-  const [selectedOrgForSettings, setSelectedOrgForSettings] = useState<OrganizationResponse | null>(null);
-  const [orgSettingsList, setOrgSettingsList] = useState<OrgSettingAdminItemResponse[]>([]);
-  const [loadingSettings, setLoadingSettings] = useState(false);
-  const [settingsSaveMsg, setSettingsSaveMsg] = useState<string | null>(null);
-  const [editingValues, setEditingValues] = useState<Record<string, any>>({});
-  const [editingEnabled, setEditingEnabled] = useState<Record<string, boolean>>({});
-  const [savingSettings, setSavingSettings] = useState(false);
 
   // Staff & Permissions state
   const [platformUsers, setPlatformUsers] = useState<PlatformUserPermissionSummary[]>([]);
@@ -249,77 +238,6 @@ export default function PlatformConsolePage() {
       alert("Platform export failed: " + err.message);
     } finally {
       setExportingPlatform(false);
-    }
-  };
-
-  // --- Manage Org (Platform Settings & Tenant Governance Modal) ---
-  const handleOpenManageOrg = async (org: OrganizationResponse) => {
-    setSelectedOrgForSettings(org);
-    setLoadingSettings(true);
-    setSettingsSaveMsg(null);
-    try {
-      const settings = await api.getPlatformOrgSettings(org.slug);
-      setOrgSettingsList(settings);
-      const initialValues: Record<string, any> = {};
-      const initialEnabled: Record<string, boolean> = {};
-      settings.forEach((s) => {
-        initialValues[s.key] = s.value !== null && s.value !== undefined ? s.value : s.default;
-        initialEnabled[s.key] = s.is_enabled;
-      });
-      setEditingValues(initialValues);
-      setEditingEnabled(initialEnabled);
-    } catch (err: any) {
-      alert("Failed to load platform settings for organization: " + err.message);
-    } finally {
-      setLoadingSettings(false);
-    }
-  };
-
-  const handleToggleSettingAvailability = (settingKey: string) => {
-    setEditingEnabled((prev) => ({
-      ...prev,
-      [settingKey]: !prev[settingKey],
-    }));
-  };
-
-  const handleSaveAllOrgSettings = async () => {
-    if (!selectedOrgForSettings) return;
-    setSavingSettings(true);
-    setSettingsSaveMsg(null);
-    try {
-      // Execute batch updates for availability and value overrides
-      for (const st of orgSettingsList) {
-        const wasEnabled = st.is_enabled;
-        const nowEnabled = editingEnabled[st.key] ?? wasEnabled;
-        const origVal = st.value !== null && st.value !== undefined ? st.value : st.default;
-        const currentVal = editingValues[st.key];
-
-        // 1. Availability changes
-        if (wasEnabled !== nowEnabled) {
-          if (nowEnabled) {
-            await api.enablePlatformOrgSetting(selectedOrgForSettings.slug, st.key, currentVal);
-          } else {
-            await api.disablePlatformOrgSetting(selectedOrgForSettings.slug, st.key);
-          }
-        }
-
-        // 2. Value overrides (if enabled and value changed)
-        if (nowEnabled && JSON.stringify(origVal) !== JSON.stringify(currentVal)) {
-          await api.overridePlatformOrgSetting(selectedOrgForSettings.slug, st.key, currentVal);
-        }
-      }
-
-      setSettingsSaveMsg("Settings saved successfully.");
-      const updated = await api.getPlatformOrgSettings(selectedOrgForSettings.slug);
-      setOrgSettingsList(updated);
-      setTimeout(() => {
-        setSettingsSaveMsg(null);
-        setSelectedOrgForSettings(null);
-      }, 700);
-    } catch (err: any) {
-      alert("Failed to save settings: " + err.message);
-    } finally {
-      setSavingSettings(false);
     }
   };
 
@@ -659,12 +577,12 @@ export default function PlatformConsolePage() {
                         )}
                       </div>
 
-                      {/* Manage Org: Opens the Platform Organization Configuration Modal */}
+                      {/* Manage Org: Opens the Platform Organization Configuration Page */}
                       {(hasPerm("platform.organizations.settings") || hasPerm("platform.organizations.manage")) && (
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleOpenManageOrg(org)}
+                          onClick={() => router.push(`/platform/organizations/${org.slug}`)}
                           className="rounded-xl text-[11px] font-bold text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10 h-7 cursor-pointer gap-1"
                         >
                           <Settings2 className="h-3 w-3" />
@@ -978,156 +896,7 @@ export default function PlatformConsolePage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* MODAL 1: Tenant Platform Configuration Modal ("Manage Org")               */}
-      {/* ========================================================================= */}
-      {selectedOrgForSettings && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <Card className="max-w-2xl w-full max-h-[85vh] flex flex-col rounded-3xl shadow-2xl border-border bg-card overflow-hidden">
-            <CardHeader className="pb-3 border-b border-border flex flex-row items-center justify-between shrink-0">
-              <div>
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-base font-bold">
-                    Platform Settings: {selectedOrgForSettings.name}
-                  </CardTitle>
-                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-muted font-bold text-muted-foreground">
-                    {selectedOrgForSettings.slug}
-                  </span>
-                </div>
-                <CardDescription className="text-xs mt-1">
-                  Configure feature availability and platform default/override values for this organization.
-                </CardDescription>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSelectedOrgForSettings(null)}
-                className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground cursor-pointer"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </CardHeader>
-
-            <CardContent className="p-6 overflow-y-auto space-y-4 flex-1">
-              {settingsSaveMsg && (
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 shrink-0" />
-                  <span>{settingsSaveMsg}</span>
-                </div>
-              )}
-
-              {loadingSettings ? (
-                <div className="h-48 flex items-center justify-center">
-                  <LoadingSpinner />
-                </div>
-              ) : (
-                <div className="divide-y divide-border">
-                  {orgSettingsList.map((st) => {
-                    const isBool = st.data_type === "boolean";
-                    const isInt = st.data_type === "integer";
-                    const isEnabled = editingEnabled[st.key] ?? st.is_enabled;
-                    const val = editingValues[st.key];
-
-                    return (
-                      <div key={st.key} className="py-4 space-y-2 first:pt-0 last:pb-0">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-xs text-foreground">{st.key}</span>
-                              <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-bold">
-                                {st.category}
-                              </span>
-                            </div>
-                            <p className="text-[11px] text-muted-foreground leading-relaxed">{st.description}</p>
-                            <span className="text-[10px] font-mono text-zinc-400 block">
-                              Registry Default: <strong className="text-zinc-200">{String(st.default)}</strong>
-                            </span>
-                          </div>
-
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className={`text-[10px] font-mono font-bold ${
-                              isEnabled ? "text-emerald-400" : "text-muted-foreground"
-                            }`}>
-                              {isEnabled ? "Enabled" : "Disabled"}
-                            </span>
-                            <Button
-                              size="sm"
-                              variant={isEnabled ? "outline" : "default"}
-                              onClick={() => handleToggleSettingAvailability(st.key)}
-                              className={`h-7 px-2.5 rounded-xl text-[11px] font-bold cursor-pointer ${
-                                !isEnabled ? "bg-[var(--accent-primary)] text-black" : ""
-                              }`}
-                            >
-                              {isEnabled ? "Disable" : "Enable"}
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Value / Override Editor */}
-                        <div className="flex items-center justify-between gap-4 pt-1 bg-muted/20 p-2.5 rounded-xl border border-border/40">
-                          <span className="text-[11px] font-semibold text-zinc-300">Default / Override Value:</span>
-                          <div className="flex items-center gap-2">
-                            {isBool ? (
-                              <Select
-                                value={val === true ? "true" : "false"}
-                                onValueChange={(newVal) => setEditingValues((prev) => ({ ...prev, [st.key]: newVal === "true" }))}
-                              >
-                                <SelectTrigger className="h-7 w-28 text-[11px]">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="true">True</SelectItem>
-                                  <SelectItem value="false">False</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            ) : isInt ? (
-                              <NumberStepper
-                                value={typeof val === "number" ? val : parseInt(val || "0", 10)}
-                                min={1}
-                                max={500}
-                                step={1}
-                                onChange={(newVal) => setEditingValues((prev) => ({ ...prev, [st.key]: newVal }))}
-                              />
-                            ) : (
-                              <Input
-                                value={val ?? ""}
-                                onChange={(e) => setEditingValues((prev) => ({ ...prev, [st.key]: e.target.value }))}
-                                className="h-7 w-48 text-[11px] rounded-lg"
-                              />
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </CardContent>
-
-            <CardFooter className="p-4 border-t border-border flex items-center justify-end gap-2.5 shrink-0 bg-muted/10">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedOrgForSettings(null)}
-                className="rounded-xl text-xs font-bold h-9 cursor-pointer"
-                disabled={savingSettings}
-              >
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleSaveAllOrgSettings}
-                disabled={savingSettings}
-                className="rounded-xl bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 text-black font-bold text-xs h-9 cursor-pointer px-5"
-              >
-                {savingSettings ? <LoadingSpinner /> : "Save"}
-              </Button>
-            </CardFooter>
-          </Card>
-        </div>
-      )}
-
-      {/* ========================================================================= */}
-      {/* MODAL 2: Permissions Configuration Modal (Granular RBAC)                  */}
+      {/* MODAL: Permissions Configuration Modal (Granular RBAC)                    */}
       {/* ========================================================================= */}
       {selectedUserForPerms && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
