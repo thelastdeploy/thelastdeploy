@@ -43,7 +43,6 @@ export default function PlatformConsolePage() {
   // Helper for checking granular platform permissions
   const hasPerm = (permKey: string): boolean => {
     if (!user) return false;
-    if (user.username === "devuser" || user.is_admin) return true;
     return Boolean(user.platform_permissions?.includes(permKey));
   };
 
@@ -141,7 +140,7 @@ export default function PlatformConsolePage() {
   });
 
   const isPlatformStaff = Boolean(
-    user && (user.username === "devuser" || user.is_admin || (user.platform_permissions && user.platform_permissions.length > 0))
+    user && ((user.platform_roles && user.platform_roles.length > 0) || (user.platform_permissions && user.platform_permissions.length > 0))
   );
 
   // Initial access check & auto-select first permitted tab
@@ -883,9 +882,7 @@ export default function PlatformConsolePage() {
               </div>
               <div className="divide-y divide-border">
                 {platformUsers.map((pUser) => {
-                  const isDevUser = pUser.username === "devuser";
                   const isSelf = user?.id === pUser.id || user?.username === pUser.username;
-                  const canConfigureOthers = pUser.permissions.includes("platform.permissions.manage") || isDevUser;
 
                   return (
                     <div key={pUser.id} className="p-4 flex items-center justify-between gap-4 hover:bg-muted/10 transition-colors flex-wrap sm:flex-nowrap">
@@ -937,7 +934,7 @@ export default function PlatformConsolePage() {
                           </Button>
                         )}
 
-                        {!isDevUser && !isSelf && hasPerm("platform.permissions.manage") && (
+                        {!isSelf && hasPerm("platform.permissions.manage") && (
                           <Button
                             variant="ghost"
                             size="icon"

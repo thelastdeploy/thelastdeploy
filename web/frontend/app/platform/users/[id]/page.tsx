@@ -231,8 +231,6 @@ export default function UserRbacConfigPage() {
     }
 
     const hasManagePerm =
-      currentUser.username === "devuser" ||
-      currentUser.is_admin ||
       currentUser.platform_permissions?.includes("platform.permissions.manage");
 
     if (!hasManagePerm) {
