@@ -24,7 +24,6 @@ import {
   Building2,
   Award,
   BarChart3,
-  Terminal,
   RotateCcw,
   Save,
   HelpCircle,
@@ -46,7 +45,7 @@ import {
 } from "@/lib/types";
 
 // Categorization & Risk Taxonomy
-type DomainKey = "all" | "security" | "tenants" | "curriculum" | "analytics" | "system";
+type DomainKey = "all" | "security" | "tenants" | "curriculum" | "analytics";
 type RiskLevel = "critical" | "elevated" | "standard" | "readonly";
 
 interface PermMetadata {
@@ -64,22 +63,16 @@ const PERMISSION_TAXONOMY: Record<string, PermMetadata> = {
     humanName: "Root Delegation Authority",
     categoryLabel: "Security & Access",
   },
-  "platform.staff.manage": {
-    domain: "security",
-    risk: "critical",
-    humanName: "Platform Staff Assignment",
-    categoryLabel: "Security & Access",
-  },
   "platform.users.manage": {
     domain: "security",
     risk: "elevated",
-    humanName: "User Profile Management",
+    humanName: "Add Platform Users",
     categoryLabel: "Security & Access",
   },
   "platform.users.view": {
     domain: "security",
     risk: "readonly",
-    humanName: "Inspect Platform Users",
+    humanName: "View Platform Users",
     categoryLabel: "Security & Access",
   },
 
@@ -172,14 +165,6 @@ const PERMISSION_TAXONOMY: Record<string, PermMetadata> = {
     humanName: "Inspect Platform Audit Logs",
     categoryLabel: "Analytics & Audit",
   },
-
-  // System
-  "platform.system.maintenance": {
-    domain: "system",
-    risk: "critical",
-    humanName: "Maintenance & System Mode",
-    categoryLabel: "System Operations",
-  },
 };
 
 const DOMAIN_SECTIONS: { id: DomainKey; label: string; icon: any; description: string }[] = [
@@ -188,7 +173,6 @@ const DOMAIN_SECTIONS: { id: DomainKey; label: string; icon: any; description: s
   { id: "tenants", label: "Tenant Governance", icon: Building2, description: "Organization lifecycle, suspension, setting enablement, and override values." },
   { id: "curriculum", label: "Curriculum QA", icon: Award, description: "Module verification, reviewer rejections, and interactive XP calibration." },
   { id: "analytics", label: "Analytics & Audit", icon: BarChart3, description: "Platform-wide KPI dashboards, audit trails, and data export pipelines." },
-  { id: "system", label: "System Operations", icon: Terminal, description: "Emergency maintenance and global infrastructure management." },
 ];
 
 export default function UserRbacConfigPage() {
@@ -401,17 +385,16 @@ export default function UserRbacConfigPage() {
       tenants: { granted: 0, total: 0 },
       curriculum: { granted: 0, total: 0 },
       analytics: { granted: 0, total: 0 },
-      system: { granted: 0, total: 0 },
     };
 
     catalog.forEach((item) => {
-      const domain = PERMISSION_TAXONOMY[item.key]?.domain || "system";
+      const domain = PERMISSION_TAXONOMY[item.key]?.domain;
       const isGranted = activePerms.has(item.key);
 
       counts.all.total += 1;
       if (isGranted) counts.all.granted += 1;
 
-      if (counts[domain]) {
+      if (domain && counts[domain]) {
         counts[domain].total += 1;
         if (isGranted) counts[domain].granted += 1;
       }

@@ -12,6 +12,7 @@ from app.dependencies import (
     get_db,
     get_current_user,
     require_platform_permission,
+    require_any_platform_permission,
     has_platform_permission,
     is_user_maintainer,
     is_user_platform_admin,
@@ -87,7 +88,7 @@ async def list_available_permissions(
 async def list_platform_users(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
-    _perm: User = Depends(require_platform_permission("platform.permissions.manage")),
+    _perm: User = Depends(require_any_platform_permission("platform.users.view", "platform.users.manage", "platform.permissions.manage")),
 ):
     """List all users who possess platform permissions."""
     perm_user_ids = select(PlatformUserPermission.user_id)
@@ -123,7 +124,7 @@ async def add_platform_user(
     body: PlatformUserAddRequest,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
-    _perm: User = Depends(require_platform_permission("platform.permissions.manage")),
+    _perm: User = Depends(require_any_platform_permission("platform.users.manage", "platform.permissions.manage")),
 ):
     """Grant a user platform access with specific permissions."""
     identity = body.identity.strip()
@@ -135,8 +136,18 @@ async def add_platform_user(
     if not target_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User '{identity}' not found")
 
+    # Permissions to grant:
+    # Users with only platform.users.manage are strictly restricted to the 3 baseline permissions.
+    # Users with platform.permissions.manage can grant custom permissions (defaulting to baseline if empty).
+    caller_has_delegation = await has_platform_permission(current_user, "platform.permissions.manage", db)
+    baseline_perms = ["platform.analytics.view", "platform.modules.view_all", "platform.users.view"]
+    if not caller_has_delegation or not body.permissions:
+        desired_keys = baseline_perms
+    else:
+        desired_keys = body.permissions
+
     # Fetch valid permissions from catalog
-    valid_perms_res = await db.execute(select(PlatformPermission).where(PlatformPermission.key.in_(body.permissions)))
+    valid_perms_res = await db.execute(select(PlatformPermission).where(PlatformPermission.key.in_(desired_keys)))
     valid_perms = valid_perms_res.scalars().all()
 
     # Synchronize direct permissions using diff-based update

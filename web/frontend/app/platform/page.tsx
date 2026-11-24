@@ -55,7 +55,7 @@ export default function PlatformConsolePage() {
     if (hasPerm("platform.analytics.view") || hasPerm("platform.audit.view")) {
       tabs.push({ key: "analytics", label: "Global Analytics", icon: BarChart3 });
     }
-    if (hasPerm("platform.staff.manage") || hasPerm("platform.permissions.manage")) {
+    if (hasPerm("platform.users.view") || hasPerm("platform.users.manage") || hasPerm("platform.permissions.manage")) {
       tabs.push({ key: "staff", label: "Platform Users & RBAC", icon: Shield });
     }
     if (hasPerm("platform.modules.verify") || hasPerm("platform.modules.view_all")) {
@@ -373,10 +373,20 @@ export default function PlatformConsolePage() {
     e.preventDefault();
     if (!newUserIdentity.trim()) return;
     try {
-      const added = await api.addPlatformUser({ identity: newUserIdentity.trim(), permissions: [] });
+      const added = await api.addPlatformUser({
+        identity: newUserIdentity.trim(),
+        permissions: [
+          "platform.analytics.view",
+          "platform.modules.view_all",
+          "platform.users.view",
+        ],
+      });
       setNewUserIdentity("");
       setShowAddUserModal(false);
-      router.push(`/platform/users/${added.id}`);
+      await loadPlatformStaffData();
+      if (hasPerm("platform.permissions.manage")) {
+        router.push(`/platform/users/${added.id}`);
+      }
     } catch (err: any) {
       alert("Error adding user: " + err.message);
     }
@@ -863,14 +873,14 @@ export default function PlatformConsolePage() {
                 </p>
               </div>
 
-              {hasPerm("platform.permissions.manage") && (
+              {(hasPerm("platform.users.manage") || hasPerm("platform.permissions.manage")) && (
                 <Button
                   size="sm"
                   onClick={() => setShowAddUserModal(true)}
                   className="rounded-xl bg-[var(--accent-primary)] text-black hover:opacity-90 font-bold text-xs gap-1.5 cursor-pointer"
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  <span>Grant Platform Access</span>
+                  <span>Add Platform User</span>
                 </Button>
               )}
             </div>
@@ -1431,9 +1441,9 @@ export default function PlatformConsolePage() {
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <Card className="max-w-md w-full rounded-2xl shadow-2xl border-border bg-card">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold">Grant Platform Operator Access</CardTitle>
+              <CardTitle className="text-base font-bold">Add Platform User</CardTitle>
               <CardDescription className="text-xs">
-                Enter an existing user's username or email to grant them platform privileges.
+                Enter an existing user's username or email. They will initially be provisioned with standard platform viewer access (<code>analytics.view</code>, <code>modules.view_all</code>, <code>users.view</code>).
               </CardDescription>
             </CardHeader>
             <form onSubmit={handleAddPlatformUserSubmit}>

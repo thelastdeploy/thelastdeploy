@@ -321,6 +321,25 @@ def require_platform_permission(permission_key: str):
     return _dependency
 
 
+def require_any_platform_permission(*permission_keys: str):
+    """
+    Dependency factory: checks if caller has ANY of the specified platform permissions.
+    """
+    async def _dependency(
+        current_user: User = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db),
+    ) -> User:
+        for key in permission_keys:
+            if await has_platform_permission(current_user, key, db):
+                return current_user
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Requires one of platform staff permissions: {list(permission_keys)}",
+        )
+
+    return _dependency
+
+
 async def has_platform_permission(user: User, permission_key: str, db: AsyncSession) -> bool:
     """Helper to check if a user has a specific platform permission key (pure granular RBAC from DB)."""
     # Direct user permission check ONLY (pure granular RBAC from database)
