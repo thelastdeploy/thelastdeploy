@@ -751,8 +751,8 @@ export default function UserRbacConfigPage() {
                         isLockedSelf
                           ? "bg-amber-500/[0.04] border-amber-500/30 cursor-not-allowed opacity-90"
                           : isGranted
-                          ? "bg-card border-[var(--accent-primary)]/30 hover:border-[var(--accent-primary)]/60 cursor-pointer shadow-[0_0_20px_rgba(var(--accent-primary-rgb),0.03)]"
-                          : "bg-card/40 border-border hover:border-muted-foreground/30 hover:bg-card/70 cursor-pointer"
+                          ? "bg-card border-emerald-500/40 dark:border-[var(--accent-primary)]/30 hover:border-emerald-500/70 dark:hover:border-[var(--accent-primary)]/60 cursor-pointer shadow-sm"
+                          : "bg-card border-border hover:border-muted-foreground/30 hover:bg-muted/20 cursor-pointer"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-4">
@@ -801,7 +801,7 @@ export default function UserRbacConfigPage() {
                         {/* Interactive Toggle Switch */}
                         <div className="shrink-0 flex items-center pt-1" onClick={(e) => e.stopPropagation()}>
                           {isLockedSelf ? (
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold">
+                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-mono font-bold">
                               <Lock className="h-3.5 w-3.5" />
                               <span>LOCKED</span>
                             </div>
@@ -809,16 +809,18 @@ export default function UserRbacConfigPage() {
                             <button
                               type="button"
                               onClick={() => handleTogglePerm(item.key)}
-                              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                                isGranted ? "bg-[var(--accent-primary)]" : "bg-muted"
+                              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] ${
+                                isGranted
+                                  ? "bg-emerald-500 dark:bg-[var(--accent-primary)] shadow-sm"
+                                  : "bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 border border-zinc-300/60 dark:border-zinc-600/60"
                               }`}
                               role="switch"
                               aria-checked={isGranted}
                             >
                               <span
                                 aria-hidden="true"
-                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-black shadow ring-0 transition duration-200 ease-in-out ${
-                                  isGranted ? "translate-x-5" : "translate-x-0 bg-muted-foreground"
+                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out border border-zinc-200/50 dark:border-transparent ${
+                                  isGranted ? "translate-x-5" : "translate-x-0"
                                 }`}
                               />
                             </button>
