@@ -21,7 +21,6 @@ import {
   Copy,
   Check,
   Building2,
-  Award,
   BarChart3,
   RotateCcw,
   Save,
@@ -44,7 +43,7 @@ import {
 } from "@/lib/types";
 
 // Categorization & Risk Taxonomy
-type DomainKey = "all" | "security" | "tenants" | "curriculum" | "analytics";
+type DomainKey = "all" | "security" | "tenants" | "analytics";
 type RiskLevel = "critical" | "elevated" | "standard" | "readonly";
 
 interface PermMetadata {
@@ -113,38 +112,6 @@ const PERMISSION_TAXONOMY: Record<string, PermMetadata> = {
     categoryLabel: "Tenant Governance",
   },
 
-  // Curriculum
-  "platform.modules.delete": {
-    domain: "curriculum",
-    risk: "critical",
-    humanName: "Deprecate & Delete Curriculum",
-    categoryLabel: "Curriculum QA",
-  },
-  "platform.modules.verify": {
-    domain: "curriculum",
-    risk: "elevated",
-    humanName: "Verify Curriculum Modules",
-    categoryLabel: "Curriculum QA",
-  },
-  "platform.modules.reject": {
-    domain: "curriculum",
-    risk: "elevated",
-    humanName: "Reject Curriculum Submissions",
-    categoryLabel: "Curriculum QA",
-  },
-  "platform.modules.calibrate_xp": {
-    domain: "curriculum",
-    risk: "elevated",
-    humanName: "Calibrate Module & Lab XP",
-    categoryLabel: "Curriculum QA",
-  },
-  "platform.modules.view_all": {
-    domain: "curriculum",
-    risk: "readonly",
-    humanName: "Audit Unverified Curriculum",
-    categoryLabel: "Curriculum QA",
-  },
-
   // Analytics
   "platform.analytics.export": {
     domain: "analytics",
@@ -170,7 +137,6 @@ const DOMAIN_SECTIONS: { id: DomainKey; label: string; icon: any; description: s
   { id: "all", label: "All Permissions", icon: SlidersHorizontal, description: "Overview of complete platform capability catalog." },
   { id: "security", label: "Security & RBAC", icon: KeyRound, description: "Administrative delegation, operator provisioning, and user access control." },
   { id: "tenants", label: "Tenant Governance", icon: Building2, description: "Organization lifecycle, suspension, setting enablement, and override values." },
-  { id: "curriculum", label: "Curriculum QA", icon: Award, description: "Module verification, reviewer rejections, and interactive XP calibration." },
   { id: "analytics", label: "Analytics & Audit", icon: BarChart3, description: "Platform-wide KPI dashboards, audit trails, and data export pipelines." },
 ];
 
@@ -387,7 +353,6 @@ export default function UserRbacConfigPage() {
       all: { granted: 0, total: 0 },
       security: { granted: 0, total: 0 },
       tenants: { granted: 0, total: 0 },
-      curriculum: { granted: 0, total: 0 },
       analytics: { granted: 0, total: 0 },
     };
 

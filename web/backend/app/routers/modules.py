@@ -762,7 +762,7 @@ async def verify_module(
     if not module:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
 
-    is_platform_admin = await is_user_platform_admin(current_user, db) or await has_platform_permission(current_user, "platform.modules.verify", db)
+    is_platform_admin = await is_user_platform_admin(current_user, db)
     if not is_platform_admin:
         mem = await db.scalar(
             select(OrganizationMembership).where(
@@ -924,7 +924,7 @@ async def reject_module(
     if not module:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Module not found")
 
-    is_platform_admin = await is_user_platform_admin(current_user, db) or await has_platform_permission(current_user, "platform.modules.verify", db)
+    is_platform_admin = await is_user_platform_admin(current_user, db)
     if not is_platform_admin:
         mem = await db.scalar(
             select(OrganizationMembership).where(

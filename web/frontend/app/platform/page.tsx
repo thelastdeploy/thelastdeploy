@@ -8,7 +8,7 @@ import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { 
-  Building2, Users, Award, ShieldAlert, Shield, CheckCircle, 
+  Building2, Users, ShieldAlert, Shield, 
   ExternalLink, Plus, Trash2, Clock, Globe, GraduationCap, 
   Search, AlertCircle, CheckCircle2, ChevronRight, BookOpen, 
   Terminal, Sparkles, KeyRound, BarChart3, Download, TrendingUp, RefreshCw,
@@ -22,8 +22,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { NumberStepper } from "@/components/ui/number-stepper";
 import { ConfirmModal } from "@/components/builder/confirm-modal";
 import {
-  Module,
-  ModuleDetail,
   OrganizationResponse,
   PlatformOverviewAnalyticsResponse,
   PlatformTrendsAnalyticsResponse,
@@ -34,7 +32,7 @@ import {
   AuditLogResponse,
 } from "@/lib/types";
 
-type TabKey = "organizations" | "analytics" | "staff" | "curriculum" | "audit";
+type TabKey = "organizations" | "analytics" | "staff" | "audit";
 
 export default function PlatformConsolePage() {
   const { user, loading: authLoading, refreshUser } = useAuth();
@@ -62,9 +60,6 @@ export default function PlatformConsolePage() {
     }
     if (hasPerm("platform.users.view") || hasPerm("platform.users.manage") || hasPerm("platform.permissions.manage")) {
       tabs.push({ key: "staff", label: "Platform Users & RBAC", icon: Shield });
-    }
-    if (hasPerm("platform.modules.verify") || hasPerm("platform.modules.view_all")) {
-      tabs.push({ key: "curriculum", label: "Curriculum Review", icon: Award });
     }
     if (hasPerm("platform.audit.view")) {
       tabs.push({ key: "audit", label: "Security & Audit Logs", icon: KeyRound });
@@ -115,12 +110,6 @@ export default function PlatformConsolePage() {
   const [platformPeriod, setPlatformPeriod] = useState<string>("30d");
   const [platformAnalyticsLoading, setPlatformAnalyticsLoading] = useState(false);
   const [exportingPlatform, setExportingPlatform] = useState(false);
-
-  // Curriculum review state
-  const [unverifiedModules, setUnverifiedModules] = useState<Module[]>([]);
-  const [selectedModule, setSelectedModule] = useState<ModuleDetail | null>(null);
-  const [loadingDetail, setLoadingDetail] = useState(false);
-  const [xpState, setXpState] = useState<Record<string, number>>({});
 
   // Security Audit Logs state
   const [auditLogs, setAuditLogs] = useState<AuditLogResponse[]>([]);
@@ -174,7 +163,6 @@ export default function PlatformConsolePage() {
     if (activeTab === "analytics") loadPlatformAnalytics();
     if (activeTab === "staff") loadPlatformStaffData();
     if (activeTab === "audit") loadAuditLogs();
-    if (activeTab === "curriculum") loadCurriculumData();
   }, [activeTab, isPlatformStaff]);
 
   const loadInitialData = async () => {
@@ -206,16 +194,6 @@ export default function PlatformConsolePage() {
       console.error("Failed to load platform staff:", err);
     } finally {
       setLoadingUsers(false);
-    }
-  };
-
-  const loadCurriculumData = async () => {
-    try {
-      const res = await api.getModules();
-      const unverified = (res.modules || []).filter((m: any) => m.status !== "verified");
-      setUnverifiedModules(unverified);
-    } catch (err) {
-      console.error("Failed to load curriculum:", err);
     }
   };
 
@@ -382,7 +360,6 @@ export default function PlatformConsolePage() {
         identity: newUserIdentity.trim(),
         permissions: [
           "platform.analytics.view",
-          "platform.modules.view_all",
           "platform.users.view",
         ],
       });
@@ -455,63 +432,6 @@ export default function PlatformConsolePage() {
     }
   };
 
-  // --- Curriculum Review & Calibrator ---
-  const handleSelectModule = async (id: string) => {
-    setLoadingDetail(true);
-    try {
-      const detail = await api.getModule(id);
-      setSelectedModule(detail);
-      const initialXP: Record<string, number> = {};
-      detail.sections.forEach((sec: any) => {
-        initialXP[sec.id] = sec.xp || 10;
-        sec.labs?.forEach((lab: any) => {
-          initialXP[lab.id] = lab.xp || 30;
-        });
-      });
-      setXpState(initialXP);
-    } catch (err: any) {
-      alert("Failed to load module details: " + err.message);
-    } finally {
-      setLoadingDetail(false);
-    }
-  };
-
-  const handleApprove = (id: string, title: string) => {
-    setModalConfig({
-      isOpen: true,
-      title: "Verify & Publish Curriculum",
-      message: `Approve and officially verify "${title}" with the calibrated XP rewards? This elevates it to official verified TLD curriculum.`,
-      confirmText: "Verify & Publish",
-      type: "success",
-      onCancel: () => setModalConfig((prev) => ({ ...prev, isOpen: false })),
-      onConfirm: async () => {
-        setModalConfig((prev) => ({ ...prev, isOpen: false }));
-        try {
-          await api.verifyModule(id, xpState);
-          setSelectedModule(null);
-          await loadCurriculumData();
-        } catch (err: any) {
-          alert("Verification failed: " + err.message);
-        }
-      },
-    });
-  };
-
-  const handleReject = (id: string, title: string) => {
-    const reason = prompt(`Provide rejection feedback for "${title}":`);
-    if (reason === null) return;
-    if (!reason.trim()) {
-      alert("Rejection reason is required.");
-      return;
-    }
-    api.rejectModule(id, reason.trim())
-      .then(async () => {
-        setSelectedModule(null);
-        await loadCurriculumData();
-      })
-      .catch((err) => alert("Rejection failed: " + err.message));
-  };
-
   if (authLoading || loading) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center">
@@ -556,7 +476,7 @@ export default function PlatformConsolePage() {
                 Platform Console
               </h1>
               <p className="mt-1.5 text-muted-foreground text-xs max-w-xl leading-relaxed">
-                Global governance for The Last Deploy: manage tenant organizations, platform permissions, and official curriculum verification.
+                Global governance for The Last Deploy: manage tenant organizations, platform operators, and security audit logs.
               </p>
             </div>
 
@@ -966,163 +886,7 @@ export default function PlatformConsolePage() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 4: Curriculum Review & Interactive XP Calibrator                     */}
-        {/* ========================================================================= */}
-        {activeTab === "curriculum" && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Module Review List */}
-              <div className="space-y-3">
-                <h3 className="font-bold text-sm text-foreground">Pending Review Submissions</h3>
-                {unverifiedModules.length === 0 ? (
-                  <div className="p-8 text-center border border-dashed border-border rounded-2xl bg-card/20 space-y-2">
-                    <CheckCircle className="h-8 w-8 mx-auto text-emerald-400" />
-                    <p className="text-xs font-bold text-foreground">Review Queue Empty</p>
-                    <p className="text-[11px] text-muted-foreground">All submitted modules have been verified or resolved.</p>
-                  </div>
-                ) : (
-                  unverifiedModules.map((mod) => (
-                    <div
-                      key={mod.id}
-                      onClick={() => handleSelectModule(mod.id)}
-                      className={`p-4 rounded-2xl border transition-all cursor-pointer ${
-                        selectedModule?.id === mod.id
-                          ? "border-[var(--accent-primary)] bg-[var(--accent-primary)]/[0.03]"
-                          : "border-border bg-card hover:border-[var(--accent-primary)]/40"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <h4 className="font-bold text-xs text-foreground">{mod.title}</h4>
-                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-bold">
-                          {mod.status || "submitted"}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-muted-foreground line-clamp-2 mt-1">
-                        {mod.description || "No description provided."}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2 text-[10px] font-mono text-muted-foreground">
-                        <span>{mod.total_sections} sections</span>
-                        <span>•</span>
-                        <span>{mod.total_xp} XP</span>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {/* Detail & Interactive XP Calibrator */}
-              <div className="lg:col-span-2">
-                {loadingDetail ? (
-                  <div className="h-64 flex items-center justify-center border border-border rounded-2xl bg-card">
-                    <LoadingSpinner />
-                  </div>
-                ) : selectedModule ? (
-                  <div className="p-6 rounded-2xl border border-border bg-card space-y-6">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className="font-bold text-lg text-foreground">{selectedModule.title}</h3>
-                        <p className="text-xs text-muted-foreground mt-1">{selectedModule.description}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {hasPerm("platform.modules.reject") && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleReject(selectedModule.id, selectedModule.title)}
-                            className="rounded-xl text-xs font-bold text-red-400 border-red-500/20 hover:bg-red-500/10 cursor-pointer"
-                          >
-                            Reject
-                          </Button>
-                        )}
-                        {hasPerm("platform.modules.verify") && (
-                          <Button
-                            size="sm"
-                            onClick={() => handleApprove(selectedModule.id, selectedModule.title)}
-                            className="rounded-xl bg-emerald-500 hover:bg-emerald-600 text-black font-bold text-xs cursor-pointer"
-                          >
-                            Verify & Publish
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-bold text-xs uppercase tracking-wider text-muted-foreground">
-                          Calibrate Section & Lab XP Weights:
-                        </h4>
-                        <span className="text-xs font-mono font-bold text-[var(--accent-primary)]">
-                          Total Calibrated:{" "}
-                          {selectedModule.sections.reduce(
-                            (acc: number, sec: any) =>
-                              acc +
-                              (xpState[sec.id] ?? sec.xp ?? 10) +
-                              (sec.labs?.reduce((lacc: number, l: any) => lacc + (xpState[l.id] ?? l.xp ?? 30), 0) ?? 0),
-                            0
-                          )}{" "}
-                          XP
-                        </span>
-                      </div>
-
-                      {selectedModule.sections.map((sec: any) => (
-                        <div key={sec.id} className="p-4 rounded-xl bg-muted/20 border border-border/60 space-y-3 text-xs">
-                          <div className="flex items-center justify-between gap-3">
-                            <div>
-                              <span className="font-bold text-foreground">{sec.title}</span>
-                              <p className="text-[10px] text-muted-foreground font-mono">Section Completion Reward</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <NumberStepper
-                                value={xpState[sec.id] ?? sec.xp ?? 10}
-                                min={0}
-                                max={500}
-                                step={5}
-                                unit="XP"
-                                disabled={!hasPerm("platform.modules.calibrate_xp")}
-                                onChange={(val) => setXpState((prev) => ({ ...prev, [sec.id]: val }))}
-                              />
-                            </div>
-                          </div>
-
-                          {sec.labs?.map((lab: any) => (
-                            <div key={lab.id} className="pl-4 border-l-2 border-border/80 flex items-center justify-between gap-3 py-1 text-muted-foreground text-[11px]">
-                              <div>
-                                <span className="font-medium text-foreground">🧪 {lab.title}</span>
-                                <span className="text-[10px] font-mono text-zinc-400 block">{lab.id}</span>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <NumberStepper
-                                  value={xpState[lab.id] ?? lab.xp ?? 30}
-                                  min={0}
-                                  max={1000}
-                                  step={10}
-                                  unit="XP"
-                                  disabled={!hasPerm("platform.modules.calibrate_xp")}
-                                  onChange={(val) => setXpState((prev) => ({ ...prev, [lab.id]: val }))}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="h-64 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl bg-card/20 space-y-2 text-center p-6">
-                    <BookOpen className="h-8 w-8 text-muted-foreground" />
-                    <p className="text-xs font-bold text-foreground">Select a Module to Review</p>
-                    <p className="text-[11px] text-muted-foreground max-w-xs">
-                      Inspect validator scripts, test commands, and calibrate official XP reward weights.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================================= */}
-        {/* TAB 5: Security & Platform-Wide Audit Logs                                */}
+        {/* TAB 4: Security & Platform-Wide Audit Logs                                */}
         {/* ========================================================================= */}
         {activeTab === "audit" && (
           <div className="space-y-6">
@@ -1444,7 +1208,7 @@ export default function PlatformConsolePage() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-bold">Add Platform User</CardTitle>
               <CardDescription className="text-xs">
-                Enter an existing user's username or email. They will initially be provisioned with standard platform viewer access (<code>analytics.view</code>, <code>modules.view_all</code>, <code>users.view</code>).
+                Enter an existing user's username or email. They will initially be provisioned with standard platform viewer access (<code>analytics.view</code>, <code>users.view</code>).
               </CardDescription>
             </CardHeader>
             <form onSubmit={handleAddPlatformUserSubmit}>

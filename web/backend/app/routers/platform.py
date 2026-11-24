@@ -140,7 +140,7 @@ async def add_platform_user(
     # Users with only platform.users.manage are strictly restricted to the 3 baseline permissions.
     # Users with platform.permissions.manage can grant custom permissions (defaulting to baseline if empty).
     caller_has_delegation = await has_platform_permission(current_user, "platform.permissions.manage", db)
-    baseline_perms = ["platform.analytics.view", "platform.modules.view_all", "platform.users.view"]
+    baseline_perms = ["platform.analytics.view", "platform.users.view"]
     if not caller_has_delegation or not body.permissions:
         desired_keys = baseline_perms
     else:
