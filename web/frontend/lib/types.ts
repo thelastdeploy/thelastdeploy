@@ -30,6 +30,8 @@ export interface AuthorInfo {
   is_official: boolean;
 }
 
+export type ModuleStatus = 'draft' | 'published' | 'pending' | 'verified';
+
 export interface Module {
   id: string;
   title: string;
@@ -79,50 +81,6 @@ export interface OrganizationMembershipInfo {
   joined_at: string;
 }
 
-export type ModuleStatus = 'draft' | 'published' | 'pending' | 'verified';
-
-export interface BuilderLabInput {
-  id: string;
-  title: string;
-  order: number;
-  xp: number;
-  estimated_minutes: number | null;
-  environment_profile?: string;
-  seed_commands: string[];
-  validator_script: string;
-}
-
-export interface BuilderSectionInput {
-  id: string;
-  title: string;
-  order: number;
-  xp: number;
-  content: string;
-  labs: BuilderLabInput[];
-}
-
-export interface BuilderModuleInput {
-  id: string;
-  title: string;
-  description: string;
-  topic: string;
-  difficulty: string;
-  estimated_minutes: number | null;
-  sections: BuilderSectionInput[];
-}
-
-export interface BuilderDraftListItem {
-  id: string;
-  title: string;
-  topic: string | null;
-  difficulty: string | null;
-  total_sections: number;
-  total_xp: number;
-  status: ModuleStatus;
-  is_official_verified?: boolean;
-  created_at: string;
-  submitted_at: string | null;
-}
 
 export interface OrganizationPublicInfoResponse {
   name: string;

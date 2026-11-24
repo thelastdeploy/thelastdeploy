@@ -1,6 +1,6 @@
 // web/frontend/components/shared/markdown-renderer.tsx
 // Shared component — identical rendering to the live section-content view.
-// Used by both SectionContent (module reading) and LivePreview (builder).
+// Used by SectionContent for module and lab reading.
 
 "use client";
 

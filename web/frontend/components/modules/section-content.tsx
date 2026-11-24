@@ -108,7 +108,7 @@ export function SectionContent({
         )}
       </div>
 
-      {/* Markdown — uses the same shared renderer as the builder live preview */}
+      {/* Markdown renderer */}
       {section.content ? (
         <div className="mb-10">
           <MarkdownRenderer content={section.content} />
