@@ -17,7 +17,7 @@ import {
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { NumberStepper } from "@/components/ui/number-stepper";
 import { ConfirmModal } from "@/components/shared/confirm-modal";
@@ -92,6 +92,8 @@ export default function PlatformConsolePage() {
   const [loadingSettings, setLoadingSettings] = useState(false);
   const [settingsSaveMsg, setSettingsSaveMsg] = useState<string | null>(null);
   const [editingValues, setEditingValues] = useState<Record<string, any>>({});
+  const [editingEnabled, setEditingEnabled] = useState<Record<string, boolean>>({});
+  const [savingSettings, setSavingSettings] = useState(false);
 
   // Staff & Permissions state
   const [platformUsers, setPlatformUsers] = useState<PlatformUserPermissionSummary[]>([]);
@@ -259,10 +261,13 @@ export default function PlatformConsolePage() {
       const settings = await api.getPlatformOrgSettings(org.slug);
       setOrgSettingsList(settings);
       const initialValues: Record<string, any> = {};
+      const initialEnabled: Record<string, boolean> = {};
       settings.forEach((s) => {
         initialValues[s.key] = s.value !== null && s.value !== undefined ? s.value : s.default;
+        initialEnabled[s.key] = s.is_enabled;
       });
       setEditingValues(initialValues);
+      setEditingEnabled(initialEnabled);
     } catch (err: any) {
       alert("Failed to load platform settings for organization: " + err.message);
     } finally {
@@ -270,34 +275,51 @@ export default function PlatformConsolePage() {
     }
   };
 
-  const handleToggleSettingAvailability = async (settingKey: string, currentEnabled: boolean) => {
-    if (!selectedOrgForSettings) return;
-    try {
-      if (currentEnabled) {
-        await api.disablePlatformOrgSetting(selectedOrgForSettings.slug, settingKey);
-      } else {
-        await api.enablePlatformOrgSetting(selectedOrgForSettings.slug, settingKey, editingValues[settingKey]);
-      }
-      const updated = await api.getPlatformOrgSettings(selectedOrgForSettings.slug);
-      setOrgSettingsList(updated);
-      setSettingsSaveMsg(`Setting '${settingKey}' availability updated.`);
-      setTimeout(() => setSettingsSaveMsg(null), 3000);
-    } catch (err: any) {
-      alert("Failed to toggle availability: " + err.message);
-    }
+  const handleToggleSettingAvailability = (settingKey: string) => {
+    setEditingEnabled((prev) => ({
+      ...prev,
+      [settingKey]: !prev[settingKey],
+    }));
   };
 
-  const handleSaveSettingValue = async (settingKey: string) => {
+  const handleSaveAllOrgSettings = async () => {
     if (!selectedOrgForSettings) return;
-    const value = editingValues[settingKey];
+    setSavingSettings(true);
+    setSettingsSaveMsg(null);
     try {
-      await api.overridePlatformOrgSetting(selectedOrgForSettings.slug, settingKey, value);
+      // Execute batch updates for availability and value overrides
+      for (const st of orgSettingsList) {
+        const wasEnabled = st.is_enabled;
+        const nowEnabled = editingEnabled[st.key] ?? wasEnabled;
+        const origVal = st.value !== null && st.value !== undefined ? st.value : st.default;
+        const currentVal = editingValues[st.key];
+
+        // 1. Availability changes
+        if (wasEnabled !== nowEnabled) {
+          if (nowEnabled) {
+            await api.enablePlatformOrgSetting(selectedOrgForSettings.slug, st.key, currentVal);
+          } else {
+            await api.disablePlatformOrgSetting(selectedOrgForSettings.slug, st.key);
+          }
+        }
+
+        // 2. Value overrides (if enabled and value changed)
+        if (nowEnabled && JSON.stringify(origVal) !== JSON.stringify(currentVal)) {
+          await api.overridePlatformOrgSetting(selectedOrgForSettings.slug, st.key, currentVal);
+        }
+      }
+
+      setSettingsSaveMsg("Settings saved successfully.");
       const updated = await api.getPlatformOrgSettings(selectedOrgForSettings.slug);
       setOrgSettingsList(updated);
-      setSettingsSaveMsg(`Saved value for '${settingKey}'.`);
-      setTimeout(() => setSettingsSaveMsg(null), 3000);
+      setTimeout(() => {
+        setSettingsSaveMsg(null);
+        setSelectedOrgForSettings(null);
+      }, 700);
     } catch (err: any) {
-      alert("Failed to save setting value: " + err.message);
+      alert("Failed to save settings: " + err.message);
+    } finally {
+      setSavingSettings(false);
     }
   };
 
@@ -1002,6 +1024,7 @@ export default function PlatformConsolePage() {
                   {orgSettingsList.map((st) => {
                     const isBool = st.data_type === "boolean";
                     const isInt = st.data_type === "integer";
+                    const isEnabled = editingEnabled[st.key] ?? st.is_enabled;
                     const val = editingValues[st.key];
 
                     return (
@@ -1022,19 +1045,19 @@ export default function PlatformConsolePage() {
 
                           <div className="flex items-center gap-2 shrink-0">
                             <span className={`text-[10px] font-mono font-bold ${
-                              st.is_enabled ? "text-emerald-400" : "text-muted-foreground"
+                              isEnabled ? "text-emerald-400" : "text-muted-foreground"
                             }`}>
-                              {st.is_enabled ? "Enabled" : "Disabled"}
+                              {isEnabled ? "Enabled" : "Disabled"}
                             </span>
                             <Button
                               size="sm"
-                              variant={st.is_enabled ? "outline" : "default"}
-                              onClick={() => handleToggleSettingAvailability(st.key, st.is_enabled)}
+                              variant={isEnabled ? "outline" : "default"}
+                              onClick={() => handleToggleSettingAvailability(st.key)}
                               className={`h-7 px-2.5 rounded-xl text-[11px] font-bold cursor-pointer ${
-                                !st.is_enabled ? "bg-[var(--accent-primary)] text-black" : ""
+                                !isEnabled ? "bg-[var(--accent-primary)] text-black" : ""
                               }`}
                             >
-                              {st.is_enabled ? "Disable" : "Enable"}
+                              {isEnabled ? "Disable" : "Enable"}
                             </Button>
                           </div>
                         </div>
@@ -1048,7 +1071,7 @@ export default function PlatformConsolePage() {
                                 value={val === true ? "true" : "false"}
                                 onValueChange={(newVal) => setEditingValues((prev) => ({ ...prev, [st.key]: newVal === "true" }))}
                               >
-                                <SelectTrigger className="h-7 w-24 text-[11px]">
+                                <SelectTrigger className="h-7 w-28 text-[11px]">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -1068,17 +1091,9 @@ export default function PlatformConsolePage() {
                               <Input
                                 value={val ?? ""}
                                 onChange={(e) => setEditingValues((prev) => ({ ...prev, [st.key]: e.target.value }))}
-                                className="h-7 w-40 text-[11px] rounded-lg"
+                                className="h-7 w-48 text-[11px] rounded-lg"
                               />
                             )}
-
-                            <Button
-                              size="sm"
-                              onClick={() => handleSaveSettingValue(st.key)}
-                              className="h-7 px-3 rounded-lg bg-[var(--accent-primary)] text-black font-bold text-[11px] cursor-pointer"
-                            >
-                              Save
-                            </Button>
                           </div>
                         </div>
                       </div>
@@ -1087,6 +1102,26 @@ export default function PlatformConsolePage() {
                 </div>
               )}
             </CardContent>
+
+            <CardFooter className="p-4 border-t border-border flex items-center justify-end gap-2.5 shrink-0 bg-muted/10">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedOrgForSettings(null)}
+                className="rounded-xl text-xs font-bold h-9 cursor-pointer"
+                disabled={savingSettings}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleSaveAllOrgSettings}
+                disabled={savingSettings}
+                className="rounded-xl bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 text-black font-bold text-xs h-9 cursor-pointer px-5"
+              >
+                {savingSettings ? <LoadingSpinner /> : "Save"}
+              </Button>
+            </CardFooter>
           </Card>
         </div>
       )}
