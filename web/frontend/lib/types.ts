@@ -531,6 +531,7 @@ export interface OrgSettingAdminItemResponse {
   category: string;
   description: string;
   data_type: string;
+  allowed_values?: any[] | null;
   updated_at?: string | null;
 }
 

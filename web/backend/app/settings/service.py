@@ -143,6 +143,7 @@ class SettingsService:
                 "category": defn.category,
                 "description": defn.description,
                 "data_type": defn.data_type.value,
+                "allowed_values": defn.allowed_values,
                 "updated_at": updated_at,
             })
         return output

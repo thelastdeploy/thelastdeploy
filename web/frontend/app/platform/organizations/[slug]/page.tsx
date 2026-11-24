@@ -33,6 +33,17 @@ import {
 } from "@/components/ui/select";
 import { NumberStepper } from "@/components/ui/number-stepper";
 
+const SETTING_CHOICES: Record<string, { value: string; label: string }[]> = {
+  "onboarding.access_approval_mode": [
+    { value: "automatic", label: "Automatic" },
+    { value: "manual", label: "Manual (Review Queue)" },
+  ],
+  "learning_paths.default_visibility": [
+    { value: "public", label: "Public" },
+    { value: "private", label: "Private" },
+  ],
+};
+
 export default function PlatformOrgSettingsPage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -398,6 +409,14 @@ export default function PlatformOrgSettingsPage() {
               const isEnabled = draftEnabled[st.key] ?? st.is_enabled;
               const val = draftValues[st.key];
               const isModified = modifiedKeys.has(st.key);
+              const choices =
+                SETTING_CHOICES[st.key] ||
+                (st.allowed_values && st.allowed_values.length > 0
+                  ? st.allowed_values.map((v: any) => ({
+                      value: String(v),
+                      label: String(v).charAt(0).toUpperCase() + String(v).slice(1),
+                    }))
+                  : null);
 
               return (
                 <div
@@ -454,6 +473,23 @@ export default function PlatformOrgSettingsPage() {
                           onChange={(newVal) => handleValueChange(st.key, newVal)}
                           disabled={!isEnabled}
                         />
+                      ) : choices ? (
+                        <Select
+                          value={String(val ?? st.default ?? "")}
+                          onValueChange={(newVal) => handleValueChange(st.key, newVal)}
+                          disabled={!isEnabled}
+                        >
+                          <SelectTrigger className="h-8 min-w-[140px] text-xs font-mono">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {choices.map((choice) => (
+                              <SelectItem key={choice.value} value={choice.value}>
+                                {choice.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       ) : (
                         <Input
                           value={val ?? ""}
@@ -518,3 +554,4 @@ export default function PlatformOrgSettingsPage() {
     </div>
   );
 }
+

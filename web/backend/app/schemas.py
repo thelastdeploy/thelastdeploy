@@ -493,6 +493,7 @@ class OrgSettingAdminItemResponse(BaseModel):
     category: str
     description: str
     data_type: str
+    allowed_values: list[Any] | None = None
     updated_at: datetime | None = None
 
 

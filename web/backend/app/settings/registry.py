@@ -111,6 +111,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         key="onboarding.access_approval_mode",
         data_type=SettingType.STRING,
         default="automatic",
+        allowed_values=["automatic", "manual"],
         category="Onboarding",
         description="Approval mode for domain-based access requests ('automatic' or 'manual').",
     ),
