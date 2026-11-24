@@ -269,6 +269,13 @@ async def update_user_permissions(
     if not target_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
+    # Safety guard: prevent self-lockout of critical permissions
+    if target_user.id == current_user.id and "platform.permissions.manage" not in body.permissions:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Self-lockout protection: you cannot revoke your own 'platform.permissions.manage' permission.",
+        )
+
     # Safety guard: protect devuser root permissions
     if target_user.username == "devuser" and "platform.permissions.manage" not in body.permissions:
         raise HTTPException(
@@ -335,6 +342,12 @@ async def revoke_platform_user(
     target_user = await db.get(User, user_id)
     if not target_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+    if target_user.id == current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Self-protection: you cannot delete or revoke your own platform operator account.",
+        )
 
     if target_user.username == "devuser":
         raise HTTPException(

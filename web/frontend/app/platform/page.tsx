@@ -374,16 +374,20 @@ export default function PlatformConsolePage() {
     e.preventDefault();
     if (!newUserIdentity.trim()) return;
     try {
-      await api.addPlatformUser({ identity: newUserIdentity.trim(), permissions: [] });
+      const added = await api.addPlatformUser({ identity: newUserIdentity.trim(), permissions: [] });
       setNewUserIdentity("");
       setShowAddUserModal(false);
-      await loadPlatformStaffData();
+      router.push(`/platform/users/${added.id}`);
     } catch (err: any) {
       alert("Error adding user: " + err.message);
     }
   };
 
   const handleRevokePlatformUser = (userId: number, username: string) => {
+    if (user && (user.id === userId || user.username === username)) {
+      alert("Self-Protection Guard: You cannot delete or revoke your own platform operator account.");
+      return;
+    }
     setModalConfig({
       isOpen: true,
       title: "Revoke Platform Operator Access",
@@ -880,6 +884,7 @@ export default function PlatformConsolePage() {
               <div className="divide-y divide-border">
                 {platformUsers.map((pUser) => {
                   const isDevUser = pUser.username === "devuser";
+                  const isSelf = user?.id === pUser.id || user?.username === pUser.username;
                   const canConfigureOthers = pUser.permissions.includes("platform.permissions.manage") || isDevUser;
 
                   return (
@@ -891,8 +896,13 @@ export default function PlatformConsolePage() {
                         <div>
                           <div className="flex items-center gap-2">
                             <h4 className="font-bold text-xs text-foreground">{pUser.username}</h4>
+                            {isSelf && (
+                              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 font-bold uppercase">
+                                You
+                              </span>
+                            )}
                             {isDevUser && (
-                              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-bold uppercase">
+                              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 font-bold uppercase">
                                 Superadmin
                               </span>
                             )}
@@ -926,20 +936,20 @@ export default function PlatformConsolePage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => handleOpenPermsModal(pUser)}
-                            className="rounded-xl text-xs font-bold gap-1.5 h-8 cursor-pointer"
+                            onClick={() => router.push(`/platform/users/${pUser.id}`)}
+                            className="rounded-xl text-xs font-bold gap-1.5 h-8 cursor-pointer hover:border-[var(--accent-primary)]/50"
                           >
                             <KeyRound className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
                             <span>Configure Permissions</span>
                           </Button>
                         )}
 
-                        {!isDevUser && hasPerm("platform.permissions.manage") && (
+                        {!isDevUser && !isSelf && hasPerm("platform.permissions.manage") && (
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => handleRevokePlatformUser(pUser.id, pUser.username)}
-                            className="h-8 w-8 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 rounded-xl"
+                            className="h-8 w-8 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 rounded-xl cursor-pointer"
                             title="Revoke all platform access"
                           >
                             <Trash2 className="h-4 w-4" />
