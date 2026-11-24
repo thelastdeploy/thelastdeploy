@@ -180,32 +180,23 @@ async def seed_users(db, org_map):
     curr_lead_role = (await db.execute(select(PlatformRole).where(PlatformRole.slug == "curriculum_lead"))).scalar_one_or_none()
     support_role = (await db.execute(select(PlatformRole).where(PlatformRole.slug == "support_staff"))).scalar_one_or_none()
 
-    # Ensure platform permission 'organization_settings.manage' exists
+    # Link platform.organizations.manage to platform_admin role
     from app.models import PlatformPermission, PlatformRolePermission
-    org_settings_perm = (await db.execute(select(PlatformPermission).where(PlatformPermission.key == "organization_settings.manage"))).scalar_one_or_none()
-    if not org_settings_perm:
-        org_settings_perm = PlatformPermission(
-            key="organization_settings.manage",
-            description="Manage workspace and organization settings across all organizations",
-        )
-        db.add(org_settings_perm)
-        await db.flush()
-        print("  ✅ Created platform permission: organization_settings.manage")
-
-    if plat_admin_role and org_settings_perm:
+    org_manage_perm = (await db.execute(select(PlatformPermission).where(PlatformPermission.key == "platform.organizations.manage"))).scalar_one_or_none()
+    if plat_admin_role and org_manage_perm:
         has_perm = (await db.execute(
             select(PlatformRolePermission).where(
                 PlatformRolePermission.platform_role_id == plat_admin_role.id,
-                PlatformRolePermission.permission_id == org_settings_perm.id,
+                PlatformRolePermission.permission_id == org_manage_perm.id,
             )
         )).scalar_one_or_none()
         if not has_perm:
             db.add(PlatformRolePermission(
                 platform_role_id=plat_admin_role.id,
-                permission_id=org_settings_perm.id,
+                permission_id=org_manage_perm.id,
             ))
             await db.flush()
-            print("  ✅ Linked organization_settings.manage to platform_admin role")
+            print("  ✅ Linked platform.organizations.manage to platform_admin role")
 
     # Fetch all platform permissions into map
     all_perm_objs = (await db.execute(select(PlatformPermission))).scalars().all()
@@ -247,10 +238,8 @@ async def seed_users(db, org_map):
             "email": "kai.curriculum@example.com",
             "platform_roles": [],
             "platform_permissions": [
-                "platform.modules.view_all",
-                "platform.modules.verify",
-                "platform.modules.calibrate_xp",
-                "platform.modules.reject",
+                "platform.analytics.view",
+                "platform.organizations.view",
             ],
             "memberships": [{"org_slug": "tld", "roles": ["instructor"], "xp": 180}],
         },
