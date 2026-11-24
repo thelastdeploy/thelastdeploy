@@ -235,8 +235,8 @@ async def get_current_organization(
     mem_result = await db.execute(mem_stmt)
     membership = mem_result.scalar_one_or_none()
     if not membership:
-        # Check if caller has cross-org management authority via 'organization_settings.manage' or platform superadmin
-        can_manage = await has_platform_permission(current_user, "organization_settings.manage", db) or await is_user_platform_admin(current_user, db)
+        # Check if caller has cross-org management authority via 'platform.organizations.manage' or platform superadmin
+        can_manage = await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db)
         if can_manage:
             from app.models import Role, MembershipRole
             membership = OrganizationMembership(
@@ -270,7 +270,7 @@ def require_permission(permission_key: str):
     """
     Dependency factory: checks if caller's active membership in the current organization
     has the specified permission key through any assigned roles.
-    Platform administrators and staff with 'organization_settings.manage' have root administrative permissions across all organizations.
+    Platform administrators and staff with 'platform.organizations.manage' have root administrative permissions across all organizations.
     """
     async def _dependency(
         org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
@@ -278,7 +278,7 @@ def require_permission(permission_key: str):
         db: AsyncSession = Depends(get_db),
     ) -> OrganizationMembership:
         _, membership = org_and_mem
-        if await has_platform_permission(current_user, "organization_settings.manage", db) or await is_user_platform_admin(current_user, db):
+        if await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db):
             return membership
 
         stmt = (
@@ -383,7 +383,7 @@ async def has_org_permission(
     db: AsyncSession,
 ) -> bool:
     """Helper to check if a user/membership has a specific organization permission key."""
-    if await has_platform_permission(user, "organization_settings.manage", db) or await is_user_platform_admin(user, db):
+    if await has_platform_permission(user, "platform.organizations.manage", db) or await is_user_platform_admin(user, db):
         return True
     stmt = (
         select(Permission.id)

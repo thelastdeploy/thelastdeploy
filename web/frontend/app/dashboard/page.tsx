@@ -121,7 +121,7 @@ export default function DashboardPage() {
   const activeModulesToShow = activeModules.slice(0, 4);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="max-w-7xl mx-auto px-4 py-10">
 
       {/* Active Workspace Bar */}
       {activeOrgInfo && (

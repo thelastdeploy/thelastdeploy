@@ -102,8 +102,8 @@ async def require_platform_settings_perm(
 ) -> User:
     if (
         await has_platform_permission(current_user, "platform.organizations.settings", db)
-        or await has_platform_permission(current_user, "organization_settings.manage", db)
         or await has_platform_permission(current_user, "platform.organizations.manage", db)
+        or await is_user_platform_admin(current_user, db)
     ):
         return current_user
     raise HTTPException(

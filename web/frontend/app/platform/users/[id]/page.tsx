@@ -83,20 +83,14 @@ const PERMISSION_TAXONOMY: Record<string, PermMetadata> = {
   },
   "platform.organizations.manage": {
     domain: "tenants",
-    risk: "elevated",
-    humanName: "Tenant Workspace Administration",
+    risk: "critical",
+    humanName: "Manage Tenant Workspaces",
     categoryLabel: "Tenant Governance",
   },
   "platform.organizations.settings": {
     domain: "tenants",
     risk: "elevated",
     humanName: "Platform Setting Availability & Overrides",
-    categoryLabel: "Tenant Governance",
-  },
-  "organization_settings.manage": {
-    domain: "tenants",
-    risk: "elevated",
-    humanName: "Legacy Global Organization Settings",
     categoryLabel: "Tenant Governance",
   },
   "platform.organizations.create": {
@@ -299,10 +293,9 @@ export default function UserRbacConfigPage() {
       setSuccessMessage("Platform permissions committed successfully.");
       setTimeout(() => setSuccessMessage(null), 4000);
 
-      // Immediately refresh current user if editing self
-      if (currentUser && (operator.id === currentUser.id || operator.username === currentUser.username)) {
-        await refreshUser();
-      }
+      // Immediately broadcast and refresh current user
+      window.dispatchEvent(new CustomEvent("tld:user-updated"));
+      await refreshUser();
     } catch (err: any) {
       setError(err.message || "Failed to commit permissions.");
     } finally {
@@ -413,15 +406,6 @@ export default function UserRbacConfigPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="space-y-1.5">
-              <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
-                <Link href="/platform" className="hover:text-foreground transition-colors">
-                  Platform Console
-                </Link>
-                <span>/</span>
-                <span>Platform Users & RBAC</span>
-                <span>/</span>
-                <span className="text-foreground font-semibold">Operator #{operator.id}</span>
-              </div>
               <div className="flex items-center gap-3">
                 <Button
                   variant="ghost"
@@ -577,35 +561,6 @@ export default function UserRbacConfigPage() {
                   Revoke All in Domain
                 </Button>
               </CardContent>
-            </Card>
-
-            {/* Risk Governance Legend */}
-            <Card className="rounded-2xl border-border bg-card/60 backdrop-blur-sm p-4 space-y-2.5">
-              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                <HelpCircle className="h-3.5 w-3.5 text-muted-foreground" /> Security Risk Levels
-              </p>
-              <div className="space-y-2 text-[11px] text-muted-foreground font-mono">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-red-400 shrink-0" />
-                  <span className="text-red-400 font-bold">Critical:</span>
-                  <span>Root delegation, suspension, deletion</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-amber-400 shrink-0" />
-                  <span className="text-amber-400 font-bold">Elevated:</span>
-                  <span>Tenant settings, module verification, XP</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-blue-400 shrink-0" />
-                  <span className="text-blue-400 font-bold">Standard:</span>
-                  <span>Provisioning, data export pipelines</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-slate-400 shrink-0" />
-                  <span className="text-slate-400 font-bold">Audit:</span>
-                  <span>Read-only inspection of logs and telemetry</span>
-                </div>
-              </div>
             </Card>
           </div>
 

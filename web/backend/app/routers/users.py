@@ -49,7 +49,7 @@ async def get_me(
 
     maintainer_status = await is_user_maintainer(current_user, db)
     admin_status = await is_user_platform_admin(current_user, db)
-    can_manage_workspaces = await has_platform_permission(current_user, "organization_settings.manage", db) or admin_status
+    can_manage_workspaces = await has_platform_permission(current_user, "platform.organizations.manage", db) or admin_status
 
     # Fetch platform permissions purely from PlatformUserPermission (DB is source of truth)
     direct_perms_stmt = (

@@ -3,6 +3,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { api } from "./api";
 import { User } from "./types";
 import { readCache, writeCache, CACHE_EVENT } from "./dashboard/use-dashboard-cache";
@@ -26,6 +27,7 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
 
   const fetchUser = async () => {
     try {
@@ -56,6 +58,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Revalidate user whenever the pathname changes
+  useEffect(() => {
+    if (pathname && localStorage.getItem("token")) {
+      refreshUser();
+    }
+  }, [pathname]);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleUpdate = () => {
@@ -71,6 +80,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     window.addEventListener("tld:workspace-changed", handleWsChange);
 
+    const handleUserUpdated = () => {
+      refreshUser();
+    };
+    window.addEventListener("tld:user-updated", handleUserUpdated);
+
     const handleFocus = () => {
       refreshUser();
     };
@@ -79,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener(CACHE_EVENT, handleUpdate);
       window.removeEventListener("tld:workspace-changed", handleWsChange);
+      window.removeEventListener("tld:user-updated", handleUserUpdated);
       window.removeEventListener("focus", handleFocus);
     };
   }, []);
@@ -105,12 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!token) return;
     try {
       const me = await api.getMe();
-      setUser((prev) => {
-        if (prev && JSON.stringify(prev) === JSON.stringify(me)) {
-          return prev;
-        }
-        return me;
-      });
+      setUser(me);
       const cache = readCache();
       if (cache) {
         writeCache({ ...cache, user: me });

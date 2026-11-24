@@ -63,7 +63,7 @@ async def list_user_organizations(
     """List all organizations the current user belongs to, along with their roles and XP in each.
     If caller is a platform administrator, all active platform organizations are returned.
     """
-    has_workspace_authority = await has_platform_permission(current_user, "organization_settings.manage", db) or await is_user_platform_admin(current_user, db)
+    has_workspace_authority = await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db)
 
     stmt = (
         select(OrganizationMembership)
@@ -133,30 +133,55 @@ async def get_organization(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Get details of a specific organization if user is an active member."""
+    """Get details of a specific organization if user is an active member or has workspace management authority."""
+    has_workspace_authority = await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db)
+
+    org = await db.scalar(select(Organization).where(Organization.slug == org_slug))
+    if not org:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Organization '{org_slug}' not found.",
+        )
+
     stmt = (
         select(OrganizationMembership)
         .options(
-            selectinload(OrganizationMembership.organization),
             selectinload(OrganizationMembership.roles).selectinload(MembershipRole.role),
         )
-        .join(Organization)
         .where(
-            Organization.slug == org_slug,
+            OrganizationMembership.organization_id == org.id,
             OrganizationMembership.user_id == current_user.id,
             OrganizationMembership.status == "active",
         )
     )
     result = await db.execute(stmt)
     m = result.scalar_one_or_none()
-    if not m:
+
+    if not m and not has_workspace_authority:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Organization '{org_slug}' not found or you are not an active member.",
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Access denied. You do not have permission to view or manage workspace '{org_slug}'.",
         )
 
-    org = m.organization
-    role_slugs = [r.role.slug for r in m.roles if r.role]
+    if m:
+        role_slugs = [r.role.slug for r in m.roles if r.role]
+        if has_workspace_authority and "admin" not in role_slugs:
+            role_slugs.append("admin")
+        return OrganizationResponse(
+            id=org.id,
+            name=org.name,
+            slug=org.slug,
+            type=org.type,
+            is_platform=org.is_platform,
+            status=org.status,
+            domains=org.domains or [],
+            roles=role_slugs,
+            total_xp=m.total_xp,
+            unverified_xp=m.unverified_xp,
+            joined_at=m.joined_at,
+        )
+
+    # Caller is not a direct member, but holds platform.organizations.manage / platform admin
     return OrganizationResponse(
         id=org.id,
         name=org.name,
@@ -165,10 +190,10 @@ async def get_organization(
         is_platform=org.is_platform,
         status=org.status,
         domains=org.domains or [],
-        roles=role_slugs,
-        total_xp=m.total_xp,
-        unverified_xp=m.unverified_xp,
-        joined_at=m.joined_at,
+        roles=["platform_admin", "admin"],
+        total_xp=0,
+        unverified_xp=0,
+        joined_at=org.created_at,
     )
 
 

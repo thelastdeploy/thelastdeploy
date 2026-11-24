@@ -70,7 +70,7 @@ export default function OrgAdminPage() {
   const router = useRouter();
   const params = useParams();
   const orgSlug = (params?.slug as string) || "";
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, refreshUser } = useAuth();
 
   const [org, setOrg] = useState<OrganizationResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -160,13 +160,17 @@ export default function OrgAdminPage() {
   const [settingUpdating, setSettingUpdating] = useState<string | null>(null);
 
   useEffect(() => {
+    refreshUser();
+  }, []);
+
+  useEffect(() => {
     if (authLoading) return;
     if (!user) {
       router.push("/login");
       return;
     }
     loadOrgData();
-  }, [authLoading, user?.id, orgSlug]);
+  }, [authLoading, user?.id, user?.platform_permissions, orgSlug]);
 
   useEffect(() => {
     if (!org) return;
@@ -187,6 +191,19 @@ export default function OrgAdminPage() {
     setError(null);
     try {
       const orgData = await api.getOrganization(orgSlug);
+
+      const canManageWorkspace = Boolean(
+        user?.can_manage_workspaces ||
+        user?.platform_permissions?.includes("platform.organizations.manage") ||
+        orgData.roles?.some((r: string) => ["owner", "admin", "platform_admin"].includes(r))
+      );
+
+      if (!canManageWorkspace) {
+        setError(`Access Restricted: Managing workspace '${orgSlug}' requires organization administrator or owner privileges, or the 'platform.organizations.manage' platform permission.`);
+        setLoading(false);
+        return;
+      }
+
       setOrg(orgData);
 
       // Pre-load overview stats passing orgSlug explicitly without mutating global workspace session
@@ -570,19 +587,18 @@ export default function OrgAdminPage() {
   if (error || !org) {
     return (
       <div className="min-h-[calc(100vh-64px)] flex items-center justify-center p-4">
-        <Card className="max-w-md w-full border-destructive/30">
-          <CardHeader>
-            <CardTitle className="text-destructive flex items-center gap-2">
-              <AlertCircle className="h-5 w-5" /> Access Error
-            </CardTitle>
-            <CardDescription>{error || "Organization not found or you lack administrative privileges."}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/dashboard">
-              <Button variant="outline" className="w-full rounded-xl">Return to Dashboard</Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="max-w-md w-full text-center space-y-4 p-8 rounded-3xl border border-border bg-card shadow-xl">
+          <div className="h-16 w-16 mx-auto rounded-2xl bg-destructive/10 text-destructive flex items-center justify-center">
+            <ShieldCheck className="h-8 w-8 text-destructive" />
+          </div>
+          <h2 className="text-xl font-black text-foreground">Access Restricted</h2>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {error || "Organization not found or you lack workspace management authority."}
+          </p>
+          <Button asChild className="rounded-xl text-xs font-bold w-full" style={{ backgroundColor: "var(--accent-primary)", color: "black" }}>
+            <Link href="/dashboard">Return to Dashboard</Link>
+          </Button>
+        </div>
       </div>
     );
   }

@@ -61,3 +61,4 @@ def downgrade() -> None:
             ('platform.modules.delete', 'Deprecate / Delete Modules: Deprecate or remove modules platform-wide')
         ON CONFLICT (key) DO NOTHING
     """)
+
