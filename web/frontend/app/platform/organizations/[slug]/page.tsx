@@ -16,11 +16,7 @@ import {
   Globe,
   Save,
   RotateCcw,
-  CheckCircle2,
   AlertCircle,
-  Sliders,
-  Layers,
-  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,7 +60,6 @@ export default function PlatformOrgSettingsPage() {
   const [draftValues, setDraftValues] = useState<Record<string, any>>({});
 
   const [saving, setSaving] = useState(false);
-  const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const hasPerm = (perm: string) => {
@@ -175,13 +170,11 @@ export default function PlatformOrgSettingsPage() {
   const handleReset = () => {
     setDraftEnabled(initialEnabled);
     setDraftValues(initialValues);
-    setSaveSuccessMsg(null);
   };
 
   const handleSave = async () => {
     if (!hasChanges || saving) return;
     setSaving(true);
-    setSaveSuccessMsg(null);
     setError(null);
 
     try {
@@ -206,8 +199,6 @@ export default function PlatformOrgSettingsPage() {
         }
       }
 
-      setSaveSuccessMsg("Platform settings updated successfully.");
-
       // Refresh to sync state
       const updated = await api.getPlatformOrgSettings(slug);
       setSettings(updated);
@@ -222,9 +213,6 @@ export default function PlatformOrgSettingsPage() {
       setDraftEnabled(initEn);
       setDraftValues(initVal);
 
-      setTimeout(() => {
-        setSaveSuccessMsg(null);
-      }, 4000);
     } catch (err: any) {
       setError(err.message || "Failed to save organization settings.");
     } finally {
@@ -348,7 +336,6 @@ export default function PlatformOrgSettingsPage() {
             >
               {saving ? (
                 <>
-                  <LoadingSpinner />
                   <span className="ml-1.5">Saving...</span>
                 </>
               ) : (
@@ -360,14 +347,6 @@ export default function PlatformOrgSettingsPage() {
             </Button>
           </div>
         </div>
-
-        {/* Status Banners */}
-        {saveSuccessMsg && (
-          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2 animate-in fade-in">
-            <CheckCircle2 className="h-4 w-4 shrink-0" />
-            <span>{saveSuccessMsg}</span>
-          </div>
-        )}
 
         {error && (
           <div className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2 animate-in fade-in">

@@ -134,27 +134,6 @@ export function ModuleFilters({
           );
         })}
       </div>
-
-      {/* Summary */}
-      <div className="flex items-center justify-between text-sm">
-        <p className="text-muted-foreground">
-          <span className="font-semibold text-foreground">{resultCount}</span>
-          {" "}module{resultCount !== 1 ? "s" : ""} found
-          {activeCount > 0 && (
-            <span className="text-muted-foreground/60 ml-1">
-              ({activeCount} active filter{activeCount !== 1 ? "s" : ""})
-            </span>
-          )}
-        </p>
-        {activeCount > 0 && (
-          <button
-            onClick={handleClear}
-            className="text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-          >
-            Clear all
-          </button>
-        )}
-      </div>
     </div>
   );
 }

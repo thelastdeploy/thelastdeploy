@@ -200,7 +200,7 @@ export default function ProfilePage() {
               className="px-3.5 py-1 rounded-full text-xs font-black tracking-wide uppercase flex items-center gap-1.5"
               style={{ backgroundColor: `${rank.color}15`, color: rank.color, border: `1px solid ${rank.color}30` }}
             >
-              👑 {rank.label}
+              {rank.label}
             </span>
             <span className="px-3.5 py-1 rounded-full text-xs font-black bg-card border border-border text-foreground flex items-center gap-1.5 shadow-sm">
               ⚡ {user.xp} Total XP

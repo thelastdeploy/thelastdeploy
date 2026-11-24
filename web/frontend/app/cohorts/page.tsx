@@ -86,33 +86,15 @@ export default function CohortsPage() {
     <div className="min-h-[calc(100vh-64px)]">
       {/* Header Banner */}
       <div className="border-b border-border bg-card/30">
-        <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="flex items-start justify-between gap-6 flex-wrap">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-xs font-mono font-bold mb-3">
-                <Users className="h-3.5 w-3.5" />
-                <span>{orgName} Cohorts</span>
-              </div>
               <h1 className="text-4xl font-black tracking-tight text-foreground">
                 Class Cohorts
               </h1>
               <p className="mt-2 text-muted-foreground max-w-xl text-sm leading-relaxed">
                 Collaborative learning cohorts with synchronized schedules, curated syllabi, milestone deadlines, and peer progress.
               </p>
-            </div>
-
-            <div className="flex items-center gap-3">
-              {isAdmin && (
-                <Button
-                  size="sm"
-                  asChild
-                  className="rounded-xl bg-card border border-border hover:bg-muted text-xs font-bold text-foreground cursor-pointer"
-                >
-                  <Link href={`/org/${activeOrg}?tab=cohorts`}>
-                    Manage Cohorts in Admin →
-                  </Link>
-                </Button>
-              )}
             </div>
           </div>
         </div>

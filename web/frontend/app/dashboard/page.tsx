@@ -123,45 +123,6 @@ export default function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
 
-      {/* Active Workspace Bar */}
-      {activeOrgInfo && (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-3.5 mb-6 rounded-2xl border border-border bg-card/60 backdrop-blur-sm shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
-              {activeOrgInfo.type === "university" ? (
-                <GraduationCap className="h-4 w-4" />
-              ) : activeOrgInfo.is_platform || activeOrgInfo.type === "platform" ? (
-                <Globe className="h-4 w-4" />
-              ) : (
-                <Building2 className="h-4 w-4" />
-              )}
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">Active Workspace</span>
-                <span className="text-sm font-bold text-foreground">{activeOrgInfo.name}</span>
-                {activeOrgInfo.roles && activeOrgInfo.roles.length > 0 && (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-muted border border-border text-muted-foreground uppercase">
-                    {activeOrgInfo.roles.join(", ")}
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Progress, XP, and rank are scoped to this organization workspace.
-              </p>
-            </div>
-          </div>
-          {(activeOrgInfo.roles?.includes("admin") || activeOrgInfo.roles?.includes("instructor")) && (
-            <Link
-              href={`/org/${activeOrgInfo.slug}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/20 border border-[var(--accent-primary)]/20 transition-all self-start sm:self-center"
-            >
-              Manage Organization <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          )}
-        </div>
-      )}
-
       {/* Top banner */}
       <div
         className="rounded-2xl border p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-card border-border shadow-sm"

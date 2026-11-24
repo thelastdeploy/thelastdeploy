@@ -9,27 +9,18 @@ import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import {
-  Shield,
-  ShieldAlert,
   Lock,
-  Unlock,
   KeyRound,
   ArrowLeft,
   Search,
-  CheckCircle2,
-  AlertTriangle,
   Copy,
   Check,
   Building2,
   BarChart3,
   RotateCcw,
   Save,
-  HelpCircle,
-  Clock,
   Mail,
-  UserCheck,
   AlertCircle,
-  Eye,
   Sliders,
   SlidersHorizontal,
 } from "lucide-react";
@@ -151,7 +142,6 @@ export default function UserRbacConfigPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -282,7 +272,6 @@ export default function UserRbacConfigPage() {
   const handleSave = async () => {
     if (!operator) return;
     setSaving(true);
-    setSuccessMessage(null);
     setError(null);
     try {
       const updated = await api.updateUserPermissions(operator.id, Array.from(activePerms));
@@ -290,8 +279,6 @@ export default function UserRbacConfigPage() {
       const newSet = new Set(updated.permissions || []);
       setInitialPerms(newSet);
       setActivePerms(new Set(newSet));
-      setSuccessMessage("Platform permissions committed successfully.");
-      setTimeout(() => setSuccessMessage(null), 4000);
 
       // Immediately broadcast and refresh current user
       window.dispatchEvent(new CustomEvent("tld:user-updated"));
@@ -467,21 +454,6 @@ export default function UserRbacConfigPage() {
               </Button>
             </div>
           </div>
-
-          {/* Success or Error Banners */}
-          {successMessage && (
-            <div className="mt-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 text-xs text-emerald-300">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-              <span>{successMessage}</span>
-            </div>
-          )}
-
-          {error && (
-            <div className="mt-4 p-3 rounded-xl bg-destructive/10 border border-destructive/30 flex items-center gap-2 text-xs text-destructive">
-              <AlertCircle className="h-4 w-4 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
         </div>
       </div>
 

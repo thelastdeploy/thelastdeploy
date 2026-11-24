@@ -70,7 +70,7 @@ export default function SelectOrgPage() {
 
   return (
     <div className="min-h-[calc(100vh-64px)] relative overflow-hidden py-10">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
         {/* Header & Back link */}
         <div className="space-y-4">
           <Link

@@ -83,13 +83,9 @@ export default function LearningPathsPage() {
     <div className="min-h-[calc(100vh-64px)]">
       {/* Header Banner */}
       <div className="border-b border-border bg-card/30">
-        <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="flex items-start justify-between gap-6 flex-wrap">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] text-xs font-mono font-bold mb-3">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>{orgName} Curriculum</span>
-              </div>
               <h1 className="text-4xl font-black tracking-tight text-foreground">
                 Learning Paths
               </h1>
@@ -97,21 +93,12 @@ export default function LearningPathsPage() {
                 Step-by-step structured curricula guiding you from fundamental DevOps tools to production-grade infrastructure scenarios.
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-border bg-card shadow-sm">
-                <Layers className="h-4 w-4 text-[var(--accent-primary)]" />
-                <span className="font-mono font-bold text-sm text-[var(--accent-primary)]">
-                  {paths.length}
-                </span>
-                <span className="text-muted-foreground text-xs">tracks active</span>
-              </div>
-            </div>
           </div>
         </div>
       </div>
 
       {/* Content Area */}
-      <div className="max-w-6xl mx-auto px-4 py-10">
+      <div className="max-w-7xl mx-auto px-4 py-10">
         {paths.length === 0 ? (
           <div className="text-center py-20 border border-dashed border-border rounded-3xl bg-card/20 space-y-4">
             <div className="h-16 w-16 mx-auto rounded-2xl bg-muted/50 flex items-center justify-center text-muted-foreground">
