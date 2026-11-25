@@ -184,6 +184,12 @@ export default function OrgAdminPage() {
     try {
       const orgData = await api.getOrganization(orgSlug);
 
+      if (orgData.status === "suspended") {
+        setError(`Organization workspace '${orgData.name || orgSlug}' is currently suspended. Access to manage this workspace is blocked for all users.`);
+        setLoading(false);
+        return;
+      }
+
       const canManageWorkspace = Boolean(
         user?.can_manage_workspaces ||
         user?.platform_permissions?.includes("platform.organizations.manage") ||
@@ -620,22 +626,7 @@ export default function OrgAdminPage() {
           <div>
             <div className="flex items-center gap-2.5">
               <h1 className="text-2xl font-black text-foreground">{org.name}</h1>
-              <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold">
-                {org.type}
-              </span>
-              {isDelegatedPlatformAdmin && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                  <ShieldCheck className="h-3 w-3" />
-                  <span>Platform Delegated</span>
-                </span>
-              )}
             </div>
-            <p className="text-xs text-muted-foreground font-mono mt-1">
-              Subdomain: <span className="text-foreground">{org.slug}.org.thelastdeploy.com</span>
-              {org.domains && org.domains.length > 0 && !org.domains.includes("*") && (
-                <> • Domains: <span className="text-[var(--accent-primary)]">{org.domains.join(", ")}</span></>
-              )}
-            </p>
           </div>
         </div>
 

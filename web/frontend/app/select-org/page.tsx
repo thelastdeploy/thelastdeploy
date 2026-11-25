@@ -28,7 +28,12 @@ export default function SelectOrgPage() {
 
     api.getOrganizations()
       .then((data) => {
-        setOrgs(data);
+        const activeOnly = (data || []).filter((o) => o.status === "active");
+        setOrgs(activeOnly);
+        // If the stored selection is no longer an active workspace, clear it
+        if (currentSelected && !activeOnly.some((o) => o.slug === currentSelected)) {
+          setSelectedSlug(null);
+        }
       })
       .catch((err) => {
         console.error("Failed to load organizations:", err);

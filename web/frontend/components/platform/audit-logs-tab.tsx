@@ -18,19 +18,14 @@ export function AuditLogsTab() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3">
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search audit events..."
-              value={auditSearch}
-              onChange={(e) => setAuditSearch(e.target.value)}
-              className="pl-9 h-9 text-xs rounded-none"
-            />
-          </div>
-          <Button size="sm" variant="outline" onClick={loadAuditLogs} className="h-9 rounded-none text-xs font-bold cursor-pointer">
-            Filter
-          </Button>
+        <div className="relative w-72">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search audit events..."
+            value={auditSearch}
+            onChange={(e) => setAuditSearch(e.target.value)}
+            className="pl-9 h-9 text-xs liquid-glass-input"
+          />
         </div>
 
         <span className="text-xs font-mono text-muted-foreground">{auditLogs.length} events logged</span>

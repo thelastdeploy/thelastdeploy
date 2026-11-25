@@ -17,7 +17,7 @@ export function usePlatformOrgs() {
     setLoading(true);
     setError(null);
     try {
-      const allOrgs = await api.getOrganizations().catch(() => []);
+      const allOrgs = await api.getOrganizations(true).catch(() => []);
       setOrgs(allOrgs);
       setMyMembershipSlugs(new Set(allOrgs.filter((o) => o.is_member).map((o) => o.slug)));
     } catch (err: any) {
@@ -35,7 +35,7 @@ export function usePlatformOrgs() {
     const isSuspended = org.status === "suspended";
     const nextStatus = isSuspended ? "active" : "suspended";
     await api.updateOrgStatus(org.slug, nextStatus);
-    const updated = await api.getOrganizations();
+    const updated = await api.getOrganizations(true);
     setOrgs(updated);
   };
 

@@ -2,7 +2,8 @@
 
 "use client";
 
-import { X, ShieldAlert, AlertTriangle, Info } from "lucide-react";
+import { X, ShieldAlert, AlertTriangle, Info, Check, Trash2, Power } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -31,26 +32,29 @@ export function ConfirmModal({
     danger: {
       bgIcon: "bg-red-500/10 border-red-500/20",
       textIcon: "text-red-400",
-      confirmBtn: "bg-red-600 hover:bg-red-700 text-white",
     },
     warning: {
       bgIcon: "bg-amber-500/10 border-amber-500/20",
       textIcon: "text-amber-400",
-      confirmBtn: "bg-[var(--accent-primary)] hover:opacity-90 text-white dark:text-black",
     },
     info: {
       bgIcon: "bg-blue-500/10 border-blue-500/20",
       textIcon: "text-blue-400",
-      confirmBtn: "bg-zinc-800 hover:bg-zinc-700 text-white",
     },
     success: {
       bgIcon: "bg-emerald-500/10 border-emerald-500/20",
       textIcon: "text-emerald-400",
-      confirmBtn: "bg-emerald-600 hover:bg-emerald-700 text-white",
     },
   };
 
   const style = colorStyles[type] || colorStyles.warning;
+
+  // Determine contextual icon for confirm button
+  const isSuspend = title.toLowerCase().includes("suspend") || confirmText.toLowerCase().includes("suspend");
+  const isReactivate = title.toLowerCase().includes("reactivate") || confirmText.toLowerCase().includes("reactivate");
+  const isDelete = type === "danger" || title.toLowerCase().includes("delete") || title.toLowerCase().includes("revoke");
+
+  const ConfirmIcon = isSuspend || isReactivate ? Power : isDelete ? Trash2 : Check;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
@@ -79,24 +83,34 @@ export function ConfirmModal({
           </div>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons with Liquid Glass */}
         <div className="flex items-center justify-end gap-2.5 mt-4 pt-3 border-t border-border/50">
           {onCancel && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={onCancel}
-              className="px-4 py-2 rounded-none text-xs font-bold border border-border text-foreground hover:bg-muted transition-colors cursor-pointer"
+              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-xl cursor-pointer gap-1.5"
             >
-              {cancelText}
-            </button>
+              <X className="h-4 w-4" />
+              <span>{cancelText}</span>
+            </Button>
           )}
-          <button
-            onClick={() => {
-              onConfirm();
-            }}
-            className={`px-4 py-2 rounded-none text-xs font-bold transition-all cursor-pointer ${style.confirmBtn}`}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onConfirm}
+            className={`h-9 px-3.5 text-xs font-semibold rounded-xl cursor-pointer gap-1.5 ${
+              type === "danger"
+                ? "liquid-glass-danger text-red-400 hover:text-red-300"
+                : isReactivate
+                ? "liquid-glass text-emerald-400 hover:text-emerald-300"
+                : "liquid-glass text-[var(--accent-primary)] hover:text-emerald-400"
+            }`}
           >
-            {confirmText}
-          </button>
+            <ConfirmIcon className="h-4 w-4" />
+            <span>{confirmText}</span>
+          </Button>
         </div>
       </div>
     </div>

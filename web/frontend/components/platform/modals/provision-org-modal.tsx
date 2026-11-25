@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, X, Building2 } from "lucide-react";
 
 interface ProvisionOrgModalProps {
   isOpen: boolean;
@@ -135,20 +135,23 @@ export function ProvisionOrgModal({ isOpen, onClose, onSuccess }: ProvisionOrgMo
           <div className="p-4 border-t border-border flex items-center justify-end gap-2">
             <Button
               type="button"
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={onClose}
-              className="rounded-none text-xs font-bold cursor-pointer"
+              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-xl cursor-pointer gap-1.5"
             >
-              Cancel
+              <X className="h-4 w-4" />
+              <span>Cancel</span>
             </Button>
             <Button
               type="submit"
+              variant="ghost"
               size="sm"
               disabled={loading}
-              className="rounded-none bg-[var(--accent-primary)] text-white dark:text-black font-bold text-xs cursor-pointer"
+              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-[var(--accent-primary)] hover:text-emerald-400 rounded-xl cursor-pointer gap-1.5"
             >
-              {loading ? "Provisioning..." : "Provision Workspace"}
+              <Building2 className="h-4 w-4" />
+              <span>{loading ? "Provisioning..." : "Provision Workspace"}</span>
             </Button>
           </div>
         </form>

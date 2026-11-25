@@ -226,6 +226,12 @@ async def get_current_organization(
     if not organization:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found")
 
+    if organization.status == "suspended":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Organization workspace '{organization.slug}' is suspended. Access is blocked.",
+        )
+
     # Verify active membership
     mem_stmt = select(OrganizationMembership).where(
         OrganizationMembership.organization_id == organization.id,

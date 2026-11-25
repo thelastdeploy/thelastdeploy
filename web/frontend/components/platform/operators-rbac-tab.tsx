@@ -162,43 +162,24 @@ export function OperatorsRbacTab({
                           variant="ghost"
                           size="sm"
                           onClick={() => router.push(`/platform/users/${pUser.id}`)}
-                          className="rounded-none text-xs font-bold gap-1.5 h-8 cursor-pointer transition-all duration-150"
-                          style={{ border: "none", boxShadow: "none", backgroundColor: "transparent" }}
-                          onMouseEnter={(e) => {
-                            const isDark = document.documentElement.classList.contains("dark");
-                            e.currentTarget.style.boxShadow = "inset 0 0 0 2px var(--accent-primary)";
-                            e.currentTarget.style.backgroundColor = isDark
-                              ? "rgba(var(--accent-primary-rgb), 0.12)"
-                              : "rgba(var(--accent-primary-rgb), 0.05)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.boxShadow = "none";
-                            e.currentTarget.style.backgroundColor = "transparent";
-                          }}
+                          className="liquid-glass text-xs font-semibold gap-1.5 h-9 px-3.5 cursor-pointer rounded-xl"
                         >
                           <KeyRound className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
                           <span>Configure Permissions</span>
                         </Button>
                       )}
 
-                      {!isSelf && hasPerm("platform.permissions.manage") && (
+                      {hasPerm("platform.permissions.manage") && (
                         <Button
                           variant="ghost"
-                          size="icon"
-                          onClick={() => handleRevoke(pUser.id, pUser.username)}
-                          className="h-8 w-8 text-muted-foreground hover:text-red-400 rounded-none cursor-pointer transition-all duration-150"
-                          style={{ border: "none", boxShadow: "none", backgroundColor: "transparent" }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.boxShadow = "inset 0 0 0 2px #ef4444";
-                            e.currentTarget.style.backgroundColor = "rgba(239, 68, 68, 0.12)";
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.boxShadow = "none";
-                            e.currentTarget.style.backgroundColor = "transparent";
-                          }}
-                          title="Revoke all platform access"
+                          size="sm"
+                          disabled={isSelf}
+                          onClick={() => !isSelf && handleRevoke(pUser.id, pUser.username)}
+                          className="liquid-glass-danger h-9 px-3.5 text-xs font-semibold cursor-pointer rounded-xl gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                          title={isSelf ? "You cannot delete your own account" : "Delete User"}
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5" />
+                          <span>Delete User</span>
                         </Button>
                       )}
                     </div>

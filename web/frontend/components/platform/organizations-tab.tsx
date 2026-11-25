@@ -60,7 +60,7 @@ export function OrganizationsTab({ hasPerm }: OrganizationsTabProps) {
         ? `Are you sure you want to reactivate "${org.name}"? Members will regain access to their workspace.`
         : `Are you sure you want to suspend "${org.name}"? Tenant access will be immediately deactivated for all members.`,
       confirmText: isSuspended ? "Reactivate Tenant" : "Suspend Tenant",
-      type: isSuspended ? "info" : "danger",
+      type: isSuspended ? "success" : "danger",
       onConfirm: async () => {
         setModalConfig((prev) => ({ ...prev, isOpen: false }));
         try {
@@ -81,7 +81,7 @@ export function OrganizationsTab({ hasPerm }: OrganizationsTabProps) {
             placeholder="Search organizations..."
             value={orgSearch}
             onChange={(e) => setOrgSearch(e.target.value)}
-            className="pl-9 h-9 text-xs rounded-none"
+            className="pl-9 h-10 text-xs liquid-glass-input"
           />
         </div>
 
@@ -189,32 +189,22 @@ export function OrganizationsTab({ hasPerm }: OrganizationsTabProps) {
                             </div>
                           </div>
 
-                          {/* Scoped Actions Footer with Inset Button Hovers */}
-                          <div className="pt-3 border-t border-border/40 flex items-center justify-between gap-2">
+                          {/* Scoped Actions Footer with Liquid Glass Buttons */}
+                          <div className="pt-3 flex items-center justify-between gap-2">
                             <div className="flex items-center gap-1.5">
                               {hasPerm("platform.organizations.suspend") && !isPlatform && (
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleToggleOrgStatus(org)}
-                                  className={`rounded-none text-[11px] font-bold h-7 cursor-pointer px-2 transition-all duration-150 ${
-                                    isSuspended ? "text-emerald-400" : "text-red-400"
+                                  className={`h-9 w-9 p-0 cursor-pointer text-xs font-semibold rounded-xl ${
+                                    isSuspended
+                                      ? "liquid-glass text-emerald-400 hover:text-emerald-300"
+                                      : "liquid-glass-danger text-red-400 hover:text-red-300"
                                   }`}
-                                  style={{ border: "none", boxShadow: "none", backgroundColor: "transparent" }}
-                                  onMouseEnter={(e) => {
-                                    const col = isSuspended ? "#10b981" : "#ef4444";
-                                    e.currentTarget.style.boxShadow = `inset 0 0 0 2px ${col}`;
-                                    e.currentTarget.style.backgroundColor = isSuspended
-                                      ? "rgba(16, 185, 129, 0.12)"
-                                      : "rgba(239, 68, 68, 0.12)";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.boxShadow = "none";
-                                    e.currentTarget.style.backgroundColor = "transparent";
-                                  }}
                                   title={isSuspended ? "Reactivate Organization" : "Suspend Organization"}
                                 >
-                                  <Power className="h-3.5 w-3.5" />
+                                  <Power className="h-4 w-4" />
                                 </Button>
                               )}
                             </div>
@@ -224,22 +214,12 @@ export function OrganizationsTab({ hasPerm }: OrganizationsTabProps) {
                                 <Button
                                   variant="ghost"
                                   size="sm"
+                                  disabled={isSuspended}
                                   onClick={() => router.push(`/org/${org.slug}`)}
-                                  className="rounded-none text-[11px] font-bold text-foreground h-7 cursor-pointer gap-1 transition-all duration-150"
-                                  style={{ border: "none", boxShadow: "none", backgroundColor: "transparent" }}
-                                  onMouseEnter={(e) => {
-                                    const isDark = document.documentElement.classList.contains("dark");
-                                    e.currentTarget.style.boxShadow = "inset 0 0 0 2px var(--accent-primary)";
-                                    e.currentTarget.style.backgroundColor = isDark
-                                      ? "rgba(var(--accent-primary-rgb), 0.12)"
-                                      : "rgba(var(--accent-primary-rgb), 0.05)";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.boxShadow = "none";
-                                    e.currentTarget.style.backgroundColor = "transparent";
-                                  }}
+                                  className="liquid-glass h-9 px-3.5 text-xs font-semibold text-foreground cursor-pointer gap-1.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
+                                  title={isSuspended ? "Workspace access suspended" : "Go to Workspace"}
                                 >
-                                  <ExternalLink className="h-3 w-3" />
+                                  <ExternalLink className="h-3.5 w-3.5" />
                                   <span>Workspace</span>
                                 </Button>
                               )}
@@ -247,22 +227,12 @@ export function OrganizationsTab({ hasPerm }: OrganizationsTabProps) {
                                 <Button
                                   variant="ghost"
                                   size="sm"
+                                  disabled={isSuspended}
                                   onClick={() => router.push(`/platform/organizations/${org.slug}`)}
-                                  className="rounded-none text-[11px] font-bold text-[var(--accent-primary)] h-7 cursor-pointer gap-1 transition-all duration-150"
-                                  style={{ border: "none", boxShadow: "none", backgroundColor: "transparent" }}
-                                  onMouseEnter={(e) => {
-                                    const isDark = document.documentElement.classList.contains("dark");
-                                    e.currentTarget.style.boxShadow = "inset 0 0 0 2px var(--accent-primary)";
-                                    e.currentTarget.style.backgroundColor = isDark
-                                      ? "rgba(var(--accent-primary-rgb), 0.12)"
-                                      : "rgba(var(--accent-primary-rgb), 0.05)";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.boxShadow = "none";
-                                    e.currentTarget.style.backgroundColor = "transparent";
-                                  }}
+                                  className="liquid-glass h-9 px-3.5 text-xs font-semibold text-[var(--accent-primary)] cursor-pointer gap-1.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
+                                  title={isSuspended ? "Organization is suspended" : "Manage Organization"}
                                 >
-                                  <Settings2 className="h-3 w-3" />
+                                  <Settings2 className="h-3.5 w-3.5" />
                                   <span>Manage Org</span>
                                 </Button>
                               )}

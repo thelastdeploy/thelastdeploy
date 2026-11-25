@@ -199,8 +199,8 @@ export const api = {
   },
 
   // Organizations
-  getOrganizations: () =>
-    request<OrganizationResponse[]>("/organizations"),
+  getOrganizations: (includeSuspended: boolean = false) =>
+    request<OrganizationResponse[]>(`/organizations${includeSuspended ? "?include_suspended=true" : ""}`),
 
   createOrganization: (data: { name: string; slug: string; type?: string; domains?: string[] }) =>
     request<OrganizationResponse>("/organizations", {
@@ -213,6 +213,15 @@ export const api = {
       const current = localStorage.getItem("selected_org");
       if (current === slug) return;
       localStorage.setItem("selected_org", slug);
+      clearDashboardCache();
+      clearModulesMemoryCache();
+      window.dispatchEvent(new Event("tld:workspace-changed"));
+    }
+  },
+
+  clearSelectedOrg: () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("selected_org");
       clearDashboardCache();
       clearModulesMemoryCache();
       window.dispatchEvent(new Event("tld:workspace-changed"));

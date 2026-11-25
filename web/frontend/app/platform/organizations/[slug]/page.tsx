@@ -91,11 +91,18 @@ export default function PlatformOrgSettingsPage() {
     setError(null);
     try {
       const [allOrgs, settingsList] = await Promise.all([
-        api.getOrganizations().catch(() => []),
+        api.getOrganizations(true).catch(() => []),
         api.getPlatformOrgSettings(slug),
       ]);
 
       const foundOrg = allOrgs.find((o) => o.slug === slug) || null;
+
+      if (foundOrg && foundOrg.status === "suspended") {
+        setError(`Organization '${foundOrg.name || slug}' is currently suspended. Platform settings cannot be managed while suspended.`);
+        setLoading(false);
+        return;
+      }
+
       setOrg(foundOrg);
       setSettings(settingsList);
 
@@ -314,36 +321,25 @@ export default function PlatformOrgSettingsPage() {
             )}
 
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
               onClick={handleReset}
               disabled={!hasChanges || saving}
-              className="rounded-none text-xs font-mono h-9 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-xl cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-              Reset
+              <RotateCcw className="h-3.5 w-3.5" />
+              <span>Reset</span>
             </Button>
 
             <Button
+              variant="ghost"
               size="sm"
               onClick={handleSave}
               disabled={!hasChanges || saving}
-              className={`rounded-none text-xs font-bold h-9 px-4 cursor-pointer transition-all ${
-                hasChanges
-                  ? "bg-[var(--accent-primary)] text-white dark:text-black hover:opacity-90"
-                  : "bg-muted text-muted-foreground opacity-40 cursor-not-allowed"
-              }`}
+              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-[var(--accent-primary)] hover:text-emerald-400 rounded-xl cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {saving ? (
-                <>
-                  <span className="ml-1.5">Saving...</span>
-                </>
-              ) : (
-                <>
-                  <Save className="h-3.5 w-3.5 mr-1.5" />
-                  <span>Save Changes</span>
-                </>
-              )}
+              <Save className="h-3.5 w-3.5" />
+              <span>{saving ? "Saving..." : "Save Changes"}</span>
             </Button>
           </div>
         </div>
@@ -402,7 +398,7 @@ export default function PlatformOrgSettingsPage() {
                 return (
                   <div key={st.key} className="relative">
                     <div className="p-2.5 sm:p-3 text-left border-0">
-                      {/* Frameless Idle -> Sharp Amber Inset on Modified / Emerald on Hover */}
+                      {/* Frameless Idle (No Row Hover) */}
                       <div
                         className="p-4 sm:p-5 rounded-none flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-all duration-150"
                         style={{
@@ -411,21 +407,6 @@ export default function PlatformOrgSettingsPage() {
                           backgroundColor: isModified
                             ? "rgba(245, 158, 11, 0.08)"
                             : "transparent",
-                        }}
-                        onMouseEnter={(e) => {
-                          if (!isModified) {
-                            const isDark = document.documentElement.classList.contains("dark");
-                            e.currentTarget.style.boxShadow = "inset 0 0 0 2px var(--accent-primary)";
-                            e.currentTarget.style.backgroundColor = isDark
-                              ? "rgba(var(--accent-primary-rgb), 0.12)"
-                              : "rgba(var(--accent-primary-rgb), 0.05)";
-                          }
-                        }}
-                        onMouseLeave={(e) => {
-                          if (!isModified) {
-                            e.currentTarget.style.boxShadow = "none";
-                            e.currentTarget.style.backgroundColor = "transparent";
-                          }
                         }}
                       >
                         {/* Left: Info & Description */}
@@ -465,8 +446,8 @@ export default function PlatformOrgSettingsPage() {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-none">
-                                  <SelectItem value="true" className="rounded-none">True</SelectItem>
-                                  <SelectItem value="false" className="rounded-none">False</SelectItem>
+                                  <SelectItem value="true" className="liquid-glass-option rounded-lg">True</SelectItem>
+                                  <SelectItem value="false" className="liquid-glass-option rounded-lg">False</SelectItem>
                                 </SelectContent>
                               </Select>
                             ) : isInt ? (
@@ -489,7 +470,7 @@ export default function PlatformOrgSettingsPage() {
                                 </SelectTrigger>
                                 <SelectContent className="rounded-none">
                                   {choices.map((choice) => (
-                                    <SelectItem key={choice.value} value={choice.value} className="rounded-none">
+                                    <SelectItem key={choice.value} value={choice.value} className="liquid-glass-option rounded-lg">
                                       {choice.label}
                                     </SelectItem>
                                   ))}
@@ -505,18 +486,21 @@ export default function PlatformOrgSettingsPage() {
                             )}
                           </div>
 
-                          {/* Availability Toggle */}
-                          <button
+                          {/* Availability Toggle with Liquid Glass */}
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="sm"
                             onClick={() => handleToggleAvailability(st.key)}
-                            className={`px-3 py-1.5 rounded-none text-xs font-mono font-bold transition-all cursor-pointer ${
+                            className={`h-8 px-3 rounded-xl text-xs font-semibold cursor-pointer gap-1.5 transition-all ${
                               isEnabled
-                                ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
-                                : "bg-muted text-muted-foreground border border-border/40 hover:bg-muted/80"
+                                ? "liquid-glass text-emerald-600 dark:text-emerald-400 font-bold"
+                                : "liquid-glass text-muted-foreground"
                             }`}
                           >
-                            {isEnabled ? "Enabled" : "Disabled"}
-                          </button>
+                            <span className={`h-1.5 w-1.5 rounded-full ${isEnabled ? "bg-emerald-500" : "bg-muted-foreground"}`} />
+                            <span>{isEnabled ? "Enabled" : "Disabled"}</span>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -528,38 +512,6 @@ export default function PlatformOrgSettingsPage() {
                   </div>
                 );
               })}
-            </div>
-          </div>
-        )}
-
-        {/* Bottom Save Bar (Visible when scrolled if changes exist) */}
-        {hasChanges && (
-          <div className="sticky bottom-4 z-20 p-3 sm:p-4 rounded-none bg-background/95 border border-border shadow-xl backdrop-blur-md flex items-center justify-between gap-4 animate-in slide-in-from-bottom-2">
-            <div className="flex items-center gap-2 text-xs font-mono">
-              <span className="h-2 w-2 rounded-full bg-amber-400 animate-ping" />
-              <span className="text-foreground font-semibold">
-                You have {modifiedKeys.size} unsaved change{modifiedKeys.size === 1 ? "" : "s"}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleReset}
-                disabled={saving}
-                className="rounded-none text-xs font-mono h-8 cursor-pointer"
-              >
-                Reset
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleSave}
-                disabled={saving}
-                className="rounded-none bg-[var(--accent-primary)] text-white dark:text-black hover:opacity-90 font-bold text-xs h-8 px-4 cursor-pointer"
-              >
-                {saving ? "Saving..." : "Save Changes"}
-              </Button>
             </div>
           </div>
         )}

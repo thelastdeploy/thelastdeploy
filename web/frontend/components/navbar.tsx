@@ -35,7 +35,21 @@ export function Navbar() {
 
       if (user) {
         api.getOrganizations()
-          .then((data) => setOrgs(data))
+          .then((data) => {
+            const activeOnly = (data || []).filter((o) => o.status === "active");
+            setOrgs(activeOnly);
+            const currentSelected = api.getSelectedOrg();
+            if (currentSelected && !activeOnly.some((o) => o.slug === currentSelected)) {
+              const defaultOrg = activeOnly.find((o) => o.is_platform || o.type === "platform");
+              if (defaultOrg) {
+                api.setSelectedOrg(defaultOrg.slug);
+                setActiveOrg(defaultOrg.slug);
+              } else {
+                api.clearSelectedOrg();
+                setActiveOrg(null);
+              }
+            }
+          })
           .catch(() => {});
       } else {
         setOrgs([]);

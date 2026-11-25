@@ -27,27 +27,29 @@ export function AnalyticsTab({ hasPerm }: AnalyticsTabProps) {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-none bg-card border border-border">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider font-mono mr-1">Period:</span>
-          {(["7d", "30d", "90d", "all"] as const).map((p) => (
-            <Button
-              key={p}
-              size="sm"
-              variant={platformPeriod === p ? "default" : "outline"}
-              onClick={() => handlePeriodChange(p)}
-              className={`h-8 px-3 rounded-none text-xs font-bold cursor-pointer border ${
-                platformPeriod === p
-                  ? "bg-[var(--accent-primary)] text-white dark:text-black border-[var(--accent-primary)]"
-                  : "border-border/60"
-              }`}
-            >
-              {p === "all" ? "All Time" : p.toUpperCase()}
-            </Button>
-          ))}
+          {(["7d", "30d", "90d", "all"] as const).map((p) => {
+            const isActive = platformPeriod === p;
+            return (
+              <button
+                key={p}
+                type="button"
+                onClick={() => handlePeriodChange(p)}
+                className={`h-8 px-3 text-xs font-bold transition-all cursor-pointer ${
+                  isActive
+                    ? "liquid-glass-tab-active"
+                    : "liquid-glass-tab text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {p === "all" ? "All Time" : p.toUpperCase()}
+              </button>
+            );
+          })}
           <Button
             size="sm"
             variant="ghost"
             onClick={() => loadAnalytics(platformPeriod)}
             disabled={loading}
-            className="h-8 w-8 p-0 rounded-none ml-1 text-muted-foreground hover:text-foreground cursor-pointer"
+            className="liquid-glass h-8 w-8 p-0 rounded-xl ml-1 text-muted-foreground hover:text-foreground cursor-pointer"
             title="Refresh Platform Analytics"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -58,10 +60,10 @@ export function AnalyticsTab({ hasPerm }: AnalyticsTabProps) {
           <div>
             <Button
               size="sm"
-              variant="outline"
+              variant="ghost"
               onClick={exportOrganizationsCsv}
               disabled={exporting}
-              className="h-8 px-3 rounded-none text-xs font-semibold gap-1.5 cursor-pointer"
+              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-foreground cursor-pointer gap-1.5 rounded-xl"
             >
               <Download className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
               <span>{exporting ? "Exporting..." : "Export Organizations CSV"}</span>

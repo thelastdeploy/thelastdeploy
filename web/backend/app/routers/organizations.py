@@ -57,13 +57,21 @@ router = APIRouter(prefix="/organizations", tags=["organizations"])
 
 @router.get("", response_model=list[OrganizationResponse])
 async def list_user_organizations(
+    include_suspended: bool = False,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """List all organizations the current user belongs to, along with their roles and XP in each.
     If caller has workspace management authority, all active organizations are dynamically included.
+    When include_suspended is True (and caller has platform authority), suspended organizations are also included.
     """
-    has_workspace_authority = await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db)
+    has_workspace_authority = (
+        await has_platform_permission(current_user, "platform.organizations.manage", db)
+        or await has_platform_permission(current_user, "platform.organizations.view", db)
+        or await is_user_platform_admin(current_user, db)
+    )
+
+    allow_suspended = include_suspended and has_workspace_authority
 
     stmt = (
         select(OrganizationMembership)
@@ -71,12 +79,16 @@ async def list_user_organizations(
             selectinload(OrganizationMembership.organization),
             selectinload(OrganizationMembership.roles).selectinload(MembershipRole.role),
         )
+        .join(Organization, Organization.id == OrganizationMembership.organization_id)
         .where(
             OrganizationMembership.user_id == current_user.id,
             OrganizationMembership.status != "removed",
         )
-        .order_by(OrganizationMembership.joined_at.asc())
     )
+    if not allow_suspended:
+        stmt = stmt.where(Organization.status == "active")
+
+    stmt = stmt.order_by(OrganizationMembership.joined_at.asc())
     result = await db.execute(stmt)
     memberships = result.scalars().all()
 
@@ -106,7 +118,10 @@ async def list_user_organizations(
         )
 
     if has_workspace_authority:
-        all_orgs = (await db.execute(select(Organization).where(Organization.status == "active"))).scalars().all()
+        org_query = select(Organization)
+        if not allow_suspended:
+            org_query = org_query.where(Organization.status == "active")
+        all_orgs = (await db.execute(org_query)).scalars().all()
         for o in all_orgs:
             if o.id not in existing_org_ids:
                 responses.append(
@@ -136,13 +151,23 @@ async def get_organization(
     db: AsyncSession = Depends(get_db),
 ):
     """Get details of a specific organization if user is an active member or has workspace management authority."""
-    has_workspace_authority = await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db)
+    has_workspace_authority = (
+        await has_platform_permission(current_user, "platform.organizations.manage", db)
+        or await has_platform_permission(current_user, "platform.organizations.view", db)
+        or await is_user_platform_admin(current_user, db)
+    )
 
     org = await db.scalar(select(Organization).where(Organization.slug == org_slug))
     if not org:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Organization '{org_slug}' not found.",
+        )
+
+    if org.status == "suspended":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Organization workspace '{org_slug}' is suspended. Access is blocked.",
         )
 
     stmt = (

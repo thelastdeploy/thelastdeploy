@@ -128,14 +128,13 @@ export function ModuleCard({ module }: { module: Module }) {
               }}
             >
               {module.author.is_official
-                ? <Crown className="h-2.5 w-2.5" />
-                : <User className="h-2.5 w-2.5" />}
+                ? <Crown className="h-3.5 w-2.5" />
+                : <User className="h-3.5 w-2.5" />}
               {module.author.name}
             </span>
             {(module.status === "verified" || module.is_official_verified) && (
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-none bg-emerald-500/15 text-emerald-500">
-                <ShieldCheck className="h-2.5 w-2.5" />
-                Verified
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold px-1 py-1 rounded-lg bg-emerald-500/15 text-emerald-500">
+                <ShieldCheck className="h-3.5 w-3.5" />
               </span>
             )}
           </div>
@@ -143,7 +142,7 @@ export function ModuleCard({ module }: { module: Module }) {
 
         {/* Progress bar */}
         {module.completed_sections > 0 && (
-          <div className="pt-3 pb-2">
+          <div className="pt-4 pb-2">
             <div className="flex justify-between text-xs text-muted-foreground mb-1.5 font-semibold">
               <span>{module.completed_sections}/{module.total_sections} sections</span>
               <span>{progressPct}%</span>
@@ -161,12 +160,8 @@ export function ModuleCard({ module }: { module: Module }) {
         )}
 
         {/* Footer */}
-        <div className="pt-3 mt-3 flex items-center justify-between border-t border-border/40">
+        <div className="pt-2 mt-1 flex items-center justify-between">
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1 font-mono font-bold text-[var(--accent-primary)]">
-              <Zap className="h-3.5 w-3.5" />
-              {module.total_xp} XP
-            </span>
             <span className="flex items-center gap-1">
               <Clock className="h-3.5 w-3.5" />
               {module.estimated_minutes} min
@@ -175,7 +170,6 @@ export function ModuleCard({ module }: { module: Module }) {
               {module.total_sections} sections
             </span>
           </div>
-          <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
         </div>
       </div>
     </Link>
