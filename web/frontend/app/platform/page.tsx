@@ -428,8 +428,10 @@ export default function PlatformConsolePage() {
                     variant={isSelected ? "default" : "outline"}
                     size="sm"
                     onClick={() => setActiveTab(t.key)}
-                    className={`rounded-xl text-xs font-bold gap-1.5 cursor-pointer transition-all ${
-                      isSelected ? "bg-[var(--accent-primary)] text-black" : "text-muted-foreground hover:text-foreground"
+                    className={`rounded-none text-xs font-bold gap-1.5 cursor-pointer transition-all border ${
+                      isSelected
+                        ? "bg-[var(--accent-primary)] text-white dark:text-black border-[var(--accent-primary)]"
+                        : "text-muted-foreground hover:text-foreground border-border/60"
                     }`}
                   >
                     <Icon className="h-3.5 w-3.5" />
@@ -445,7 +447,7 @@ export default function PlatformConsolePage() {
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* ========================================================================= */}
-        {/* TAB 1: Organizations Directory & Platform Governance                      */}
+        {/* TAB 1: Organizations Directory & Platform Governance (3-Column Matrix)    */}
         {/* ========================================================================= */}
         {activeTab === "organizations" && (
           <div className="space-y-6">
@@ -456,7 +458,7 @@ export default function PlatformConsolePage() {
                   placeholder="Search organizations..."
                   value={orgSearch}
                   onChange={(e) => setOrgSearch(e.target.value)}
-                  className="pl-9 h-9 text-xs rounded-xl"
+                  className="pl-9 h-9 text-xs rounded-none"
                 />
               </div>
 
@@ -464,7 +466,7 @@ export default function PlatformConsolePage() {
                 <Button
                   size="sm"
                   onClick={() => setShowCreateOrgModal(true)}
-                  className="rounded-xl bg-[var(--accent-primary)] text-black hover:opacity-90 font-bold text-xs gap-1.5 cursor-pointer"
+                  className="rounded-none bg-[var(--accent-primary)] text-white dark:text-black hover:opacity-90 font-bold text-xs gap-1.5 cursor-pointer"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Provision Organization</span>
@@ -472,137 +474,180 @@ export default function PlatformConsolePage() {
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredOrgs.map((org) => {
-                const isPlatform = org.type === "platform" || org.is_platform;
-                const isSuspended = org.status === "suspended";
-                const isMemberOfOrg = myMembershipSlugs.has(org.slug);
+            {/* 3-Column Open Matrix Grid with Continuous Extending Lines */}
+            <div className="relative overflow-visible">
+              <div className="matrix-line-v left-1/3 hidden lg:block" />
+              <div className="matrix-line-v left-2/3 hidden lg:block" />
 
-                return (
-                  <div
-                    key={org.slug}
-                    className="p-5 rounded-2xl border border-border bg-card shadow-sm hover:border-[var(--accent-primary)]/40 transition-all flex flex-col justify-between space-y-4"
-                  >
-                    <div className="space-y-2.5">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-xl bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] flex items-center justify-center shrink-0 font-bold">
-                            {org.type === "university" ? (
-                              <GraduationCap className="h-5 w-5" />
-                            ) : isPlatform ? (
-                              <Globe className="h-5 w-5" />
-                            ) : (
-                              <Building2 className="h-5 w-5" />
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-sm text-foreground truncate max-w-[150px]">
-                              {isPlatform ? "The Last Deploy (Personal)" : org.name}
-                            </h3>
-                            <span className="text-[10px] font-mono text-muted-foreground">
-                              slug: {org.slug}
-                            </span>
-                          </div>
-                        </div>
-                        <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-muted font-bold text-muted-foreground">
-                          {org.type}
-                        </span>
+              <div className="flex flex-col relative">
+                {Array.from({ length: Math.ceil(filteredOrgs.length / 3) }, (_, rIdx) => {
+                  const row = filteredOrgs.slice(rIdx * 3, rIdx * 3 + 3);
+                  const isLastRow = rIdx === Math.ceil(filteredOrgs.length / 3) - 1;
+
+                  return (
+                    <div key={rIdx} className="relative">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                        {row.map((org, cIdx) => {
+                          const isPlatform = org.type === "platform" || org.is_platform;
+                          const isSuspended = org.status === "suspended";
+                          const isMemberOfOrg = myMembershipSlugs.has(org.slug);
+                          const isLastInColMobile = isLastRow && cIdx === row.length - 1;
+
+                          return (
+                            <div
+                              key={org.slug}
+                              className={`group relative p-2.5 sm:p-3 text-left transition-colors border-0 ${
+                                !isLastInColMobile ? "max-lg:border-b max-lg:border-border/40" : ""
+                              }`}
+                            >
+                              {/* Sharp-Cornered Inset Tile (frameless idle -> emerald highlight on hover) */}
+                              <div
+                                className="w-full h-full min-h-[220px] p-5 sm:p-6 rounded-none flex flex-col justify-between transition-all duration-150"
+                                style={{
+                                  border: "none",
+                                  boxShadow: "none",
+                                  backgroundColor: "transparent",
+                                }}
+                                onMouseEnter={(e) => {
+                                  const isDark = document.documentElement.classList.contains("dark");
+                                  e.currentTarget.style.boxShadow = "inset 0 0 0 2px var(--accent-primary)";
+                                  e.currentTarget.style.backgroundColor = isDark
+                                    ? "rgba(var(--accent-primary-rgb), 0.12)"
+                                    : "rgba(var(--accent-primary-rgb), 0.05)";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.boxShadow = "none";
+                                  e.currentTarget.style.backgroundColor = "transparent";
+                                }}
+                              >
+                                <div className="space-y-2.5">
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-center gap-3">
+                                      <div className="h-10 w-10 rounded-none bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] flex items-center justify-center shrink-0 font-bold">
+                                        {org.type === "university" ? (
+                                          <GraduationCap className="h-5 w-5" />
+                                        ) : isPlatform ? (
+                                          <Globe className="h-5 w-5" />
+                                        ) : (
+                                          <Building2 className="h-5 w-5" />
+                                        )}
+                                      </div>
+                                      <div>
+                                        <h3 className="font-bold text-sm text-foreground truncate max-w-[150px]">
+                                          {isPlatform ? "The Last Deploy (Personal)" : org.name}
+                                        </h3>
+                                        <span className="text-[10px] font-mono text-muted-foreground">
+                                          slug: {org.slug}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-none bg-muted font-bold text-muted-foreground">
+                                      {org.type}
+                                    </span>
+                                  </div>
+
+                                  <div className="space-y-1.5 text-xs text-muted-foreground">
+                                    <div className="flex items-center justify-between">
+                                      <span>Status:</span>
+                                      <span className={`font-mono font-semibold flex items-center gap-1 text-[11px] ${
+                                        isSuspended ? "text-red-400" : "text-emerald-400"
+                                      }`}>
+                                        <span className={`h-1.5 w-1.5 rounded-full ${isSuspended ? "bg-red-400" : "bg-emerald-400"}`} />
+                                        {isSuspended ? "Suspended" : "Active"}
+                                      </span>
+                                    </div>
+                                    {org.domains && org.domains.length > 0 && (
+                                      <div className="flex items-center justify-between">
+                                        <span>Domains:</span>
+                                        <span className="font-mono text-foreground text-[10px] truncate max-w-[140px]">
+                                          {org.domains.join(", ")}
+                                        </span>
+                                      </div>
+                                    )}
+                                    <div className="flex items-center justify-between">
+                                      <span>Your Membership:</span>
+                                      <span className="font-mono text-foreground text-[11px]">
+                                        {isMemberOfOrg ? (
+                                          <span className="text-emerald-400 font-semibold">Active Member</span>
+                                        ) : (
+                                          <span className="text-muted-foreground">Not Enrolled</span>
+                                        )}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Scoped Actions Footer */}
+                                <div className="pt-3 border-t border-border/40 flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-1.5">
+                                    {isMemberOfOrg && (
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                          api.setSelectedOrg(org.slug);
+                                          router.push("/dashboard");
+                                        }}
+                                        className="rounded-none text-[11px] font-bold h-7 cursor-pointer"
+                                      >
+                                        Switch Workspace
+                                      </Button>
+                                    )}
+
+                                    {hasPerm("platform.organizations.suspend") && !isPlatform && (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleToggleOrgStatus(org)}
+                                        className={`rounded-none text-[11px] font-bold h-7 cursor-pointer px-2 ${
+                                          isSuspended ? "text-emerald-400 hover:bg-emerald-500/10" : "text-red-400 hover:bg-red-500/10"
+                                        }`}
+                                        title={isSuspended ? "Reactivate Organization" : "Suspend Organization"}
+                                      >
+                                        <Power className="h-3.5 w-3.5" />
+                                      </Button>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center gap-1.5">
+                                    {hasPerm("platform.organizations.manage") && (
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => router.push(`/org/${org.slug}`)}
+                                        className="rounded-none text-[11px] font-bold text-foreground hover:bg-muted h-7 cursor-pointer gap-1"
+                                      >
+                                        <ExternalLink className="h-3 w-3" />
+                                        <span>Workspace</span>
+                                      </Button>
+                                    )}
+                                    {(hasPerm("platform.organizations.settings") || hasPerm("platform.organizations.manage")) && (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => router.push(`/platform/organizations/${org.slug}`)}
+                                        className="rounded-none text-[11px] font-bold text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10 h-7 cursor-pointer gap-1"
+                                      >
+                                        <Settings2 className="h-3 w-3" />
+                                        <span>Manage Org</span>
+                                      </Button>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
 
-                      <div className="space-y-1.5 text-xs text-muted-foreground">
-                        <div className="flex items-center justify-between">
-                          <span>Status:</span>
-                          <span className={`font-mono font-semibold flex items-center gap-1 text-[11px] ${
-                            isSuspended ? "text-red-400" : "text-emerald-400"
-                          }`}>
-                            <span className={`h-1.5 w-1.5 rounded-full ${isSuspended ? "bg-red-400" : "bg-emerald-400"}`} />
-                            {isSuspended ? "Suspended" : "Active"}
-                          </span>
-                        </div>
-                        {org.domains && org.domains.length > 0 && (
-                          <div className="flex items-center justify-between">
-                            <span>Domains:</span>
-                            <span className="font-mono text-zinc-300 text-[10px] truncate max-w-[140px]">
-                              {org.domains.join(", ")}
-                            </span>
-                          </div>
-                        )}
-                        <div className="flex items-center justify-between">
-                          <span>Your Membership:</span>
-                          <span className="font-mono text-zinc-300 text-[11px]">
-                            {isMemberOfOrg ? (
-                              <span className="text-emerald-400 font-semibold">Active Member</span>
-                            ) : (
-                              <span className="text-muted-foreground">Not Enrolled</span>
-                            )}
-                          </span>
-                        </div>
-                      </div>
+                      {/* Continuous Horizontal Row Divider Line */}
+                      {!isLastRow && (
+                        <div className="matrix-line-h bottom-0 hidden lg:block" />
+                      )}
                     </div>
-
-                    {/* Scoped Actions Footer */}
-                    <div className="pt-3 border-t border-border flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5">
-                        {/* Switch Workspace: ONLY rendered if user has an active membership */}
-                        {isMemberOfOrg && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              api.setSelectedOrg(org.slug);
-                              router.push("/dashboard");
-                            }}
-                            className="rounded-xl text-[11px] font-bold h-7 cursor-pointer"
-                          >
-                            Switch Workspace
-                          </Button>
-                        )}
-
-                        {/* Suspend / Reactivate action */}
-                        {hasPerm("platform.organizations.suspend") && !isPlatform && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleToggleOrgStatus(org)}
-                            className={`rounded-xl text-[11px] font-bold h-7 cursor-pointer px-2 ${
-                              isSuspended ? "text-emerald-400 hover:bg-emerald-500/10" : "text-red-400 hover:bg-red-500/10"
-                            }`}
-                            title={isSuspended ? "Reactivate Organization" : "Suspend Organization"}
-                          >
-                            <Power className="h-3.5 w-3.5" />
-                          </Button>
-                        )}
-                      </div>
-
-                      {/* Actions: Workspace (if manage perm) & Manage Org (if settings/manage perm) */}
-                      <div className="flex items-center gap-1.5">
-                        {hasPerm("platform.organizations.manage") && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => router.push(`/org/${org.slug}`)}
-                            className="rounded-xl text-[11px] font-bold text-foreground hover:bg-muted h-7 cursor-pointer gap-1"
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                            <span>Workspace</span>
-                          </Button>
-                        )}
-                        {(hasPerm("platform.organizations.settings") || hasPerm("platform.organizations.manage")) && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => router.push(`/platform/organizations/${org.slug}`)}
-                            className="rounded-xl text-[11px] font-bold text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10 h-7 cursor-pointer gap-1"
-                          >
-                            <Settings2 className="h-3 w-3" />
-                            <span>Manage Org</span>
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
@@ -612,8 +657,8 @@ export default function PlatformConsolePage() {
         {/* ========================================================================= */}
         {activeTab === "analytics" && (
           <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-none bg-card border border-border">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider font-mono mr-1">Period:</span>
                 {(["7d", "30d", "90d", "all"] as const).map((p) => (
                   <Button
@@ -624,8 +669,10 @@ export default function PlatformConsolePage() {
                       setPlatformPeriod(p);
                       loadPlatformAnalytics(p);
                     }}
-                    className={`h-8 px-3 rounded-xl text-xs font-bold ${
-                      platformPeriod === p ? "bg-[var(--accent-primary)] text-black" : ""
+                    className={`h-8 px-3 rounded-none text-xs font-bold cursor-pointer border ${
+                      platformPeriod === p
+                        ? "bg-[var(--accent-primary)] text-white dark:text-black border-[var(--accent-primary)]"
+                        : "border-border/60"
                     }`}
                   >
                     {p === "all" ? "All Time" : p.toUpperCase()}
@@ -636,7 +683,7 @@ export default function PlatformConsolePage() {
                   variant="ghost"
                   onClick={() => loadPlatformAnalytics(platformPeriod)}
                   disabled={platformAnalyticsLoading}
-                  className="h-8 w-8 p-0 rounded-xl ml-1 text-muted-foreground hover:text-foreground cursor-pointer"
+                  className="h-8 w-8 p-0 rounded-none ml-1 text-muted-foreground hover:text-foreground cursor-pointer"
                   title="Refresh Platform Analytics"
                 >
                   <RefreshCw className={`h-3.5 w-3.5 ${platformAnalyticsLoading ? "animate-spin" : ""}`} />
@@ -650,7 +697,7 @@ export default function PlatformConsolePage() {
                     variant="outline"
                     onClick={handleExportPlatformOrgs}
                     disabled={exportingPlatform}
-                    className="h-8 px-3 rounded-xl text-xs font-semibold gap-1.5 cursor-pointer"
+                    className="h-8 px-3 rounded-none text-xs font-semibold gap-1.5 cursor-pointer"
                   >
                     <Download className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
                     <span>{exportingPlatform ? "Exporting..." : "Export Organizations CSV"}</span>
@@ -659,36 +706,113 @@ export default function PlatformConsolePage() {
               )}
             </div>
 
-            {/* KPI Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card className="rounded-2xl border-border bg-card p-4">
-                <p className="text-[11px] font-mono uppercase text-muted-foreground">Total Organizations</p>
-                <p className="text-2xl font-black text-foreground mt-1">
-                  {platformOverview?.total_organizations ?? "—"}
-                </p>
-              </Card>
-              <Card className="rounded-2xl border-border bg-card p-4">
-                <p className="text-[11px] font-mono uppercase text-muted-foreground">Global Users</p>
-                <p className="text-2xl font-black text-[var(--accent-primary)] mt-1">
-                  {platformOverview?.total_users ?? "—"}
-                </p>
-              </Card>
-              <Card className="rounded-2xl border-border bg-card p-4">
-                <p className="text-[11px] font-mono uppercase text-muted-foreground">Lab Completions</p>
-                <p className="text-2xl font-black text-emerald-400 mt-1">
-                  {platformOverview?.total_lab_completions ?? "—"}
-                </p>
-              </Card>
-              <Card className="rounded-2xl border-border bg-card p-4">
-                <p className="text-[11px] font-mono uppercase text-muted-foreground">Verified XP Awarded</p>
-                <p className="text-2xl font-black text-amber-400 mt-1">
-                  {platformOverview?.total_verified_xp ?? "—"} XP
-                </p>
-              </Card>
+            {/* KPI Cards: 4-Column Open Matrix with Continuous Extending Lines */}
+            <div className="relative overflow-visible">
+              <div className="matrix-line-v left-1/4 hidden md:block" />
+              <div className="matrix-line-v left-2/4 hidden md:block" />
+              <div className="matrix-line-v left-3/4 hidden md:block" />
+
+              <div className="grid grid-cols-2 md:grid-cols-4">
+                {/* Total Organizations */}
+                <div className="group relative p-2.5 sm:p-3 text-left border-0">
+                  <div
+                    className="p-5 rounded-none flex flex-col justify-between transition-all duration-150"
+                    style={{ border: "none", boxShadow: "none", backgroundColor: "transparent" }}
+                    onMouseEnter={(e) => {
+                      const isDark = document.documentElement.classList.contains("dark");
+                      e.currentTarget.style.boxShadow = "inset 0 0 0 2px var(--accent-primary)";
+                      e.currentTarget.style.backgroundColor = isDark
+                        ? "rgba(var(--accent-primary-rgb), 0.12)"
+                        : "rgba(var(--accent-primary-rgb), 0.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = "none";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <p className="text-[11px] font-mono uppercase text-muted-foreground">Total Organizations</p>
+                    <p className="text-2xl font-black text-foreground mt-2">
+                      {platformOverview?.total_organizations ?? "—"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Global Users */}
+                <div className="group relative p-2.5 sm:p-3 text-left border-0">
+                  <div
+                    className="p-5 rounded-none flex flex-col justify-between transition-all duration-150"
+                    style={{ border: "none", boxShadow: "none", backgroundColor: "transparent" }}
+                    onMouseEnter={(e) => {
+                      const isDark = document.documentElement.classList.contains("dark");
+                      e.currentTarget.style.boxShadow = "inset 0 0 0 2px var(--accent-primary)";
+                      e.currentTarget.style.backgroundColor = isDark
+                        ? "rgba(var(--accent-primary-rgb), 0.12)"
+                        : "rgba(var(--accent-primary-rgb), 0.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = "none";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <p className="text-[11px] font-mono uppercase text-muted-foreground">Global Users</p>
+                    <p className="text-2xl font-black text-[var(--accent-primary)] mt-2">
+                      {platformOverview?.total_users ?? "—"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Lab Completions */}
+                <div className="group relative p-2.5 sm:p-3 text-left border-0">
+                  <div
+                    className="p-5 rounded-none flex flex-col justify-between transition-all duration-150"
+                    style={{ border: "none", boxShadow: "none", backgroundColor: "transparent" }}
+                    onMouseEnter={(e) => {
+                      const isDark = document.documentElement.classList.contains("dark");
+                      e.currentTarget.style.boxShadow = "inset 0 0 0 2px #10b981";
+                      e.currentTarget.style.backgroundColor = isDark
+                        ? "rgba(16, 185, 129, 0.12)"
+                        : "rgba(16, 185, 129, 0.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = "none";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <p className="text-[11px] font-mono uppercase text-muted-foreground">Lab Completions</p>
+                    <p className="text-2xl font-black text-emerald-400 mt-2">
+                      {platformOverview?.total_lab_completions ?? "—"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Verified XP Awarded */}
+                <div className="group relative p-2.5 sm:p-3 text-left border-0">
+                  <div
+                    className="p-5 rounded-none flex flex-col justify-between transition-all duration-150"
+                    style={{ border: "none", boxShadow: "none", backgroundColor: "transparent" }}
+                    onMouseEnter={(e) => {
+                      const isDark = document.documentElement.classList.contains("dark");
+                      e.currentTarget.style.boxShadow = "inset 0 0 0 2px #f59e0b";
+                      e.currentTarget.style.backgroundColor = isDark
+                        ? "rgba(245, 158, 11, 0.12)"
+                        : "rgba(245, 158, 11, 0.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = "none";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                  >
+                    <p className="text-[11px] font-mono uppercase text-muted-foreground">Verified XP Awarded</p>
+                    <p className="text-2xl font-black text-amber-400 mt-2">
+                      {platformOverview?.total_verified_xp ?? "—"} XP
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Organizations Breakdown Table */}
-            <Card className="rounded-2xl border-border bg-card overflow-hidden">
+            <div className="rounded-none border border-border bg-card overflow-hidden">
               <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
                 <h3 className="font-bold text-sm text-foreground">Tenant Organization Summary</h3>
                 <span className="text-xs font-mono text-muted-foreground">{platformOrgsSummary.length} organizations active</span>
@@ -712,8 +836,8 @@ export default function PlatformConsolePage() {
                         <td className="p-3 font-semibold text-foreground">{org.name}</td>
                         <td className="p-3 uppercase font-mono text-[10px] text-muted-foreground">{org.type}</td>
                         <td className="p-3">
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                            org.status === "active" ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"
+                          <span className={`px-2 py-0.5 rounded-none text-[10px] font-bold ${
+                            org.status === "active" ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30" : "bg-red-500/10 text-red-400 border border-red-500/30"
                           }`}>
                             {org.status}
                           </span>
@@ -727,12 +851,12 @@ export default function PlatformConsolePage() {
                   </tbody>
                 </table>
               </div>
-            </Card>
+            </div>
           </div>
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 3: Platform Users & Granular RBAC                                     */}
+        {/* TAB 3: Platform Users & Granular RBAC (Single-Column Open Matrix)         */}
         {/* ========================================================================= */}
         {activeTab === "staff" && (
           <div className="space-y-6">
@@ -748,7 +872,7 @@ export default function PlatformConsolePage() {
                 <Button
                   size="sm"
                   onClick={() => setShowAddUserModal(true)}
-                  className="rounded-xl bg-[var(--accent-primary)] text-black hover:opacity-90 font-bold text-xs gap-1.5 cursor-pointer"
+                  className="rounded-none bg-[var(--accent-primary)] text-white dark:text-black hover:opacity-90 font-bold text-xs gap-1.5 cursor-pointer"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   <span>Add Platform User</span>
@@ -756,77 +880,103 @@ export default function PlatformConsolePage() {
               )}
             </div>
 
-            <div className="rounded-2xl border border-border overflow-hidden bg-card shadow-sm">
-              <div className="p-4 border-b border-border bg-muted/20 flex items-center justify-between">
-                <span className="font-bold text-xs text-muted-foreground uppercase font-mono">Current Platform Operators</span>
-                <span className="text-xs font-mono text-muted-foreground">{platformUsers.length} Operators</span>
-              </div>
-              <div className="divide-y divide-border">
-                {platformUsers.map((pUser) => {
+            {/* Single-Column Open Matrix with Continuous Horizontal Lines */}
+            <div className="relative overflow-visible">
+              <div className="flex flex-col relative">
+                {platformUsers.map((pUser, pIdx) => {
                   const isSelf = user?.id === pUser.id || user?.username === pUser.username;
+                  const isLast = pIdx === platformUsers.length - 1;
 
                   return (
-                    <div key={pUser.id} className="p-4 flex items-center justify-between gap-4 hover:bg-muted/10 transition-colors flex-wrap sm:flex-nowrap">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold shrink-0">
-                          <Shield className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-bold text-xs text-foreground">{pUser.username}</h4>
-                            {isSelf && (
-                              <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/20 font-bold uppercase">
-                                You
-                              </span>
-                            )}
+                    <div key={pUser.id} className="relative">
+                      <div className="p-2.5 sm:p-3 text-left border-0">
+                        {/* Frameless Idle -> Sharp Purple Inset Highlight */}
+                        <div
+                          className="p-4 sm:p-5 rounded-none flex items-center justify-between gap-4 transition-all duration-150 flex-wrap sm:flex-nowrap"
+                          style={{
+                            border: "none",
+                            boxShadow: "none",
+                            backgroundColor: "transparent",
+                          }}
+                          onMouseEnter={(e) => {
+                            const isDark = document.documentElement.classList.contains("dark");
+                            e.currentTarget.style.boxShadow = "inset 0 0 0 2px #a855f7";
+                            e.currentTarget.style.backgroundColor = isDark
+                              ? "rgba(168, 85, 247, 0.12)"
+                              : "rgba(168, 85, 247, 0.05)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.boxShadow = "none";
+                            e.currentTarget.style.backgroundColor = "transparent";
+                          }}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="h-10 w-10 rounded-none bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold shrink-0">
+                              <Shield className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-bold text-xs text-foreground">{pUser.username}</h4>
+                                {isSelf && (
+                                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-none bg-amber-500/10 text-amber-500 dark:text-amber-400 border border-amber-500/20 font-bold uppercase">
+                                    You
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[11px] text-muted-foreground font-mono">{pUser.email}</p>
+                              <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                                <span className="text-[11px] font-mono font-medium text-muted-foreground">
+                                  {pUser.permissions.length} active permissions:
+                                </span>
+                                {pUser.permissions.slice(0, 3).map((pk) => (
+                                  <span
+                                    key={pk}
+                                    className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-none bg-muted text-foreground border border-border"
+                                  >
+                                    {pk.replace("platform.", "")}
+                                  </span>
+                                ))}
+                                {pUser.permissions.length > 3 && (
+                                  <span className="text-[10px] font-mono text-muted-foreground font-medium">
+                                    +{pUser.permissions.length - 3} more
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <p className="text-[11px] text-muted-foreground font-mono">{pUser.email}</p>
-                          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                            <span className="text-[11px] font-mono font-medium text-muted-foreground">
-                              {pUser.permissions.length} active permissions:
-                            </span>
-                            {pUser.permissions.slice(0, 3).map((pk) => (
-                              <span
-                                key={pk}
-                                className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-md bg-muted text-foreground border border-border"
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            {hasPerm("platform.permissions.manage") && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => router.push(`/platform/users/${pUser.id}`)}
+                                className="rounded-none text-xs font-bold gap-1.5 h-8 cursor-pointer hover:border-[var(--accent-primary)]/50"
                               >
-                                {pk.replace("platform.", "")}
-                              </span>
-                            ))}
-                            {pUser.permissions.length > 3 && (
-                              <span className="text-[10px] font-mono text-muted-foreground font-medium">
-                                +{pUser.permissions.length - 3} more
-                              </span>
+                                <KeyRound className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
+                                <span>Configure Permissions</span>
+                              </Button>
+                            )}
+
+                            {!isSelf && hasPerm("platform.permissions.manage") && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleRevokePlatformUser(pUser.id, pUser.username)}
+                                className="h-8 w-8 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 rounded-none cursor-pointer"
+                                title="Revoke all platform access"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             )}
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        {hasPerm("platform.permissions.manage") && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => router.push(`/platform/users/${pUser.id}`)}
-                            className="rounded-xl text-xs font-bold gap-1.5 h-8 cursor-pointer hover:border-[var(--accent-primary)]/50"
-                          >
-                            <KeyRound className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
-                            <span>Configure Permissions</span>
-                          </Button>
-                        )}
-
-                        {!isSelf && hasPerm("platform.permissions.manage") && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleRevokePlatformUser(pUser.id, pUser.username)}
-                            className="h-8 w-8 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 rounded-xl cursor-pointer"
-                            title="Revoke all platform access"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
+                      {/* Continuous Horizontal Line */}
+                      {!isLast && (
+                        <div className="matrix-line-h bottom-0" />
+                      )}
                     </div>
                   );
                 })}
@@ -836,7 +986,7 @@ export default function PlatformConsolePage() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 4: Security & Platform-Wide Audit Logs                                */}
+        {/* TAB 4: Security & Platform-Wide Audit Logs (Single-Column Matrix)         */}
         {/* ========================================================================= */}
         {activeTab === "audit" && (
           <div className="space-y-6">
@@ -848,10 +998,10 @@ export default function PlatformConsolePage() {
                     placeholder="Search audit events..."
                     value={auditSearch}
                     onChange={(e) => setAuditSearch(e.target.value)}
-                    className="pl-9 h-9 text-xs rounded-xl"
+                    className="pl-9 h-9 text-xs rounded-none"
                   />
                 </div>
-                <Button size="sm" variant="outline" onClick={loadAuditLogs} className="h-9 rounded-xl text-xs font-bold">
+                <Button size="sm" variant="outline" onClick={loadAuditLogs} className="h-9 rounded-none text-xs font-bold cursor-pointer">
                   Filter
                 </Button>
               </div>
@@ -859,7 +1009,7 @@ export default function PlatformConsolePage() {
               <span className="text-xs font-mono text-muted-foreground">{auditLogs.length} events logged</span>
             </div>
 
-            <Card className="rounded-2xl border-border bg-card overflow-hidden">
+            <div className="rounded-none border border-border bg-card overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-left">
                   <thead className="bg-muted/30 text-muted-foreground font-mono uppercase text-[10px]">
@@ -900,7 +1050,7 @@ export default function PlatformConsolePage() {
                   </tbody>
                 </table>
               </div>
-            </Card>
+            </div>
           </div>
         )}
       </div>
@@ -910,30 +1060,28 @@ export default function PlatformConsolePage() {
       {/* ========================================================================= */}
       {selectedUserForPerms && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <Card className="max-w-xl w-full max-h-[85vh] flex flex-col rounded-3xl shadow-2xl border-border bg-card overflow-hidden">
-            <CardHeader className="pb-3 border-b border-border flex flex-row items-center justify-between shrink-0">
+          <div className="max-w-xl w-full max-h-[85vh] flex flex-col rounded-none shadow-2xl border border-border bg-card overflow-hidden">
+            <div className="p-6 pb-4 border-b border-border flex flex-row items-center justify-between shrink-0">
               <div>
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-base font-bold">
-                    Configure Permissions: {selectedUserForPerms.username}
-                  </CardTitle>
-                </div>
-                <CardDescription className="text-xs mt-1">
+                <h2 className="text-base font-bold text-foreground">
+                  Configure Permissions: {selectedUserForPerms.username}
+                </h2>
+                <p className="text-xs text-muted-foreground mt-1">
                   Toggle granular platform permissions. Enabled permissions take effect immediately.
-                </CardDescription>
+                </p>
               </div>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setSelectedUserForPerms(null)}
-                className="h-8 w-8 rounded-xl text-muted-foreground hover:text-foreground cursor-pointer"
+                className="h-8 w-8 rounded-none text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </Button>
-            </CardHeader>
+            </div>
 
-            <CardContent className="p-6 overflow-y-auto space-y-3 flex-1">
-              <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs flex items-center justify-between">
+            <div className="p-6 overflow-y-auto space-y-3 flex-1">
+              <div className="p-3 rounded-none bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs flex items-center justify-between">
                 <div>
                   <span className="font-bold block">Delegation Switch</span>
                   <span className="text-[10px] text-purple-400/80">
@@ -951,7 +1099,7 @@ export default function PlatformConsolePage() {
                     <div
                       key={perm.key}
                       onClick={() => handleToggleDraftPerm(perm.key)}
-                      className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                      className={`p-3 rounded-none border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                         isChecked
                           ? isDelegationPerm
                             ? "bg-purple-500/10 border-purple-500/40"
@@ -963,7 +1111,7 @@ export default function PlatformConsolePage() {
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-xs text-foreground font-mono">{perm.key}</span>
                           {isDelegationPerm && (
-                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-bold uppercase">
+                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-none bg-purple-500/20 text-purple-300 font-bold uppercase">
                               Key Authority
                             </span>
                           )}
@@ -973,7 +1121,7 @@ export default function PlatformConsolePage() {
                         </p>
                       </div>
 
-                      <div className={`h-5 w-5 rounded-md flex items-center justify-center shrink-0 border transition-all ${
+                      <div className={`h-5 w-5 rounded-none flex items-center justify-center shrink-0 border transition-all ${
                         isChecked
                           ? "bg-[var(--accent-primary)] border-[var(--accent-primary)] text-black"
                           : "border-border bg-card"
@@ -984,7 +1132,7 @@ export default function PlatformConsolePage() {
                   );
                 })}
               </div>
-            </CardContent>
+            </div>
 
             <div className="p-4 border-t border-border bg-muted/20 flex items-center justify-between shrink-0">
               <span className="text-xs font-mono text-muted-foreground">
@@ -995,7 +1143,7 @@ export default function PlatformConsolePage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setSelectedUserForPerms(null)}
-                  className="rounded-xl text-xs font-bold"
+                  className="rounded-none text-xs font-bold cursor-pointer"
                 >
                   Cancel
                 </Button>
@@ -1003,13 +1151,13 @@ export default function PlatformConsolePage() {
                   size="sm"
                   onClick={handleSaveUserPermissions}
                   disabled={savingPerms}
-                  className="rounded-xl bg-[var(--accent-primary)] text-black font-bold text-xs cursor-pointer"
+                  className="rounded-none bg-[var(--accent-primary)] text-white dark:text-black font-bold text-xs cursor-pointer"
                 >
                   {savingPerms ? "Saving..." : "Save Permissions"}
                 </Button>
               </div>
             </div>
-          </Card>
+          </div>
         </div>
       )}
 
@@ -1018,43 +1166,43 @@ export default function PlatformConsolePage() {
       {/* ========================================================================= */}
       {showAddUserModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <Card className="max-w-md w-full rounded-2xl shadow-2xl border-border bg-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold">Add Platform User</CardTitle>
-              <CardDescription className="text-xs">
+          <div className="max-w-md w-full rounded-none shadow-2xl border border-border bg-card">
+            <div className="p-6 pb-3">
+              <h2 className="text-base font-bold text-foreground">Add Platform User</h2>
+              <p className="text-xs text-muted-foreground mt-1">
                 Enter an existing user's username or email. They will initially be provisioned with standard platform viewer access (<code>analytics.view</code>, <code>users.view</code>).
-              </CardDescription>
-            </CardHeader>
+              </p>
+            </div>
             <form onSubmit={handleAddPlatformUserSubmit}>
-              <CardContent className="space-y-3">
+              <div className="px-6 py-3 space-y-3">
                 <Input
                   placeholder="Enter username or email..."
                   value={newUserIdentity}
                   onChange={(e) => setNewUserIdentity(e.target.value)}
-                  className="h-9 text-xs rounded-xl"
+                  className="h-9 text-xs rounded-none"
                   required
                 />
-              </CardContent>
+              </div>
               <div className="p-4 border-t border-border flex items-center justify-end gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setShowAddUserModal(false)}
-                  className="rounded-xl text-xs font-bold"
+                  className="rounded-none text-xs font-bold cursor-pointer"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   size="sm"
-                  className="rounded-xl bg-[var(--accent-primary)] text-black font-bold text-xs"
+                  className="rounded-none bg-[var(--accent-primary)] text-white dark:text-black font-bold text-xs cursor-pointer"
                 >
                   Add Operator
                 </Button>
               </div>
             </form>
-          </Card>
+          </div>
         </div>
       )}
 
@@ -1063,17 +1211,17 @@ export default function PlatformConsolePage() {
       {/* ========================================================================= */}
       {showCreateOrgModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <Card className="max-w-md w-full rounded-2xl shadow-2xl border-border bg-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base font-bold">Provision New Organization</CardTitle>
-              <CardDescription className="text-xs">
+          <div className="max-w-md w-full rounded-none shadow-2xl border border-border bg-card">
+            <div className="p-6 pb-3">
+              <h2 className="text-base font-bold text-foreground">Provision New Organization</h2>
+              <p className="text-xs text-muted-foreground mt-1">
                 Create a tenant workspace for an educational institution or enterprise.
-              </CardDescription>
-            </CardHeader>
+              </p>
+            </div>
             <form onSubmit={handleCreateOrg}>
-              <CardContent className="space-y-3.5">
+              <div className="px-6 py-3 space-y-3.5">
                 {createOrgError && (
-                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
+                  <div className="p-2.5 rounded-none bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
                     <AlertCircle className="h-4 w-4 shrink-0" />
                     <span>{createOrgError}</span>
                   </div>
@@ -1090,7 +1238,7 @@ export default function PlatformConsolePage() {
                         setNewOrgSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""));
                       }
                     }}
-                    className="h-9 text-xs rounded-xl"
+                    className="h-9 text-xs rounded-none"
                   />
                 </div>
 
@@ -1100,20 +1248,20 @@ export default function PlatformConsolePage() {
                     placeholder="e.g. stanford"
                     value={newOrgSlug}
                     onChange={(e) => setNewOrgSlug(e.target.value)}
-                    className="h-9 text-xs font-mono rounded-xl"
+                    className="h-9 text-xs font-mono rounded-none"
                   />
                 </div>
 
                 <div className="space-y-1">
                   <label className="text-xs font-semibold text-foreground">Organization Type</label>
                   <Select value={newOrgType} onValueChange={(val) => setNewOrgType(val)}>
-                    <SelectTrigger className="w-full h-9 text-xs">
+                    <SelectTrigger className="w-full h-9 text-xs rounded-none">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="company">Enterprise / Company</SelectItem>
-                      <SelectItem value="university">Higher Education Institution</SelectItem>
-                      <SelectItem value="other">Non-profit / Community</SelectItem>
+                    <SelectContent className="rounded-none">
+                      <SelectItem value="company" className="rounded-none">Enterprise / Company</SelectItem>
+                      <SelectItem value="university" className="rounded-none">Higher Education Institution</SelectItem>
+                      <SelectItem value="other" className="rounded-none">Non-profit / Community</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -1124,11 +1272,11 @@ export default function PlatformConsolePage() {
                     placeholder="e.g. stanford.edu, cs.stanford.edu"
                     value={newOrgDomain}
                     onChange={(e) => setNewOrgDomain(e.target.value)}
-                    className="h-9 text-xs font-mono rounded-xl"
+                    className="h-9 text-xs font-mono rounded-none"
                   />
                   <p className="text-[10px] text-muted-foreground">Comma-separated domain list for automatic onboarding eligibility.</p>
                 </div>
-              </CardContent>
+              </div>
 
               <div className="p-4 border-t border-border flex items-center justify-end gap-2">
                 <Button
@@ -1136,7 +1284,7 @@ export default function PlatformConsolePage() {
                   variant="outline"
                   size="sm"
                   onClick={() => setShowCreateOrgModal(false)}
-                  className="rounded-xl text-xs font-bold"
+                  className="rounded-none text-xs font-bold cursor-pointer"
                 >
                   Cancel
                 </Button>
@@ -1144,13 +1292,13 @@ export default function PlatformConsolePage() {
                   type="submit"
                   size="sm"
                   disabled={createOrgLoading}
-                  className="rounded-xl bg-[var(--accent-primary)] text-black font-bold text-xs"
+                  className="rounded-none bg-[var(--accent-primary)] text-white dark:text-black font-bold text-xs cursor-pointer"
                 >
                   {createOrgLoading ? "Provisioning..." : "Provision Workspace"}
                 </Button>
               </div>
             </form>
-          </Card>
+          </div>
         </div>
       )}
 

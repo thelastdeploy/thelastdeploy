@@ -398,19 +398,19 @@ export default function UserRbacConfigPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => router.push("/platform")}
-                  className="rounded-xl h-8 px-2 cursor-pointer -ml-2 text-muted-foreground hover:text-foreground"
+                  className="rounded-none h-8 px-2 cursor-pointer -ml-2 text-muted-foreground hover:text-foreground"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <div className="flex items-center gap-2.5">
-                  <div className="h-9 w-9 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-sm uppercase">
+                  <div className="h-9 w-9 rounded-none bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-sm uppercase">
                     {operator.username.slice(0, 2)}
                   </div>
                   <div>
                     <h1 className="text-xl font-bold tracking-tight flex items-center gap-2">
                       <span>{operator.username}</span>
                       {isSelf && (
-                        <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30 font-mono">
+                        <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30 font-mono rounded-none">
                           You
                         </Badge>
                       )}
@@ -438,7 +438,7 @@ export default function UserRbacConfigPage() {
                 size="sm"
                 onClick={handleReset}
                 disabled={!diff.hasChanges || saving}
-                className="rounded-xl text-xs h-9 cursor-pointer gap-1.5"
+                className="rounded-none text-xs h-9 cursor-pointer gap-1.5"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 <span>Reset</span>
@@ -447,7 +447,7 @@ export default function UserRbacConfigPage() {
                 size="sm"
                 onClick={handleSave}
                 disabled={!diff.hasChanges || saving}
-                className="rounded-xl text-xs h-9 font-bold bg-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/90 text-black cursor-pointer gap-1.5 shadow-[0_0_15px_rgba(var(--accent-primary-rgb),0.2)]"
+                className="rounded-none text-xs h-9 font-bold bg-[var(--accent-primary)] hover:opacity-90 text-white dark:text-black cursor-pointer gap-1.5"
               >
                 {saving ? <LoadingSpinner /> : <Save className="h-3.5 w-3.5" />}
                 <span>Save</span>
@@ -462,13 +462,13 @@ export default function UserRbacConfigPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Column: Domain Selector & Filters */}
           <div className="space-y-6">
-            <Card className="rounded-2xl border-border bg-card/60 backdrop-blur-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+            <div className="rounded-none border border-border bg-card">
+              <div className="p-4 pb-3">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                   <Sliders className="h-4 w-4 text-[var(--accent-primary)]" /> Capability Domains
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-1.5 p-3 pt-0">
+                </h3>
+              </div>
+              <div className="space-y-1.5 p-3 pt-0">
                 {DOMAIN_SECTIONS.map((sec) => {
                   const Icon = sec.icon;
                   const count = domainCounts[sec.id] || { granted: 0, total: 0 };
@@ -477,10 +477,10 @@ export default function UserRbacConfigPage() {
                     <button
                       key={sec.id}
                       onClick={() => setSelectedDomain(sec.id)}
-                      className={`w-full flex items-center justify-between p-2.5 rounded-xl text-xs font-medium transition-all text-left cursor-pointer ${
+                      className={`w-full flex items-center justify-between p-2.5 rounded-none text-xs font-medium transition-all text-left cursor-pointer border ${
                         isSelected
-                          ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold border border-[var(--accent-primary)]/20 shadow-sm"
-                          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border border-transparent"
+                          ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] font-bold border-[var(--accent-primary)]/30"
+                          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground border-transparent"
                       }`}
                     >
                       <div className="flex items-center gap-2.5 truncate">
@@ -489,11 +489,11 @@ export default function UserRbacConfigPage() {
                       </div>
                       <Badge
                         variant="secondary"
-                        className={`text-[10px] font-mono shrink-0 ml-2 ${
+                        className={`text-[10px] font-mono shrink-0 ml-2 rounded-none ${
                           count.granted === count.total && count.total > 0
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                            ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
                             : count.granted > 0
-                            ? "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                            ? "bg-purple-500/10 text-purple-400 border border-purple-500/30"
                             : ""
                         }`}
                       >
@@ -502,25 +502,25 @@ export default function UserRbacConfigPage() {
                     </button>
                   );
                 })}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Quick Actions Panel */}
-            <Card className="rounded-2xl border-border bg-card/60 backdrop-blur-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            <div className="rounded-none border border-border bg-card">
+              <div className="p-4 pb-3">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
                   Domain Actions
-                </CardTitle>
-                <CardDescription className="text-xs">
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">
                   Apply batch grants or revocations to the active domain filter.
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2 p-3 pt-0">
+                </p>
+              </div>
+              <div className="space-y-2 p-3 pt-0">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => handleGrantDomain(selectedDomain)}
-                  className="w-full text-xs font-semibold rounded-xl cursor-pointer hover:bg-emerald-500/10 hover:text-emerald-400 hover:border-emerald-500/30"
+                  className="w-full text-xs font-semibold rounded-none cursor-pointer hover:bg-emerald-500/10 hover:text-emerald-400 hover:border-emerald-500/30"
                 >
                   Grant All in Domain
                 </Button>
@@ -528,15 +528,15 @@ export default function UserRbacConfigPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => handleRevokeDomain(selectedDomain)}
-                  className="w-full text-xs font-semibold rounded-xl cursor-pointer hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
+                  className="w-full text-xs font-semibold rounded-none cursor-pointer hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/30"
                 >
                   Revoke All in Domain
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* Right 3 Columns: Search, Filters & Permission Grid */}
+          {/* Right 3 Columns: Search, Filters & Permission Grid (Single Column Matrix) */}
           <div className="lg:col-span-3 space-y-6">
             {/* Search and Status Filter Bar */}
             <div className="flex flex-col sm:flex-row items-center gap-3">
@@ -547,16 +547,16 @@ export default function UserRbacConfigPage() {
                   placeholder="Filter permissions by key (e.g. 'platform.organizations'), title, or keywords..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-10 rounded-xl bg-card border-border text-xs font-mono"
+                  className="pl-10 h-10 rounded-none bg-card border-border text-xs font-mono"
                 />
               </div>
 
-              <div className="flex items-center gap-1.5 bg-card p-1 rounded-xl border border-border shrink-0">
+              <div className="flex items-center gap-1.5 bg-card p-1 rounded-none border border-border shrink-0">
                 {(["all", "granted", "revoked"] as const).map((filter) => (
                   <button
                     key={filter}
                     onClick={() => setStatusFilter(filter)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-mono capitalize transition-colors cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-none text-xs font-mono capitalize transition-colors cursor-pointer ${
                       statusFilter === filter
                         ? "bg-muted text-foreground font-bold"
                         : "text-muted-foreground hover:text-foreground"
@@ -568,9 +568,9 @@ export default function UserRbacConfigPage() {
               </div>
             </div>
 
-            {/* Permissions List */}
+            {/* Permissions List: Single-Column Open Matrix with Continuous Lines */}
             {filteredCatalog.length === 0 ? (
-              <Card className="rounded-2xl border-border bg-card/40 p-12 text-center">
+              <div className="rounded-none border border-border bg-card p-12 text-center">
                 <SlidersHorizontal className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
                 <h3 className="text-base font-bold">No permissions match criteria</h3>
                 <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
@@ -584,129 +584,176 @@ export default function UserRbacConfigPage() {
                     setStatusFilter("all");
                     setSearchQuery("");
                   }}
-                  className="mt-4 rounded-xl text-xs cursor-pointer"
+                  className="mt-4 rounded-none text-xs cursor-pointer"
                 >
                   Clear All Filters
                 </Button>
-              </Card>
+              </div>
             ) : (
-              <div className="space-y-3">
-                {filteredCatalog.map((item) => {
-                  const isGranted = activePerms.has(item.key);
-                  const isLockedSelf = isSelf && item.key === "platform.permissions.manage";
-                  const meta = PERMISSION_TAXONOMY[item.key] || {
-                    domain: "system",
-                    risk: "standard",
-                    humanName: item.key,
-                    categoryLabel: "General",
-                  };
+              <div className="relative overflow-visible">
+                <div className="flex flex-col relative">
+                  {filteredCatalog.map((item, idx) => {
+                    const isLast = idx === filteredCatalog.length - 1;
+                    const isGranted = activePerms.has(item.key);
+                    const isLockedSelf = isSelf && item.key === "platform.permissions.manage";
+                    const meta = PERMISSION_TAXONOMY[item.key] || {
+                      domain: "system",
+                      risk: "standard",
+                      humanName: item.key,
+                      categoryLabel: "General",
+                    };
 
-                  const riskBadge =
-                    meta.risk === "critical" ? (
-                      <Badge variant="outline" className="text-[10px] bg-red-500/10 text-red-400 border-red-500/30 font-mono">
-                        Critical Risk
-                      </Badge>
-                    ) : meta.risk === "elevated" ? (
-                      <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-400 border-amber-500/30 font-mono">
-                        Elevated
-                      </Badge>
-                    ) : meta.risk === "readonly" ? (
-                      <Badge variant="outline" className="text-[10px] bg-slate-500/10 text-slate-400 border-slate-500/30 font-mono">
-                        Read Only
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-400 border-blue-500/30 font-mono">
-                        Standard
-                      </Badge>
-                    );
+                    const riskColor =
+                      meta.risk === "critical"
+                        ? "#ef4444"
+                        : meta.risk === "elevated"
+                        ? "#f59e0b"
+                        : meta.risk === "readonly"
+                        ? "#64748b"
+                        : "#3b82f6";
 
-                  return (
-                    <div
-                      key={item.key}
-                      onClick={() => !isLockedSelf && handleTogglePerm(item.key)}
-                      className={`p-4 rounded-2xl border transition-all ${
-                        isLockedSelf
-                          ? "bg-amber-500/[0.04] border-amber-500/30 cursor-not-allowed opacity-90"
-                          : isGranted
-                          ? "bg-card border-emerald-500/40 dark:border-[var(--accent-primary)]/30 hover:border-emerald-500/70 dark:hover:border-[var(--accent-primary)]/60 cursor-pointer shadow-sm"
-                          : "bg-card border-border hover:border-muted-foreground/30 hover:bg-muted/20 cursor-pointer"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="space-y-1.5 flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-sm font-bold text-foreground">
-                              {meta.humanName}
-                            </span>
-                            {riskBadge}
-                            <Badge variant="secondary" className="text-[10px] font-mono">
-                              {meta.categoryLabel}
-                            </Badge>
-                            {isLockedSelf && (
-                              <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30 font-mono flex items-center gap-1">
-                                <Lock className="h-2.5 w-2.5" /> Locked
-                              </Badge>
-                            )}
-                          </div>
+                    const riskRgb =
+                      meta.risk === "critical"
+                        ? "239, 68, 68"
+                        : meta.risk === "elevated"
+                        ? "245, 158, 11"
+                        : meta.risk === "readonly"
+                        ? "100, 116, 139"
+                        : "59, 130, 246";
 
-                          <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
-                            <code className="bg-muted px-1.5 py-0.5 rounded text-[11px] text-foreground font-semibold">
-                              {item.key}
-                            </code>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                copyKeyToClipboard(item.key);
-                              }}
-                              className="hover:text-foreground transition-colors p-1"
-                              title="Copy permission key"
-                            >
-                              {copiedKey === item.key ? (
-                                <Check className="h-3 w-3 text-emerald-400" />
-                              ) : (
-                                <Copy className="h-3 w-3" />
-                              )}
-                            </button>
-                          </div>
+                    const riskBadge =
+                      meta.risk === "critical" ? (
+                        <Badge variant="outline" className="text-[10px] bg-red-500/10 text-red-400 border-red-500/30 font-mono rounded-none">
+                          Critical Risk
+                        </Badge>
+                      ) : meta.risk === "elevated" ? (
+                        <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-400 border-amber-500/30 font-mono rounded-none">
+                          Elevated
+                        </Badge>
+                      ) : meta.risk === "readonly" ? (
+                        <Badge variant="outline" className="text-[10px] bg-slate-500/10 text-slate-400 border-slate-500/30 font-mono rounded-none">
+                          Read Only
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-400 border-blue-500/30 font-mono rounded-none">
+                          Standard
+                        </Badge>
+                      );
 
-                          <p className="text-xs text-muted-foreground leading-relaxed pt-0.5">
-                            {item.description || "Grants authority to execute operations associated with this platform capability."}
-                          </p>
-                        </div>
+                    return (
+                      <div key={item.key} className="relative">
+                        <div className="p-2.5 sm:p-3 text-left border-0">
+                          {/* Frameless Idle -> Sharp Risk-Colored Inset Highlight */}
+                          <div
+                            onClick={() => !isLockedSelf && handleTogglePerm(item.key)}
+                            className={`p-4 sm:p-5 rounded-none flex items-start justify-between gap-4 transition-all duration-150 ${
+                              isLockedSelf
+                                ? "cursor-not-allowed opacity-90"
+                                : "cursor-pointer"
+                            }`}
+                            style={{
+                              border: "none",
+                              boxShadow: isGranted
+                                ? `inset 0 0 0 2px ${riskColor}`
+                                : "none",
+                              backgroundColor: isGranted
+                                ? `rgba(${riskRgb}, 0.08)`
+                                : isLockedSelf
+                                ? "rgba(245, 158, 11, 0.04)"
+                                : "transparent",
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isGranted && !isLockedSelf) {
+                                e.currentTarget.style.boxShadow = `inset 0 0 0 2px ${riskColor}`;
+                                e.currentTarget.style.backgroundColor = `rgba(${riskRgb}, 0.05)`;
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isGranted && !isLockedSelf) {
+                                e.currentTarget.style.boxShadow = "none";
+                                e.currentTarget.style.backgroundColor = "transparent";
+                              }
+                            }}
+                          >
+                            <div className="space-y-1.5 flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-sm font-bold text-foreground">
+                                  {meta.humanName}
+                                </span>
+                                {riskBadge}
+                                <Badge variant="secondary" className="text-[10px] font-mono rounded-none">
+                                  {meta.categoryLabel}
+                                </Badge>
+                                {isLockedSelf && (
+                                  <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30 font-mono flex items-center gap-1 rounded-none">
+                                    <Lock className="h-2.5 w-2.5" /> Locked
+                                  </Badge>
+                                )}
+                              </div>
 
-                        {/* Interactive Toggle Switch */}
-                        <div className="shrink-0 flex items-center pt-1" onClick={(e) => e.stopPropagation()}>
-                          {isLockedSelf ? (
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-mono font-bold">
-                              <Lock className="h-3.5 w-3.5" />
-                              <span>LOCKED</span>
+                              <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
+                                <code className="bg-muted px-1.5 py-0.5 text-[11px] text-foreground font-semibold rounded-none">
+                                  {item.key}
+                                </code>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    copyKeyToClipboard(item.key);
+                                  }}
+                                  className="hover:text-foreground transition-colors p-1"
+                                  title="Copy permission key"
+                                >
+                                  {copiedKey === item.key ? (
+                                    <Check className="h-3 w-3 text-emerald-400" />
+                                  ) : (
+                                    <Copy className="h-3 w-3" />
+                                  )}
+                                </button>
+                              </div>
+
+                              <p className="text-xs text-muted-foreground leading-relaxed pt-0.5">
+                                {item.description || "Grants authority to execute operations associated with this platform capability."}
+                              </p>
                             </div>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => handleTogglePerm(item.key)}
-                              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-primary)] ${
-                                isGranted
-                                  ? "bg-emerald-500 dark:bg-[var(--accent-primary)] shadow-sm"
-                                  : "bg-zinc-200 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 border border-zinc-300/60 dark:border-zinc-600/60"
-                              }`}
-                              role="switch"
-                              aria-checked={isGranted}
-                            >
-                              <span
-                                aria-hidden="true"
-                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out border border-zinc-200/50 dark:border-transparent ${
-                                  isGranted ? "translate-x-5" : "translate-x-0"
-                                }`}
-                              />
-                            </button>
-                          )}
+
+                            {/* Sharp Interactive Checkbox Toggle */}
+                            <div className="shrink-0 flex items-center pt-1" onClick={(e) => e.stopPropagation()}>
+                              {isLockedSelf ? (
+                                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-none bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-mono font-bold">
+                                  <Lock className="h-3.5 w-3.5" />
+                                  <span>LOCKED</span>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => handleTogglePerm(item.key)}
+                                  className={`h-6 w-6 rounded-none flex items-center justify-center shrink-0 border transition-all cursor-pointer ${
+                                    isGranted
+                                      ? "border-transparent text-white dark:text-black font-bold"
+                                      : "border-border bg-card hover:border-muted-foreground/60"
+                                  }`}
+                                  style={{
+                                    backgroundColor: isGranted ? riskColor : undefined,
+                                  }}
+                                  role="switch"
+                                  aria-checked={isGranted}
+                                >
+                                  {isGranted && <Check className="h-4 w-4 stroke-[3]" />}
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </div>
+
+                        {/* Continuous Horizontal Row Divider Line */}
+                        {!isLast && (
+                          <div className="matrix-line-h bottom-0" />
+                        )}
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
