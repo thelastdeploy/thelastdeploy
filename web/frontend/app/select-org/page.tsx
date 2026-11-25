@@ -7,8 +7,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 import { OrganizationMembershipInfo } from "@/lib/types";
-import { Building2, GraduationCap, Globe, ArrowLeft, Layers } from "lucide-react";
-import Link from "next/link";
+import { Building2, GraduationCap, Globe, Layers } from "lucide-react";
 
 export default function SelectOrgPage() {
   const { user, loading: authLoading } = useAuth();
@@ -119,8 +118,8 @@ export default function SelectOrgPage() {
                   }
                 `}
               >
-                {/* Header row inside cell */}
-                <div className="flex items-start justify-between gap-3">
+                {/* Top row inside cell: Icon & Active Indicator */}
+                <div className="flex items-center justify-between gap-3">
                   <div
                     className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                       isCurrent
@@ -137,20 +136,15 @@ export default function SelectOrgPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    {isCurrent && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium text-emerald-400">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        Active
-                      </span>
-                    )}
-                    <span className="text-[10px] font-mono text-muted-foreground uppercase px-1.5 py-0.5 rounded bg-muted/60">
-                      {org.type}
+                  {isCurrent && (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium text-emerald-400">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Active
                     </span>
-                  </div>
+                  )}
                 </div>
 
-                {/* Identity: Name & Slug */}
+                {/* Identity: Name & Org Slug */}
                 <div className="min-w-0 space-y-1">
                   <h3 className="font-bold text-sm sm:text-base text-foreground group-hover:text-[var(--accent-primary)] transition-colors truncate">
                     {displayName}
@@ -158,22 +152,6 @@ export default function SelectOrgPage() {
                   <p className="text-xs font-mono text-muted-foreground truncate">
                     {org.slug}
                   </p>
-                </div>
-
-                {/* Footer: Role & XP */}
-                <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground pt-1">
-                  <div>
-                    {org.is_member === false ? (
-                      <span className="text-amber-400 font-semibold">Platform Access</span>
-                    ) : org.roles && org.roles.length > 0 ? (
-                      <span className="capitalize">{org.roles.join(", ")}</span>
-                    ) : (
-                      <span>Member</span>
-                    )}
-                  </div>
-                  <div className="font-bold text-foreground">
-                    {org.total_xp || 0} <span className="text-[10px] text-muted-foreground font-normal">XP</span>
-                  </div>
                 </div>
               </button>
             );
