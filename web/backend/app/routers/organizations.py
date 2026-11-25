@@ -57,11 +57,12 @@ router = APIRouter(prefix="/organizations", tags=["organizations"])
 
 @router.get("", response_model=list[OrganizationResponse])
 async def list_user_organizations(
+    include_all: bool = False,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """List all organizations the current user belongs to, along with their roles and XP in each.
-    If caller is a platform administrator, all active platform organizations are returned.
+    If include_all is True and caller has workspace management authority, all active organizations are appended.
     """
     has_workspace_authority = await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db)
 
@@ -104,7 +105,7 @@ async def list_user_organizations(
             )
         )
 
-    if has_workspace_authority:
+    if include_all and has_workspace_authority:
         all_orgs = (await db.execute(select(Organization).where(Organization.status == "active"))).scalars().all()
         for o in all_orgs:
             if o.id not in existing_org_ids:
@@ -317,7 +318,7 @@ async def remove_organization_member(
 ):
     """Remove a member from the organization (requires 'members.manage' permission)."""
     organization, caller_mem = org_and_mem
-    if caller_mem.user_id == user_id:
+    if current_user.id == user_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="You cannot remove yourself from the organization.",
@@ -732,6 +733,8 @@ async def list_learning_paths(
 
     if is_manager:
         paths = all_paths
+    elif not caller_mem:
+        paths = []
     else:
         # Get learning paths assigned to cohorts where this user is an active enrolled member
         cohort_lp_stmt = (

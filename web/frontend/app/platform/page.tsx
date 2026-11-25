@@ -160,8 +160,8 @@ export default function PlatformConsolePage() {
     setLoading(true);
     try {
       const [allOrgs, myOrgs] = await Promise.all([
-        api.getOrganizations().catch(() => []),
-        api.getOrganizations().catch(() => []),
+        api.getOrganizations(true).catch(() => []),
+        api.getOrganizations(false).catch(() => []),
       ]);
       setOrgs(allOrgs);
       setMyMembershipSlugs(new Set(myOrgs.map((o: any) => o.slug)));
@@ -363,7 +363,7 @@ export default function PlatformConsolePage() {
       setNewOrgName("");
       setNewOrgSlug("");
       setNewOrgDomain("");
-      const updated = await api.getOrganizations();
+      const updated = await api.getOrganizations(true);
       setOrgs(updated);
     } catch (err: any) {
       setCreateOrgError(err.message || "Failed to provision organization");
@@ -577,18 +577,31 @@ export default function PlatformConsolePage() {
                         )}
                       </div>
 
-                      {/* Manage Org: Opens the Platform Organization Configuration Page */}
-                      {(hasPerm("platform.organizations.settings") || hasPerm("platform.organizations.manage")) && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => router.push(`/platform/organizations/${org.slug}`)}
-                          className="rounded-xl text-[11px] font-bold text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10 h-7 cursor-pointer gap-1"
-                        >
-                          <Settings2 className="h-3 w-3" />
-                          <span>Manage Org</span>
-                        </Button>
-                      )}
+                      {/* Actions: Workspace (if manage perm) & Manage Org (if settings/manage perm) */}
+                      <div className="flex items-center gap-1.5">
+                        {hasPerm("platform.organizations.manage") && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => router.push(`/org/${org.slug}`)}
+                            className="rounded-xl text-[11px] font-bold text-foreground hover:bg-muted h-7 cursor-pointer gap-1"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            <span>Workspace</span>
+                          </Button>
+                        )}
+                        {(hasPerm("platform.organizations.settings") || hasPerm("platform.organizations.manage")) && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => router.push(`/platform/organizations/${org.slug}`)}
+                            className="rounded-xl text-[11px] font-bold text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10 h-7 cursor-pointer gap-1"
+                          >
+                            <Settings2 className="h-3 w-3" />
+                            <span>Manage Org</span>
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );

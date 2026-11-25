@@ -238,21 +238,8 @@ async def get_current_organization(
         # Check if caller has cross-org management authority via 'platform.organizations.manage' or platform superadmin
         can_manage = await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db)
         if can_manage:
-            from app.models import Role, MembershipRole
-            membership = OrganizationMembership(
-                organization_id=organization.id,
-                user_id=current_user.id,
-                status="active",
-                total_xp=0,
-                unverified_xp=0,
-            )
-            db.add(membership)
-            await db.flush()
-            admin_role = (await db.execute(select(Role).where(Role.slug == "admin"))).scalar_one_or_none()
-            if admin_role:
-                db.add(MembershipRole(membership_id=membership.id, role_id=admin_role.id))
-            await db.commit()
-            await db.refresh(membership)
+            # Grant delegated platform administration authority WITHOUT creating an OrganizationMembership row in DB
+            membership = None
         elif organization.type == "platform" or organization.slug == "tld":
             from app.services import get_or_create_platform_membership
             membership = await get_or_create_platform_membership(current_user.id, db)
@@ -273,13 +260,19 @@ def require_permission(permission_key: str):
     Platform administrators and staff with 'platform.organizations.manage' have root administrative permissions across all organizations.
     """
     async def _dependency(
-        org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+        org_and_mem: tuple[Organization, OrganizationMembership | None] = Depends(get_current_organization),
         current_user: User = Depends(get_current_user),
         db: AsyncSession = Depends(get_db),
-    ) -> OrganizationMembership:
+    ) -> OrganizationMembership | None:
         _, membership = org_and_mem
         if await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db):
             return membership
+
+        if not membership:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Missing required permission: '{permission_key}' in this organization",
+            )
 
         stmt = (
             select(Permission.id)
@@ -377,7 +370,7 @@ async def is_user_platform_admin(user: User, db: AsyncSession) -> bool:
 
 
 async def has_org_permission(
-    membership: OrganizationMembership,
+    membership: OrganizationMembership | None,
     permission_key: str,
     user: User,
     db: AsyncSession,
@@ -385,6 +378,8 @@ async def has_org_permission(
     """Helper to check if a user/membership has a specific organization permission key."""
     if await has_platform_permission(user, "platform.organizations.manage", db) or await is_user_platform_admin(user, db):
         return True
+    if not membership:
+        return False
     stmt = (
         select(Permission.id)
         .join(RolePermission, RolePermission.permission_id == Permission.id)
