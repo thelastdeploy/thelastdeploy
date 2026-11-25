@@ -68,7 +68,7 @@ export default function SelectOrgPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] relative overflow-hidden py-10">
+    <div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
         <div className="border-b border-border bg-card/30">
           <div className="max-w-7xl mx-auto px-4 py-12">
@@ -84,7 +84,7 @@ export default function SelectOrgPage() {
         </div>
 
         {/* Open Matrix Grid with Internal Dividers Only */}
-        <div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 min-[2100px]:grid-cols-4">
           {sortedOrgs.map((org, index) => {
             const isPlatform = org.type === "platform" || org.is_platform;
             const isCurrent = selectedSlug === org.slug || (!selectedSlug && isPlatform);
@@ -104,19 +104,17 @@ export default function SelectOrgPage() {
                 className={`group relative p-2.5 sm:p-3 text-left transition-colors cursor-pointer border-border/50
                   ${isLastRow1 ? "border-b-0" : "border-b"}
                   ${isLastRow3 ? "md:border-b-0" : "md:border-b"}
-                  ${isLastRow4 ? "2xl:border-b-0" : "2xl:border-b"}
+                  ${isLastRow4 ? "min-[2100px]:border-b-0" : "min-[2100px]:border-b"}
                   border-r-0
                   md:border-r md:[&:nth-child(3n)]:border-r-0
-                  2xl:[&:nth-child(3n)]:border-r 2xl:[&:nth-child(4n)]:border-r-0
+                  min-[2100px]:[&:nth-child(3n)]:border-r min-[2100px]:[&:nth-child(4n)]:border-r-0
                   [&:last-child]:border-r-0
                 `}
               >
-                {/* Sharp-Cornered Inner Box (slightly smaller than cell square, green when active, gray when hover) */}
+                {/* Sharp-Cornered Inner Box (invisible when idle, thick green when active, thick gray when hover) */}
                 <div
-                  className={`w-full h-full min-h-[180px] sm:min-h-[200px] p-6 rounded-none flex flex-col justify-between transition-all duration-150 ${
-                    isCurrent
-                      ? "bg-[var(--accent-primary)]/15 border border-[var(--accent-primary)]/40 shadow-sm"
-                      : "bg-transparent border border-transparent group-hover:bg-muted/60 dark:group-hover:bg-zinc-800/70 group-hover:border-border/60"
+                  className={`w-full h-full min-h-[200px] sm:min-h-[220px] p-6 sm:p-7 rounded-none flex flex-col justify-between transition-all duration-150 ${
+                    isCurrent ? "workspace-tile-active shadow-sm" : "workspace-tile-inactive"
                   }`}
                 >
                   {/* Top row inside cell: Icon */}

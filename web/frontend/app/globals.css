@@ -164,6 +164,22 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
 
+/* ─── Workspace Selector Matrix Tiles ─────────────────── */
+.workspace-tile-active {
+  border: 2px solid var(--accent-primary) !important;
+  background-color: rgba(var(--accent-primary-rgb), 0.15) !important;
+}
+
+.workspace-tile-inactive {
+  border: 2px solid transparent !important;
+  background-color: transparent !important;
+}
+
+.group:hover .workspace-tile-inactive {
+  border: 2px solid #71717a !important; /* zinc-500 thick border */
+  background-color: rgba(39, 39, 42, 0.7) !important; /* zinc-800 gray bg */
+}
+
 /* ─── Keyframe animations ─────────────────────────────── */
 
 @keyframes fadeSlideIn {
