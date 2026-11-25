@@ -83,30 +83,49 @@ export default function SelectOrgPage() {
           </div>
         </div>
 
-        {/* Clean, Non-Card Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-2.5">
-          {sortedOrgs.map((org) => {
+        {/* Open Matrix Grid with Internal Dividers Only */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {sortedOrgs.map((org, index) => {
             const isPlatform = org.type === "platform" || org.is_platform;
             const isCurrent = selectedSlug === org.slug || (!selectedSlug && isPlatform);
             const displayName = isPlatform ? "Personal" : org.name;
+
+            // Compute last row to omit bottom border on final row
+            const total = sortedOrgs.length;
+            const isLastRow1 = index === total - 1;
+            const isLastRow2 = index >= total - (total % 2 || 2);
+            const isLastRow3 = index >= total - (total % 3 || 3);
+            const isLastRow4 = index >= total - (total % 4 || 4);
 
             return (
               <button
                 key={org.slug}
                 type="button"
                 onClick={() => handleSelectOrg(org.slug)}
-                className={`group flex items-center justify-between gap-3.5 p-3.5 rounded-xl text-left transition-colors cursor-pointer ${
-                  isCurrent
-                    ? "bg-muted/60 dark:bg-muted/40"
-                    : "hover:bg-muted/40 dark:hover:bg-muted/20"
-                }`}
+                className={`group relative p-5 sm:p-6 text-left transition-colors cursor-pointer flex flex-col justify-between gap-4 border-border/50
+                  ${isLastRow1 ? "border-b-0" : "border-b"}
+                  ${isLastRow2 ? "sm:border-b-0" : "sm:border-b"}
+                  ${isLastRow3 ? "lg:border-b-0" : "lg:border-b"}
+                  ${isLastRow4 ? "xl:border-b-0" : "xl:border-b"}
+                  border-r-0
+                  sm:border-r sm:[&:nth-child(2n)]:border-r-0
+                  lg:border-r lg:[&:nth-child(2n)]:border-r lg:[&:nth-child(3n)]:border-r-0
+                  xl:[&:nth-child(3n)]:border-r xl:[&:nth-child(4n)]:border-r-0
+                  [&:last-child]:border-r-0
+                  ${
+                    isCurrent
+                      ? "bg-[var(--accent-primary)]/[0.04] dark:bg-[var(--accent-primary)]/[0.06]"
+                      : "hover:bg-muted/30 dark:hover:bg-muted/15"
+                  }
+                `}
               >
-                <div className="flex items-center gap-3 min-w-0">
+                {/* Header row inside cell */}
+                <div className="flex items-start justify-between gap-3">
                   <div
                     className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
                       isCurrent
                         ? "bg-[var(--accent-primary)] text-black"
-                        : "bg-muted text-muted-foreground group-hover:text-foreground"
+                        : "bg-muted text-muted-foreground group-hover:text-foreground group-hover:bg-muted/80"
                     }`}
                   >
                     {org.type === "university" ? (
@@ -118,21 +137,42 @@ export default function SelectOrgPage() {
                     )}
                   </div>
 
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm text-foreground group-hover:text-[var(--accent-primary)] transition-colors truncate">
-                        {displayName}
+                  <div className="flex items-center gap-2">
+                    {isCurrent && (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium text-emerald-400">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        Active
                       </span>
-                      {isCurrent && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium text-emerald-400 shrink-0">
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                          Active
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground truncate mt-0.5">
-                      <span>{org.slug}</span>
-                    </div>
+                    )}
+                    <span className="text-[10px] font-mono text-muted-foreground uppercase px-1.5 py-0.5 rounded bg-muted/60">
+                      {org.type}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Identity: Name & Slug */}
+                <div className="min-w-0 space-y-1">
+                  <h3 className="font-bold text-sm sm:text-base text-foreground group-hover:text-[var(--accent-primary)] transition-colors truncate">
+                    {displayName}
+                  </h3>
+                  <p className="text-xs font-mono text-muted-foreground truncate">
+                    {org.slug}
+                  </p>
+                </div>
+
+                {/* Footer: Role & XP */}
+                <div className="flex items-center justify-between text-[11px] font-mono text-muted-foreground pt-1">
+                  <div>
+                    {org.is_member === false ? (
+                      <span className="text-amber-400 font-semibold">Platform Access</span>
+                    ) : org.roles && org.roles.length > 0 ? (
+                      <span className="capitalize">{org.roles.join(", ")}</span>
+                    ) : (
+                      <span>Member</span>
+                    )}
+                  </div>
+                  <div className="font-bold text-foreground">
+                    {org.total_xp || 0} <span className="text-[10px] text-muted-foreground font-normal">XP</span>
                   </div>
                 </div>
               </button>
