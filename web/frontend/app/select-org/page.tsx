@@ -73,24 +73,12 @@ export default function SelectOrgPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10 space-y-6">
         {/* Header & Back link */}
         <div className="space-y-4">
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground font-mono transition-colors"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            <span>Return to Dashboard</span>
-          </Link>
-
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 border-b border-border/40 pb-5">
             <div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">Select Workspace</h1>
               <p className="text-muted-foreground text-xs sm:text-sm mt-1 max-w-xl">
                 Choose an organization workspace to switch your active context and track progress.
               </p>
-            </div>
-
-            <div className="text-xs font-mono text-muted-foreground shrink-0">
-              <span className="font-bold text-foreground text-sm">{orgs.length}</span> Workspaces
             </div>
           </div>
         </div>
@@ -144,26 +132,8 @@ export default function SelectOrgPage() {
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground truncate mt-0.5">
                       <span>{org.slug}</span>
-                      {org.is_member === false ? (
-                        <>
-                          <span className="text-muted-foreground/40">•</span>
-                          <span className="text-amber-400 font-semibold">Platform Access</span>
-                        </>
-                      ) : org.roles && org.roles.length > 0 ? (
-                        <>
-                          <span className="text-muted-foreground/40">•</span>
-                          <span className="capitalize">{org.roles.join(", ")}</span>
-                        </>
-                      ) : null}
                     </div>
                   </div>
-                </div>
-
-                <div className="shrink-0 text-right font-mono text-xs text-muted-foreground pl-2">
-                  <span className="font-bold text-foreground group-hover:text-[var(--accent-primary)] transition-colors">
-                    {org.total_xp}
-                  </span>{" "}
-                  <span className="text-[10px] text-muted-foreground/60 uppercase">XP</span>
                 </div>
               </button>
             );
