@@ -57,12 +57,11 @@ router = APIRouter(prefix="/organizations", tags=["organizations"])
 
 @router.get("", response_model=list[OrganizationResponse])
 async def list_user_organizations(
-    include_all: bool = False,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """List all organizations the current user belongs to, along with their roles and XP in each.
-    If include_all is True and caller has workspace management authority, all active organizations are appended.
+    If caller has workspace management authority, all active organizations are dynamically included.
     """
     has_workspace_authority = await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db)
 
@@ -102,10 +101,11 @@ async def list_user_organizations(
                 total_xp=m.total_xp,
                 unverified_xp=m.unverified_xp,
                 joined_at=m.joined_at,
+                is_member=True,
             )
         )
 
-    if include_all and has_workspace_authority:
+    if has_workspace_authority:
         all_orgs = (await db.execute(select(Organization).where(Organization.status == "active"))).scalars().all()
         for o in all_orgs:
             if o.id not in existing_org_ids:
@@ -122,6 +122,7 @@ async def list_user_organizations(
                         total_xp=0,
                         unverified_xp=0,
                         joined_at=o.created_at,
+                        is_member=False,
                     )
                 )
 
@@ -180,6 +181,7 @@ async def get_organization(
             total_xp=m.total_xp,
             unverified_xp=m.unverified_xp,
             joined_at=m.joined_at,
+            is_member=True,
         )
 
     # Caller is not a direct member, but holds platform.organizations.manage / platform admin
@@ -195,6 +197,7 @@ async def get_organization(
         total_xp=0,
         unverified_xp=0,
         joined_at=org.created_at,
+        is_member=False,
     )
 
 

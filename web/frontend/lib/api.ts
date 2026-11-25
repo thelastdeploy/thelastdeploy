@@ -199,8 +199,8 @@ export const api = {
   },
 
   // Organizations
-  getOrganizations: (all: boolean = false) =>
-    request<OrganizationResponse[]>(`/organizations${all ? '?include_all=true' : ''}`),
+  getOrganizations: () =>
+    request<OrganizationResponse[]>("/organizations"),
 
   createOrganization: (data: { name: string; slug: string; type?: string; domains?: string[] }) =>
     request<OrganizationResponse>("/organizations", {

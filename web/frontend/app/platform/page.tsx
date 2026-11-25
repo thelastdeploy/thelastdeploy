@@ -159,12 +159,9 @@ export default function PlatformConsolePage() {
   const loadInitialData = async () => {
     setLoading(true);
     try {
-      const [allOrgs, myOrgs] = await Promise.all([
-        api.getOrganizations(true).catch(() => []),
-        api.getOrganizations(false).catch(() => []),
-      ]);
+      const allOrgs = await api.getOrganizations().catch(() => []);
       setOrgs(allOrgs);
-      setMyMembershipSlugs(new Set(myOrgs.map((o: any) => o.slug)));
+      setMyMembershipSlugs(new Set(allOrgs.filter((o) => o.is_member).map((o) => o.slug)));
     } catch (err: any) {
       setError(err.message || "Failed to load platform data");
     } finally {
@@ -363,7 +360,7 @@ export default function PlatformConsolePage() {
       setNewOrgName("");
       setNewOrgSlug("");
       setNewOrgDomain("");
-      const updated = await api.getOrganizations(true);
+      const updated = await api.getOrganizations();
       setOrgs(updated);
     } catch (err: any) {
       setCreateOrgError(err.message || "Failed to provision organization");

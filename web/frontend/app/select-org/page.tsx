@@ -144,12 +144,17 @@ export default function SelectOrgPage() {
                     </div>
                     <div className="flex items-center gap-1.5 text-[11px] font-mono text-muted-foreground truncate mt-0.5">
                       <span>{org.slug}</span>
-                      {org.roles && org.roles.length > 0 && (
+                      {org.is_member === false ? (
+                        <>
+                          <span className="text-muted-foreground/40">•</span>
+                          <span className="text-amber-400 font-semibold">Platform Access</span>
+                        </>
+                      ) : org.roles && org.roles.length > 0 ? (
                         <>
                           <span className="text-muted-foreground/40">•</span>
                           <span className="capitalize">{org.roles.join(", ")}</span>
                         </>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </div>

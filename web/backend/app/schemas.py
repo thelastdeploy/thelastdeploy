@@ -365,6 +365,7 @@ class OrganizationResponse(BaseModel):
     total_xp: int = 0
     unverified_xp: int = 0
     joined_at: datetime | None = None
+    is_member: bool = True
 
 
 class OrganizationCreateRequest(BaseModel):

@@ -79,6 +79,7 @@ export interface OrganizationMembershipInfo {
   total_xp: number;
   unverified_xp: number;
   joined_at: string;
+  is_member?: boolean;
 }
 
 
@@ -149,6 +150,7 @@ export interface OrganizationResponse {
   total_xp: number;
   unverified_xp: number;
   joined_at: string;
+  is_member?: boolean;
 }
 
 export interface CohortResponse {
