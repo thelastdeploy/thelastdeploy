@@ -64,10 +64,44 @@ export function ModuleGrid({ modules }: { modules: Module[] }) {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 transition-all duration-300">
-          {filtered.map((m) => (
-            <ModuleCard key={m.id} module={m} />
-          ))}
+        <div className="relative overflow-visible">
+          {/* Continuous Vertical Divider Lines across all rows */}
+          <div className="matrix-line-v left-1/3 hidden lg:block" />
+          <div className="matrix-line-v left-2/3 hidden lg:block" />
+
+          {/* Row Chunks with Continuous Horizontal Dividers */}
+          <div className="flex flex-col relative">
+            {Array.from({ length: Math.ceil(filtered.length / 3) }, (_, rIdx) => {
+              const row = filtered.slice(rIdx * 3, rIdx * 3 + 3);
+              const isLastRow = rIdx === Math.ceil(filtered.length / 3) - 1;
+
+              return (
+                <div key={rIdx} className="relative">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    {row.map((m, cIdx) => {
+                      const isLastInColMobile = isLastRow && cIdx === row.length - 1;
+
+                      return (
+                        <div
+                          key={m.id}
+                          className={`group relative p-2.5 sm:p-3 text-left transition-colors border-0 ${
+                            !isLastInColMobile ? "max-lg:border-b max-lg:border-border/40" : ""
+                          }`}
+                        >
+                          <ModuleCard module={m} />
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Continuous Horizontal Row Divider Line (omitted on last row) */}
+                  {!isLastRow && (
+                    <div className="matrix-line-h bottom-0 hidden lg:block" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

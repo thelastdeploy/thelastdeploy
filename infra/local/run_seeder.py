@@ -153,19 +153,60 @@ async def seed_organizations_and_settings(db):
             ))
             print("  ✅ Created cohort: Fall 2026 DevOps Cohort (Apex University)")
 
-        # Seed Learning Path
-        lp = (await db.execute(select(LearningPath).where(LearningPath.organization_id == apex_org.id, LearningPath.slug == "devops-foundations"))).scalar_one_or_none()
-        if not lp:
-            db.add(LearningPath(
-                organization_id=apex_org.id,
-                name="DevOps Foundations",
-                slug="devops-foundations",
-                description="Core Linux, Bash scripting, and Git workflows.",
-                visibility="organization",
-                status="published",
-                modules=["linux-fundamentals", "bash-scripting", "git-mastery"],
-            ))
-            print("  ✅ Created learning path: DevOps Foundations (Apex University)")
+        # Seed Learning Paths for Apex University using strictly Apex University's catalog modules
+        apex_learning_paths = [
+            {
+                "name": "Systems Engineering & Linux Internals",
+                "slug": "apex-systems-engineering",
+                "description": "Deep dive into kernel interfaces, system calls, memory management, and POSIX tooling.",
+                "visibility": "public",
+                "status": "active",
+                "modules": ["apex-univ-linux-fundamentals", "apex-linux-systems"],
+            },
+            {
+                "name": "Cloud Microservices & Containers",
+                "slug": "apex-cloud-microservices",
+                "description": "Container runtime architecture, multi-container orchestration, and service mesh fundamentals.",
+                "visibility": "public",
+                "status": "active",
+                "modules": ["apex-cloud-containers"],
+            },
+            {
+                "name": "DevOps Foundations",
+                "slug": "devops-foundations",
+                "description": "Core Linux, system architecture, and cloud container workflows for CS students.",
+                "visibility": "public",
+                "status": "active",
+                "modules": ["apex-univ-linux-fundamentals", "apex-cloud-containers"],
+            },
+        ]
+
+        for lp_data in apex_learning_paths:
+            lp = (await db.execute(
+                select(LearningPath).where(
+                    LearningPath.organization_id == apex_org.id,
+                    LearningPath.slug == lp_data["slug"],
+                )
+            )).scalar_one_or_none()
+
+            if not lp:
+                db.add(LearningPath(
+                    organization_id=apex_org.id,
+                    name=lp_data["name"],
+                    slug=lp_data["slug"],
+                    description=lp_data["description"],
+                    visibility=lp_data["visibility"],
+                    status=lp_data["status"],
+                    modules=lp_data["modules"],
+                ))
+                print(f"  ✅ Created learning path: {lp_data['name']} (Apex University)")
+            else:
+                lp.name = lp_data["name"]
+                lp.description = lp_data["description"]
+                lp.modules = lp_data["modules"]
+                lp.visibility = lp_data["visibility"]
+                lp.status = lp_data["status"]
+                print(f"  🔄 Updated learning path: {lp_data['name']} (Apex University)")
 
     await db.flush()
     return org_map

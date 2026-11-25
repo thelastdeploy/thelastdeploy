@@ -189,7 +189,7 @@ export function Navbar() {
                             {isOrgPlatform ? "Personal" : org.name}
                           </p>
                           <p className="text-[10px] text-muted-foreground font-mono">
-                            {org.roles && org.roles.length > 0 ? org.roles.join(", ") : "Member"} • {org.total_xp} XP
+                            {org.slug}
                           </p>
                         </div>
                       </div>
@@ -203,10 +203,7 @@ export function Navbar() {
                     href="/select-org"
                     className="flex items-center justify-between p-2 rounded-xl text-xs font-mono text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer transition-colors"
                   >
-                    <span>Browse All Workspaces</span>
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground font-mono">
-                      {orgs.length} →
-                    </span>
+                    <span className="mx-auto">Browse All Workspaces</span>
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
