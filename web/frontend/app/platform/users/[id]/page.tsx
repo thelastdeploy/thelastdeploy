@@ -435,21 +435,20 @@ export default function UserRbacConfigPage() {
                 </p>
               </div>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 onClick={handleReset}
                 disabled={!diff.hasChanges || saving}
-                className="liquid-glass h-9 px-3.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-xl cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="h-9 px-3.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-none border-border cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
                 <span>Reset</span>
               </Button>
               <Button
-                variant="ghost"
                 size="sm"
                 onClick={handleSave}
                 disabled={!diff.hasChanges || saving}
-                className="liquid-glass h-9 px-3.5 text-xs font-semibold text-[var(--accent-primary)] hover:text-emerald-400 rounded-xl cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="h-9 px-3.5 text-xs font-bold rounded-none bg-[var(--accent-primary)] text-white dark:text-black hover:opacity-90 cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {saving ? <LoadingSpinner /> : <Save className="h-3.5 w-3.5" />}
                 <span>Save</span>
@@ -479,10 +478,10 @@ export default function UserRbacConfigPage() {
                     <button
                       key={sec.id}
                       onClick={() => setSelectedDomain(sec.id)}
-                      className={`w-full flex items-center justify-between p-2.5 rounded-lg text-xs font-medium transition-all text-left cursor-pointer ${
+                      className={`w-full flex items-center justify-between p-2.5 rounded-none border text-xs font-medium transition-all text-left cursor-pointer ${
                         isSelected
-                          ? "liquid-glass-tab-active"
-                          : "liquid-glass-tab text-muted-foreground hover:text-foreground"
+                          ? "bg-[var(--accent-primary)]/10 text-foreground border-[var(--accent-primary)]"
+                          : "bg-transparent text-muted-foreground border-transparent hover:text-foreground hover:border-border"
                       }`}
                     >
                       <div className="flex items-center gap-2.5 truncate">
@@ -519,19 +518,19 @@ export default function UserRbacConfigPage() {
               </div>
               <div className="space-y-2 p-3 pt-0">
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={() => handleGrantDomain(selectedDomain)}
-                  className="liquid-glass w-full h-9 text-xs font-semibold rounded-xl cursor-pointer text-emerald-400 hover:text-emerald-300 gap-1.5 justify-center"
+                  className="w-full h-9 text-xs font-semibold rounded-none border-border cursor-pointer text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10 gap-1.5 justify-center"
                 >
                   <Check className="h-3.5 w-3.5" />
                   <span>Grant All in Domain</span>
                 </Button>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={() => handleRevokeDomain(selectedDomain)}
-                  className="liquid-glass-danger w-full h-9 text-xs font-semibold rounded-xl cursor-pointer text-red-400 hover:text-red-300 gap-1.5 justify-center"
+                  className="w-full h-9 text-xs font-semibold rounded-none border-border cursor-pointer text-red-500 hover:text-red-400 hover:bg-red-500/10 gap-1.5 justify-center"
                 >
                   <X className="h-3.5 w-3.5" />
                   <span>Revoke All in Domain</span>
@@ -551,19 +550,19 @@ export default function UserRbacConfigPage() {
                   placeholder="Filter permissions by key (e.g. 'platform.organizations'), title, or keywords..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 h-10 liquid-glass-input text-xs font-mono"
+                  className="pl-10 h-10 text-xs font-mono rounded-none border-border bg-transparent focus-visible:ring-0 focus-visible:border-[var(--accent-primary)]"
                 />
               </div>
 
-              <div className="flex items-center gap-1.5 p-1 rounded-xl shrink-0">
+              <div className="flex items-center gap-1 border border-border p-1 rounded-none shrink-0">
                 {(["all", "granted", "revoked"] as const).map((filter) => (
                   <button
                     key={filter}
                     onClick={() => setStatusFilter(filter)}
-                    className={`px-3 py-1.5 text-xs font-mono capitalize transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 text-xs font-mono capitalize rounded-none transition-all cursor-pointer ${
                       statusFilter === filter
-                        ? "liquid-glass-tab-active"
-                        : "liquid-glass-tab text-muted-foreground hover:text-foreground"
+                        ? "bg-[var(--accent-primary)]/15 text-[var(--accent-primary)] font-bold"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                     }`}
                   >
                     {filter}
@@ -581,14 +580,14 @@ export default function UserRbacConfigPage() {
                   No platform capabilities matched your active domain filter, status selection, or search query.
                 </p>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={() => {
                     setSelectedDomain("all");
                     setStatusFilter("all");
                     setSearchQuery("");
                   }}
-                  className="liquid-glass mt-4 h-9 px-3.5 text-xs font-semibold rounded-xl cursor-pointer gap-1.5"
+                  className="mt-4 h-9 px-3.5 text-xs font-semibold rounded-none border-border cursor-pointer gap-1.5"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
                   <span>Clear All Filters</span>

@@ -24,7 +24,7 @@ export function AuditLogsTab() {
             placeholder="Search audit events..."
             value={auditSearch}
             onChange={(e) => setAuditSearch(e.target.value)}
-            className="pl-9 h-9 text-xs liquid-glass-input"
+            className="pl-9 h-9 text-xs rounded-none border-border bg-transparent focus-visible:ring-0 focus-visible:border-[var(--accent-primary)]"
           />
         </div>
 

@@ -185,9 +185,6 @@ export default function LearningPathsPage() {
                                       <h3 className="font-bold text-lg text-foreground group-hover:text-foreground transition-colors">
                                         {path.name}
                                       </h3>
-                                      <p className="text-[11px] font-mono text-muted-foreground">
-                                        {path.modules?.length || 0} hands-on labs
-                                      </p>
                                     </div>
                                   </div>
                                   <span
@@ -208,7 +205,7 @@ export default function LearningPathsPage() {
                                 {/* Modules sequential checklist */}
                                 <div className="space-y-2 pt-1">
                                   <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
-                                    Curriculum Labs:
+                                    Curriculum Modules:
                                   </div>
                                   <div className="space-y-1.5">
                                     {path.modules && path.modules.length > 0 ? (
@@ -235,24 +232,6 @@ export default function LearningPathsPage() {
                                     )}
                                   </div>
                                 </div>
-                              </div>
-
-                              <div className="pt-5 mt-4 border-t border-border/50 flex items-center justify-between">
-                                <span className="text-[11px] font-mono text-muted-foreground">
-                                  Sequential Track
-                                </span>
-                                {path.modules && path.modules.length > 0 && (
-                                  <Button
-                                    size="sm"
-                                    asChild
-                                    className="rounded-none bg-[var(--accent-primary)] text-white dark:text-black hover:opacity-90 font-bold text-xs gap-1.5"
-                                  >
-                                    <Link href={`/modules/${path.modules[0]}`}>
-                                      <span>Start Track</span>
-                                      <ArrowRight className="h-3.5 w-3.5" />
-                                    </Link>
-                                  </Button>
-                                )}
                               </div>
                             </div>
                           </div>

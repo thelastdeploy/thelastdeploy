@@ -321,22 +321,21 @@ export default function PlatformOrgSettingsPage() {
             )}
 
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleReset}
               disabled={!hasChanges || saving}
-              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-xl cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="h-9 px-3.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-none border-border cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Reset</span>
             </Button>
 
             <Button
-              variant="ghost"
               size="sm"
               onClick={handleSave}
               disabled={!hasChanges || saving}
-              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-[var(--accent-primary)] hover:text-emerald-400 rounded-xl cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="h-9 px-3.5 text-xs font-bold rounded-none bg-[var(--accent-primary)] text-white dark:text-black hover:opacity-90 cursor-pointer gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Save className="h-3.5 w-3.5" />
               <span>{saving ? "Saving..." : "Save Changes"}</span>
@@ -446,8 +445,8 @@ export default function PlatformOrgSettingsPage() {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent className="rounded-none">
-                                  <SelectItem value="true" className="liquid-glass-option rounded-lg">True</SelectItem>
-                                  <SelectItem value="false" className="liquid-glass-option rounded-lg">False</SelectItem>
+                                  <SelectItem value="true" className="rounded-none">True</SelectItem>
+                                  <SelectItem value="false" className="rounded-none">False</SelectItem>
                                 </SelectContent>
                               </Select>
                             ) : isInt ? (
@@ -470,7 +469,7 @@ export default function PlatformOrgSettingsPage() {
                                 </SelectTrigger>
                                 <SelectContent className="rounded-none">
                                   {choices.map((choice) => (
-                                    <SelectItem key={choice.value} value={choice.value} className="liquid-glass-option rounded-lg">
+                                    <SelectItem key={choice.value} value={choice.value} className="rounded-none">
                                       {choice.label}
                                     </SelectItem>
                                   ))}
@@ -486,16 +485,16 @@ export default function PlatformOrgSettingsPage() {
                             )}
                           </div>
 
-                          {/* Availability Toggle with Liquid Glass */}
+                          {/* Availability Toggle */}
                           <Button
                             type="button"
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleToggleAvailability(st.key)}
-                            className={`h-8 px-3 rounded-xl text-xs font-semibold cursor-pointer gap-1.5 transition-all ${
+                            className={`h-8 px-3 rounded-none text-xs font-semibold cursor-pointer gap-1.5 transition-all ${
                               isEnabled
-                                ? "liquid-glass text-emerald-600 dark:text-emerald-400 font-bold"
-                                : "liquid-glass text-muted-foreground"
+                                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold hover:bg-emerald-500/20"
+                                : "border-border text-muted-foreground hover:text-foreground"
                             }`}
                           >
                             <span className={`h-1.5 w-1.5 rounded-full ${isEnabled ? "bg-emerald-500" : "bg-muted-foreground"}`} />

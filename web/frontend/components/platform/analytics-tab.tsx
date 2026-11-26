@@ -34,10 +34,10 @@ export function AnalyticsTab({ hasPerm }: AnalyticsTabProps) {
                 key={p}
                 type="button"
                 onClick={() => handlePeriodChange(p)}
-                className={`h-8 px-3 text-xs font-bold transition-all cursor-pointer ${
+                className={`h-8 px-3 text-xs font-bold rounded-none border transition-all cursor-pointer ${
                   isActive
-                    ? "liquid-glass-tab-active"
-                    : "liquid-glass-tab text-muted-foreground hover:text-foreground"
+                    ? "bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border-[var(--accent-primary)]"
+                    : "bg-transparent text-muted-foreground border-border hover:text-foreground hover:border-foreground/30"
                 }`}
               >
                 {p === "all" ? "All Time" : p.toUpperCase()}
@@ -49,7 +49,7 @@ export function AnalyticsTab({ hasPerm }: AnalyticsTabProps) {
             variant="ghost"
             onClick={() => loadAnalytics(platformPeriod)}
             disabled={loading}
-            className="liquid-glass h-8 w-8 p-0 rounded-xl ml-1 text-muted-foreground hover:text-foreground cursor-pointer"
+            className="h-8 w-8 p-0 rounded-none ml-1 text-muted-foreground hover:text-foreground cursor-pointer"
             title="Refresh Platform Analytics"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -60,10 +60,10 @@ export function AnalyticsTab({ hasPerm }: AnalyticsTabProps) {
           <div>
             <Button
               size="sm"
-              variant="ghost"
+              variant="outline"
               onClick={exportOrganizationsCsv}
               disabled={exporting}
-              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-foreground cursor-pointer gap-1.5 rounded-xl"
+              className="h-9 px-3.5 text-xs font-semibold text-foreground rounded-none border-border cursor-pointer gap-1.5"
             >
               <Download className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
               <span>{exporting ? "Exporting..." : "Export Organizations CSV"}</span>

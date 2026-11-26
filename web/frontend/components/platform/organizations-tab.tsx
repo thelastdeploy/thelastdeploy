@@ -81,7 +81,7 @@ export function OrganizationsTab({ hasPerm }: OrganizationsTabProps) {
             placeholder="Search organizations..."
             value={orgSearch}
             onChange={(e) => setOrgSearch(e.target.value)}
-            className="pl-9 h-10 text-xs liquid-glass-input"
+            className="pl-9 h-10 text-xs rounded-none border-border bg-transparent focus-visible:ring-0 focus-visible:border-[var(--accent-primary)]"
           />
         </div>
 
@@ -197,10 +197,10 @@ export function OrganizationsTab({ hasPerm }: OrganizationsTabProps) {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleToggleOrgStatus(org)}
-                                  className={`h-9 w-9 p-0 cursor-pointer text-xs font-semibold rounded-xl ${
+                                  className={`h-9 w-9 p-0 cursor-pointer text-xs font-semibold rounded-none ${
                                     isSuspended
-                                      ? "liquid-glass text-emerald-400 hover:text-emerald-300"
-                                      : "liquid-glass-danger text-red-400 hover:text-red-300"
+                                      ? "text-emerald-500 hover:text-emerald-400 hover:bg-emerald-500/10"
+                                      : "text-red-500 hover:text-red-400 hover:bg-red-500/10"
                                   }`}
                                   title={isSuspended ? "Reactivate Organization" : "Suspend Organization"}
                                 >
@@ -216,7 +216,7 @@ export function OrganizationsTab({ hasPerm }: OrganizationsTabProps) {
                                   size="sm"
                                   disabled={isSuspended}
                                   onClick={() => router.push(`/org/${org.slug}`)}
-                                  className="liquid-glass h-9 px-3.5 text-xs font-semibold text-foreground cursor-pointer gap-1.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
+                                  className="h-9 px-3.5 text-xs font-semibold text-foreground hover:bg-muted/50 cursor-pointer gap-1.5 rounded-none disabled:opacity-40 disabled:cursor-not-allowed"
                                   title={isSuspended ? "Workspace access suspended" : "Go to Workspace"}
                                 >
                                   <ExternalLink className="h-3.5 w-3.5" />
@@ -229,7 +229,7 @@ export function OrganizationsTab({ hasPerm }: OrganizationsTabProps) {
                                   size="sm"
                                   disabled={isSuspended}
                                   onClick={() => router.push(`/platform/organizations/${org.slug}`)}
-                                  className="liquid-glass h-9 px-3.5 text-xs font-semibold text-[var(--accent-primary)] cursor-pointer gap-1.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed"
+                                  className="h-9 px-3.5 text-xs font-semibold text-[var(--accent-primary)] hover:bg-[var(--accent-primary)]/10 cursor-pointer gap-1.5 rounded-none disabled:opacity-40 disabled:cursor-not-allowed"
                                   title={isSuspended ? "Organization is suspended" : "Manage Organization"}
                                 >
                                   <Settings2 className="h-3.5 w-3.5" />

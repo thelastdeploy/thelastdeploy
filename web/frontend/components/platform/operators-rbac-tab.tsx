@@ -159,10 +159,10 @@ export function OperatorsRbacTab({
                     <div className="flex items-center gap-2 shrink-0">
                       {hasPerm("platform.permissions.manage") && (
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => router.push(`/platform/users/${pUser.id}`)}
-                          className="liquid-glass text-xs font-semibold gap-1.5 h-9 px-3.5 cursor-pointer rounded-xl"
+                          className="text-xs font-semibold gap-1.5 h-9 px-3.5 cursor-pointer rounded-none border-border"
                         >
                           <KeyRound className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
                           <span>Configure Permissions</span>
@@ -175,7 +175,7 @@ export function OperatorsRbacTab({
                           size="sm"
                           disabled={isSelf}
                           onClick={() => !isSelf && handleRevoke(pUser.id, pUser.username)}
-                          className="liquid-glass-danger h-9 px-3.5 text-xs font-semibold cursor-pointer rounded-xl gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+                          className="h-9 px-3.5 text-xs font-semibold text-red-500 hover:text-red-400 hover:bg-red-500/10 cursor-pointer rounded-none gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
                           title={isSelf ? "You cannot delete your own account" : "Delete User"}
                         >
                           <Trash2 className="h-3.5 w-3.5" />

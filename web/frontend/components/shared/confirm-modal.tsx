@@ -83,29 +83,28 @@ export function ConfirmModal({
           </div>
         </div>
 
-        {/* Action Buttons with Liquid Glass */}
+        {/* Action Buttons */}
         <div className="flex items-center justify-end gap-2.5 mt-4 pt-3 border-t border-border/50">
           {onCancel && (
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={onCancel}
-              className="liquid-glass h-9 px-3.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-xl cursor-pointer gap-1.5"
+              className="h-9 px-3.5 text-xs font-semibold text-muted-foreground hover:text-foreground rounded-none border-border cursor-pointer gap-1.5"
             >
               <X className="h-4 w-4" />
               <span>{cancelText}</span>
             </Button>
           )}
           <Button
-            variant="ghost"
             size="sm"
             onClick={onConfirm}
-            className={`h-9 px-3.5 text-xs font-semibold rounded-xl cursor-pointer gap-1.5 ${
+            className={`h-9 px-3.5 text-xs font-bold rounded-none cursor-pointer gap-1.5 ${
               type === "danger"
-                ? "liquid-glass-danger text-red-400 hover:text-red-300"
+                ? "bg-red-600 text-white hover:bg-red-700"
                 : isReactivate
-                ? "liquid-glass text-emerald-400 hover:text-emerald-300"
-                : "liquid-glass text-[var(--accent-primary)] hover:text-emerald-400"
+                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                : "bg-[var(--accent-primary)] text-white dark:text-black hover:opacity-90"
             }`}
           >
             <ConfirmIcon className="h-4 w-4" />

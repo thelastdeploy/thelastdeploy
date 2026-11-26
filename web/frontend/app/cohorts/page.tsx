@@ -248,49 +248,6 @@ export default function CohortsPage() {
                                     </div>
                                   </div>
                                 </div>
-
-                                {/* Curricula assigned */}
-                                <div className="space-y-2">
-                                  <div className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-semibold">
-                                    Assigned Curricula:
-                                  </div>
-                                  {assignedPaths.length > 0 ? (
-                                    <div className="space-y-1.5">
-                                      {assignedPaths.map((p) => (
-                                        <div
-                                          key={p.id}
-                                          className="flex items-center justify-between p-2.5 rounded-none bg-muted/40 text-xs font-medium text-foreground"
-                                        >
-                                          <div className="flex items-center gap-2">
-                                            <Layers className="h-3.5 w-3.5 text-[var(--accent-primary)]" />
-                                            <span>{p.name}</span>
-                                          </div>
-                                          <span className="text-[10px] font-mono text-muted-foreground">
-                                            {p.modules?.length || 0} labs
-                                          </span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ) : (
-                                    <p className="text-xs text-muted-foreground italic">Curriculum assigned directly by instructors.</p>
-                                  )}
-                                </div>
-                              </div>
-
-                              <div className="pt-5 mt-4 border-t border-border/50 flex items-center justify-between">
-                                <span className="text-[11px] font-mono text-muted-foreground">
-                                  Cohort Track
-                                </span>
-                                <Button
-                                  size="sm"
-                                  asChild
-                                  className="rounded-none bg-[var(--accent-primary)] text-white dark:text-black hover:opacity-90 font-bold text-xs gap-1.5"
-                                >
-                                  <Link href="/paths">
-                                    <span>View Syllabus</span>
-                                    <ArrowRight className="h-3.5 w-3.5" />
-                                  </Link>
-                                </Button>
                               </div>
                             </div>
                           </div>
