@@ -4,10 +4,10 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
-import { Building2, Shield, KeyRound, BarChart3, ShieldAlert } from "lucide-react";
+import { AccessRestricted } from "@/components/shared/access-restricted";
+import { Building2, Shield, KeyRound, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { OrganizationsTab } from "@/components/platform/organizations-tab";
@@ -64,8 +64,8 @@ export default function PlatformConsolePage() {
 
   const isPlatformStaff = Boolean(
     user &&
-      ((user.platform_roles && user.platform_roles.length > 0) ||
-        (user.platform_permissions && user.platform_permissions.length > 0))
+      user.platform_permissions &&
+      user.platform_permissions.length > 0
   );
 
   // Initial access check & auto-select first permitted tab
@@ -91,24 +91,11 @@ export default function PlatformConsolePage() {
 
   if (!isPlatformStaff || permittedTabs.length === 0) {
     return (
-      <div className="min-h-[calc(100vh-64px)] flex items-center justify-center px-4">
-        <div className="max-w-md w-full text-center space-y-4 p-8 rounded-none border border-border bg-card shadow-xl">
-          <div className="h-16 w-16 mx-auto rounded-none bg-destructive/10 text-destructive flex items-center justify-center">
-            <ShieldAlert className="h-8 w-8" />
-          </div>
-          <h2 className="text-xl font-black text-foreground">Access Restricted</h2>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            The Platform Console is restricted to authorized platform operations personnel.
-            Your global account does not possess active platform permissions.
-          </p>
-          <Button
-            asChild
-            className="rounded-none text-xs font-bold bg-[var(--accent-primary)] text-white dark:text-black cursor-pointer"
-          >
-            <Link href="/dashboard">Return to Dashboard</Link>
-          </Button>
-        </div>
-      </div>
+      <AccessRestricted
+        message="The Platform Console is restricted to authorized platform operations personnel. Your global account does not possess active platform permissions."
+        backHref="/dashboard"
+        backLabel="Return to Dashboard"
+      />
     );
   }
 

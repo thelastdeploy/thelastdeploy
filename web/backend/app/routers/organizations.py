@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, func
 from sqlalchemy.orm import selectinload
 
 from app.dependencies import (
@@ -10,6 +10,7 @@ from app.dependencies import (
     get_current_user,
     get_current_organization,
     require_permission,
+    require_any_permission,
     require_platform_permission,
     is_user_platform_admin,
     has_platform_permission,
@@ -19,17 +20,18 @@ from app.models import (
     User,
     Organization,
     OrganizationMembership,
-    MembershipRole,
     Role,
+    RolePermission,
+    Permission,
     Cohort,
     CohortMembership,
     LearningPath,
-    OrganizationRoleAvailability,
     AuditLog,
     Module,
     Section,
     Lab,
 )
+from app.services import log_audit_event, seed_default_org_roles
 from app.schemas import (
     OrganizationResponse,
     OrganizationCreateRequest,
@@ -48,8 +50,13 @@ from app.schemas import (
     AdoptModuleRequest,
     ModuleListItem,
     AuthorInfo,
+    OrgPermissionItemResponse,
+    OrgRoleResponse,
+    OrgRoleCreateRequest,
+    OrgRoleUpdateRequest,
+    MemberRoleBatchUpdateRequest,
+    MemberBulkRemoveRequest,
 )
-from app.services import log_audit_event
 from app.settings.service import SettingsService
 
 router = APIRouter(prefix="/organizations", tags=["organizations"])
@@ -77,7 +84,7 @@ async def list_user_organizations(
         select(OrganizationMembership)
         .options(
             selectinload(OrganizationMembership.organization),
-            selectinload(OrganizationMembership.roles).selectinload(MembershipRole.role),
+            selectinload(OrganizationMembership.role),
         )
         .join(Organization, Organization.id == OrganizationMembership.organization_id)
         .where(
@@ -97,7 +104,7 @@ async def list_user_organizations(
     for m in memberships:
         org = m.organization
         existing_org_ids.add(org.id)
-        role_slugs = [r.role.slug for r in m.roles if r.role]
+        role_slugs = [m.role.slug] if m.role else []
         if has_workspace_authority and "admin" not in role_slugs:
             role_slugs.append("admin")
         responses.append(
@@ -173,7 +180,7 @@ async def get_organization(
     stmt = (
         select(OrganizationMembership)
         .options(
-            selectinload(OrganizationMembership.roles).selectinload(MembershipRole.role),
+            selectinload(OrganizationMembership.role),
         )
         .where(
             OrganizationMembership.organization_id == org.id,
@@ -191,7 +198,7 @@ async def get_organization(
         )
 
     if m:
-        role_slugs = [r.role.slug for r in m.roles if r.role]
+        role_slugs = [m.role.slug] if m.role else []
         if has_workspace_authority and "admin" not in role_slugs:
             role_slugs.append("admin")
         return OrganizationResponse(
@@ -239,7 +246,7 @@ async def list_organization_members(
         select(OrganizationMembership)
         .options(
             selectinload(OrganizationMembership.user),
-            selectinload(OrganizationMembership.roles).selectinload(MembershipRole.role),
+            selectinload(OrganizationMembership.role),
         )
         .where(
             OrganizationMembership.organization_id == organization.id,
@@ -257,7 +264,7 @@ async def list_organization_members(
             username=m.user.username,
             email=m.user.email,
             status=m.status,
-            roles=[r.role.slug for r in m.roles if r.role],
+            roles=[m.role.slug] if m.role else [],
             total_xp=m.total_xp,
             unverified_xp=m.unverified_xp,
             joined_at=m.joined_at,
@@ -274,7 +281,7 @@ async def update_member_role(
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-    _perm: OrganizationMembership = Depends(require_permission("members.manage")),
+    _perm: OrganizationMembership = Depends(require_any_permission("roles.assign", "members.manage")),
 ):
     """Change the role of an organization member (requires 'members.manage' permission)."""
     organization, caller_mem = org_and_mem
@@ -282,7 +289,7 @@ async def update_member_role(
         select(OrganizationMembership)
         .options(
             selectinload(OrganizationMembership.user),
-            selectinload(OrganizationMembership.roles).selectinload(MembershipRole.role),
+            selectinload(OrganizationMembership.role),
         )
         .where(
             OrganizationMembership.organization_id == organization.id,
@@ -299,16 +306,47 @@ async def update_member_role(
         )
 
     clean_role_slug = body.role.strip().lower()
-    target_role = await db.scalar(select(Role).where(Role.slug == clean_role_slug))
+    target_role = await db.scalar(
+        select(Role).where(Role.organization_id == organization.id, Role.slug == clean_role_slug)
+    )
     if not target_role:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Role '{body.role}' is not recognized.",
         )
 
-    # Delete existing roles and assign the new role
-    await db.execute(delete(MembershipRole).where(MembershipRole.membership_id == target_mem.id))
-    db.add(MembershipRole(membership_id=target_mem.id, role_id=target_role.id, assigned_by=current_user.id))
+    # Check roles.manage anti-lockout before downgrading member
+    target_had_roles_manage = (
+        await db.scalar(
+            select(RolePermission.id)
+            .join(Permission, Permission.id == RolePermission.permission_id)
+            .where(RolePermission.role_id == target_mem.role_id, Permission.key == "roles.manage")
+            .limit(1)
+        )
+        is not None
+    )
+
+    target_has_roles_manage = (
+        await db.scalar(
+            select(RolePermission.id)
+            .join(Permission, Permission.id == RolePermission.permission_id)
+            .where(RolePermission.role_id == target_role.id, Permission.key == "roles.manage")
+            .limit(1)
+        )
+        is not None
+    )
+
+    if target_had_roles_manage and not target_has_roles_manage:
+        other_holders = await _count_active_roles_manage_holders(
+            db, organization.id, exclude_membership_id=target_mem.id
+        )
+        if other_holders == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot remove 'roles.manage' from the last member holding it in this organization.",
+            )
+
+    target_mem.role_id = target_role.id
     await db.commit()
     await db.refresh(target_mem)
 
@@ -364,6 +402,29 @@ async def remove_organization_member(
             detail="Member not found in organization.",
         )
 
+    # Prevent removing the last member holding roles.manage
+    target_has_roles_manage = (
+        await db.scalar(
+            select(RolePermission.id)
+            .join(Permission, Permission.id == RolePermission.permission_id)
+            .where(
+                RolePermission.role_id == target_mem.role_id,
+                Permission.key == "roles.manage",
+            )
+            .limit(1)
+        )
+        is not None
+    )
+    if target_has_roles_manage:
+        other_holders = await _count_active_roles_manage_holders(
+            db, organization.id, exclude_membership_id=target_mem.id
+        )
+        if other_holders == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot remove the last member holding 'roles.manage' in this organization.",
+            )
+
     target_mem.status = "removed"
     db.add(target_mem)
     await db.commit()
@@ -379,6 +440,147 @@ async def remove_organization_member(
     )
 
     return MessageResponse(detail="Member removed successfully.")
+
+
+@router.patch("/{org_slug}/members/roles/batch", response_model=MessageResponse)
+async def batch_update_member_roles(
+    org_slug: str,
+    body: MemberRoleBatchUpdateRequest,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_any_permission("roles.assign", "members.manage")),
+):
+    """Batch update roles for multiple organization members atomically with final-state anti-lockout check."""
+    organization, _ = org_and_mem
+    if not body.updates:
+        return MessageResponse(detail="No updates provided.")
+
+    org_roles = (
+        await db.execute(
+            select(Role)
+            .options(selectinload(Role.permissions).selectinload(RolePermission.permission))
+            .where(Role.organization_id == organization.id)
+        )
+    ).scalars().all()
+    role_by_slug = {r.slug: r for r in org_roles}
+    roles_manage_ids = {
+        r.id for r in org_roles if any(rp.permission and rp.permission.key == "roles.manage" for rp in r.permissions)
+    }
+
+    mems = (
+        await db.execute(
+            select(OrganizationMembership).where(
+                OrganizationMembership.organization_id == organization.id,
+                OrganizationMembership.status != "removed",
+            )
+        )
+    ).scalars().all()
+    mem_by_uid = {m.user_id: m for m in mems}
+
+    # Compute final role_id map across all active members
+    final_role_by_mem: dict[int, int] = {m.id: m.role_id for m in mems}
+    for upd in body.updates:
+        m = mem_by_uid.get(upd.user_id)
+        if not m:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Member user_id={upd.user_id} not found.")
+        target_role = role_by_slug.get(upd.role.strip().lower())
+        if not target_role:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Role '{upd.role}' is not recognized.")
+        final_role_by_mem[m.id] = target_role.id
+
+    # Verify at least 1 active member retains roles.manage after the batch
+    if not any(rid in roles_manage_ids for rid in final_role_by_mem.values()):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Anti-lockout: at least one active member in the organization must retain 'roles.manage'.",
+        )
+
+    for upd in body.updates:
+        m = mem_by_uid[upd.user_id]
+        m.role_id = role_by_slug[upd.role.strip().lower()].id
+
+    await db.commit()
+
+    await log_audit_event(
+        db,
+        action="member.roles_batch_updated",
+        entity_type="organization",
+        entity_id=str(organization.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"count": len(body.updates)},
+    )
+    return MessageResponse(detail=f"Updated roles for {len(body.updates)} member(s).")
+
+
+@router.post("/{org_slug}/members/bulk-remove", response_model=MessageResponse)
+async def bulk_remove_organization_members(
+    org_slug: str,
+    body: MemberBulkRemoveRequest,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+    _perm: OrganizationMembership = Depends(require_permission("members.manage")),
+):
+    """Bulk remove multiple members from the organization with self and anti-lockout guards."""
+    organization, _ = org_and_mem
+    target_ids = set(body.user_ids)
+    if not target_ids:
+        return MessageResponse(detail="No members selected.")
+    if current_user.id in target_ids:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You cannot remove yourself from the organization.",
+        )
+
+    org_roles = (
+        await db.execute(
+            select(Role)
+            .options(selectinload(Role.permissions).selectinload(RolePermission.permission))
+            .where(Role.organization_id == organization.id)
+        )
+    ).scalars().all()
+    roles_manage_ids = {
+        r.id for r in org_roles if any(rp.permission and rp.permission.key == "roles.manage" for rp in r.permissions)
+    }
+
+    mems = (
+        await db.execute(
+            select(OrganizationMembership).where(
+                OrganizationMembership.organization_id == organization.id,
+                OrganizationMembership.status != "removed",
+            )
+        )
+    ).scalars().all()
+
+    remaining_rm_holders = [
+        m for m in mems if m.user_id not in target_ids and m.role_id in roles_manage_ids
+    ]
+    if not remaining_rm_holders:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Anti-lockout: cannot remove all members holding 'roles.manage'.",
+        )
+
+    removed_count = 0
+    for m in mems:
+        if m.user_id in target_ids:
+            m.status = "removed"
+            removed_count += 1
+
+    await db.commit()
+
+    await log_audit_event(
+        db,
+        action="member.bulk_removed",
+        entity_type="organization",
+        entity_id=str(organization.id),
+        actor_user_id=current_user.id,
+        organization_id=organization.id,
+        metadata={"removed_user_ids": list(target_ids)},
+    )
+    return MessageResponse(detail=f"Removed {removed_count} member(s).")
 
 
 @router.get("/{org_slug}/cohorts/{cohort_id}/members", response_model=list[CohortMemberResponse])
@@ -467,6 +669,19 @@ async def create_cohort(
 ):
     """Create a new cohort within the organization (requires 'cohorts.manage')."""
     organization, _ = org_and_mem
+    max_cohorts = await SettingsService.get_effective_setting(db, organization.id, "cohorts.max_active_cohorts")
+    if max_cohorts is not None:
+        active_count = await db.scalar(
+            select(func.count(Cohort.id)).where(
+                Cohort.organization_id == organization.id,
+                Cohort.status == "active",
+            )
+        ) or 0
+        if active_count >= int(max_cohorts):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Maximum active cohorts limit ({max_cohorts}) reached for this organization.",
+            )
     cohort = Cohort(
         organization_id=organization.id,
         name=body.name,
@@ -526,6 +741,20 @@ async def update_cohort(
     if body.description is not None:
         cohort.description = body.description
     if body.status is not None:
+        if body.status == "active" and cohort.status != "active":
+            max_cohorts = await SettingsService.get_effective_setting(db, organization.id, "cohorts.max_active_cohorts")
+            if max_cohorts is not None:
+                active_count = await db.scalar(
+                    select(func.count(Cohort.id)).where(
+                        Cohort.organization_id == organization.id,
+                        Cohort.status == "active",
+                    )
+                ) or 0
+                if active_count >= int(max_cohorts):
+                    raise HTTPException(
+                        status_code=status.HTTP_403_FORBIDDEN,
+                        detail=f"Maximum active cohorts limit ({max_cohorts}) reached for this organization.",
+                    )
         cohort.status = body.status
     if body.learning_paths is not None:
         cohort.learning_paths = body.learning_paths
@@ -983,7 +1212,7 @@ async def list_organization_audit_logs(
     offset: int = 0,
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
     db: AsyncSession = Depends(get_db),
-    _perm: OrganizationMembership = Depends(require_permission("members.manage")),
+    _perm: OrganizationMembership = Depends(require_any_permission("audit.view", "members.manage")),
 ):
     """List audit events for the organization (requires 'members.manage' permission)."""
     organization, _ = org_and_mem
@@ -1042,24 +1271,19 @@ async def provision_organization(
     db.add(org)
     await db.flush()
 
-    # Assign all standard roles as available to this organization
-    roles_res = await db.execute(select(Role).where(Role.is_system == True))
-    standard_roles = roles_res.scalars().all()
-    for r in standard_roles:
-        db.add(OrganizationRoleAvailability(organization_id=org.id, role_id=r.id))
+    # Seed the 4 default org-scoped roles for this organization
+    seeded_roles = await seed_default_org_roles(db, org.id)
+    owner_role = seeded_roles.get("owner")
 
     # Add creator as Owner of the new organization
-    owner_role = next((r for r in standard_roles if r.slug == "owner"), None)
     membership = OrganizationMembership(
         organization_id=org.id,
         user_id=current_user.id,
+        role_id=owner_role.id,
         status="active",
     )
     db.add(membership)
     await db.flush()
-
-    if owner_role:
-        db.add(MembershipRole(membership_id=membership.id, role_id=owner_role.id, assigned_by=current_user.id))
 
     # Initialize code-defined organization settings for the newly provisioned organization
     await SettingsService.initialize_organization_settings(db, org.id, tier="free", auto_commit=False)
@@ -1370,4 +1594,420 @@ async def remove_organization_module(
     )
 
     return MessageResponse(detail=f"Module '{module_id}' successfully removed from {org.name}.")
+
+
+# =============================================================================
+# Organization-Scoped Role Management
+# =============================================================================
+
+async def _count_active_roles_manage_holders(
+    db: AsyncSession,
+    org_id: int,
+    exclude_membership_id: int | None = None,
+    exclude_role_id: int | None = None,
+) -> int:
+    stmt = (
+        select(func.count(func.distinct(OrganizationMembership.id)))
+        .join(RolePermission, RolePermission.role_id == OrganizationMembership.role_id)
+        .join(Permission, Permission.id == RolePermission.permission_id)
+        .where(
+            OrganizationMembership.organization_id == org_id,
+            OrganizationMembership.status != "removed",
+            Permission.key == "roles.manage",
+        )
+    )
+    if exclude_membership_id is not None:
+        stmt = stmt.where(OrganizationMembership.id != exclude_membership_id)
+    if exclude_role_id is not None:
+        stmt = stmt.where(OrganizationMembership.role_id != exclude_role_id)
+    return (await db.scalar(stmt)) or 0
+
+
+async def _get_caller_role_ids(db: AsyncSession, mem: OrganizationMembership | None) -> set[int]:
+    if not mem or not mem.role_id:
+        return set()
+    return {mem.role_id}
+
+
+async def _require_role_manager(
+    org: Organization,
+    mem: OrganizationMembership | None,
+    user: User,
+    db: AsyncSession,
+) -> None:
+    if await is_user_platform_admin(user, db):
+        return
+    if mem and await has_org_permission(mem, "roles.manage", user, db):
+        return
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Requires 'roles.manage' permission.",
+    )
+
+
+def _slugify_role(name: str) -> str:
+    import re
+    slug = re.sub(r"[^a-z0-9]+", "_", name.strip().lower()).strip("_")
+    return slug or "custom_role"
+
+
+@router.get("/{org_slug}/permissions", response_model=list[OrgPermissionItemResponse])
+async def list_org_available_permissions(
+    org_slug: str,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """List all assignable organization-level permissions."""
+    org, mem = org_and_mem
+    await _require_role_manager(org, mem, current_user, db)
+    perms = (await db.execute(select(Permission).order_by(Permission.key))).scalars().all()
+    return [OrgPermissionItemResponse(key=p.key, description=p.description) for p in perms]
+
+
+@router.get("/{org_slug}/roles", response_model=list[OrgRoleResponse])
+async def list_org_roles(
+    org_slug: str,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    db: AsyncSession = Depends(get_db),
+):
+    """List all roles defined for this organization with their permissions, member counts, and safety flags."""
+    org, mem = org_and_mem
+    roles = (
+        await db.execute(
+            select(Role)
+            .options(selectinload(Role.permissions).selectinload(RolePermission.permission))
+            .where(Role.organization_id == org.id)
+            .order_by(Role.id.asc())
+        )
+    ).scalars().all()
+
+    counts_rows = (
+        await db.execute(
+            select(OrganizationMembership.role_id)
+            .where(
+                OrganizationMembership.organization_id == org.id,
+                OrganizationMembership.status != "removed",
+            )
+        )
+    ).scalars().all()
+    count_map: dict[int, int] = {}
+    for rid in counts_rows:
+        count_map[rid] = count_map.get(rid, 0) + 1
+
+    caller_role_ids = await _get_caller_role_ids(db, mem)
+    roles_manage_role_ids = {
+        r.id
+        for r in roles
+        if any(rp.permission and rp.permission.key == "roles.manage" for rp in r.permissions)
+    }
+
+    result_list: list[OrgRoleResponse] = []
+    for r in roles:
+        perm_keys = sorted([rp.permission.key for rp in r.permissions if rp.permission])
+        m_count = count_map.get(r.id, 0)
+        is_caller = r.id in caller_role_ids
+        has_roles_manage = r.id in roles_manage_role_ids
+        other_rm_roles_exist = len(roles_manage_role_ids - {r.id}) > 0
+
+        can_delete = (
+            not is_caller
+            and m_count == 0
+            and len(roles) > 1
+            and (not has_roles_manage or other_rm_roles_exist)
+        )
+        if not has_roles_manage:
+            can_remove_rm = True
+        elif is_caller or not other_rm_roles_exist:
+            can_remove_rm = False
+        elif m_count > 0:
+            other_holders = await _count_active_roles_manage_holders(
+                db, org.id, exclude_role_id=r.id
+            )
+            can_remove_rm = other_holders > 0
+        else:
+            can_remove_rm = True
+
+        result_list.append(
+            OrgRoleResponse(
+                id=r.id,
+                organization_id=r.organization_id,
+                name=r.name,
+                slug=r.slug,
+                description=r.description,
+                permissions=perm_keys,
+                member_count=m_count,
+                is_caller_role=is_caller,
+                can_delete=can_delete,
+                can_remove_roles_manage=can_remove_rm,
+                created_at=r.created_at,
+            )
+        )
+    return result_list
+
+
+@router.post("/{org_slug}/roles", response_model=OrgRoleResponse, status_code=status.HTTP_201_CREATED)
+async def create_org_role(
+    org_slug: str,
+    body: OrgRoleCreateRequest,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a new custom role for this organization."""
+    org, mem = org_and_mem
+    await _require_role_manager(org, mem, current_user, db)
+
+    slug = _slugify_role(body.slug or body.name)
+    existing = await db.scalar(
+        select(Role).where(Role.organization_id == org.id, Role.slug == slug)
+    )
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"A role with slug '{slug}' already exists in this organization.",
+        )
+
+    role = Role(
+        organization_id=org.id,
+        name=body.name.strip(),
+        slug=slug,
+        description=body.description.strip() if body.description else None,
+    )
+    db.add(role)
+    await db.flush()
+
+    perm_keys = list(dict.fromkeys(k.strip() for k in body.permissions if k.strip()))
+    if perm_keys:
+        perms = (await db.execute(select(Permission).where(Permission.key.in_(perm_keys)))).scalars().all()
+        for p in perms:
+            db.add(RolePermission(role_id=role.id, permission_id=p.id))
+
+    await db.commit()
+    await db.refresh(role)
+
+    await log_audit_event(
+        db,
+        action="organization.role.created",
+        entity_type="role",
+        entity_id=str(role.id),
+        actor_user_id=current_user.id,
+        organization_id=org.id,
+        metadata={"name": role.name, "slug": role.slug, "permissions": perm_keys},
+    )
+
+    return OrgRoleResponse(
+        id=role.id,
+        organization_id=role.organization_id,
+        name=role.name,
+        slug=role.slug,
+        description=role.description,
+        permissions=sorted(perm_keys),
+        member_count=0,
+        created_at=role.created_at,
+    )
+
+
+@router.patch("/{org_slug}/roles/{role_id}", response_model=OrgRoleResponse)
+async def update_org_role(
+    org_slug: str,
+    role_id: int,
+    body: OrgRoleUpdateRequest,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update a role's name, description, or permissions within this organization."""
+    org, mem = org_and_mem
+    await _require_role_manager(org, mem, current_user, db)
+
+    role = (
+        await db.execute(
+            select(Role)
+            .options(selectinload(Role.permissions).selectinload(RolePermission.permission))
+            .where(Role.id == role_id, Role.organization_id == org.id)
+        )
+    ).scalar_one_or_none()
+    if not role:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Role not found in this organization.")
+
+    if body.name is not None:
+        role.name = body.name.strip()
+    if body.description is not None:
+        role.description = body.description.strip() or None
+
+    if body.permissions is not None:
+        perm_keys = list(dict.fromkeys(k.strip() for k in body.permissions if k.strip()))
+        current_perm_keys = {rp.permission.key for rp in role.permissions if rp.permission}
+        if "roles.manage" in current_perm_keys and "roles.manage" not in perm_keys:
+            caller_role_ids = await _get_caller_role_ids(db, mem)
+            if role.id in caller_role_ids:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Self-protection: you cannot remove 'roles.manage' from your own role.",
+                )
+
+            other_rm_role = await db.scalar(
+                select(Role.id)
+                .join(RolePermission, RolePermission.role_id == Role.id)
+                .join(Permission, Permission.id == RolePermission.permission_id)
+                .where(
+                    Role.organization_id == org.id,
+                    Role.id != role.id,
+                    Permission.key == "roles.manage",
+                )
+                .limit(1)
+            )
+            if not other_rm_role:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Anti-lockout: at least one role in the organization must retain 'roles.manage'.",
+                )
+
+            role_has_active_members = (
+                await db.scalar(
+                    select(OrganizationMembership.id)
+                    .where(
+                        OrganizationMembership.role_id == role.id,
+                        OrganizationMembership.organization_id == org.id,
+                        OrganizationMembership.status != "removed",
+                    )
+                    .limit(1)
+                )
+                is not None
+            )
+            if role_has_active_members:
+                other_holders = await _count_active_roles_manage_holders(
+                    db, org.id, exclude_role_id=role.id
+                )
+                if other_holders == 0:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Anti-lockout: at least one active member must retain 'roles.manage'.",
+                    )
+
+        await db.execute(delete(RolePermission).where(RolePermission.role_id == role.id))
+        if perm_keys:
+            perms = (await db.execute(select(Permission).where(Permission.key.in_(perm_keys)))).scalars().all()
+            for p in perms:
+                db.add(RolePermission(role_id=role.id, permission_id=p.id))
+
+    await db.commit()
+
+    updated = (
+        await db.execute(
+            select(Role)
+            .options(selectinload(Role.permissions).selectinload(RolePermission.permission))
+            .where(Role.id == role.id)
+        )
+    ).scalar_one()
+
+    await log_audit_event(
+        db,
+        action="organization.role.updated",
+        entity_type="role",
+        entity_id=str(role.id),
+        actor_user_id=current_user.id,
+        organization_id=org.id,
+        metadata={"name": updated.name, "slug": updated.slug},
+    )
+
+    return OrgRoleResponse(
+        id=updated.id,
+        organization_id=updated.organization_id,
+        name=updated.name,
+        slug=updated.slug,
+        description=updated.description,
+        permissions=sorted([rp.permission.key for rp in updated.permissions if rp.permission]),
+        member_count=0,
+        created_at=updated.created_at,
+    )
+
+
+@router.delete("/{org_slug}/roles/{role_id}", response_model=MessageResponse)
+async def delete_org_role(
+    org_slug: str,
+    role_id: int,
+    org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete a role from this organization (with anti-lockout and in-use guards)."""
+    org, mem = org_and_mem
+    await _require_role_manager(org, mem, current_user, db)
+
+    role = (
+        await db.execute(
+            select(Role)
+            .options(selectinload(Role.permissions).selectinload(RolePermission.permission))
+            .where(Role.id == role_id, Role.organization_id == org.id)
+        )
+    ).scalar_one_or_none()
+    if not role:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Role not found in this organization.")
+
+    caller_role_ids = await _get_caller_role_ids(db, mem)
+    if role.id in caller_role_ids:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Self-protection: you cannot delete your own role.",
+        )
+
+    assigned = await db.scalar(
+        select(OrganizationMembership.id)
+        .where(
+            OrganizationMembership.role_id == role.id,
+            OrganizationMembership.organization_id == org.id,
+            OrganizationMembership.status != "removed",
+        )
+        .limit(1)
+    )
+    if assigned:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete a role that is currently assigned to active members. Reassign those members first.",
+        )
+
+    total_roles = await db.scalar(
+        select(func.count(Role.id)).where(Role.organization_id == org.id)
+    ) or 0
+    if total_roles <= 1:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete the last remaining role in the organization.",
+        )
+
+    role_has_rm = any(rp.permission and rp.permission.key == "roles.manage" for rp in role.permissions)
+    if role_has_rm:
+        other_rm_role = await db.scalar(
+            select(Role.id)
+            .join(RolePermission, RolePermission.role_id == Role.id)
+            .join(Permission, Permission.id == RolePermission.permission_id)
+            .where(
+                Role.organization_id == org.id,
+                Role.id != role.id,
+                Permission.key == "roles.manage",
+            )
+            .limit(1)
+        )
+        if not other_rm_role:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Anti-lockout: cannot delete the last role holding 'roles.manage' in this organization.",
+            )
+
+    await db.delete(role)
+    await db.commit()
+
+    await log_audit_event(
+        db,
+        action="organization.role.deleted",
+        entity_type="role",
+        entity_id=str(role_id),
+        actor_user_id=current_user.id,
+        organization_id=org.id,
+        metadata={"slug": role.slug, "name": role.name},
+    )
+
+    return MessageResponse(detail=f"Role '{role.name}' deleted.")
 

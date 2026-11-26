@@ -4,9 +4,9 @@ from datetime import datetime, timezone
 from typing import Any
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
+from sqlalchemy import select
 
-from app.models import OrganizationSettingAvailability, OrganizationSetting
+from app.models import OrganizationSetting
 from app.settings.registry import (
     get_setting_definition,
     get_all_setting_definitions,
@@ -43,24 +43,16 @@ class SettingsService:
         if not defn:
             return None
 
-        # 1. Check availability
-        avail = await db.scalar(
-            select(OrganizationSettingAvailability.is_enabled).where(
-                OrganizationSettingAvailability.organization_id == organization_id,
-                OrganizationSettingAvailability.setting_key == setting_key,
-            )
-        )
-        if not avail:  # Either no record or is_enabled == False
-            return None
-
-        # 2. Query configured value
         setting = await db.scalar(
             select(OrganizationSetting).where(
                 OrganizationSetting.organization_id == organization_id,
                 OrganizationSetting.setting_key == setting_key,
             )
         )
-        if setting is not None and setting.value is not None:
+        if not setting or not setting.is_enabled:
+            return None
+
+        if setting.value is not None:
             return setting.value
         return defn.default
 
@@ -79,35 +71,28 @@ class SettingsService:
         Only returns settings where is_enabled == True.
         """
         stmt = (
-            select(OrganizationSettingAvailability, OrganizationSetting)
-            .outerjoin(
-                OrganizationSetting,
-                and_(
-                    OrganizationSetting.organization_id == OrganizationSettingAvailability.organization_id,
-                    OrganizationSetting.setting_key == OrganizationSettingAvailability.setting_key,
-                ),
-            )
+            select(OrganizationSetting)
             .where(
-                OrganizationSettingAvailability.organization_id == organization_id,
-                OrganizationSettingAvailability.is_enabled == True,
+                OrganizationSetting.organization_id == organization_id,
+                OrganizationSetting.is_enabled == True,
             )
-            .order_by(OrganizationSettingAvailability.setting_key)
+            .order_by(OrganizationSetting.setting_key)
         )
-        result = await db.execute(stmt)
-        rows = result.all()
+        rows = (await db.execute(stmt)).scalars().all()
 
         output = []
-        for avail, setting in rows:
-            defn = get_setting_definition(avail.setting_key)
+        for setting in rows:
+            defn = get_setting_definition(setting.setting_key)
             if not defn:
-                continue  # Skip unknown/deprecated keys
+                continue
             output.append({
-                "key": avail.setting_key,
-                "value": setting.value if setting else defn.default,
+                "key": setting.setting_key,
+                "value": setting.value if setting.value is not None else defn.default,
                 "category": defn.category,
                 "description": defn.description,
                 "data_type": defn.data_type.value,
-                "updated_at": setting.updated_at if setting else avail.updated_at,
+                "required_permission": defn.required_permission,
+                "updated_at": setting.updated_at,
             })
         return output
 
@@ -117,34 +102,24 @@ class SettingsService:
         List settings for TLD Platform Personnel.
         Returns ALL registered settings with their availability (enabled/disabled) and configured values.
         """
-        # Get existing availability and setting values
-        avail_res = await db.execute(
-            select(OrganizationSettingAvailability).where(OrganizationSettingAvailability.organization_id == organization_id)
-        )
-        avail_map = {a.setting_key: a.is_enabled for a in avail_res.scalars().all()}
-
-        val_res = await db.execute(
+        res = await db.execute(
             select(OrganizationSetting).where(OrganizationSetting.organization_id == organization_id)
         )
-        val_map = {s.setting_key: (s.value, s.updated_at) for s in val_res.scalars().all()}
+        setting_map = {s.setting_key: s for s in res.scalars().all()}
 
         output = []
         for defn in get_all_setting_definitions():
-            is_enabled = avail_map.get(defn.key, False)
-            stored_val_info = val_map.get(defn.key)
-            stored_value = stored_val_info[0] if stored_val_info else None
-            updated_at = stored_val_info[1] if stored_val_info else None
-
+            row = setting_map.get(defn.key)
             output.append({
                 "key": defn.key,
-                "is_enabled": is_enabled,
-                "value": stored_value,
+                "is_enabled": row.is_enabled if row else False,
+                "value": row.value if row else None,
                 "default": defn.default,
                 "category": defn.category,
                 "description": defn.description,
                 "data_type": defn.data_type.value,
                 "allowed_values": defn.allowed_values,
-                "updated_at": updated_at,
+                "updated_at": row.updated_at if row else None,
             })
         return output
 
@@ -156,56 +131,31 @@ class SettingsService:
         new_value: Any,
         actor_user_id: int | None = None,
     ) -> dict[str, Any]:
-        """
-        Update an enabled setting value as an organization administrator.
-        Enforces:
-        - Setting must exist in registry.
-        - Value must validate against definition.
-        - Setting must be currently enabled for the organization.
-        - Records audit log.
-        """
+        """Update an enabled setting value as an organization administrator."""
         defn = SettingsService.get_definition(setting_key)
         valid, err_msg = defn.validate(new_value)
         if not valid:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err_msg)
 
-        # Check availability
-        avail = await db.scalar(
-            select(OrganizationSettingAvailability.is_enabled).where(
-                OrganizationSettingAvailability.organization_id == organization_id,
-                OrganizationSettingAvailability.setting_key == setting_key,
-            )
-        )
-        if not avail:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Setting '{setting_key}' is not enabled for your organization.",
-            )
-
-        # Upsert or update value
         existing = await db.scalar(
             select(OrganizationSetting).where(
                 OrganizationSetting.organization_id == organization_id,
                 OrganizationSetting.setting_key == setting_key,
             )
         )
-
-        old_value = existing.value if existing else None
-        if existing:
-            existing.value = new_value
-            existing.updated_at = datetime.now(timezone.utc)
-        else:
-            existing = OrganizationSetting(
-                organization_id=organization_id,
-                setting_key=setting_key,
-                value=new_value,
+        if not existing or not existing.is_enabled:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Setting '{setting_key}' is not enabled for your organization.",
             )
-            db.add(existing)
+
+        old_value = existing.value
+        existing.value = new_value
+        existing.updated_at = datetime.now(timezone.utc)
 
         await db.commit()
         await db.refresh(existing)
 
-        # Audit log
         await log_audit_event(
             db,
             action="organization_setting.updated",
@@ -222,6 +172,8 @@ class SettingsService:
             "category": defn.category,
             "description": defn.description,
             "data_type": defn.data_type.value,
+            "can_edit": True,
+            "required_permission": defn.required_permission,
             "updated_at": existing.updated_at,
         }
 
@@ -235,32 +187,11 @@ class SettingsService:
     ) -> dict[str, Any]:
         """
         Enable a setting for an organization (TLD personnel operation).
-        - If setting already has a stored value, retains it (restores previous value).
+        - If setting already has a stored value, retains it.
         - If no stored value exists, initializes with initial_value or registry default.
-        - Sets is_enabled = True in availability.
-        - Transactional & safe to re-run.
         """
         defn = SettingsService.get_definition(setting_key)
 
-        # 1. Update or create availability record
-        avail = await db.scalar(
-            select(OrganizationSettingAvailability).where(
-                OrganizationSettingAvailability.organization_id == organization_id,
-                OrganizationSettingAvailability.setting_key == setting_key,
-            )
-        )
-        if avail:
-            avail.is_enabled = True
-            avail.updated_at = datetime.now(timezone.utc)
-        else:
-            avail = OrganizationSettingAvailability(
-                organization_id=organization_id,
-                setting_key=setting_key,
-                is_enabled=True,
-            )
-            db.add(avail)
-
-        # 2. Check existing value
         setting = await db.scalar(
             select(OrganizationSetting).where(
                 OrganizationSetting.organization_id == organization_id,
@@ -268,12 +199,18 @@ class SettingsService:
             )
         )
 
-        effective_val = None
         if setting:
-            # Re-enable: preserve stored value
-            effective_val = setting.value
+            setting.is_enabled = True
+            if setting.value is None:
+                if initial_value is not None:
+                    valid, err_msg = defn.validate(initial_value)
+                    if not valid:
+                        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=err_msg)
+                    setting.value = initial_value
+                else:
+                    setting.value = defn.default
+            setting.updated_at = datetime.now(timezone.utc)
         else:
-            # Newly enabled: use custom initial_value or code default
             if initial_value is not None:
                 valid, err_msg = defn.validate(initial_value)
                 if not valid:
@@ -286,14 +223,13 @@ class SettingsService:
                 organization_id=organization_id,
                 setting_key=setting_key,
                 value=effective_val,
+                is_enabled=True,
             )
             db.add(setting)
 
         await db.commit()
-        await db.refresh(avail)
         await db.refresh(setting)
 
-        # Audit log
         await log_audit_event(
             db,
             action="organization_setting.enabled",
@@ -301,7 +237,7 @@ class SettingsService:
             entity_id=setting_key,
             actor_user_id=actor_user_id,
             organization_id=organization_id,
-            metadata={"setting_key": setting_key, "value": effective_val, "by": "platform_staff"},
+            metadata={"setting_key": setting_key, "value": setting.value, "by": "platform_staff"},
         )
 
         return {
@@ -321,41 +257,31 @@ class SettingsService:
     ) -> dict[str, Any]:
         """
         Disable a setting for an organization (TLD personnel operation).
-        - Sets is_enabled = False in availability.
-        - Stored value in organization_settings is NEVER deleted or modified.
-        - Logs audit event.
+        Sets is_enabled = False while preserving any stored value.
         """
         defn = SettingsService.get_definition(setting_key)
 
-        avail = await db.scalar(
-            select(OrganizationSettingAvailability).where(
-                OrganizationSettingAvailability.organization_id == organization_id,
-                OrganizationSettingAvailability.setting_key == setting_key,
-            )
-        )
-        if avail:
-            avail.is_enabled = False
-            avail.updated_at = datetime.now(timezone.utc)
-        else:
-            avail = OrganizationSettingAvailability(
-                organization_id=organization_id,
-                setting_key=setting_key,
-                is_enabled=False,
-            )
-            db.add(avail)
-
-        # Keep existing setting record untouched
         setting = await db.scalar(
             select(OrganizationSetting).where(
                 OrganizationSetting.organization_id == organization_id,
                 OrganizationSetting.setting_key == setting_key,
             )
         )
+        if setting:
+            setting.is_enabled = False
+            setting.updated_at = datetime.now(timezone.utc)
+        else:
+            setting = OrganizationSetting(
+                organization_id=organization_id,
+                setting_key=setting_key,
+                value=None,
+                is_enabled=False,
+            )
+            db.add(setting)
 
         await db.commit()
-        await db.refresh(avail)
+        await db.refresh(setting)
 
-        # Audit log
         await log_audit_event(
             db,
             action="organization_setting.disabled",
@@ -369,9 +295,9 @@ class SettingsService:
         return {
             "key": setting_key,
             "is_enabled": False,
-            "value": setting.value if setting else None,
+            "value": setting.value,
             "data_type": defn.data_type.value,
-            "updated_at": avail.updated_at,
+            "updated_at": setting.updated_at,
         }
 
     @staticmethod
@@ -382,10 +308,7 @@ class SettingsService:
         new_value: Any,
         actor_user_id: int | None = None,
     ) -> dict[str, Any]:
-        """
-        Update setting value directly (override) as TLD staff.
-        Can update even if disabled; validates type against registry.
-        """
+        """Update setting value directly (override) as TLD staff."""
         defn = SettingsService.get_definition(setting_key)
         valid, err_msg = defn.validate(new_value)
         if not valid:
@@ -407,29 +330,13 @@ class SettingsService:
                 organization_id=organization_id,
                 setting_key=setting_key,
                 value=new_value,
+                is_enabled=False,
             )
             db.add(existing)
 
-        # Ensure availability record exists (defaults to False if not yet enabled)
-        avail = await db.scalar(
-            select(OrganizationSettingAvailability).where(
-                OrganizationSettingAvailability.organization_id == organization_id,
-                OrganizationSettingAvailability.setting_key == setting_key,
-            )
-        )
-        if not avail:
-            avail = OrganizationSettingAvailability(
-                organization_id=organization_id,
-                setting_key=setting_key,
-                is_enabled=False,
-            )
-            db.add(avail)
-
         await db.commit()
         await db.refresh(existing)
-        await db.refresh(avail)
 
-        # Audit log
         await log_audit_event(
             db,
             action="organization_setting.override",
@@ -442,7 +349,7 @@ class SettingsService:
 
         return {
             "key": setting_key,
-            "is_enabled": avail.is_enabled,
+            "is_enabled": existing.is_enabled,
             "value": existing.value,
             "data_type": defn.data_type.value,
             "updated_at": existing.updated_at,
@@ -456,7 +363,7 @@ class SettingsService:
         auto_commit: bool = True,
     ) -> None:
         """
-        Initialize available settings and default values for a newly provisioned organization.
+        Initialize settings and default values for a newly provisioned organization.
         Safe to call multiple times (never overwrites existing values).
         """
         eligible_keys = get_tier_eligible_settings(tier)
@@ -464,40 +371,22 @@ class SettingsService:
 
         for defn in all_defs:
             is_eligible = defn.key in eligible_keys
-
-            # 1. Availability
-            avail = await db.scalar(
-                select(OrganizationSettingAvailability).where(
-                    OrganizationSettingAvailability.organization_id == organization_id,
-                    OrganizationSettingAvailability.setting_key == defn.key,
+            setting = await db.scalar(
+                select(OrganizationSetting).where(
+                    OrganizationSetting.organization_id == organization_id,
+                    OrganizationSetting.setting_key == defn.key,
                 )
             )
-            if not avail:
-                avail = OrganizationSettingAvailability(
+            if not setting:
+                setting = OrganizationSetting(
                     organization_id=organization_id,
                     setting_key=defn.key,
+                    value=defn.default if is_eligible else None,
                     is_enabled=is_eligible,
                 )
-                db.add(avail)
-
-            # 2. Setting value if eligible (never overwrite existing)
-            if is_eligible:
-                setting = await db.scalar(
-                    select(OrganizationSetting).where(
-                        OrganizationSetting.organization_id == organization_id,
-                        OrganizationSetting.setting_key == defn.key,
-                    )
-                )
-                if not setting:
-                    setting = OrganizationSetting(
-                        organization_id=organization_id,
-                        setting_key=defn.key,
-                        value=defn.default,
-                    )
-                    db.add(setting)
+                db.add(setting)
 
         if auto_commit:
             await db.commit()
         else:
             await db.flush()
-

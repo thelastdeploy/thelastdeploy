@@ -22,9 +22,6 @@ from app.models import (
     Organization,
     PlatformPermission,
     PlatformUserPermission,
-    PlatformUserRole,
-    PlatformRole,
-    PlatformRolePermission,
     AuditLog,
 )
 from app.schemas import AuditLogResponse, OrganizationResponse, MessageResponse
@@ -170,9 +167,6 @@ async def add_platform_user(
                 assigned_at=datetime.now(timezone.utc),
             ))
 
-    # Clean up any legacy platform user roles to eliminate ghost role permissions
-    await db.execute(delete(PlatformUserRole).where(PlatformUserRole.user_id == target_user.id))
-
     await db.commit()
 
     await log_audit_event(
@@ -268,9 +262,6 @@ async def update_user_permissions(
                 assigned_at=datetime.now(timezone.utc),
             ))
 
-    # Clean up any legacy platform user roles to eliminate ghost role permissions
-    await db.execute(delete(PlatformUserRole).where(PlatformUserRole.user_id == target_user.id))
-
     await db.commit()
 
     await log_audit_event(
@@ -320,16 +311,6 @@ async def revoke_platform_user(
     )).scalars().all()
     for ep in existing_perms:
         await db.delete(ep)
-
-    # Delete any platform roles
-    existing_roles = (await db.execute(
-        select(PlatformUserRole).where(PlatformUserRole.user_id == target_user.id)
-    )).scalars().all()
-    for er in existing_roles:
-        await db.delete(er)
-
-    # Clean up any legacy platform user roles to eliminate ghost role permissions
-    await db.execute(delete(PlatformUserRole).where(PlatformUserRole.user_id == target_user.id))
 
     await db.commit()
 

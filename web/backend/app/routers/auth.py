@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_, update
 from app.config import settings
 from app.dependencies import get_db, get_current_user, get_optional_session
-from app.models import User, CLIDeviceAuth, UserSession, Organization, OrganizationMembership, Role, MembershipRole
+from app.models import User, CLIDeviceAuth, UserSession, Organization, OrganizationMembership, Role
 from app.auth import hash_password, verify_password, create_access_token, ensure_utc, hash_token
 from app.onboarding.service import extract_subdomain_org_slug
 from app.schemas import (
@@ -157,20 +157,23 @@ async def register(
                     detail=f"Registration in {target_org.name} requires an authorized email domain: {valid_domains}",
                 )
 
-        # Create membership in institutional org ONLY (no default platform org membership)
+        from app.services import resolve_default_org_role
+        learner_role = await resolve_default_org_role(db, target_org.id, preferred_slug="learner")
+        if not learner_role:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Organization has no roles configured.",
+            )
         mem = OrganizationMembership(
             organization_id=target_org.id,
             user_id=user.id,
+            role_id=learner_role.id,
             status="active",
             total_xp=0,
             unverified_xp=0,
         )
         db.add(mem)
         await db.flush()
-
-        learner_role = await db.scalar(select(Role).where(Role.slug == "learner"))
-        if learner_role:
-            db.add(MembershipRole(membership_id=mem.id, role_id=learner_role.id))
 
     await db.commit()
     await db.refresh(user)

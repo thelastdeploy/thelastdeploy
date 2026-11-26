@@ -41,7 +41,7 @@ export function NumberStepper({
 
   return (
     <div className={cn("inline-flex items-center gap-2", className)}>
-      <div className="inline-flex items-center rounded-xl border border-border bg-card shadow-sm hover:border-[var(--accent-primary)]/40 focus-within:border-[var(--accent-primary)] focus-within:ring-1 focus-within:ring-[var(--accent-primary)]/30 transition-all overflow-hidden h-8">
+      <div className="inline-flex items-center rounded-none border border-border bg-card shadow-sm hover:border-[var(--accent-primary)]/40 transition-all overflow-hidden h-8">
         <input
           type="number"
           disabled={disabled}

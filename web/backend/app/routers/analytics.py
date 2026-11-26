@@ -29,6 +29,7 @@ from app.dependencies import (
     get_current_user,
     get_current_organization,
     require_permission,
+    require_any_permission,
     require_platform_permission,
 )
 from app.models import Organization, OrganizationMembership, User
@@ -196,7 +197,7 @@ async def get_org_analytics_learner_detail(
 async def export_org_analytics(
     org_slug: str,
     export_type: str,
-    membership: OrganizationMembership = Depends(require_permission("analytics.view")),
+    membership: OrganizationMembership = Depends(require_any_permission("analytics.export", "analytics.view")),
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
     db: AsyncSession = Depends(get_db),
 ):

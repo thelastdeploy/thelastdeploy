@@ -11,7 +11,9 @@ from app.dependencies import (
     get_current_user,
     get_current_organization,
     require_permission,
+    require_any_permission,
 )
+from app.settings.service import SettingsService
 from app.models import (
     User,
     Organization,
@@ -157,13 +159,19 @@ async def create_invitation(
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-    _perm: User = Depends(require_permission("members.manage")),
+    _perm: User = Depends(require_any_permission("invitations.manage", "members.manage")),
 ):
     """Issues an individual organization invitation and sends an email."""
     organization, _ = org_and_mem
 
     cohort_name = None
     if body.cohort_id:
+        cohort_invites_enabled = await SettingsService.get_effective_setting(db, organization.id, "cohorts.invitations_enabled")
+        if cohort_invites_enabled is False:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Cohort invitations are disabled for this organization.",
+            )
         cohort = await db.scalar(select(Cohort).where(Cohort.id == body.cohort_id, Cohort.organization_id == organization.id))
         if not cohort:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cohort not found in this organization")
@@ -420,6 +428,12 @@ async def create_cohort_invitation(
 ):
     """Issues an invitation directly into a specific cohort."""
     organization, _ = org_and_mem
+    cohort_invites_enabled = await SettingsService.get_effective_setting(db, organization.id, "cohorts.invitations_enabled")
+    if cohort_invites_enabled is False:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cohort invitations are disabled for this organization.",
+        )
     cohort = await db.scalar(select(Cohort).where(Cohort.id == cohort_id, Cohort.organization_id == organization.id))
     if not cohort:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cohort not found in this organization")

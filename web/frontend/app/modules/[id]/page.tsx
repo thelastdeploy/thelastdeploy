@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { ModuleDetail, Section } from "@/lib/types";
-import { DifficultyBadge } from "@/components/challenges/difficulty-badge";
+import { DifficultyBadge } from "@/components/modules/difficulty-badge";
 import { SectionSidebar } from "@/components/modules/section-sidebar";
 import { SectionContent } from "@/components/modules/section-content";
 import { CompletionToast } from "@/components/modules/completion-toast";

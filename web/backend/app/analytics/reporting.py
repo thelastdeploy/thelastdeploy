@@ -12,7 +12,6 @@ from sqlalchemy.orm import selectinload
 from app.models import (
     Organization,
     OrganizationMembership,
-    MembershipRole,
     Role,
     LabProgress,
     SectionProgress,
@@ -132,8 +131,7 @@ class AnalyticsServiceReporting:
         # Total learners
         total_learners = await db.scalar(
             select(func.count(func.distinct(OrganizationMembership.id)))
-            .join(MembershipRole, MembershipRole.membership_id == OrganizationMembership.id)
-            .join(Role, Role.id == MembershipRole.role_id)
+            .join(Role, Role.id == OrganizationMembership.role_id)
             .where(
                 OrganizationMembership.organization_id == org.id,
                 OrganizationMembership.status == "active",
@@ -210,8 +208,7 @@ class AnalyticsServiceReporting:
 
         learners_started = await db.scalar(
             select(func.count(func.distinct(OrganizationMembership.id)))
-            .join(MembershipRole, MembershipRole.membership_id == OrganizationMembership.id)
-            .join(Role, Role.id == MembershipRole.role_id)
+            .join(Role, Role.id == OrganizationMembership.role_id)
             .where(
                 OrganizationMembership.id.in_(select(started_union.c.id)),
                 Role.slug == "learner",
@@ -221,8 +218,7 @@ class AnalyticsServiceReporting:
         # Learners who have completed at least one lab
         learners_completed_lab = await db.scalar(
             select(func.count(func.distinct(OrganizationMembership.id)))
-            .join(MembershipRole, MembershipRole.membership_id == OrganizationMembership.id)
-            .join(Role, Role.id == MembershipRole.role_id)
+            .join(Role, Role.id == OrganizationMembership.role_id)
             .join(LabProgress, LabProgress.organization_membership_id == OrganizationMembership.id)
             .where(
                 OrganizationMembership.organization_id == org.id,
@@ -345,8 +341,7 @@ class AnalyticsServiceReporting:
         # 5. New learners over time
         lrn_q = (
             select(cast(OrganizationMembership.joined_at, Date), func.count(func.distinct(OrganizationMembership.id)))
-            .join(MembershipRole, MembershipRole.membership_id == OrganizationMembership.id)
-            .join(Role, Role.id == MembershipRole.role_id)
+            .join(Role, Role.id == OrganizationMembership.role_id)
             .where(
                 OrganizationMembership.organization_id == org.id,
                 OrganizationMembership.status != "removed",
@@ -1024,15 +1019,9 @@ class AnalyticsServiceReporting:
 
         results: list[LearnerAnalyticsItem] = []
         for mem, user in rows:
-            # Roles for this membership
-            roles = (
-                await db.execute(
-                    select(Role.slug)
-                    .join(MembershipRole, MembershipRole.role_id == Role.id)
-                    .where(MembershipRole.membership_id == mem.id)
-                )
-            ).scalars().all()
-            primary_role = "learner" if "learner" in roles else (roles[0] if roles else "member")
+            # Role for this membership
+            role_slug = await db.scalar(select(Role.slug).where(Role.id == mem.role_id))
+            primary_role = role_slug or "learner"
 
             # Completed labs and sections
             lab_cnt = await db.scalar(
@@ -1105,15 +1094,9 @@ class AnalyticsServiceReporting:
 
         mem, user = mem_row
 
-        # Roles
-        roles = (
-            await db.execute(
-                select(Role.slug)
-                .join(MembershipRole, MembershipRole.role_id == Role.id)
-                .where(MembershipRole.membership_id == mem.id)
-            )
-        ).scalars().all()
-        primary_role = "learner" if "learner" in roles else (roles[0] if roles else "member")
+        # Role
+        role_slug = await db.scalar(select(Role.slug).where(Role.id == mem.role_id))
+        primary_role = role_slug or "learner"
 
         # Cohorts
         c_names = (

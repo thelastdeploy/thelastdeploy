@@ -9,8 +9,8 @@ from app.database import AsyncSessionLocal
 from app.auth import decode_token_payload, ensure_utc
 from app.models import (
     User, UserSession, Organization, OrganizationMembership,
-    MembershipRole, RolePermission, Permission,
-    PlatformRole, PlatformUserRole, PlatformRolePermission, PlatformPermission, PlatformUserPermission
+    RolePermission, Permission,
+    PlatformPermission, PlatformUserPermission
 )
 
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -283,9 +283,8 @@ def require_permission(permission_key: str):
         stmt = (
             select(Permission.id)
             .join(RolePermission, RolePermission.permission_id == Permission.id)
-            .join(MembershipRole, MembershipRole.role_id == RolePermission.role_id)
             .where(
-                MembershipRole.membership_id == membership.id,
+                RolePermission.role_id == membership.role_id,
                 Permission.key == permission_key,
             )
             .limit(1)
@@ -295,6 +294,46 @@ def require_permission(permission_key: str):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Missing required permission: '{permission_key}' in this organization",
+            )
+        return membership
+
+    return _dependency
+
+
+def require_any_permission(*permission_keys: str):
+    """
+    Dependency factory: checks if caller's active membership in the current organization
+    has ANY of the specified permission keys through any assigned roles.
+    """
+    async def _dependency(
+        org_and_mem: tuple[Organization, OrganizationMembership | None] = Depends(get_current_organization),
+        current_user: User = Depends(get_current_user),
+        db: AsyncSession = Depends(get_db),
+    ) -> OrganizationMembership | None:
+        _, membership = org_and_mem
+        if await has_platform_permission(current_user, "platform.organizations.manage", db) or await is_user_platform_admin(current_user, db):
+            return membership
+
+        if not membership:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Missing required permission: one of {list(permission_keys)} in this organization",
+            )
+
+        stmt = (
+            select(Permission.id)
+            .join(RolePermission, RolePermission.permission_id == Permission.id)
+            .where(
+                RolePermission.role_id == membership.role_id,
+                Permission.key.in_(list(permission_keys)),
+            )
+            .limit(1)
+        )
+        result = await db.execute(stmt)
+        if result.scalar_one_or_none() is None:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Missing required permission: one of {list(permission_keys)} in this organization",
             )
         return membership
 
@@ -389,9 +428,8 @@ async def has_org_permission(
     stmt = (
         select(Permission.id)
         .join(RolePermission, RolePermission.permission_id == Permission.id)
-        .join(MembershipRole, MembershipRole.role_id == RolePermission.role_id)
         .where(
-            MembershipRole.membership_id == membership.id,
+            RolePermission.role_id == membership.role_id,
             Permission.key == permission_key,
         )
         .limit(1)

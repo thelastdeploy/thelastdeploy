@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Module } from "@/lib/types";
-import { DifficultyBadge } from "@/components/challenges/difficulty-badge";
+import { DifficultyBadge } from "@/components/modules/difficulty-badge";
 import { Clock, Zap, ChevronRight, CheckCircle2, Crown, ShieldCheck, User } from "lucide-react";
 
 const topicConfig: Record<string, {

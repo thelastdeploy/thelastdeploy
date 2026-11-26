@@ -24,6 +24,7 @@ class SettingDefinition:
     allowed_values: list[Any] | None = None
     min_value: int | None = None
     max_value: int | None = None
+    required_permission: str = "settings.manage"
 
     def validate(self, value: Any) -> tuple[bool, str | None]:
         """Validate a proposed value against this setting definition."""
@@ -69,6 +70,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         default=False,
         category="Content",
         description="Allow learners in the organization to discover and access unverified community modules.",
+        required_permission="settings.content.manage",
     ),
     "content.allow_custom_modules": SettingDefinition(
         key="content.allow_custom_modules",
@@ -76,6 +78,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         default=False,
         category="Content",
         description="Allow instructors/maintainers within the organization to author custom modules and labs.",
+        required_permission="settings.content.manage",
     ),
     "security.enforce_domain_match": SettingDefinition(
         key="security.enforce_domain_match",
@@ -83,6 +86,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         default=True,
         category="Security",
         description="Enforce that newly invited members must possess an email address ending in the organization's verified domain.",
+        required_permission="settings.security.manage",
     ),
     "cohorts.max_active_cohorts": SettingDefinition(
         key="cohorts.max_active_cohorts",
@@ -92,6 +96,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         max_value=500,
         category="Cohorts",
         description="Maximum number of active cohorts that can run concurrently within this organization.",
+        required_permission="settings.cohorts.manage",
     ),
     "analytics.export_enabled": SettingDefinition(
         key="analytics.export_enabled",
@@ -99,6 +104,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         default=False,
         category="Analytics",
         description="Allow organization administrators to export learner lab completion records and audit reports.",
+        required_permission="analytics.export",
     ),
     "invitations.expiry_days": SettingDefinition(
         key="invitations.expiry_days",
@@ -106,6 +112,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         default=7,
         category="Onboarding",
         description="Number of days before newly issued invitations expire (snapshot on creation).",
+        required_permission="settings.onboarding.manage",
     ),
     "onboarding.access_approval_mode": SettingDefinition(
         key="onboarding.access_approval_mode",
@@ -114,6 +121,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         allowed_values=["automatic", "manual"],
         category="Onboarding",
         description="Approval mode for domain-based access requests ('automatic' or 'manual').",
+        required_permission="settings.onboarding.manage",
     ),
     "cohorts.invitations_enabled": SettingDefinition(
         key="cohorts.invitations_enabled",
@@ -121,6 +129,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         default=True,
         category="Cohorts",
         description="Whether direct cohort invitations are permitted in this organization.",
+        required_permission="settings.cohorts.manage",
     ),
     "learning_paths.default_visibility": SettingDefinition(
         key="learning_paths.default_visibility",
@@ -129,6 +138,7 @@ _SETTINGS_REGISTRY: dict[str, SettingDefinition] = {
         allowed_values=["public", "private"],
         category="Learning Paths",
         description="Default visibility ('public' or 'private') for newly created learning paths.",
+        required_permission="learning_paths.manage",
     ),
 }
 

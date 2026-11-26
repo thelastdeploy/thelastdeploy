@@ -4,7 +4,7 @@ from sqlalchemy import select, func, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import (
     User, LabProgress, SectionProgress, Lab, Section, Module,
-    OrganizationMembership, Organization, AuditLog, Role, MembershipRole,
+    OrganizationMembership, Organization, AuditLog, Role, RolePermission, Permission,
     LearningPath
 )
 
@@ -304,9 +304,14 @@ async def get_or_create_platform_membership(
     if mem:
         return mem
 
+    role = await resolve_default_org_role(db, plat_org.id, preferred_slug=role_slug)
+    if not role:
+        raise ValueError(f"No roles exist in organization {plat_org.slug}")
+
     mem = OrganizationMembership(
         organization_id=plat_org.id,
         user_id=user_id,
+        role_id=role.id,
         status="active",
         total_xp=0,
         unverified_xp=0,
@@ -314,11 +319,114 @@ async def get_or_create_platform_membership(
     db.add(mem)
     await db.flush()
 
-    role = await db.scalar(select(Role).where(Role.slug == role_slug))
-    if role:
-        db.add(MembershipRole(membership_id=mem.id, role_id=role.id))
+    return mem
+
+
+async def resolve_default_org_role(
+    db: AsyncSession,
+    organization_id: int,
+    preferred_slug: str = "learner",
+) -> Role | None:
+    """Resolve preferred default role in an org, falling back to the lowest-privilege role if deleted/renamed."""
+    from sqlalchemy.orm import selectinload
+
+    preferred = await db.scalar(
+        select(Role).where(Role.organization_id == organization_id, Role.slug == preferred_slug)
+    )
+    if preferred:
+        return preferred
+
+    roles = (
+        await db.execute(
+            select(Role)
+            .options(selectinload(Role.permissions).selectinload(RolePermission.permission))
+            .where(Role.organization_id == organization_id)
+        )
+    ).scalars().all()
+    if not roles:
+        return None
+
+    def _sort_key(r: Role) -> tuple[int, int, int]:
+        perm_keys = {rp.permission.key for rp in r.permissions if rp.permission}
+        has_critical = 1 if "roles.manage" in perm_keys else 0
+        return (has_critical, len(perm_keys), r.id)
+
+    return min(roles, key=_sort_key)
+
+
+DEFAULT_ORG_ROLE_SPECS: list[tuple[str, str, str, list[str]]] = [
+    (
+        "Owner",
+        "owner",
+        "Full organization ownership including role management",
+        [
+            "analytics.view", "analytics.export", "audit.view",
+            "cohorts.manage", "content.publish", "content.verify",
+            "invitations.manage", "learning_paths.manage",
+            "members.manage", "members.view", "organization.manage",
+            "roles.manage", "roles.assign",
+            "settings.view", "settings.manage",
+            "settings.cohorts.manage", "settings.content.manage",
+            "settings.onboarding.manage", "settings.security.manage",
+        ],
+    ),
+    (
+        "Admin",
+        "admin",
+        "Organization administrator",
+        [
+            "analytics.view", "analytics.export", "audit.view",
+            "cohorts.manage", "content.publish", "content.verify",
+            "invitations.manage", "learning_paths.manage",
+            "members.manage", "members.view", "organization.manage",
+            "roles.assign",
+            "settings.view", "settings.manage",
+            "settings.cohorts.manage", "settings.content.manage",
+            "settings.onboarding.manage",
+        ],
+    ),
+    (
+        "Instructor",
+        "instructor",
+        "Cohort and curriculum instructor",
+        [
+            "analytics.view", "cohorts.manage", "content.publish",
+            "learning_paths.manage", "members.view",
+        ],
+    ),
+    (
+        "Learner",
+        "learner",
+        "Standard organization learner",
+        ["members.view"],
+    ),
+]
+
+
+async def seed_default_org_roles(db: AsyncSession, organization_id: int) -> dict[str, Role]:
+    """Create the 4 default roles with their default permissions for a new organization."""
+    perms_res = await db.execute(select(Permission))
+    perm_by_key = {p.key: p for p in perms_res.scalars().all()}
+
+    created: dict[str, Role] = {}
+    for name, slug, description, perm_keys in DEFAULT_ORG_ROLE_SPECS:
+        role = Role(
+            organization_id=organization_id,
+            name=name,
+            slug=slug,
+            description=description,
+        )
+        db.add(role)
         await db.flush()
 
-    return mem
+        for pk in perm_keys:
+            perm = perm_by_key.get(pk)
+            if perm:
+                db.add(RolePermission(role_id=role.id, permission_id=perm.id))
+
+        created[slug] = role
+
+    await db.flush()
+    return created
 
 

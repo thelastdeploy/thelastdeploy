@@ -17,19 +17,15 @@ from app.models import (
     Organization,
     OrganizationMembership,
     Role,
-    MembershipRole,
-    PlatformRole,
-    PlatformUserRole,
     PlatformPermission,
     PlatformUserPermission,
-    PlatformRolePermission,
     Cohort,
     CohortMembership,
     LearningPath,
-    OrganizationSettingAvailability,
     OrganizationSetting,
 )
 from app.auth import hash_password
+from app.services import seed_default_org_roles
 from app.settings.registry import get_all_setting_definitions
 from seed.seed_modules import seed as seed_modules
 
@@ -104,26 +100,18 @@ async def seed_organizations_and_settings(db):
             org.domains = odef["domains"]
         org_map[odef["slug"]] = org
 
-    # Seed organization settings availability for each organization
+    # Seed organization settings and default org-scoped roles for each organization
     all_defs = get_all_setting_definitions()
     for slug, org in org_map.items():
+        has_roles = (await db.execute(
+            select(Role.id).where(Role.organization_id == org.id).limit(1)
+        )).scalar_one_or_none()
+        if not has_roles:
+            await seed_default_org_roles(db, org.id)
+            print(f"  ✅ Seeded default roles for organization: {org.slug}")
+
         for sdef in all_defs:
             key = sdef.key
-            avail = (await db.execute(
-                select(OrganizationSettingAvailability).where(
-                    OrganizationSettingAvailability.organization_id == org.id,
-                    OrganizationSettingAvailability.setting_key == key,
-                )
-            )).scalar_one_or_none()
-
-            if not avail:
-                db.add(OrganizationSettingAvailability(
-                    organization_id=org.id,
-                    setting_key=key,
-                    is_enabled=True,
-                ))
-
-            # Default setting value
             setting = (await db.execute(
                 select(OrganizationSetting).where(
                     OrganizationSetting.organization_id == org.id,
@@ -135,7 +123,10 @@ async def seed_organizations_and_settings(db):
                     organization_id=org.id,
                     setting_key=key,
                     value=sdef.default,
+                    is_enabled=True,
                 ))
+            elif not setting.is_enabled:
+                setting.is_enabled = True
 
     # Seed Cohorts for Apex University and CloudScale
     apex_org = org_map.get("apex-univ")
@@ -216,46 +207,16 @@ async def seed_users(db, org_map):
     print("👤 Seeding development users matrix...")
     default_pw_hash = hash_password("Password123!")
 
-    # Fetch platform roles
-    plat_admin_role = (await db.execute(select(PlatformRole).where(PlatformRole.slug == "platform_admin"))).scalar_one_or_none()
-    curr_lead_role = (await db.execute(select(PlatformRole).where(PlatformRole.slug == "curriculum_lead"))).scalar_one_or_none()
-    support_role = (await db.execute(select(PlatformRole).where(PlatformRole.slug == "support_staff"))).scalar_one_or_none()
-
-    # Link platform.organizations.manage to platform_admin role
-    from app.models import PlatformPermission, PlatformRolePermission
-    org_manage_perm = (await db.execute(select(PlatformPermission).where(PlatformPermission.key == "platform.organizations.manage"))).scalar_one_or_none()
-    if plat_admin_role and org_manage_perm:
-        has_perm = (await db.execute(
-            select(PlatformRolePermission).where(
-                PlatformRolePermission.platform_role_id == plat_admin_role.id,
-                PlatformRolePermission.permission_id == org_manage_perm.id,
-            )
-        )).scalar_one_or_none()
-        if not has_perm:
-            db.add(PlatformRolePermission(
-                platform_role_id=plat_admin_role.id,
-                permission_id=org_manage_perm.id,
-            ))
-            await db.flush()
-            print("  ✅ Linked platform.organizations.manage to platform_admin role")
-
     # Fetch all platform permissions into map
     all_perm_objs = (await db.execute(select(PlatformPermission))).scalars().all()
     perm_map = {p.key: p for p in all_perm_objs}
     all_perm_keys = list(perm_map.keys())
 
-    # Fetch org roles
-    role_owner = (await db.execute(select(Role).where(Role.slug == "owner"))).scalar_one_or_none()
-    role_admin = (await db.execute(select(Role).where(Role.slug == "admin"))).scalar_one_or_none()
-    role_instructor = (await db.execute(select(Role).where(Role.slug == "instructor"))).scalar_one_or_none()
-    role_learner = (await db.execute(select(Role).where(Role.slug == "learner"))).scalar_one_or_none()
-
-    role_lookup = {
-        "owner": role_owner,
-        "admin": role_admin,
-        "instructor": role_instructor,
-        "learner": role_learner,
-    }
+    # Fetch org-scoped roles per organization
+    org_roles_map: dict[int, dict[str, Role]] = {}
+    for org in org_map.values():
+        roles_res = (await db.execute(select(Role).where(Role.organization_id == org.id))).scalars().all()
+        org_roles_map[org.id] = {r.slug: r for r in roles_res}
 
     # User definitions: username, email, platform_roles, memberships: [{ org_slug, roles, xp }]
     users_matrix = [
@@ -367,7 +328,7 @@ async def seed_users(db, org_map):
         {
             "username": "ethan_apex",
             "email": "ethan.apex@example.com",
-            "platform_roles": [curr_lead_role],
+            "platform_roles": [],
             "platform_permissions": ["platform.modules.view_all", "platform.modules.verify"],
             "memberships": [
                 {"org_slug": "apex-univ", "roles": ["learner"], "xp": 80},
@@ -445,16 +406,6 @@ async def seed_users(db, org_map):
             user.password_hash = default_pw_hash
             user.is_verified = True
 
-        # Platform Roles
-        for pr in udef["platform_roles"]:
-            if pr:
-                has_pr = (await db.execute(select(PlatformUserRole).where(
-                    PlatformUserRole.user_id == user.id,
-                    PlatformUserRole.platform_role_id == pr.id,
-                ))).scalar_one_or_none()
-                if not has_pr:
-                    db.add(PlatformUserRole(user_id=user.id, platform_role_id=pr.id))
-
         # Direct Platform Permissions
         for pkey in udef.get("platform_permissions", []):
             perm_obj = perm_map.get(pkey)
@@ -473,39 +424,32 @@ async def seed_users(db, org_map):
             target_org = org_map.get(mdef["org_slug"])
             if not target_org:
                 continue
+            role_lookup = org_roles_map.get(target_org.id, {})
 
             mem = (await db.execute(select(OrganizationMembership).where(
                 OrganizationMembership.user_id == user.id,
                 OrganizationMembership.organization_id == target_org.id,
             ))).scalar_one_or_none()
 
+            primary_slug = mdef["roles"][0] if mdef["roles"] else "learner"
+            r_obj = role_lookup.get(primary_slug)
+            if not r_obj:
+                continue
+
             if not mem:
                 mem = OrganizationMembership(
                     organization_id=target_org.id,
                     user_id=user.id,
+                    role_id=r_obj.id,
                     status="active",
                     total_xp=mdef["xp"],
                     unverified_xp=0,
                 )
                 db.add(mem)
                 await db.flush()
-
-                for r_slug in mdef["roles"]:
-                    r_obj = role_lookup.get(r_slug)
-                    if r_obj:
-                        db.add(MembershipRole(membership_id=mem.id, role_id=r_obj.id))
             else:
                 mem.total_xp = mdef["xp"]
-                # Ensure roles exist
-                for r_slug in mdef["roles"]:
-                    r_obj = role_lookup.get(r_slug)
-                    if r_obj:
-                        has_r = (await db.execute(select(MembershipRole).where(
-                            MembershipRole.membership_id == mem.id,
-                            MembershipRole.role_id == r_obj.id,
-                        ))).scalar_one_or_none()
-                        if not has_r:
-                            db.add(MembershipRole(membership_id=mem.id, role_id=r_obj.id))
+                mem.role_id = r_obj.id
 
     await db.commit()
     print("✓ User matrix and permissions successfully seeded.")

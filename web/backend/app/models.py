@@ -30,7 +30,6 @@ class User(Base):
 
     sessions: Mapped[list["UserSession"]] = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
     memberships: Mapped[list["OrganizationMembership"]] = relationship("OrganizationMembership", back_populates="user", cascade="all, delete-orphan")
-    platform_roles: Mapped[list["PlatformUserRole"]] = relationship("PlatformUserRole", back_populates="user", cascade="all, delete-orphan", foreign_keys="PlatformUserRole.user_id")
     platform_permissions: Mapped[list["PlatformUserPermission"]] = relationship("PlatformUserPermission", back_populates="user", cascade="all, delete-orphan", foreign_keys="PlatformUserPermission.user_id")
 
 
@@ -237,6 +236,7 @@ class OrganizationMembership(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    role_id: Mapped[int] = mapped_column(Integer, ForeignKey("roles.id", ondelete="RESTRICT"), nullable=False)
     status: Mapped[str] = mapped_column(String(50), default="active", server_default="active", nullable=False)
     total_xp: Mapped[int] = mapped_column(BigInteger, default=0, server_default="0", nullable=False)
     unverified_xp: Mapped[int] = mapped_column(BigInteger, default=0, server_default="0", nullable=False)
@@ -247,7 +247,7 @@ class OrganizationMembership(Base):
 
     organization: Mapped["Organization"] = relationship("Organization", back_populates="memberships")
     user: Mapped["User"] = relationship("User", back_populates="memberships")
-    roles: Mapped[list["MembershipRole"]] = relationship("MembershipRole", back_populates="membership", cascade="all, delete-orphan")
+    role: Mapped["Role"] = relationship("Role")
     cohort_memberships: Mapped[list["CohortMembership"]] = relationship("CohortMembership", back_populates="membership", cascade="all, delete-orphan", overlaps="cohort,memberships")
     lab_progress: Mapped[list["LabProgress"]] = relationship("LabProgress", back_populates="membership", cascade="all, delete-orphan")
     section_progress: Mapped[list["SectionProgress"]] = relationship("SectionProgress", back_populates="membership", cascade="all, delete-orphan")
@@ -264,14 +264,19 @@ class Permission(Base):
 
 class Role(Base):
     __tablename__ = "roles"
+    __table_args__ = (
+        UniqueConstraint("organization_id", "slug", name="uq_roles_org_slug"),
+        Index("idx_roles_org_id", "organization_id"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
-    slug: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    slug: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    is_system: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
+    organization: Mapped["Organization"] = relationship("Organization")
     permissions: Mapped[list["RolePermission"]] = relationship("RolePermission", back_populates="role", cascade="all, delete-orphan")
 
 
@@ -289,50 +294,6 @@ class RolePermission(Base):
     permission: Mapped["Permission"] = relationship("Permission")
 
 
-class OrganizationRoleAvailability(Base):
-    __tablename__ = "organization_role_availability"
-    __table_args__ = (
-        UniqueConstraint("organization_id", "role_id", name="uq_org_role_avail"),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
-    role_id: Mapped[int] = mapped_column(Integer, ForeignKey("roles.id", ondelete="RESTRICT"), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-    organization: Mapped["Organization"] = relationship("Organization")
-    role: Mapped["Role"] = relationship("Role")
-
-
-class MembershipRole(Base):
-    __tablename__ = "membership_roles"
-    __table_args__ = (
-        UniqueConstraint("membership_id", "role_id", name="uq_membership_roles"),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    membership_id: Mapped[int] = mapped_column(Integer, ForeignKey("organization_memberships.id", ondelete="CASCADE"), nullable=False)
-    role_id: Mapped[int] = mapped_column(Integer, ForeignKey("roles.id", ondelete="RESTRICT"), nullable=False)
-    assigned_by: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
-    assigned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-    membership: Mapped["OrganizationMembership"] = relationship("OrganizationMembership", back_populates="roles")
-    role: Mapped["Role"] = relationship("Role")
-    assigner: Mapped["User | None"] = relationship("User", foreign_keys=[assigned_by])
-
-
-class PlatformRole(Base):
-    __tablename__ = "platform_roles"
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    name: Mapped[str] = mapped_column(String(100), nullable=False)
-    slug: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
-    description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-    permissions: Mapped[list["PlatformRolePermission"]] = relationship("PlatformRolePermission", back_populates="platform_role", cascade="all, delete-orphan")
-
-
 class PlatformPermission(Base):
     __tablename__ = "platform_permissions"
 
@@ -340,37 +301,6 @@ class PlatformPermission(Base):
     key: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-
-class PlatformRolePermission(Base):
-    __tablename__ = "platform_role_permissions"
-    __table_args__ = (
-        UniqueConstraint("platform_role_id", "permission_id", name="uq_platform_role_perms"),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    platform_role_id: Mapped[int] = mapped_column(Integer, ForeignKey("platform_roles.id", ondelete="CASCADE"), nullable=False)
-    permission_id: Mapped[int] = mapped_column(Integer, ForeignKey("platform_permissions.id", ondelete="CASCADE"), nullable=False)
-
-    platform_role: Mapped["PlatformRole"] = relationship("PlatformRole", back_populates="permissions")
-    permission: Mapped["PlatformPermission"] = relationship("PlatformPermission")
-
-
-class PlatformUserRole(Base):
-    __tablename__ = "platform_user_roles"
-    __table_args__ = (
-        UniqueConstraint("user_id", "platform_role_id", name="uq_platform_user_roles"),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    platform_role_id: Mapped[int] = mapped_column(Integer, ForeignKey("platform_roles.id", ondelete="RESTRICT"), nullable=False)
-    assigned_by: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
-    assigned_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-    user: Mapped["User"] = relationship("User", back_populates="platform_roles", foreign_keys=[user_id])
-    platform_role: Mapped["PlatformRole"] = relationship("PlatformRole")
-    assigner: Mapped["User | None"] = relationship("User", foreign_keys=[assigned_by])
 
 
 class PlatformUserPermission(Base):
@@ -498,23 +428,6 @@ class AuditLog(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
-class OrganizationSettingAvailability(Base):
-    __tablename__ = "organization_setting_availability"
-    __table_args__ = (
-        UniqueConstraint("organization_id", "setting_key", name="uq_org_setting_avail"),
-        Index("idx_org_setting_avail_org", "organization_id"),
-    )
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
-    setting_key: Mapped[str] = mapped_column(String(100), nullable=False)
-    is_enabled: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true", nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-
-    organization: Mapped["Organization"] = relationship("Organization")
-
-
 class OrganizationSetting(Base):
     __tablename__ = "organization_settings"
     __table_args__ = (
@@ -525,7 +438,8 @@ class OrganizationSetting(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     organization_id: Mapped[int] = mapped_column(Integer, ForeignKey("organizations.id", ondelete="CASCADE"), nullable=False)
     setting_key: Mapped[str] = mapped_column(String(100), nullable=False)
-    value: Mapped[Any] = mapped_column(JSONB, nullable=False)
+    value: Mapped[Any | None] = mapped_column(JSONB, nullable=True)
+    is_enabled: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false", nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

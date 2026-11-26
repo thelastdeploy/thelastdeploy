@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from typing import Any
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 # --- Auth ---
@@ -232,7 +232,6 @@ class MeResponse(BaseModel):
     is_maintainer: bool = False
     is_admin: bool = False
     can_manage_workspaces: bool = False
-    platform_roles: list[str] = []
     platform_permissions: list[str] = []
     completed_labs: list[str]       # lab IDs (from lab_progress)
     completed_sections: list[str]   # section IDs (from section_progress — reading/questions)
@@ -483,6 +482,8 @@ class OrgSettingItemResponse(BaseModel):
     category: str
     description: str
     data_type: str
+    can_edit: bool = True
+    required_permission: str | None = None
     updated_at: datetime | None = None
 
 
@@ -598,6 +599,51 @@ class InvitationStatsResponse(BaseModel):
     expired_invitations: int
     revoked_invitations: int
     pending_access_requests: int
+
+
+class OrgPermissionItemResponse(BaseModel):
+    key: str
+    description: str
+
+
+class OrgRoleResponse(BaseModel):
+    id: int
+    organization_id: int
+    name: str
+    slug: str
+    description: str | None = None
+    permissions: list[str] = []
+    member_count: int = 0
+    is_caller_role: bool = False
+    can_delete: bool = True
+    can_remove_roles_manage: bool = True
+    created_at: datetime
+
+
+class OrgRoleCreateRequest(BaseModel):
+    name: str = Field(..., min_length=1, max_length=100)
+    slug: str | None = Field(default=None, max_length=100)
+    description: str | None = None
+    permissions: list[str] = []
+
+
+class OrgRoleUpdateRequest(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    description: str | None = None
+    permissions: list[str] | None = None
+
+
+class MemberRoleBatchItem(BaseModel):
+    user_id: int
+    role: str
+
+
+class MemberRoleBatchUpdateRequest(BaseModel):
+    updates: list[MemberRoleBatchItem]
+
+
+class MemberBulkRemoveRequest(BaseModel):
+    user_ids: list[int]
 
 
 

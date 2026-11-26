@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
+import { useWorkspaceSync } from "@/lib/hooks/use-workspace-sync";
 import { CohortResponse, LearningPathResponse } from "@/lib/types";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
+import { EmptyState } from "@/components/shared/empty-state";
 import { 
   Users, Calendar, Clock, ArrowRight, ShieldCheck, CheckCircle2, 
   Sparkles, Layers, BookOpen, KeyRound, ExternalLink 
@@ -22,51 +24,37 @@ export default function CohortsPage() {
   const [cohorts, setCohorts] = useState<CohortResponse[]>([]);
   const [paths, setPaths] = useState<LearningPathResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const selectedOrg = useWorkspaceSync() || "tld";
   const [activeOrg, setActiveOrg] = useState<string>("tld");
   const [orgName, setOrgName] = useState<string>("Personal");
   const [isAdmin, setIsAdmin] = useState(false);
   const [inviteCode, setInviteCode] = useState("");
 
   useEffect(() => {
-    const selected = api.getSelectedOrg() || "tld";
-    setActiveOrg(selected);
+    setActiveOrg(selectedOrg);
+    setLoading(true);
 
     Promise.all([
-      api.getCohorts(selected).catch(() => []),
-      api.getLearningPaths(selected).catch(() => []),
+      api.getCohorts(selectedOrg).catch(() => []),
+      api.getLearningPaths(selectedOrg).catch(() => []),
       api.getOrganizations().catch(() => []),
     ])
       .then(([cohortsData, pathsData, orgsData]) => {
         setCohorts(cohortsData);
         setPaths(pathsData);
-        const current = orgsData.find((o) => o.slug === selected);
+        const current = orgsData.find((o) => o.slug === selectedOrg);
         if (current) {
           setOrgName(current.type === "platform" || current.is_platform ? "Personal" : current.name);
-          const adminCheck = current.roles?.some((r) => ["admin", "owner", "platform_admin"].includes(r)) || user?.is_maintainer || user?.is_admin;
+          const adminCheck =
+            current.roles?.some((r) => ["admin", "owner", "platform_admin"].includes(r)) ||
+            user?.is_maintainer ||
+            user?.is_admin;
           setIsAdmin(!!adminCheck);
         }
       })
       .catch((err) => console.error("Error loading cohorts:", err))
       .finally(() => setLoading(false));
-
-    const handleOrgChange = () => {
-      const newOrg = api.getSelectedOrg() || "tld";
-      setActiveOrg(newOrg);
-      setLoading(true);
-      Promise.all([
-        api.getCohorts(newOrg).catch(() => []),
-        api.getLearningPaths(newOrg).catch(() => []),
-      ])
-        .then(([cData, pData]) => {
-          setCohorts(cData);
-          setPaths(pData);
-        })
-        .finally(() => setLoading(false));
-    };
-
-    window.addEventListener("tld:workspace-changed", handleOrgChange);
-    return () => window.removeEventListener("tld:workspace-changed", handleOrgChange);
-  }, [user]);
+  }, [user, selectedOrg]);
 
   const handleRedeemInvite = (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,25 +123,17 @@ export default function CohortsPage() {
 
         {/* Cohort Cards - Open Matrix Grid */}
         {cohorts.length === 0 ? (
-          <div className="text-center py-20 border border-dashed border-border rounded-none bg-card/20 space-y-4">
-            <div className="h-16 w-16 mx-auto rounded-none bg-muted/50 flex items-center justify-center text-muted-foreground">
-              <Users className="h-8 w-8" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-lg font-bold text-foreground">No Cohorts Found in {orgName}</h3>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                No active cohorts are currently scheduled for this workspace. Use an invite code above or switch to an organization with active cohorts.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="rounded-none text-xs font-bold"
-            >
-              <Link href="/paths">Explore Learning Paths →</Link>
-            </Button>
-          </div>
+          <EmptyState
+            icon={<Users className="h-8 w-8" />}
+            title={`No Cohorts Found in ${orgName}`}
+            description="No active cohorts are currently scheduled for this workspace. Use an invite code above or switch to an organization with active cohorts."
+            className="py-20 bg-card/20"
+            action={
+              <Button variant="outline" size="sm" asChild className="rounded-none text-xs font-bold">
+                <Link href="/paths">Explore Learning Paths →</Link>
+              </Button>
+            }
+          />
         ) : (
           <div className="relative overflow-visible">
             {/* Continuous Vertical Divider Line down the center */}
@@ -183,24 +163,8 @@ export default function CohortsPage() {
                               !isLastInColMobile ? "max-lg:border-b max-lg:border-border/40" : ""
                             }`}
                           >
-                            {/* Sharp-Cornered Inset Tile (100% invisible when idle, thick status highlight when hover) */}
-                            <div
-                              className="w-full h-full min-h-[300px] p-6 sm:p-7 rounded-none flex flex-col justify-between transition-all duration-150"
-                              style={{
-                                border: "none",
-                                boxShadow: "none",
-                                backgroundColor: "transparent",
-                              }}
-                              onMouseEnter={(e) => {
-                                const isDark = document.documentElement.classList.contains("dark");
-                                e.currentTarget.style.boxShadow = `inset 0 0 0 2px ${statusTheme.border}`;
-                                e.currentTarget.style.backgroundColor = isDark ? statusTheme.bgDark : statusTheme.bgLight;
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.boxShadow = "none";
-                                e.currentTarget.style.backgroundColor = "transparent";
-                              }}
-                            >
+                            {/* Sharp-Cornered Inset Tile (100% invisible when idle, inset highlight when hovered) */}
+                            <div className="matrix-hover-cell w-full h-full min-h-[300px] p-6 sm:p-7 rounded-none flex flex-col justify-between">
                               <div className="space-y-4">
                                 <div className="flex items-start justify-between gap-4">
                                   <div className="flex items-center gap-3">

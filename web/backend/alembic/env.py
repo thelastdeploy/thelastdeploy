@@ -13,10 +13,10 @@ from app.database import Base, db_url
 from app.models import (  # noqa: F401 — registers models
     User, UserSession, CLIDeviceAuth, Module, Section, Lab, LabProgress, SectionProgress,
     Organization, OrganizationMembership, Permission, Role,
-    RolePermission, OrganizationRoleAvailability, MembershipRole, PlatformRole,
-    PlatformPermission, PlatformRolePermission, PlatformUserRole, PlatformUserPermission, Cohort,
+    RolePermission,
+    PlatformPermission, PlatformUserPermission, Cohort,
     CohortMembership, CohortInvite, LearningPath, AuditLog,
-    OrganizationSettingAvailability, OrganizationSetting,
+    OrganizationSetting,
     OrganizationInvitation, OrganizationAccessRequest
 )
 

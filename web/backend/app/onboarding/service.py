@@ -16,7 +16,6 @@ from app.models import (
     Organization,
     OrganizationMembership,
     Role,
-    MembershipRole,
     Cohort,
     CohortMembership,
     OrganizationInvitation,
@@ -605,20 +604,20 @@ async def ensure_organization_and_cohort_membership(
         )
     )
     if not mem:
+        from app.services import resolve_default_org_role
+        learner_role = await resolve_default_org_role(db, organization_id, preferred_slug="learner")
+        if not learner_role:
+            raise ValueError(f"No roles configured for organization {organization_id}")
         mem = OrganizationMembership(
             organization_id=organization_id,
             user_id=user_id,
+            role_id=learner_role.id,
             status="active",
             total_xp=0,
             unverified_xp=0,
         )
         db.add(mem)
         await db.flush()
-
-        learner_role = await db.scalar(select(Role).where(Role.slug == "learner"))
-        if learner_role:
-            db.add(MembershipRole(membership_id=mem.id, role_id=learner_role.id))
-            await db.flush()
     elif mem.status != "active":
         mem.status = "active"
         db.add(mem)

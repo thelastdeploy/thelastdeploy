@@ -154,6 +154,11 @@ async def list_modules(
         Module.status != 'draft',
         Module.owner_organization_id.in_(visible_org_ids),
     )
+    if visible_org_ids:
+        from app.settings.service import SettingsService
+        show_unverified = await SettingsService.get_effective_setting(db, visible_org_ids[0], "content.show_unverified")
+        if show_unverified is False:
+            stmt = stmt.where(Module.status == "verified")
     result = await db.execute(stmt)
     rows = result.all()
 

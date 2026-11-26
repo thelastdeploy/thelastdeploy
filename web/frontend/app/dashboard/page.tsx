@@ -9,10 +9,16 @@ import { useAuth } from "@/lib/auth";
 import { useDashboardCache } from "@/lib/dashboard/use-dashboard-cache";
 import { ModuleDetail, OrganizationMembershipInfo, CohortResponse, LearningPathResponse } from "@/lib/types";
 import { api } from "@/lib/api";
+import { useWorkspaceSync } from "@/lib/hooks/use-workspace-sync";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SectionBadge } from "@/components/dashboard/section-badge";
 import { getRank, getNextRank, getXpProgress } from "@/lib/ranks";
+import {
+  isModuleComplete,
+  isModuleInProgress,
+  getModuleRecencyIndex,
+} from "@/lib/dashboard/module-progress";
 import { Zap, Trophy, Terminal, ArrowRight, CheckCircle2, Building2, GraduationCap, Globe, Users, BookOpen, Calendar } from "lucide-react";
 import Link from "next/link";
 
@@ -23,6 +29,7 @@ export default function DashboardPage() {
   const [activeOrgInfo, setActiveOrgInfo] = useState<OrganizationMembershipInfo | null>(null);
   const [cohorts, setCohorts] = useState<CohortResponse[]>([]);
   const [learningPaths, setLearningPaths] = useState<LearningPathResponse[]>([]);
+  const selectedOrg = useWorkspaceSync();
 
   useEffect(() => {
     if (!authLoading && !authUser) router.push("/login");
@@ -32,8 +39,7 @@ export default function DashboardPage() {
     const fetchOrgData = async () => {
       try {
         const orgs = await api.getOrganizations();
-        const selectedSlug = api.getSelectedOrg();
-        const current = orgs.find((o) => o.slug === selectedSlug) || orgs.find((o) => o.is_platform || o.type === "platform") || orgs[0] || null;
+        const current = orgs.find((o) => o.slug === selectedOrg) || orgs.find((o) => o.is_platform || o.type === "platform") || orgs[0] || null;
         setActiveOrgInfo(current);
 
         if (current && !current.is_platform && current.type !== "platform") {
@@ -53,13 +59,7 @@ export default function DashboardPage() {
     };
 
     fetchOrgData();
-
-    const onWsChange = () => {
-      fetchOrgData();
-    };
-    window.addEventListener("tld:workspace-changed", onWsChange);
-    return () => window.removeEventListener("tld:workspace-changed", onWsChange);
-  }, []);
+  }, [selectedOrg]);
 
   if (authLoading || (loading && !data)) return <LoadingSpinner className="py-40" />;
   if (!data) return null;
@@ -69,54 +69,14 @@ export default function DashboardPage() {
   const nextRank = getNextRank(user.xp);
   const xpProgress = getXpProgress(user.xp);
 
-  const isModuleComplete = (m: ModuleDetail) => {
-    const allLabs = m.sections.flatMap((s) => s.labs);
-    // Module complete = all labs done + all reading sections done
-    const allSections = m.sections;
-    const labsDone = allLabs.length === 0 || allLabs.every((l) => user.completed_labs.includes(l.id));
-    const readingDone = allSections
-      .filter((s) => s.labs.length === 0)
-      .every((s) => user.completed_sections.includes(s.id));
-    return labsDone && readingDone && allSections.length > 0;
-  };
-
-  const isModuleInProgress = (m: ModuleDetail) => {
-    const allLabs = m.sections.flatMap((s) => s.labs);
-    const hasLabProgress = allLabs.some((l) => user.completed_labs.includes(l.id));
-    const hasSectionProgress = m.sections.some((s) => user.completed_sections.includes(s.id));
-    return (hasLabProgress || hasSectionProgress) && !isModuleComplete(m);
-  };
-
   const labToModule: Record<string, string> = {};
   modules.forEach((m) => m.sections.forEach((s) => s.labs.forEach((l) => { labToModule[l.id] = m.id; })));
 
-  const getModuleRecencyIndex = (m: ModuleDetail) => {
-    const allLabs = m.sections.flatMap((s) => s.labs);
-    const allSections = m.sections;
-    
-    let minIdx = Infinity;
-    allLabs.forEach((l) => {
-      const idx = user.completed_labs.indexOf(l.id);
-      if (idx !== -1 && idx < minIdx) {
-        minIdx = idx;
-      }
-    });
-    allSections.forEach((s) => {
-      const idx = user.completed_sections.indexOf(s.id);
-      if (idx !== -1 && idx < minIdx) {
-        minIdx = idx;
-      }
-    });
-    
-    return minIdx;
-  };
-
-  const completedModules = modules.filter(isModuleComplete);
-  const inProgressModules = modules.filter(isModuleInProgress);
+  const completedModules = modules.filter((m) => isModuleComplete(m, user));
 
   const activeModules = modules
-    .filter((m) => isModuleComplete(m) || isModuleInProgress(m))
-    .sort((a, b) => getModuleRecencyIndex(a) - getModuleRecencyIndex(b));
+    .filter((m) => isModuleComplete(m, user) || isModuleInProgress(m, user))
+    .sort((a, b) => getModuleRecencyIndex(a, user) - getModuleRecencyIndex(b, user));
 
   const activeModulesToShow = activeModules.slice(0, 4);
 
@@ -306,7 +266,7 @@ export default function DashboardPage() {
             ) : (
               <div className="flex flex-col gap-3">
                 {activeModulesToShow.map((m) => {
-                  const isComplete = isModuleComplete(m);
+                  const isComplete = isModuleComplete(m, user);
                   if (isComplete) {
                     return (
                       <Link key={m.id} href={`/modules/${m.id}`}>

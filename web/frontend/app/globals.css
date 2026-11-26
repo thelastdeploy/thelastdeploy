@@ -218,6 +218,15 @@ body {
   z-index: 0;
 }
 
+.matrix-hover-cell {
+  transition: box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.matrix-hover-cell:hover {
+  box-shadow: inset 0 0 0 2px rgba(var(--accent-primary-rgb), 0.7);
+  background-color: rgba(var(--accent-primary-rgb), 0.04);
+}
+
 /* ─── Keyframe animations ─────────────────────────────── */
 
 @keyframes fadeSlideIn {
@@ -247,14 +256,4 @@ body {
 @keyframes spinOrbitCounter {
   from { transform: rotate(0deg); }
   to   { transform: rotate(-360deg); }
-}
-
-/* Hide number spin buttons globally for class .no-spin */
-.no-spin::-webkit-outer-spin-button,
-.no-spin::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-.no-spin[type=number] {
-  -moz-appearance: textfield;
 }

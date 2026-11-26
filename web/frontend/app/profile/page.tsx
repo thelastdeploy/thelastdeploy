@@ -5,77 +5,16 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
-import { api } from "@/lib/api";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { getRank, getNextRank, getXpProgress } from "@/lib/ranks";
-import { SessionResponse } from "@/lib/types";
-import { Laptop, Terminal, Trash2, ShieldCheck, Clock, Check } from "lucide-react";
+import { ProfileOverviewTab } from "@/components/profile/profile-overview-tab";
+import { ProfileSettingsTab } from "@/components/profile/profile-settings-tab";
+import { ProfileSecurityTab } from "@/components/profile/profile-security-tab";
 
 export default function ProfilePage() {
   const { user, loading, logout, refreshUser } = useAuth();
   const router = useRouter();
-
-  // Active tab state
   const [activeTab, setActiveTab] = useState<"overview" | "settings" | "security">("overview");
-
-  // Lab search state
-  const [labSearch, setLabSearch] = useState("");
-
-  // Profile update states
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [profileLoading, setProfileLoading] = useState(false);
-  const [profileError, setProfileError] = useState<string | null>(null);
-  const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
-
-  // Password update states
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordLoading, setPasswordLoading] = useState(false);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
-
-  // Active Sessions state (Module A)
-  const [sessions, setSessions] = useState<SessionResponse[]>([]);
-  const [sessionsLoading, setSessionsLoading] = useState(false);
-
-  useEffect(() => {
-    if (activeTab === "security" && user) {
-      loadSessions();
-    }
-  }, [activeTab, user]);
-
-  const loadSessions = async () => {
-    setSessionsLoading(true);
-    try {
-      const data = await api.getSessions();
-      setSessions(data);
-    } catch (err) {
-      console.error("Failed to load sessions:", err);
-    } finally {
-      setSessionsLoading(false);
-    }
-  };
-
-  const handleRevokeSession = async (sessionId: number) => {
-    try {
-      await api.revokeSession(sessionId);
-      setSessions((prev) => prev.filter((s) => s.id !== sessionId));
-    } catch (err: any) {
-      alert("Failed to revoke session: " + err.message);
-    }
-  };
-
-  // Sync inputs with user data once loaded
-  useEffect(() => {
-    if (user) {
-      setUsername(user.username);
-      setEmail(user.email);
-    }
-  }, [user]);
 
   useEffect(() => {
     if (!loading && !user) router.push("/login");
@@ -87,103 +26,16 @@ export default function ProfilePage() {
   const nextRank = getNextRank(user.xp);
   const xpProgress = getXpProgress(user.xp);
 
-  // Helper to extract clean initials (e.g. "0xShreyansh" -> "S" or "SH")
   const getInitials = (name: string) => {
     const cleanName = name.startsWith("0x") ? name.slice(2) : name;
     if (!cleanName) return name.slice(0, 1).toUpperCase();
     return cleanName.slice(0, 2).toUpperCase();
   };
 
-  // Helper to determine lab topic from ID prefix
-  const getTopicBadge = (labId: string) => {
-    if (labId.startsWith("dkr-")) {
-      return { label: "Docker", color: "text-blue-400 bg-blue-500/10 border-blue-500/20" };
-    }
-    if (labId.startsWith("k8s-")) {
-      return { label: "Kubernetes", color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" };
-    }
-    if (labId.startsWith("lnx-")) {
-      return { label: "Linux", color: "text-orange-400 bg-orange-500/10 border-orange-500/20" };
-    }
-    if (labId.startsWith("git-")) {
-      return { label: "Git", color: "text-red-400 bg-red-500/10 border-red-500/20" };
-    }
-    return { label: "System", color: "text-muted-foreground bg-muted border-border" };
-  };
-
-  const handleUpdateProfile = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setProfileError(null);
-    setProfileSuccess(null);
-    setProfileLoading(true);
-
-    try {
-      const emailChanged = email !== user.email;
-      const res = await api.updateProfile(username, email);
-      
-      if (emailChanged) {
-        setProfileSuccess("Email updated! You will be logged out to verify your new email.");
-        setTimeout(() => {
-          logout();
-          router.push("/login");
-        }, 3000);
-      } else {
-        setProfileSuccess(res.detail);
-        await refreshUser();
-      }
-    } catch (err: unknown) {
-      setProfileError(err instanceof Error ? err.message : "Failed to update profile");
-    } finally {
-      setProfileLoading(false);
-    }
-  };
-
-  const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setPasswordError(null);
-    setPasswordSuccess(null);
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError("Passwords do not match.");
-      return;
-    }
-
-    if (newPassword.length < 8) {
-      setPasswordError("New password must be at least 8 characters long.");
-      return;
-    }
-
-    setPasswordLoading(true);
-
-    try {
-      const res = await api.updatePassword(oldPassword, newPassword);
-      setPasswordSuccess(res.detail);
-      setOldPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (err: unknown) {
-      setPasswordError(err instanceof Error ? err.message : "Failed to update password");
-    } finally {
-      setPasswordLoading(false);
-    }
-  };
-
-  // Filter completed labs by search query
-  const filteredLabs = user.completed_labs.filter((labId) =>
-    labId.toLowerCase().includes(labSearch.toLowerCase())
-  );
-
-  const dockerCompleted = user.completed_labs.filter((id) => id.startsWith("dkr-")).length;
-  const k8sCompleted = user.completed_labs.filter((id) => id.startsWith("k8s-")).length;
-  const lnxCompleted = user.completed_labs.filter((id) => id.startsWith("lnx-")).length;
-  const gitCompleted = user.completed_labs.filter((id) => id.startsWith("git-")).length;
-
   return (
     <div className="max-w-4xl mx-auto px-4 py-12 transition-colors duration-300">
-      
       {/* Profile Header Dashboard Widget */}
       <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-xl flex flex-col md:flex-row items-center md:items-start gap-6 mb-10 relative overflow-hidden">
-        {/* Subtle grid background decoration */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(var(--accent-primary-rgb),0.03),transparent_50%)] pointer-events-none" />
 
         <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-[var(--accent-primary)] to-emerald-400 flex items-center justify-center border-4 border-card shadow-lg text-black font-black text-3xl select-none uppercase shrink-0">
@@ -207,7 +59,6 @@ export default function ProfilePage() {
             </span>
           </div>
 
-          {/* XP Progress Bar */}
           <div className="space-y-1.5 pt-2">
             <div className="flex justify-between text-xs font-bold tracking-wide uppercase text-muted-foreground/80">
               <span>Progress to next rank</span>
@@ -239,414 +90,33 @@ export default function ProfilePage() {
 
       {/* Tabs Selector Navigation */}
       <div className="flex border-b border-border mb-8 gap-6 overflow-x-auto select-none">
-        <button
-          onClick={() => setActiveTab("overview")}
-          className={`pb-3 font-bold text-sm border-b-2 transition-all cursor-pointer ${
-            activeTab === "overview"
-              ? "border-[var(--accent-primary)] text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          Overview
-        </button>
-        <button
-          onClick={() => setActiveTab("settings")}
-          className={`pb-3 font-bold text-sm border-b-2 transition-all cursor-pointer ${
-            activeTab === "settings"
-              ? "border-[var(--accent-primary)] text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          Account Settings
-        </button>
-        <button
-          onClick={() => setActiveTab("security")}
-          className={`pb-3 font-bold text-sm border-b-2 transition-all cursor-pointer ${
-            activeTab === "security"
-              ? "border-[var(--accent-primary)] text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          Security
-        </button>
+        {(
+          [
+            { key: "overview", label: "Overview" },
+            { key: "settings", label: "Account Settings" },
+            { key: "security", label: "Security" },
+          ] as const
+        ).map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            className={`pb-3 font-bold text-sm border-b-2 transition-all cursor-pointer ${
+              activeTab === tab.key
+                ? "border-[var(--accent-primary)] text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      {/* Tab Panels */}
       <div className="space-y-6">
-        
-        {/* TAB 1: OVERVIEW */}
-        {activeTab === "overview" && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-            
-            {/* Activity Summary Column */}
-            <div className="md:col-span-1 space-y-6">
-              {/* Stat Count Card */}
-              <div className="bg-card border border-border rounded-2xl p-6 shadow-md space-y-5">
-                <div>
-                  <h2 className="text-lg font-black text-foreground">Activity Summary</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">{rank.description}</p>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center border-b border-border/50 pb-2">
-                    <span className="text-sm text-muted-foreground">Labs Completed</span>
-                    <span className="font-bold text-foreground font-mono text-base bg-muted px-2.5 py-0.5 rounded-lg border border-border/60">
-                      {user.completed_labs.length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-border/50 pb-2">
-                    <span className="text-sm text-muted-foreground">Reading Sections</span>
-                    <span className="font-bold text-foreground font-mono text-base bg-muted px-2.5 py-0.5 rounded-lg border border-border/60">
-                      {user.completed_sections.length}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Rank Tier</span>
-                    <span className="font-bold text-xs uppercase tracking-wide px-2 py-0.5 rounded-lg bg-[var(--accent-primary)]/10 text-[var(--accent-primary)] border border-[var(--accent-primary)]/20">
-                      {rank.label}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Topic Mastery Progress Card */}
-              <div className="bg-card border border-border rounded-2xl p-6 shadow-md space-y-5">
-                <div>
-                  <h2 className="text-lg font-black text-foreground">Topic Mastery</h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">Your progress across disciplines</p>
-                </div>
-                <div className="space-y-4">
-                  {/* Docker */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="font-bold flex items-center gap-1.5 text-blue-400">
-                        <span className="w-2 h-2 rounded-full bg-blue-400" /> Docker
-                      </span>
-                      <span className="font-mono text-[10px] text-muted-foreground">{dockerCompleted} completed</span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                      <div className="bg-blue-400 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, dockerCompleted * 10)}%` }} />
-                    </div>
-                  </div>
-
-                  {/* Kubernetes */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="font-bold flex items-center gap-1.5 text-indigo-400">
-                        <span className="w-2 h-2 rounded-full bg-indigo-400" /> Kubernetes
-                      </span>
-                      <span className="font-mono text-[10px] text-muted-foreground">{k8sCompleted} completed</span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                      <div className="bg-indigo-400 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, k8sCompleted * 10)}%` }} />
-                    </div>
-                  </div>
-
-                  {/* Linux */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="font-bold flex items-center gap-1.5 text-orange-400">
-                        <span className="w-2 h-2 rounded-full bg-orange-400" /> Linux
-                      </span>
-                      <span className="font-mono text-[10px] text-muted-foreground">{lnxCompleted} completed</span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                      <div className="bg-orange-400 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, lnxCompleted * 10)}%` }} />
-                    </div>
-                  </div>
-
-                  {/* Git */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="font-bold flex items-center gap-1.5 text-red-400">
-                        <span className="w-2 h-2 rounded-full bg-red-400" /> Git
-                      </span>
-                      <span className="font-mono text-[10px] text-muted-foreground">{gitCompleted} completed</span>
-                    </div>
-                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                      <div className="bg-red-400 h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, gitCompleted * 10)}%` }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Completed Labs Column */}
-            <div className="md:col-span-2 space-y-4">
-              <div className="bg-card border border-border rounded-2xl p-6 shadow-md space-y-6">
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
-                  <h2 className="text-lg font-black text-foreground">Completed Labs & Progress</h2>
-                  
-                  {/* Premium Search Filter */}
-                  {user.completed_labs.length > 0 && (
-                    <div className="relative max-w-xs">
-                      <input
-                        type="text"
-                        placeholder="Search labs..."
-                        value={labSearch}
-                        onChange={(e) => setLabSearch(e.target.value)}
-                        className="w-full bg-background border border-border text-foreground text-xs placeholder:text-muted-foreground/45 h-9 px-3 rounded-lg focus:border-[var(--accent-primary)] focus:ring-0 outline-none"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {user.completed_labs.length === 0 ? (
-                  <div className="text-center py-16 text-muted-foreground text-sm space-y-3">
-                    <p>No labs completed yet.</p>
-                    <p className="text-xs">Go to your dashboard to sync and start practicing DevOps labs!</p>
-                  </div>
-                ) : filteredLabs.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground text-xs">
-                    No completed labs match &quot;{labSearch}&quot;
-                  </div>
-                ) : (
-                  <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-                    {filteredLabs.map((labId) => {
-                      const topic = getTopicBadge(labId);
-                      return (
-                        <div
-                          key={labId}
-                          className="flex items-center justify-between p-4 bg-background/50 hover:bg-background/90 hover:scale-[1.005] hover:border-[var(--accent-primary)]/45 transition-all duration-300 rounded-xl border border-border gap-4 group"
-                        >
-                          <div className="flex items-center gap-3.5">
-                            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 border border-emerald-500/20 group-hover:scale-105 transition-all">
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                              </svg>
-                            </div>
-                            <div className="space-y-1">
-                              <p className="font-bold text-foreground text-sm tracking-wide group-hover:text-[var(--accent-primary)] transition-all">{labId}</p>
-                              <span className={`inline-block px-2 py-0.5 rounded text-[9px] font-black tracking-wider uppercase border ${topic.color}`}>
-                                {topic.label}
-                              </span>
-                            </div>
-                          </div>
-
-                          <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 select-none">
-                            Completed
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            </div>
-
-          </div>
-        )}
-
-        {/* TAB 2: ACCOUNT SETTINGS */}
+        {activeTab === "overview" && <ProfileOverviewTab user={user} rank={rank} />}
         {activeTab === "settings" && (
-          <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-md max-w-xl">
-            <div className="mb-6">
-              <h2 className="text-xl font-black text-foreground">Profile Settings</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Manage your user profile details.</p>
-            </div>
-            
-            <form onSubmit={handleUpdateProfile} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="username" className="text-muted-foreground/80 text-xs font-semibold uppercase tracking-wider">
-                  Username
-                </Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  className="bg-card border-border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl focus:border-[var(--accent-primary)] focus:ring-0"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-muted-foreground/80 text-xs font-semibold uppercase tracking-wider">
-                  Email Address
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="bg-card border-border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl focus:border-[var(--accent-primary)] focus:ring-0"
-                />
-                <p className="text-[10px] text-muted-foreground/60 italic mt-1.5 leading-relaxed">
-                  Changing your email address will mark your account unverified. You will be logged out and a verification link will be sent to the new email address.
-                </p>
-              </div>
-
-              {profileError && (
-                <div className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-xl">
-                  {profileError}
-                </div>
-              )}
-
-              {profileSuccess && (
-                <div className="text-sm text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 rounded-xl">
-                  {profileSuccess}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={profileLoading}
-                className="h-12 rounded-xl font-bold text-background bg-[var(--accent-primary)] hover:opacity-90 px-6 disabled:opacity-50 disabled:cursor-not-allowed mt-2 transition-all text-white dark:text-black cursor-pointer shadow-sm shadow-[rgba(var(--accent-primary-rgb),0.1)]"
-              >
-                {profileLoading ? "Saving changes..." : "Save Changes"}
-              </button>
-            </form>
-          </div>
+          <ProfileSettingsTab user={user} logout={logout} refreshUser={refreshUser} />
         )}
-
-        {/* TAB 3: SECURITY / PASSWORD */}
-        {activeTab === "security" && (
-          <div className="space-y-6 max-w-xl">
-            <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-md">
-              <div className="mb-6">
-                <h2 className="text-xl font-black text-foreground">Change Password</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Ensure your account stays secure.</p>
-              </div>
-
-              <form onSubmit={handleUpdatePassword} className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="oldPassword" className="text-muted-foreground/80 text-xs font-semibold uppercase tracking-wider">
-                  Current Password
-                </Label>
-                <Input
-                  id="oldPassword"
-                  type="password"
-                  value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
-                  required
-                  placeholder="••••••••"
-                  className="bg-card border-border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl focus:border-[var(--accent-primary)] focus:ring-0"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="newPassword" className="text-muted-foreground/80 text-xs font-semibold uppercase tracking-wider">
-                  New Password
-                </Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                  placeholder="••••••••"
-                  className="bg-card border-border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl focus:border-[var(--accent-primary)] focus:ring-0"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="confirmPassword" className="text-muted-foreground/80 text-xs font-semibold uppercase tracking-wider">
-                  Confirm New Password
-                </Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  placeholder="••••••••"
-                  className="bg-card border-border text-foreground placeholder:text-muted-foreground/45 h-12 rounded-xl focus:border-[var(--accent-primary)] focus:ring-0"
-                />
-              </div>
-
-              {passwordError && (
-                <div className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-xl">
-                  {passwordError}
-                </div>
-              )}
-
-              {passwordSuccess && (
-                <div className="text-sm text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 px-4 py-3 rounded-xl">
-                  {passwordSuccess}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={passwordLoading}
-                className="h-12 rounded-xl font-bold text-background bg-[var(--accent-primary)] hover:opacity-90 px-6 disabled:opacity-50 disabled:cursor-not-allowed mt-2 transition-all text-white dark:text-black cursor-pointer shadow-sm shadow-[rgba(var(--accent-primary-rgb),0.1)]"
-              >
-                {passwordLoading ? "Updating password..." : "Update Password"}
-              </button>
-            </form>
-          </div>
-
-          {/* Active Sessions & Devices (Module A) */}
-          <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-md max-w-xl mt-6">
-            <div className="mb-6 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-black text-foreground">Active Sessions & Devices</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Manage authenticated browser and CLI sessions.</p>
-              </div>
-              <ShieldCheck className="h-5 w-5 text-[var(--accent-primary)]" />
-            </div>
-
-            {sessionsLoading ? (
-              <div className="py-6 text-center text-xs font-mono text-muted-foreground animate-pulse">
-                Loading sessions...
-              </div>
-            ) : sessions.length === 0 ? (
-              <div className="py-6 text-center text-xs text-muted-foreground">
-                No active sessions found.
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {sessions.map((s) => {
-                  const isCli = s.client_type === "cli";
-                  return (
-                    <div
-                      key={s.id}
-                      className="p-3.5 rounded-xl border border-border/70 bg-muted/20 flex items-center justify-between gap-3 text-xs"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-muted text-foreground">
-                          {isCli ? <Terminal className="h-4 w-4 text-[var(--accent-primary)]" /> : <Laptop className="h-4 w-4 text-[var(--accent-primary)]" />}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-foreground capitalize">
-                              {s.client_type} Session
-                            </span>
-                            {s.is_current && (
-                              <span className="text-[10px] font-mono px-2 py-0.2 rounded-full bg-emerald-500/10 text-emerald-400 font-bold flex items-center gap-1">
-                                <Check className="h-2.5 w-2.5" /> This Device
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-[11px] text-muted-foreground font-mono mt-0.5">
-                            {s.ip_address || "Unknown IP"} • {s.user_agent ? (s.user_agent.length > 35 ? s.user_agent.slice(0, 35) + "..." : s.user_agent) : "TLD Client"}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground/60 flex items-center gap-1 mt-0.5">
-                            <Clock className="h-2.5 w-2.5" />
-                            Active: {s.last_used_at ? new Date(s.last_used_at).toLocaleDateString() : "Just now"}
-                          </p>
-                        </div>
-                      </div>
-
-                      {!s.is_current && (
-                        <button
-                          type="button"
-                          onClick={() => handleRevokeSession(s.id)}
-                          className="px-2.5 py-1.5 rounded-lg border border-border/80 hover:border-destructive text-destructive hover:bg-destructive/10 text-xs font-semibold cursor-pointer transition-colors"
-                          title="Revoke session"
-                        >
-                          Revoke
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
+        {activeTab === "security" && <ProfileSecurityTab />}
       </div>
     </div>
   );

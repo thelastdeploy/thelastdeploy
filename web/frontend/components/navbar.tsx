@@ -116,7 +116,6 @@ export function Navbar() {
       user.username === "devuser" ||
       user.is_admin ||
       user.is_maintainer ||
-      (user.platform_roles && user.platform_roles.length > 0) ||
       (user.platform_permissions && user.platform_permissions.length > 0)
     )
   );

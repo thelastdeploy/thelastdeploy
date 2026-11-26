@@ -8,11 +8,12 @@ from app.dependencies import (
     get_db,
     get_current_user,
     get_current_organization,
-    require_permission,
+    require_any_permission,
     require_platform_permission,
     has_platform_permission,
+    has_org_permission,
 )
-from app.models import User, Organization, OrganizationMembership, OrganizationSettingAvailability
+from app.models import User, Organization, OrganizationMembership, OrganizationSetting
 from app.schemas import (
     OrgSettingItemResponse,
     OrgSettingAdminItemResponse,
@@ -26,16 +27,51 @@ router = APIRouter(prefix="/organizations/{org_slug}/settings", tags=["Organizat
 
 # --- Organization Admin Endpoints ---
 
+_SETTINGS_VIEW_PERMS = (
+    "organization.manage",
+    "settings.view",
+    "settings.manage",
+    "settings.cohorts.manage",
+    "settings.content.manage",
+    "settings.onboarding.manage",
+    "settings.security.manage",
+    "analytics.export",
+    "learning_paths.manage",
+)
+
+
+async def _can_edit_setting(
+    mem: OrganizationMembership | None,
+    user: User,
+    db: AsyncSession,
+    required_permission: str,
+) -> bool:
+    return (
+        await has_org_permission(mem, "organization.manage", user, db)
+        or await has_org_permission(mem, "settings.manage", user, db)
+        or await has_org_permission(mem, required_permission, user, db)
+    )
+
+
 @router.get("", response_model=list[OrgSettingItemResponse])
 async def list_org_settings(
     org_slug: str,
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-    _perm: OrganizationMembership = Depends(require_permission("organization.manage")),
+    _perm: OrganizationMembership = Depends(require_any_permission(*_SETTINGS_VIEW_PERMS)),
 ):
-    """List all settings currently enabled for the organization (requires 'organization.manage')."""
-    organization, _ = org_and_mem
-    return await SettingsService.list_settings_for_org_admin(db, organization.id)
+    """List all settings currently enabled for the organization."""
+    organization, mem = org_and_mem
+    items = await SettingsService.list_settings_for_org_admin(db, organization.id)
+    has_global = (
+        await has_org_permission(mem, "organization.manage", current_user, db)
+        or await has_org_permission(mem, "settings.manage", current_user, db)
+    )
+    for item in items:
+        req_perm = item.get("required_permission") or "settings.manage"
+        item["can_edit"] = has_global or await has_org_permission(mem, req_perm, current_user, db)
+    return items
 
 
 @router.get("/{setting_key}", response_model=OrgSettingItemResponse)
@@ -43,16 +79,17 @@ async def get_org_setting(
     org_slug: str,
     setting_key: str,
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-    _perm: OrganizationMembership = Depends(require_permission("organization.manage")),
+    _perm: OrganizationMembership = Depends(require_any_permission(*_SETTINGS_VIEW_PERMS)),
 ):
     """Get a single setting if enabled for the organization."""
-    organization, _ = org_and_mem
+    organization, mem = org_and_mem
     defn = SettingsService.get_definition(setting_key)
     avail = await db.scalar(
-        select(OrganizationSettingAvailability.is_enabled).where(
-            OrganizationSettingAvailability.organization_id == organization.id,
-            OrganizationSettingAvailability.setting_key == setting_key,
+        select(OrganizationSetting.is_enabled).where(
+            OrganizationSetting.organization_id == organization.id,
+            OrganizationSetting.setting_key == setting_key,
         )
     )
     if not avail:
@@ -61,12 +98,15 @@ async def get_org_setting(
             detail=f"Setting '{setting_key}' is not available or enabled for this organization.",
         )
     effective_val = await SettingsService.get_effective_setting(db, organization.id, setting_key)
+    can_edit = await _can_edit_setting(mem, current_user, db, defn.required_permission)
     return {
         "key": setting_key,
         "value": effective_val,
         "category": defn.category,
         "description": defn.description,
         "data_type": defn.data_type.value,
+        "can_edit": can_edit,
+        "required_permission": defn.required_permission,
     }
 
 
@@ -78,10 +118,15 @@ async def update_org_setting(
     org_and_mem: tuple[Organization, OrganizationMembership] = Depends(get_current_organization),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-    _perm: OrganizationMembership = Depends(require_permission("organization.manage")),
 ):
-    """Update an enabled setting value as an organization administrator (requires 'organization.manage')."""
-    organization, _ = org_and_mem
+    """Update an enabled setting value if caller holds organization.manage, settings.manage, or the setting's required permission."""
+    organization, mem = org_and_mem
+    defn = SettingsService.get_definition(setting_key)
+    if not await _can_edit_setting(mem, current_user, db, defn.required_permission):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Missing required permission ('{defn.required_permission}' or 'settings.manage') to update '{setting_key}'.",
+        )
     return await SettingsService.update_setting_by_org_admin(
         db=db,
         organization_id=organization.id,

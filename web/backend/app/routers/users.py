@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from app.dependencies import get_db, get_current_user, is_user_maintainer, is_user_platform_admin, has_platform_permission
-from app.models import User, LabProgress, SectionProgress, PlatformRole, PlatformUserRole, PlatformRolePermission, PlatformPermission, PlatformUserPermission, Organization, OrganizationMembership
+from app.models import User, LabProgress, SectionProgress, PlatformPermission, PlatformUserPermission, Organization, OrganizationMembership
 from app.schemas import MeResponse, ProfileUpdateRequest, PasswordUpdateRequest, MessageResponse
 from app.auth import verify_password, hash_password
 from app.email import send_verification_email
@@ -58,7 +58,6 @@ async def get_me(
         .where(PlatformUserPermission.user_id == current_user.id)
     )
     user_plat_perms = sorted(list((await db.scalars(direct_perms_stmt)).all()))
-    user_plat_roles = ["platform_admin"] if "platform.permissions.manage" in user_plat_perms else []
 
     # Resolve active workspace organization membership to return workspace-scoped XP
     org_slug = request.headers.get("x-organization-slug") or request.headers.get("x-organization")
@@ -92,7 +91,6 @@ async def get_me(
         is_maintainer=maintainer_status,
         is_admin=admin_status,
         can_manage_workspaces=can_manage_workspaces,
-        platform_roles=user_plat_roles,
         platform_permissions=user_plat_perms,
         completed_labs=completed_labs,
         completed_sections=completed_sections,

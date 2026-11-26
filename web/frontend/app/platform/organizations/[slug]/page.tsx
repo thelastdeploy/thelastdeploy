@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
 import { OrganizationResponse, OrgSettingAdminItemResponse } from "@/lib/types";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
+import { AccessRestricted } from "@/components/shared/access-restricted";
 import {
   ArrowLeft,
   Building2,
@@ -64,7 +65,7 @@ export default function PlatformOrgSettingsPage() {
 
   const hasPerm = (perm: string) => {
     if (!user) return false;
-    if (user.platform_roles?.includes("platform_admin")) return true;
+    if (user.is_admin || user.platform_permissions?.includes("platform.permissions.manage")) return true;
     return Boolean(user.platform_permissions?.includes(perm));
   };
 
@@ -240,16 +241,11 @@ export default function PlatformOrgSettingsPage() {
 
   if (error && !canManageSettings) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
-        <AlertCircle className="h-10 w-10 text-red-400 mx-auto" />
-        <h1 className="text-xl font-bold text-foreground">Access Restricted</h1>
-        <p className="text-sm text-muted-foreground">{error}</p>
-        <Link href="/platform">
-          <Button variant="outline" className="rounded-xl text-xs font-mono">
-            Return to Platform Console
-          </Button>
-        </Link>
-      </div>
+      <AccessRestricted
+        message={error}
+        backHref="/platform"
+        backLabel="Return to Platform Console"
+      />
     );
   }
 

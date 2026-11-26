@@ -16,6 +16,7 @@ from app.models import (
     Organization, OrganizationMembership
 )
 from app.services import log_audit_event
+from app.settings.service import SettingsService
 from app.schemas import (
     BuilderModuleInput,
     BuilderModuleResponse,
@@ -218,6 +219,13 @@ async def publish_module_from_cli(
 ):
     organization, membership = org_and_mem
     is_platform_org = organization.type == "platform"
+    if not is_platform_org:
+        allow_custom = await SettingsService.get_effective_setting(db, organization.id, "content.allow_custom_modules")
+        if allow_custom is False:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Custom module authoring is disabled for this organization.",
+            )
     platform_org_id = await db.scalar(select(Organization.id).where(Organization.type == "platform"))
 
     # 1. Resolve module ID in current organization (composite PK: id + owner_organization_id, no forced slug prefix)

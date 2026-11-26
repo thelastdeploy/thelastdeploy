@@ -1,4 +1,4 @@
-// web/frontend/components/challenges/difficulty-badge.tsx
+// web/frontend/components/modules/difficulty-badge.tsx
 
 import { Badge } from "@/components/ui/badge";
 import { Difficulty } from "@/lib/types";

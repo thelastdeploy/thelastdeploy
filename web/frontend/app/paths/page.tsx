@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { api } from "@/lib/api";
+import { useWorkspaceSync } from "@/lib/hooks/use-workspace-sync";
 import { LearningPathResponse, Module } from "@/lib/types";
 import { LoadingSpinner } from "@/components/shared/loading-spinner";
+import { EmptyState } from "@/components/shared/empty-state";
 import { 
   BookOpen, Layers, ArrowRight, ExternalLink 
 } from "lucide-react";
@@ -20,16 +22,16 @@ export default function LearningPathsPage() {
   const [paths, setPaths] = useState<LearningPathResponse[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
+  const selectedOrg = useWorkspaceSync() || "tld";
   const [activeOrg, setActiveOrg] = useState<string>("tld");
   const [orgName, setOrgName] = useState<string>("Personal");
 
   useEffect(() => {
-    const selected = api.getSelectedOrg() || "tld";
-    setActiveOrg(selected);
+    setActiveOrg(selectedOrg);
+    setLoading(true);
 
-    // Fetch org details & learning paths
     Promise.all([
-      api.getLearningPaths(selected).catch(() => []),
+      api.getLearningPaths(selectedOrg).catch(() => []),
       api.getModules().catch(() => ({ modules: [] })),
       api.getOrganizations().catch(() => []),
     ])
@@ -37,38 +39,14 @@ export default function LearningPathsPage() {
         setPaths(pathsData || []);
         const rawList = Array.isArray(modulesData) ? modulesData : (modulesData as any)?.modules || [];
         setModules(rawList);
-        const current = orgsData.find((o) => o.slug === selected);
+        const current = orgsData.find((o) => o.slug === selectedOrg);
         if (current) {
           setOrgName(current.type === "platform" || current.is_platform ? "Personal" : current.name);
         }
       })
       .catch((err) => console.error("Error loading learning paths:", err))
       .finally(() => setLoading(false));
-
-    const handleOrgChange = () => {
-      const newOrg = api.getSelectedOrg() || "tld";
-      setActiveOrg(newOrg);
-      setLoading(true);
-      Promise.all([
-        api.getLearningPaths(newOrg).catch(() => []),
-        api.getModules().catch(() => ({ modules: [] })),
-        api.getOrganizations().catch(() => []),
-      ])
-        .then(([pathsData, modulesData, orgsData]) => {
-          setPaths(pathsData || []);
-          const rawList = Array.isArray(modulesData) ? modulesData : (modulesData as any)?.modules || [];
-          setModules(rawList);
-          const current = orgsData.find((o) => o.slug === newOrg);
-          if (current) {
-            setOrgName(current.type === "platform" || current.is_platform ? "Personal" : current.name);
-          }
-        })
-        .finally(() => setLoading(false));
-    };
-
-    window.addEventListener("tld:workspace-changed", handleOrgChange);
-    return () => window.removeEventListener("tld:workspace-changed", handleOrgChange);
-  }, [user]);
+  }, [user, selectedOrg]);
 
   if (authLoading || loading) {
     return (
@@ -99,25 +77,17 @@ export default function LearningPathsPage() {
       {/* Content Area - Open Matrix Grid */}
       <div className="max-w-7xl mx-auto px-4 py-8">
         {paths.length === 0 ? (
-          <div className="text-center py-20 border border-dashed border-border rounded-none bg-card/20 space-y-4">
-            <div className="h-16 w-16 mx-auto rounded-none bg-muted/50 flex items-center justify-center text-muted-foreground">
-              <BookOpen className="h-8 w-8" />
-            </div>
-            <div className="space-y-1">
-              <h3 className="text-lg font-bold text-foreground">No Learning Paths in this Workspace</h3>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                There are no curated tracks published in {orgName} yet. Check back soon or switch workspaces.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="rounded-none text-xs font-bold"
-            >
-              <Link href="/modules">Browse All Modules →</Link>
-            </Button>
-          </div>
+          <EmptyState
+            icon={<BookOpen className="h-8 w-8" />}
+            title="No Learning Paths in this Workspace"
+            description={`There are no curated tracks published in ${orgName} yet. Check back soon or switch workspaces.`}
+            className="py-20 bg-card/20"
+            action={
+              <Button variant="outline" size="sm" asChild className="rounded-none text-xs font-bold">
+                <Link href="/modules">Browse All Modules →</Link>
+              </Button>
+            }
+          />
         ) : (
           <div className="relative overflow-visible">
             {/* Continuous Vertical Divider Line down the center */}
@@ -151,24 +121,8 @@ export default function LearningPathsPage() {
                               !isLastInColMobile ? "max-lg:border-b max-lg:border-border/40" : ""
                             }`}
                           >
-                            {/* Sharp-Cornered Inset Tile (100% invisible when idle, thick topic highlight when hover) */}
-                            <div
-                              className="w-full h-full min-h-[300px] p-6 sm:p-7 rounded-none flex flex-col justify-between transition-all duration-150"
-                              style={{
-                                border: "none",
-                                boxShadow: "none",
-                                backgroundColor: "transparent",
-                              }}
-                              onMouseEnter={(e) => {
-                                const isDark = document.documentElement.classList.contains("dark");
-                                e.currentTarget.style.boxShadow = `inset 0 0 0 2px ${theme.border}`;
-                                e.currentTarget.style.backgroundColor = isDark ? theme.bgDark : theme.bgLight;
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.boxShadow = "none";
-                                e.currentTarget.style.backgroundColor = "transparent";
-                              }}
-                            >
+                            {/* Sharp-Cornered Inset Tile (100% invisible when idle, inset highlight when hovered) */}
+                            <div className="matrix-hover-cell w-full h-full min-h-[300px] p-6 sm:p-7 rounded-none flex flex-col justify-between">
                               <div className="space-y-4">
                                 <div className="flex items-start justify-between gap-4">
                                   <div className="flex items-center gap-3">
